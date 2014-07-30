@@ -13,11 +13,13 @@
 using namespace Susi::Util;
 
 Any::Any() {
+	std::cout<<"ctor"<<std::endl;
 	this->type = UNDEFINED;
 }
 
 // copy ctor's
 Any::Any(const bool & value) {
+	std::cout<<"copy ctor BOOL"<<std::endl;
 	this->type = BOOL;
 	this->boolValue = value;
 }
@@ -33,6 +35,7 @@ Any::Any(const double & value) {
 }
 
 Any::Any(const std::string & value) {
+	std::cout<<"copy ctor STRING"<<std::endl;
 	this->type = STRING;
 	this->stringValue = value;
 }
@@ -48,6 +51,7 @@ Any::Any(const std::map<std::string,Any> & value) {
 }
 
 Any::Any(const Any & value) {
+	std::cout<<"copy ctor ANY"<<std::endl;
 	this->type = value.type;
 
 	switch(this->type) {
@@ -76,10 +80,12 @@ Any::Any(const Any & value) {
 
 // move ctor's
 Any::Any(Any && value) {
+	std::cout<<"move ctor ANY"<<std::endl;
 	*this = value;
 }
 
 Any::Any(bool && value) {
+	std::cout<<"move ctor BOOL"<<std::endl;
 	type = BOOL;
 	std::swap(this->boolValue,value);
 }
@@ -93,6 +99,7 @@ Any::Any(double && value) {
 }
 
 Any::Any(std::string && value) {
+	std::cout<<"move ctor STRING"<<std::endl;
 	type = STRING;
 	std::swap(this->stringValue,value);
 }
@@ -107,6 +114,7 @@ Any::Any(std::map<std::string,Any> && value) {
 
 // move asignment operator
 void Any::operator=(Any && value) {
+	std::cout<<"move asignment operator ANY"<<std::endl;
 	std::swap(value.type , type);
 
 	switch(this->type) {
@@ -122,6 +130,7 @@ void Any::operator=(Any && value) {
 			std::swap(value.doubleValue , doubleValue);
 			break;
 		case STRING:
+			std::cout<<"move asignment operator ANY->STRING"<<std::endl;
 			std::swap(value.stringValue , stringValue);
 			break;
 		case ARRAY:			
@@ -136,6 +145,7 @@ void Any::operator=(Any && value) {
 }
 
 void Any::operator=(bool && value) {
+	std::cout<<"move asignment operator BOOL"<<std::endl;
 	type = BOOL;
 	std::swap(this->boolValue,value);
 }
@@ -149,6 +159,7 @@ void Any::operator=(double && value) {
 }
 
 void Any::operator=(std::string && value) {
+	std::cout<<"move asignment STRING"<<std::endl;
 	type = STRING;
 	std::swap(this->stringValue,value);
 }
@@ -187,6 +198,7 @@ void Any::operator=(const double & value) {
 }
 
 void Any::operator=(const std::string & value) {
+	std::cout<<"copy asignment operators STRING"<<std::endl;
 	if(this->type != STRING){
 		throw AnyWrongTypeException(STRING, this->type);
 	}
@@ -211,6 +223,7 @@ void Any::operator=(const std::map<std::string,Any> & value) {
 }
 
 void Any::operator=(const Any & value) {
+	std::cout<<"copy asignment operator ANY"<<std::endl;
 	this->type = value.type;
 
 	switch(this->type) {
@@ -304,6 +317,7 @@ Any::operator double&() {
 	return this->doubleValue;
 }
 Any::operator std::string&() {
+	std::cout<<"reference conversion operators STRING"<<std::endl;
 	if(this->type != STRING) {
 		throw AnyWrongTypeException(STRING, type);
 	}
