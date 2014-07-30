@@ -263,6 +263,15 @@ unsigned char Any::getType(){
 	return this->type;
 }
 
+// deque operators
+int Any::size() {
+	if(type != ARRAY) {
+		throw AnyWrongTypeException(ARRAY, type);
+	} 
+
+	return this->arrayValue.size();
+}
+
 // index operators 
 Any& Any::operator[](const int pos) {
 	if(type != ARRAY) {

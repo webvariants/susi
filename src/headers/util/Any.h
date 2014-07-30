@@ -52,9 +52,9 @@ namespace Susi {
 						  _actual{actual} {}
 					virtual const char* what() noexcept {
 						std::string msg = "wrong type. expected: ";
-						//msg += typeToString(_expected);
-						//msg += " actual: ";
-						//msg += typeToString(_actual);
+						msg += typeToString(_expected);
+						msg += " actual: ";
+						msg += typeToString(_actual);
 						return msg.c_str();
 					}
 					std::string typeToString(Type type){
@@ -137,7 +137,7 @@ namespace Susi {
 			void push_front();
 			void pop_back();
 			void pop_front();
-			void size();
+			int  size();
 
 			// json de/encoder; 
 			std::string toString();
