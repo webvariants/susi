@@ -10,7 +10,7 @@
 #  */
 
 
-CC=g++-4.9
+CC=g++-4.8
 
 MAINFILE=$(shell find ./src/sources -name "main.cc")
 MAIN_INTERMEDIATE=$(subst ./src/sources,./src/objects,$(MAINFILE))
