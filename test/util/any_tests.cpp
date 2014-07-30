@@ -165,6 +165,8 @@ TEST(Any, ARRAY) {
 	EXPECT_EQ(Any::ARRAY,d.getType());
 	EXPECT_TRUE(d.isArray());
 
+	std::cout<<"TEST:"<<d.toString()<<std::endl;
+
 	Any d1 = d[0];
 	Any d2 = d[1];
 	Any d3 = d[2];
@@ -265,6 +267,8 @@ TEST(Any, OBJECT) {
 	Any a = Any(std::map<std::string,Any>{ {"foo", "bar" } });
 	EXPECT_EQ(Any::OBJECT,a.getType());
 	EXPECT_TRUE(a.isObject());
+
+	std::cout<<"TEST2:"<<a.toString()<<std::endl;
 
 	// Copy Contructor
 	Any b = a;

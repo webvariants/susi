@@ -302,7 +302,13 @@ int Any::size() {
 		throw AnyWrongTypeException(ARRAY, type);
 	} 
 
-	return this->arrayValue.size();
+	if(type == ARRAY) {
+		return this->arrayValue.size();
+	}
+
+	if(type == OBJECT) {
+		return this->objectValue.size();
+	}
 }
 
 // index operators 
@@ -365,3 +371,75 @@ Any::operator std::map<std::string,Any>&() {
 
 	return this->objectValue;
 }
+
+// json de/encoder; 
+std::string Any::toStringRecusive(std::string & current) {
+
+	std::string result = "";
+
+	switch(this->type) {
+		case UNDEFINED:
+			break;
+		case BOOL:
+			result = boolValue ? "true" : "false";
+			break;
+		case INTEGER:
+			result = Poco::NumberFormatter::format(integerValue);
+			break;			
+		case DOUBLE:
+			result = Poco::NumberFormatter::format(doubleValue);
+			break;
+		case STRING:
+			result = stringValue;
+			break;
+		case ARRAY:			
+			//std::swap(value.arrayValue , arrayValue);
+			for (int i = 0; i < this->size(); ++i) {
+				result = arrayValue[i].toStringRecusive(result);
+			}
+			break;
+		case OBJECT:
+			for (std::map<std::string,Any>::iterator it=objectValue.begin(); it!=objectValue.end(); ++it) {
+				result += it->first;
+				result = objectValue[it->first].toStringRecusive(result);
+			}
+			break;
+	}
+
+	return current + " " + result;
+}
+
+std::string Any::toString() {
+	std::string result = "";
+
+	switch(this->type) {
+		case UNDEFINED:
+			break;
+		case BOOL:
+			result = boolValue ? "true" : "false";
+			break;
+		case INTEGER:
+			result = Poco::NumberFormatter::format(integerValue);
+			break;			
+		case DOUBLE:
+			result = Poco::NumberFormatter::format(doubleValue);
+			break;
+		case STRING:
+			result = stringValue;
+			break;
+		case ARRAY:
+			for (int i = 0; i < this->size(); ++i) {
+				result = arrayValue[i].toStringRecusive(result);
+			}
+			break;
+		case OBJECT:
+			for (std::map<std::string,Any>::iterator it=objectValue.begin(); it!=objectValue.end(); ++it) {
+				result += it->first;
+				result = objectValue[it->first].toStringRecusive(result);
+			}
+			break;
+	}
+
+	return result;
+}
+//static Any fromString(std::string str);
