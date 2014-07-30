@@ -123,7 +123,7 @@ namespace Susi {
 			operator std::map<std::string,Any>&();
 			
 			// type test operators
-			unsigned char getType();
+			int  getType();
 			bool isNull();
 			bool isBool();
 			bool isInteger();
@@ -133,8 +133,8 @@ namespace Susi {
 			bool isObject();
 
 			// deque operators
-			void push_back();
-			void push_front();
+			void push_back(Any & value);
+			void push_front(Any & value);
 			void pop_back();
 			void pop_front();
 			int  size();

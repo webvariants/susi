@@ -259,11 +259,44 @@ bool Any::isArray(){
 bool Any::isObject(){
 	return type == OBJECT;
 }
-unsigned char Any::getType(){
+int Any::getType(){
 	return this->type;
 }
 
 // deque operators
+void Any::push_back(Any & value) {
+	if(type != ARRAY) {
+		throw AnyWrongTypeException(ARRAY, type);
+	}
+
+	this->arrayValue.push_back(value);
+}
+
+void Any::push_front(Any & value) {
+	if(type != ARRAY) {
+		throw AnyWrongTypeException(ARRAY, type);
+	}
+
+	this->arrayValue.push_front(value);
+}
+
+void Any::pop_back() {
+	if(type != ARRAY) {
+		throw AnyWrongTypeException(ARRAY, type);
+	}
+
+	this->arrayValue.pop_back();
+}
+
+void Any::pop_front() {
+	if(type != ARRAY) {
+		throw AnyWrongTypeException(ARRAY, type);
+	}
+
+	this->arrayValue.pop_front();
+}
+
+
 int Any::size() {
 	if(type != ARRAY) {
 		throw AnyWrongTypeException(ARRAY, type);
