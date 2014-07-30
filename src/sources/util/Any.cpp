@@ -298,7 +298,8 @@ void Any::pop_front() {
 
 
 int Any::size() {
-	if(type != ARRAY) {
+	if(type != ARRAY && type != OBJECT) {
+
 		throw AnyWrongTypeException(ARRAY, type);
 	} 
 
@@ -309,6 +310,8 @@ int Any::size() {
 	if(type == OBJECT) {
 		return this->objectValue.size();
 	}
+
+	return 0;
 }
 
 // index operators 
@@ -373,15 +376,15 @@ Any::operator std::map<std::string,Any>&() {
 }
 
 // json de/encoder; 
-std::string Any::toStringRecusive(std::string & current) {
-
+std::string Any::toStringRecursive(std::string & current) {
+	int max_size;
 	std::string result = "";
 
 	switch(this->type) {
 		case UNDEFINED:
 			break;
 		case BOOL:
-			result = boolValue ? "true" : "false";
+			result = boolValue ? "\"true\"" : "\"false\"";
 			break;
 		case INTEGER:
 			result = Poco::NumberFormatter::format(integerValue);
@@ -390,19 +393,31 @@ std::string Any::toStringRecusive(std::string & current) {
 			result = Poco::NumberFormatter::format(doubleValue);
 			break;
 		case STRING:
-			result = stringValue;
+			result += "\"";
+			result += stringValue;
+			result += "\"";
 			break;
-		case ARRAY:			
-			//std::swap(value.arrayValue , arrayValue);
-			for (int i = 0; i < this->size(); ++i) {
-				result = arrayValue[i].toStringRecusive(result);
+		case ARRAY:
+			max_size = this->size() - 1;
+			result = "[ ";
+			for (int i = 0; i <= max_size; ++i) {
+				result = arrayValue[i].toStringRecursive(result);
+
+				if(i < max_size) {
+					result += ", ";
+				}
 			}
+			result += " ]";
 			break;
 		case OBJECT:
+			result += " { ";
 			for (std::map<std::string,Any>::iterator it=objectValue.begin(); it!=objectValue.end(); ++it) {
+				result += "\"";
 				result += it->first;
-				result = objectValue[it->first].toStringRecusive(result);
+				result += "\" : ";
+				result = objectValue[it->first].toStringRecursive(result);
 			}
+			result += " } ";
 			break;
 	}
 
@@ -410,13 +425,14 @@ std::string Any::toStringRecusive(std::string & current) {
 }
 
 std::string Any::toString() {
+	int max_size;
 	std::string result = "";
 
 	switch(this->type) {
 		case UNDEFINED:
 			break;
 		case BOOL:
-			result = boolValue ? "true" : "false";
+			result = boolValue ? "\"true\"" : "\"false\"";
 			break;
 		case INTEGER:
 			result = Poco::NumberFormatter::format(integerValue);
@@ -425,21 +441,74 @@ std::string Any::toString() {
 			result = Poco::NumberFormatter::format(doubleValue);
 			break;
 		case STRING:
-			result = stringValue;
+			result += "\"";
+			result += stringValue;
+			result += "\"";
 			break;
 		case ARRAY:
-			for (int i = 0; i < this->size(); ++i) {
-				result = arrayValue[i].toStringRecusive(result);
+			max_size = this->size() - 1;
+			result = "[ ";
+			for (int i = 0; i <= max_size; ++i) {
+				result = arrayValue[i].toStringRecursive(result);
+
+				if(i < max_size) {
+					result += ", ";
+				}
 			}
+			result += " ]";
 			break;
 		case OBJECT:
+			result += " { ";
 			for (std::map<std::string,Any>::iterator it=objectValue.begin(); it!=objectValue.end(); ++it) {
+				result += "\"";
 				result += it->first;
-				result = objectValue[it->first].toStringRecusive(result);
+				result += "\" : ";
+				result = objectValue[it->first].toStringRecursive(result);
 			}
+			result += " } ";
 			break;
 	}
 
+
 	return result;
 }
-//static Any fromString(std::string str);
+
+static Any fromString(std::string str) {
+	Any result = Any();
+	Poco::JSON::Parser parser;
+
+	parser.parse(str);
+
+	/*
+	// http://stackoverflow.com/questions/15387154/correct-usage-of-poco-c-json-for-parsing-data
+	// objects
+std::string json = "{ \"test\" : { \"property\" : \"value\" } }";
+Parser parser;
+DefaultHandler handler;
+parser.setHandler(&handler);
+parser.parse(json);
+Var result = handler.result();
+Object::Ptr object = result.extract<Object::Ptr>();
+Var test = object->get("test");
+object = test.extract<Object::Ptr>();
+test = object->get("property");
+std::string value = test.convert<std::string>();
+
+// array of objects
+std::string json = "[ {\"test\" : 0}, { \"test1\" : [1, 2, 3], \"test2\" : 4 } ]";
+Parser parser;
+DefaultHandler handler;
+parser.setHandler(&handler);
+parser.parse(json);
+Var result = handler.result();
+Array::Ptr arr = result.extract<Array::Ptr>();
+Object::Ptr object = arr->getObject(0);//
+assert (object->getValue<int>("test") == 0);
+object = arr->getObject(1);
+arr = object->getArray("test1");
+result = arr->get(0);
+assert (result == 1);
+	*/
+
+	return result;
+}

@@ -148,7 +148,7 @@ namespace Susi {
 
 			// json de/encoder; 
 			std::string toString();
-			std::string toStringRecusive(std::string & current);
+			std::string toStringRecursive(std::string & current);
 			static Any fromString(std::string str);
 		};
 	}
