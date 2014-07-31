@@ -440,139 +440,98 @@ bool Any::operator!=(const Any & other) const{
 	return !(*this == other);
 }
 // json de/encoder; 
-std::string Any::toStringRecursive(std::string & current) {
-	int max_size;
-	std::string result = "";
-
-	switch(this->type) {
-		case UNDEFINED:
-			break;
-		case BOOL:
-			result = boolValue ? "\"true\"" : "\"false\"";
-			break;
-		case INTEGER:
-			result = Poco::NumberFormatter::format(integerValue);
-			break;			
-		case DOUBLE:
-			result = Poco::NumberFormatter::format(doubleValue);
-			break;
-		case STRING:
-			result += "\"";
-			result += stringValue;
-			result += "\"";
-			break;
-		case ARRAY:
-			max_size = this->size() - 1;
-			result = "[ ";
-			for (int i = 0; i <= max_size; ++i) {
-				result = arrayValue[i].toStringRecursive(result);
-
-				if(i < max_size) {
-					result += ", ";
-				}
-			}
-			result += " ]";
-			break;
-		case OBJECT:
-			result += " { ";
-			for (std::map<std::string,Any>::iterator it=objectValue.begin(); it!=objectValue.end(); ++it) {
-				result += "\"";
-				result += it->first;
-				result += "\" : ";
-				result = objectValue[it->first].toStringRecursive(result);
-			}
-			result += " } ";
-			break;
-	}
-
-	return current + " " + result;
-}
-
 std::string Any::toString() {
-	int max_size;
 	std::string result = "";
-
-	switch(this->type) {
-		case UNDEFINED:
-			break;
-		case BOOL:
-			result = boolValue ? "\"true\"" : "\"false\"";
-			break;
-		case INTEGER:
-			result = Poco::NumberFormatter::format(integerValue);
-			break;			
-		case DOUBLE:
-			result = Poco::NumberFormatter::format(doubleValue);
-			break;
-		case STRING:
-			result += "\"";
-			result += stringValue;
-			result += "\"";
-			break;
-		case ARRAY:
-			max_size = this->size() - 1;
-			result = "[ ";
-			for (int i = 0; i <= max_size; ++i) {
-				result = arrayValue[i].toStringRecursive(result);
-
-				if(i < max_size) {
-					result += ", ";
-				}
-			}
-			result += " ]";
-			break;
-		case OBJECT:
-			result += " { ";
-			for (std::map<std::string,Any>::iterator it=objectValue.begin(); it!=objectValue.end(); ++it) {
-				result += "\"";
-				result += it->first;
-				result += "\" : ";
-				result = objectValue[it->first].toStringRecursive(result);
-			}
-			result += " } ";
-			break;
-	}
-
+	result = this->__parseToString(result);
 
 	return result;
 }
 
+std::string Any::__parseToString(std::string & current) {
+	int max_size;
+	std::string result = "";
+
+	switch(this->type) {
+		case UNDEFINED:
+			result = "null";
+			break;
+		case BOOL:
+			result = boolValue ? "true" : "false";
+			break;
+		case INTEGER:
+			result = std::to_string(integerValue);
+			break;			
+		case DOUBLE:
+			result = std::to_string(doubleValue);
+			break;
+		case STRING:
+			result += "\"";
+			result += stringValue;
+			result += "\"";
+			break;
+		case ARRAY:
+			max_size = this->size() - 1;
+			result = "[";
+			for (int i = 0; i <= max_size; ++i) {
+				result = arrayValue[i].__parseToString(result);
+
+				if(i < max_size) {
+					result += ",";
+				}
+			}
+			result += "]";
+			break;
+		case OBJECT:
+			result += "{";
+			for (std::map<std::string,Any>::iterator it=objectValue.begin(); it!=objectValue.end(); ++it) {
+				result += "\"";
+				result += it->first;
+				result += "\":";
+				result = objectValue[it->first].__parseToString(result);
+			}
+			result += "}";
+			break;
+	}
+
+	return current + "" + result;
+}
+
 static Any fromString(std::string str) {
 	Any result = Any();
-	Poco::JSON::Parser parser;
+	
+	const char *js;
+	int r;
+	jsmn_parser p;
+	jsmntok_t tokens[10];
 
-	parser.parse(str);
+	js = "{\"a\": 0}";
 
+	jsmn_init(&p);
+	r = jsmn_parse(&p, js, strlen(js), tokens, 10);
+
+	for(int i = 0; i < 10; ++i) {
+		std::cout<<token[i]<<std::endl;
+	}
+	
 	/*
-	// http://stackoverflow.com/questions/15387154/correct-usage-of-poco-c-json-for-parsing-data
-	// objects
-std::string json = "{ \"test\" : { \"property\" : \"value\" } }";
-Parser parser;
-DefaultHandler handler;
-parser.setHandler(&handler);
-parser.parse(json);
-Var result = handler.result();
-Object::Ptr object = result.extract<Object::Ptr>();
-Var test = object->get("test");
-object = test.extract<Object::Ptr>();
-test = object->get("property");
-std::string value = test.convert<std::string>();
+	check(r >= 0);
+	check(TOKEN_EQ(tokens[0], 0, 8, JSMN_OBJECT));
+	check(TOKEN_EQ(tokens[1], 2, 3, JSMN_STRING));
+	check(TOKEN_EQ(tokens[2], 6, 7, JSMN_PRIMITIVE));
 
-// array of objects
-std::string json = "[ {\"test\" : 0}, { \"test1\" : [1, 2, 3], \"test2\" : 4 } ]";
-Parser parser;
-DefaultHandler handler;
-parser.setHandler(&handler);
-parser.parse(json);
-Var result = handler.result();
-Array::Ptr arr = result.extract<Array::Ptr>();
-Object::Ptr object = arr->getObject(0);//
-assert (object->getValue<int>("test") == 0);
-object = arr->getObject(1);
-arr = object->getArray("test1");
-result = arr->get(0);
-assert (result == 1);
-	*/
+	check(TOKEN_STRING(js, tokens[0], js));
+	check(TOKEN_STRING(js, tokens[1], "a"));
+	check(TOKEN_STRING(js, tokens[2], "0"));
+    */
+	jsmn_init(&p);
+	js = "[\"a\":{},\"b\":{}]";
+	r = jsmn_parse(&p, js, strlen(js), tokens, 10);
+	//check(r >= 0);
+
+	jsmn_init(&p);
+	js = "{\n \"Day\": 26,\n \"Month\": 9,\n \"Year\": 12\n }";
+	r = jsmn_parse(&p, js, strlen(js), tokens, 10);
+	//check(r >= 0);
 
 	return result;
 }
