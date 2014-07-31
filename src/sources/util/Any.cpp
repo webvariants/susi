@@ -496,6 +496,7 @@ std::string Any::__parseToString(std::string & current) {
 	return current + "" + result;
 }
 
+/*
 Any Any::fromString(std::string str) {
 	Any result = Any();
 	
@@ -520,7 +521,11 @@ Any Any::fromString(std::string str) {
         STOP
     } parse_state;
 
+    // state is the current state of the parser
     parse_state state = START;
+
+    // stack is the state we return to when reaching the end of an object
+    parse_state stack = STOP;
 
      // Counters to keep track of how far through parsing we are
     size_t object_tokens = 0;
@@ -538,16 +543,20 @@ Any Any::fromString(std::string str) {
             j += t->size;
 		}
 
-		/*
 		switch (state)
         {
         	case START:
-                if (t->type != JSMN_ARRAY)
-                    std::cout<<"Invalid response: root element must be array."<<std::endl;
-                if (t->size != 1)
-                    std::cout<<"Invalid response: array must have one element."<<std::endl;
 
-                state = WRAPPER;
+        		switch(t->type) {
+        			case JSMN_ARRAY:
+        				result
+        				state = WRAPPER;
+        				break;
+        			case JSMN_OBJECT:
+        				
+        				state = WRAPPER;
+        				break;
+        		}
                 break;
 
             case WRAPPER:
@@ -564,7 +573,7 @@ Any Any::fromString(std::string str) {
                 // Keys are odd-numbered tokens within the object
                 if (object_tokens % 2 == 1)
                 {
-                    if (t->type == JSMN_STRING && json_token_streq(js, t, "trends"))
+                    if (t->type == JSMN_STRING)
                         state = TRENDS;
                 }
                 else if (t->type == JSMN_ARRAY || t->type == JSMN_OBJECT)
@@ -628,7 +637,7 @@ Any Any::fromString(std::string str) {
                 // Keys are odd-numbered tokens within the object
                 if (trend_tokens % 2 == 1)
                 {
-                    if (t->type == JSMN_STRING && json_token_streq(js, t, "name"))
+                    if (t->type == JSMN_STRING)
                         state = NAME;
                 }
                 // Only care about values in the NAME state
@@ -637,8 +646,8 @@ Any Any::fromString(std::string str) {
                     if (t->type != JSMN_STRING)
                         std::cout<<"Invalid trend name."<<std::endl;
 
-                    char *str = json_token_tostr(js, t);
-                    puts(str);
+                    //char *str = json_token_tostr(js, t);
+                    //puts(str);
 
                     state = TREND;
                 }
@@ -662,8 +671,6 @@ Any Any::fromString(std::string str) {
             default:
                 std::cout<<"Invalid state"<<state<<std::endl;
         }
-        */
-
 
 		if(t->start >= 0 && t->start < js_size && t->end > 1 && t->end <= js_size) {
 
@@ -703,6 +710,75 @@ Any Any::fromString(std::string str) {
 	}
 
 	return result;
+}
+*/
+
+Any Any::fromString(std::string str) {
+	Any result = Any();
+	
+	const char *js;
+	jsmn_parser p;
+	jsmntok_t tokens[JSON_TOKENS];
+
+	//js = "{\"a\": 0}";
+	js = str.c_str();
+	
+	jsmn_init(&p);
+	jsmn_parse(&p, js, strlen(js), tokens, JSON_TOKENS);
+
+	 typedef enum {
+        START,
+        WRAPPER, OBJECT,
+        TRENDS, ARRAY,
+        TREND, NAME,
+        SKIP,
+        STOP
+    } parse_state;
+
+    // state is the current state of the parser
+    parse_state state = START;
+
+    // stack is the state we return to when reaching the end of an object
+    parse_state stack = STOP;
+
+    result = __parseFromString(result, 0, 1, js, tokens);
+
+    return result;
+}
+
+Any Any::__parseFromString(Any & current, int ii, int nz, const char *js, jsmntok_t *tokens) {
+
+	std::cout<<"POS:"<<ii<<std::endl;
+
+	for (size_t i = ii, j = nz; j > 0; i++, j--) {
+
+		jsmntok_t *t = &tokens[i];
+
+		if (t->type == JSMN_ARRAY || t->type == JSMN_OBJECT) {
+            j += t->size;
+		}
+
+		switch(t->type) {
+			case JSMN_OBJECT:
+					std::cout<<"OBJECT->"<<t->size<<std::endl;
+					current = __parseFromString(current, i+1, 1, js, tokens);
+				break;
+			case JSMN_ARRAY:
+					std::cout<<"ARRAY->"<<t->size<<std::endl;
+					current = __parseFromString(current, i+1, 1, js, tokens);
+				break;
+			case JSMN_STRING:
+					std::cout<<"STRING->"<<std::endl;
+					current = __parseFromString(current, i+1, 1, js, tokens);
+				break;
+			case JSMN_PRIMITIVE:
+					std::cout<<"PRIMITIVE->"<<std::endl;
+					current = __parseFromString(current, i+1, 1, js, tokens);
+				break;
+		}
+	}
+
+	return current;
 }
 
 // json helper
