@@ -77,6 +77,7 @@ Any::Any(const Any & value) {
 // move ctor's
 Any::Any(Any && value) {
 	*this = value;
+	value.type = UNDEFINED;
 }
 
 Any::Any(bool && value) {
@@ -136,75 +137,98 @@ void Any::operator=(Any && value) {
 }
 
 void Any::operator=(bool && value) {
+	if(this->type != UNDEFINED && this->type != BOOL){
+		throw WrongTypeException(BOOL, this->type);
+	}
 	type = BOOL;
 	std::swap(this->boolValue,value);
 }
 void Any::operator=(int && value) {
+	if(this->type != UNDEFINED && this->type != INTEGER){
+		throw WrongTypeException(INTEGER, this->type);
+	}
 	type = INTEGER;
 	std::swap(this->integerValue,value);
 }
 void Any::operator=(double && value) {
+	if(this->type != UNDEFINED && this->type != DOUBLE){
+		throw WrongTypeException(DOUBLE, this->type);
+	}
 	type = DOUBLE;
 	std::swap(this->doubleValue,value);
 }
 
 void Any::operator=(std::string && value) {
+	if(this->type != UNDEFINED && this->type != STRING){
+		throw WrongTypeException(STRING, this->type);
+	}
 	type = STRING;
 	std::swap(this->stringValue,value);
 }
 void Any::operator=(std::deque<Any> && value) {
+	if(this->type != UNDEFINED && this->type != ARRAY){
+		throw WrongTypeException(ARRAY, this->type);
+	}
 	type = ARRAY;
 	std::swap(this->arrayValue,value);
 }
 void Any::operator=(std::map<std::string,Any> && value) {
+	if(this->type != UNDEFINED && this->type != OBJECT){
+		throw WrongTypeException(OBJECT, this->type);
+	}
 	type = OBJECT;
 	std::swap(this->objectValue,value);
 }
 
 // copy asignment operators;
 void Any::operator=(const bool & value) {
-	if(this->type != BOOL){
-		throw AnyWrongTypeException(BOOL, this->type);
+	if(this->type != UNDEFINED && this->type != BOOL){
+		throw WrongTypeException(BOOL, this->type);
 	}	
 	this->type = BOOL;
 	this->boolValue = value;
 }
 
 void Any::operator=(const int & value) {
-	if(this->type != INTEGER){
-		throw AnyWrongTypeException(INTEGER, this->type);
+	if(this->type != UNDEFINED && this->type != INTEGER){
+		throw WrongTypeException(INTEGER, this->type);
 	}
 	this->type = INTEGER;
 	this->integerValue = value;
 }
 
 void Any::operator=(const double & value) {
-	if(this->type != DOUBLE){
-		throw AnyWrongTypeException(DOUBLE, this->type);
+	if(this->type != UNDEFINED && this->type != DOUBLE){
+		throw WrongTypeException(DOUBLE, this->type);
 	}
 	this->type = DOUBLE;
 	this->doubleValue = value;
 }
 
 void Any::operator=(const std::string & value) {
-	if(this->type != STRING){
-		throw AnyWrongTypeException(STRING, this->type);
+	if(this->type != UNDEFINED && this->type != STRING){
+		throw WrongTypeException(STRING, this->type);
 	}
 	this->type = STRING;
 	this->stringValue = value;
 }
 
+void Any::operator=(const char * value) {
+	std::string v{value};
+	*this = v;
+}
+
 void Any::operator=(const std::deque<Any> & value) {
-	if(this->type != ARRAY){
-		throw AnyWrongTypeException(ARRAY, this->type);
+	if(this->type != UNDEFINED && this->type != ARRAY){
+		throw WrongTypeException(ARRAY, this->type);
 	}
 	this->type = ARRAY;
 	this->arrayValue = value;
 
 }
 void Any::operator=(const std::map<std::string,Any> & value) {
-	if(this->type != OBJECT){
-		throw AnyWrongTypeException(OBJECT, this->type);
+	if(this->type != UNDEFINED && this->type != OBJECT){
+		throw WrongTypeException(OBJECT, this->type);
 	}
 	this->type = OBJECT;
 	this->objectValue = value;
@@ -266,7 +290,7 @@ int Any::getType(){
 // deque operators
 void Any::push_back(Any & value) {
 	if(type != ARRAY) {
-		throw AnyWrongTypeException(ARRAY, type);
+		throw WrongTypeException(ARRAY, type);
 	}
 
 	this->arrayValue.push_back(value);
@@ -274,15 +298,23 @@ void Any::push_back(Any & value) {
 
 void Any::push_front(Any & value) {
 	if(type != ARRAY) {
-		throw AnyWrongTypeException(ARRAY, type);
+		throw WrongTypeException(ARRAY, type);
 	}
 
 	this->arrayValue.push_front(value);
 }
 
+
+void Any::push_back(Any && value){
+	push_back(value);
+}
+void Any::push_front(Any && value){
+	push_front(value);
+}
+
 void Any::pop_back() {
 	if(type != ARRAY) {
-		throw AnyWrongTypeException(ARRAY, type);
+		throw WrongTypeException(ARRAY, type);
 	}
 
 	this->arrayValue.pop_back();
@@ -290,17 +322,16 @@ void Any::pop_back() {
 
 void Any::pop_front() {
 	if(type != ARRAY) {
-		throw AnyWrongTypeException(ARRAY, type);
+		throw WrongTypeException(ARRAY, type);
 	}
 
 	this->arrayValue.pop_front();
 }
 
-
-int Any::size() {
+size_t Any::size() const {
 	if(type != ARRAY && type != OBJECT) {
 
-		throw AnyWrongTypeException(ARRAY, type);
+		throw WrongTypeException(ARRAY, type);
 	} 
 
 	if(type == ARRAY) {
@@ -317,64 +348,97 @@ int Any::size() {
 // index operators 
 Any& Any::operator[](const int pos) {
 	if(type != ARRAY) {
-		throw AnyWrongTypeException(ARRAY, type);
+		throw WrongTypeException(ARRAY, type);
 	} 
-
 	return this->arrayValue[pos];
 }
 
-Any& Any::operator[](std::string key) {
+Any& Any::operator[](std::string key){
 	if(type != OBJECT) {
-		throw AnyWrongTypeException(OBJECT, type);
-	} 
-
+		throw WrongTypeException(OBJECT, type);
+	}
 	return this->objectValue[key];
+}
+
+Any& Any::operator[](const char * key){
+	std::string k{key};
+	return ((*this)[k]);
 }
 
 //reference conversion operators
 Any::operator bool&() {
 	if(this->type != BOOL) {
-		throw AnyWrongTypeException(BOOL, type);
+		throw WrongTypeException(BOOL, type);
 	}
 
 	return this->boolValue;
 }
 Any::operator int&() {
 	if(this->type != INTEGER) {
-		throw AnyWrongTypeException(INTEGER, type);
+		throw WrongTypeException(INTEGER, type);
 	}
 
 	return this->integerValue;
 }
 Any::operator double&() {
 	if(this->type != DOUBLE) {
-		throw AnyWrongTypeException(DOUBLE, type);
+		throw WrongTypeException(DOUBLE, type);
 	}
 
 	return this->doubleValue;
 }
 Any::operator std::string&() {
 	if(this->type != STRING) {
-		throw AnyWrongTypeException(STRING, type);
+		throw WrongTypeException(STRING, type);
 	}
 
 	return this->stringValue;
 }
 Any::operator std::deque<Any>&() {
 	if(this->type != ARRAY) {
-		throw AnyWrongTypeException(ARRAY, type);
+		throw WrongTypeException(ARRAY, type);
 	}
 
 	return this->arrayValue;
 }
 Any::operator std::map<std::string,Any>&() {
 	if(this->type != OBJECT) {
-		throw AnyWrongTypeException(OBJECT, type);
+		throw WrongTypeException(OBJECT, type);
 	}
 
 	return this->objectValue;
 }
 
+
+bool Any::operator==(const Any & other) const {
+	if(type != other.type)return false;
+	switch(type){
+		case UNDEFINED: return true;
+		case BOOL: return boolValue==other.boolValue;
+		case INTEGER: return integerValue==other.integerValue;
+		case DOUBLE: return doubleValue==other.doubleValue;
+		case STRING: return stringValue==other.stringValue;
+		case ARRAY: {
+			if(size()!=other.size())return false;
+			for(size_t i=0;i<size();i++){
+				if(arrayValue[i]!=other.arrayValue.at(i))return false;
+			}
+			return true;
+		}
+		case OBJECT:{
+			for(auto & kv : objectValue){
+				if(kv.second != other.objectValue.at(kv.first)){
+					return false;
+				}
+			}
+			return true;
+		}
+		default: return false;
+	}
+}
+bool Any::operator!=(const Any & other) const{
+	return !(*this == other);
+}
 // json de/encoder; 
 std::string Any::toStringRecursive(std::string & current) {
 	int max_size;
