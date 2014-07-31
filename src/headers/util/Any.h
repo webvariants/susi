@@ -54,12 +54,12 @@ namespace Susi {
 			std::map<std::string,Any> objectValue;
 
 		public:		
-			class AnyWrongTypeException: public std::exception {
+			class WrongTypeException: public std::exception {
 				protected:
 					Type _expected;
 					Type _actual;
 				public:
-					AnyWrongTypeException(Type expected, Type actual) 
+					WrongTypeException(Type expected, Type actual) 
 						: _expected{expected},
 						  _actual{actual} {}
 					virtual const char* what() noexcept {
@@ -119,12 +119,15 @@ namespace Susi {
 			void operator=(const int & value);
 			void operator=(const double & value);
 			void operator=(const std::string & value);
+			void operator=(const char* value);
 			void operator=(const std::deque<Any> & value);
 			void operator=(const std::map<std::string,Any> & value);
 
 			// index operators
 			Any& operator[](const int pos);
-			Any& operator[](std::string key);					
+			Any& operator[](std::string key);
+			Any& operator[](const char * key);				
+
 
 			//reference conversion operators
 			operator bool&(); // Any foo(true); bool & value = foo; value = false; EXPECT_FALSE(foo);
@@ -134,6 +137,10 @@ namespace Susi {
 			operator std::deque<Any>&();
 			operator std::map<std::string,Any>&();
 			
+
+			bool operator==(const Any & other) const;
+			bool operator!=(const Any & other) const;
+
 			// type test operators
 			int  getType();
 			bool isNull();
@@ -147,9 +154,11 @@ namespace Susi {
 			// deque operators
 			void push_back(Any & value);
 			void push_front(Any & value);
+			void push_back(Any && value);
+			void push_front(Any && value);
 			void pop_back();
 			void pop_front();
-			int  size();
+			size_t size() const;
 
 			// json de/encoder; 
 			std::string toString();
