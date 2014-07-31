@@ -34,15 +34,17 @@ namespace Susi {
 	namespace Util {
 		class Any {	
 		public:
-		enum Type {
-			 UNDEFINED,
-			 BOOL,
-			 INTEGER,
-			 DOUBLE,
-			 STRING,
-			 ARRAY,
-			 OBJECT
-		};
+			typedef std::map<std::string,Any> Object;
+			typedef std::deque<Any> Array;
+			enum Type {
+				UNDEFINED,
+				BOOL,
+				INTEGER,
+				DOUBLE,
+				STRING,
+				ARRAY,
+				OBJECT
+			};
 		protected:	
 			Type type;
 
@@ -162,7 +164,6 @@ namespace Susi {
 
 			// json de/encoder; 
 			std::string toString();
-			std::string __parseToString(std::string & current);
 			static Any fromString(std::string str);
 			static Any __parseFromString(Any & current, int ii, int nz, const char *js, jsmntok_t *tokens);
 

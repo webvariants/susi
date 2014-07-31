@@ -1,3 +1,14 @@
+/*
+ * Copyright (c) 2014, webvariants GmbH, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ * 
+ * @author: Tino Rusch (tino.rusch@webvariants.de)
+ */
+
 #include "gtest/gtest.h"
 #include "db/EventInterface.h"
 #include "iocontroller/IOController.h"
@@ -12,12 +23,14 @@ protected:
 		world.setupEventSystem();
 		world.setupDBManager();
 	}
+	void TearDown() override {
+		Susi::IOController controller;
+	    controller.deletePath("./test_sqlite_db_3");
+	}
 };
 
 TEST_F(DBEventInterfaceTest, Query) {
 
-	Susi::IOController controller;
-    controller.deletePath("./test_sqlite_db_3");
 
 	std::vector<std::tuple<std::string,std::string,std::string>> dbs;
     dbs.push_back(std::make_tuple("test_sqlite_db_3", "sqlite3", "./test_sqlite_db_3"));

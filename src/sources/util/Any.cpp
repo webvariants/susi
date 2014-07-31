@@ -439,61 +439,62 @@ bool Any::operator==(const Any & other) const {
 bool Any::operator!=(const Any & other) const{
 	return !(*this == other);
 }
-// json de/encoder; 
-std::string Any::toString() {
-	std::string result = "";
-	result = this->__parseToString(result);
 
-	return result;
-}
-
-std::string Any::__parseToString(std::string & current) {
-	int max_size;
-	std::string result = "";
-
+std::string Any::toString(){
+	std::string result;
 	switch(this->type) {
-		case UNDEFINED:
+		case UNDEFINED: {
 			result = "null";
 			break;
-		case BOOL:
+		}
+		case BOOL: {
 			result = boolValue ? "true" : "false";
 			break;
-		case INTEGER:
+		}
+		case INTEGER: {
 			result = std::to_string(integerValue);
-			break;			
-		case DOUBLE:
+			break;	
+		}
+		case DOUBLE: {
 			result = std::to_string(doubleValue);
-			break;
-		case STRING:
+			break;	
+		}		
+		case STRING: {
 			result += "\"";
 			result += stringValue;
 			result += "\"";
 			break;
-		case ARRAY:
-			max_size = this->size() - 1;
+		}
+		case ARRAY: {
+			size_t max_size = this->size() - 1;
 			result = "[";
-			for (int i = 0; i <= max_size; ++i) {
-				result = arrayValue[i].__parseToString(result);
-
+			if(this->size())for (size_t i = 0; i <= max_size; ++i) {
+				result += arrayValue[i].toString();
 				if(i < max_size) {
 					result += ",";
 				}
 			}
 			result += "]";
 			break;
-		case OBJECT:
+		}
+		case OBJECT: {
 			result += "{";
-			for (std::map<std::string,Any>::iterator it=objectValue.begin(); it!=objectValue.end(); ++it) {
+			size_t current = 0;
+			size_t max_size = size();
+			for (auto & kv : objectValue) {
 				result += "\"";
-				result += it->first;
+				result += kv.first;
 				result += "\":";
-				result = objectValue[it->first].__parseToString(result);
+				result += kv.second.toString();
+				if(current++ < max_size-1){
+					result += ",";
+				}
 			}
 			result += "}";
 			break;
+		}
 	}
-
-	return current + "" + result;
+	return result;
 }
 
 /*
@@ -512,6 +513,24 @@ Any Any::fromString(std::string str) {
 	jsmn_init(&p);
 	r = jsmn_parse(&p, js, strlen(js), tokens, JSON_TOKENS);
 
+	/*for(int i = 0; i < 10; ++i) {
+		std::cout<<tokens[i]<<std::endl;
+	}*/
+	
+	/*
+	check(r >= 0);
+	check(TOKEN_EQ(tokens[0], 0, 8, JSMN_OBJECT));
+	check(TOKEN_EQ(tokens[1], 2, 3, JSMN_STRING));
+	check(TOKEN_EQ(tokens[2], 6, 7, JSMN_PRIMITIVE));
+
+	check(TOKEN_STRING(js, tokens[0], js));
+	check(TOKEN_STRING(js, tokens[1], "a"));
+	check(TOKEN_STRING(js, tokens[2], "0"));
+    */
+	jsmn_init(&p);
+	js = "[\"a\":{},\"b\":{}]";
+	r = jsmn_parse(&p, js, strlen(js), tokens, 10);
+	//check(r >= 0);
 	 typedef enum {
         START,
         WRAPPER, OBJECT,
