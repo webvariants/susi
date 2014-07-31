@@ -2,10 +2,10 @@
 
 using namespace Susi::Events;
 
-Manager::Manager(){
+Manager::Manager(int threadCount, int chanBuffSize) {
 	//std::cout<<"init manager"<<std::endl;
-	workChannel = std::shared_ptr<Susi::Util::Channel<EventPtr>>(new Susi::Util::Channel<EventPtr>());
-	for(int i=0;i<4;i++){
+	workChannel = std::shared_ptr<Susi::Util::Channel<EventPtr>>(new Susi::Util::Channel<EventPtr>(chanBuffSize));
+	for(int i=0;i<threadCount;i++){
 		std::thread t([this](){
 			Manager::AcknowledgeWorker worker(this,workChannel);
 			 try{

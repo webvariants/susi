@@ -40,7 +40,7 @@ namespace Events{
 
 	typedef std::unique_ptr<Event,std::function<void(Event*)>> EventPtr; 
 	typedef std::function<void( EventPtr )> Handler;
-	typedef std::function<bool( Event & )> Predicate;
+	typedef std::function<bool( const Event & )> Predicate;
 
 
 	class Manager {
@@ -86,7 +86,8 @@ namespace Events{
 		std::vector<std::thread> workers;
 
 	public:
-		Manager();
+		Manager() : Manager(4,32) {};
+		Manager(int threadCount, int channelBuffSize);
 		//register handler by topic. returns subscription-id
 		long subscribe(std::string topic, Handler handler);
 		//register handler by predicate. returns subscription-id
