@@ -4,6 +4,7 @@
 #include <chrono>
 #include <initializer_list>
 
+
 // This is the EventManagerTest, here you can see how to use the new eventsystem.
 class EventManagerTest : public ::testing::Test {
 protected:
