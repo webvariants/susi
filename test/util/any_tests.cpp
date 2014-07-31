@@ -762,14 +762,16 @@ TEST(Any, toString){
 	EXPECT_EQ("{\"array\":[1,{\"foo\":\"bar\"}]}",j.toString());
 }
 
-/*
+
 TEST(Any, JSON) {
-	Any d = std::deque<Any>{true, 5, 7.8,"FOO", Any(std::deque<Any>{"A",2}) , Any(std::deque<Any>{"B",4, false})};
+	Any d = std::deque<Any>{true, 5, Any(std::deque<Any>{"A","B", Any(std::deque<Any>{"D","E",2}) ,2}), 7.8,"FOO"};
 	std::string js_str = d.toString();
-	std::cout<<"TEST:"<<js_str<<std::endl;
+	std::cout<<"TEST-->:"<<js_str<<std::endl;
 	Any a_fs = Any::fromString(js_str);
+
+	std::cout<<"<--TEST:"<<a_fs.toString()<<std::endl;
 }
-*/
+
 
 TEST(Any,ArrayHelper){
 	Any a{Any::Array{}};
