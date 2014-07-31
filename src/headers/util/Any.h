@@ -34,15 +34,17 @@ namespace Susi {
 	namespace Util {
 		class Any {	
 		public:
-		enum Type {
-			 UNDEFINED,
-			 BOOL,
-			 INTEGER,
-			 DOUBLE,
-			 STRING,
-			 ARRAY,
-			 OBJECT
-		};
+			typedef std::map<std::string,Any> Map;
+			typedef std::deque<Any> Array;
+			enum Type {
+				 UNDEFINED,
+				 BOOL,
+				 INTEGER,
+				 DOUBLE,
+				 STRING,
+				 ARRAY,
+				 OBJECT
+			};
 		protected:	
 			Type type;
 
