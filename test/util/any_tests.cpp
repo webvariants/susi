@@ -165,8 +165,6 @@ TEST(Any, ARRAY) {
 	EXPECT_EQ(Any::ARRAY,d.getType());
 	EXPECT_TRUE(d.isArray());
 
-	std::cout<<"TEST:"<<d.toString()<<std::endl;
-
 	Any d1 = d[0];
 	Any d2 = d[1];
 	Any d3 = d[2];
@@ -268,8 +266,6 @@ TEST(Any, OBJECT) {
 	EXPECT_EQ(Any::OBJECT,a.getType());
 	EXPECT_TRUE(a.isObject());
 
-	std::cout<<"TEST2:"<<a.toString()<<std::endl;
-
 	// Copy Contructor
 	Any b = a;
 	EXPECT_EQ(Any::OBJECT,b.getType());
@@ -296,4 +292,13 @@ TEST(Any, OBJECT) {
 	std::map<std::string, Any> & o_ = o;
 	EXPECT_EQ(o,o_);
 	*/
+}
+
+TEST(Any, JSON) {
+
+	Any d = std::deque<Any>{true, 5, 7.8,"FOO", Any(std::deque<Any>{"A",2}) , Any(std::deque<Any>{"B",4, false})};
+	
+	std::string js_str = d.toString();
+	std::cout<<"TEST:"<<js_str<<std::endl;
+	Any a_fs = Any::fromString(js_str);
 }
