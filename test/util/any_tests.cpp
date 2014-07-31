@@ -16,7 +16,7 @@
 
 using namespace Susi::Util;
 
-void EXPECT_EQ_MAP(Any::Map a, Any::Map b){
+void EXPECT_EQ_OBJECT(Any::Object a, Any::Object b){
 	EXPECT_EQ(a.size(),b.size());
 	for(auto & kv : a){
 		const Any & other = b[kv.first];
@@ -239,37 +239,37 @@ TEST(Any, ArrayConstructorsAndAssignments) {
 
 TEST(Any, ObjectConstructorsAndAssignments) {
 	// Contructor
-	Any a{Any::Map{{"foo","bar"},{"baz",234}}};
+	Any a{Any::Object{{"foo","bar"},{"baz",234}}};
 	EXPECT_EQ(Any::OBJECT,a.getType());
 	EXPECT_TRUE(a.isObject());
-	EXPECT_EQ_MAP(Any::Map{{"foo","bar"},{"baz",234}},static_cast<Any::Map&>(a));
+	EXPECT_EQ_OBJECT(Any::Object{{"foo","bar"},{"baz",234}},static_cast<Any::Object&>(a));
 
 
 	// Copy Constructor
 	Any b{a};
 	EXPECT_EQ(Any::OBJECT,b.getType());
 	EXPECT_TRUE(b.isObject());
-	EXPECT_EQ_MAP(Any::Map{{"foo","bar"},{"baz",234}},static_cast<Any::Map&>(b));
+	EXPECT_EQ_OBJECT(Any::Object{{"foo","bar"},{"baz",234}},static_cast<Any::Object&>(b));
 	
 	// Move Constructor
-	Any c{Any::Map{{"foo","bar"},{"baz",234}}};
+	Any c{Any::Object{{"foo","bar"},{"baz",234}}};
 	Any d{std::move(c)};
 	EXPECT_EQ(Any::OBJECT,d.getType());
 	EXPECT_TRUE(d.isObject());
-	EXPECT_EQ_MAP(Any::Map{{"foo","bar"},{"baz",234}},static_cast<Any::Map&>(d));
+	EXPECT_EQ_OBJECT(Any::Object{{"foo","bar"},{"baz",234}},static_cast<Any::Object&>(d));
 	EXPECT_TRUE(c.isNull());
 
 	// Copy asignment operator
 	Any e = a;
 	EXPECT_EQ(Any::OBJECT,e.getType());
 	EXPECT_TRUE(e.isObject());
-	EXPECT_EQ_MAP(Any::Map{{"foo","bar"},{"baz",234}},static_cast<Any::Map&>(e));
+	EXPECT_EQ_OBJECT(Any::Object{{"foo","bar"},{"baz",234}},static_cast<Any::Object&>(e));
 	
 	// Move asignment operator
 	Any f = std::move(a);	
 	EXPECT_EQ(Any::OBJECT,f.getType());
 	EXPECT_TRUE(f.isObject());
-	EXPECT_EQ_MAP(Any::Map{{"foo","bar"},{"baz",234}},static_cast<Any::Map&>(f));
+	EXPECT_EQ_OBJECT(Any::Object{{"foo","bar"},{"baz",234}},static_cast<Any::Object&>(f));
 	EXPECT_TRUE(a.isNull());
 }
 
@@ -302,7 +302,7 @@ TEST(Any,UndefinedConversion){
 	},Any::WrongTypeException);
 	
 	EXPECT_THROW({
-		Any::Map v = a;
+		Any::Object v = a;
 		if(v.size()){};
 	},Any::WrongTypeException);
 }
@@ -337,7 +337,7 @@ TEST(Any,BoolConversion){
 	},Any::WrongTypeException);
 	
 	EXPECT_THROW({
-		Any::Map v = a;
+		Any::Object v = a;
 		if(v.size()){};
 	},Any::WrongTypeException);
 }
@@ -371,7 +371,7 @@ TEST(Any,IntegerConversion){
 	},Any::WrongTypeException);
 	
 	EXPECT_THROW({
-		Any::Map v = a;
+		Any::Object v = a;
 		if(v.size()){};
 	},Any::WrongTypeException);
 }
@@ -405,7 +405,7 @@ TEST(Any,DoubleConversion){
 	},Any::WrongTypeException);
 	
 	EXPECT_THROW({
-		Any::Map v = a;
+		Any::Object v = a;
 		if(v.size()){};
 	},Any::WrongTypeException);
 }
@@ -439,7 +439,7 @@ TEST(Any,StringConversion){
 	},Any::WrongTypeException);
 	
 	EXPECT_THROW({
-		Any::Map v = a;
+		Any::Object v = a;
 		if(v.size()){};
 	},Any::WrongTypeException);
 }
@@ -474,13 +474,13 @@ TEST(Any,ArrayConversion){
 	});
 	
 	EXPECT_THROW({
-		Any::Map v = a;
+		Any::Object v = a;
 		if(v.size()){};
 	},Any::WrongTypeException);
 }
 
 TEST(Any,ObjectConversion){
-	Any::Map base{{"foo","bar"}};
+	Any::Object base{{"foo","bar"}};
 	Any a{base};
 	
 	EXPECT_THROW({
@@ -509,8 +509,8 @@ TEST(Any,ObjectConversion){
 	},Any::WrongTypeException);
 	
 	EXPECT_NO_THROW({
-		Any::Map v = a;
-		EXPECT_EQ_MAP(base,v);
+		Any::Object v = a;
+		EXPECT_EQ_OBJECT(base,v);
 	});
 }
 
@@ -531,7 +531,7 @@ TEST(Any,UndefinedWrongAssignment){
 		Any a = Any::Array{};
 	});
 	EXPECT_NO_THROW({
-		Any a = Any::Map{};
+		Any a = Any::Object{};
 	});
 }
 
@@ -559,7 +559,7 @@ TEST(Any,BoolWrongAssignment){
 	},Any::WrongTypeException);
 
 	EXPECT_THROW({
-		a = Any::Map{};
+		a = Any::Object{};
 	},Any::WrongTypeException);
 }
 
@@ -587,7 +587,7 @@ TEST(Any,IntegerWrongAssignment){
 	},Any::WrongTypeException);
 
 	EXPECT_THROW({
-		a = Any::Map{};
+		a = Any::Object{};
 	},Any::WrongTypeException);
 }
 
@@ -615,7 +615,7 @@ TEST(Any,DoubleWrongAssignment){
 	},Any::WrongTypeException);
 
 	EXPECT_THROW({
-		a = Any::Map{};
+		a = Any::Object{};
 	},Any::WrongTypeException);
 }
 
@@ -643,7 +643,7 @@ TEST(Any,StringWrongAssignment){
 	},Any::WrongTypeException);
 
 	EXPECT_THROW({
-		a = Any::Map{};
+		a = Any::Object{};
 	},Any::WrongTypeException);
 }
 
@@ -671,12 +671,12 @@ TEST(Any,ArrayWrongAssignment){
 	});
 
 	EXPECT_THROW({
-		a = Any::Map{};
+		a = Any::Object{};
 	},Any::WrongTypeException);
 }
 
 TEST(Any,ObjectWrongAssignment){
-	Any a{Any::Map{}};
+	Any a{Any::Object{}};
 	
 	EXPECT_THROW({
 		a = true;
@@ -699,12 +699,12 @@ TEST(Any,ObjectWrongAssignment){
 	},Any::WrongTypeException);
 
 	EXPECT_NO_THROW({
-		a = Any::Map{};
+		a = Any::Object{};
 	});
 }
 
 TEST(Any,ObjectIndexOperators){
-	Any a{Any::Map{}};
+	Any a{Any::Object{}};
 	EXPECT_NO_THROW({
 		a["foo"] = "bar";
 	});
@@ -742,19 +742,19 @@ TEST(Any, toString){
 	EXPECT_EQ("123.450000",e.toString());
 	Any f{Any::Array{}};
 	EXPECT_EQ("[]",f.toString());
-	Any g{Any::Map{}};
+	Any g{Any::Object{}};
 	EXPECT_EQ("{}",g.toString());
 
 	Any h{Any::Array{1,2,3}};
 	EXPECT_EQ("[1,2,3]",h.toString());
 
-	Any i{Any::Map{{"foo","bar"}}};
+	Any i{Any::Object{{"foo","bar"}}};
 	EXPECT_EQ("{\"foo\":\"bar\"}",i.toString());
 
-	Any j{Any::Map{
+	Any j{Any::Object{
 		{"array",Any::Array{
 			1,
-			Any::Map{
+			Any::Object{
 				{"foo","bar"}
 			}
 		}
