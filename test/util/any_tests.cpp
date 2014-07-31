@@ -237,6 +237,7 @@ TEST(Any, ArrayConstructorsAndAssignments) {
 	EXPECT_TRUE(f.isArray());
 	EXPECT_EQ_MAP(Array{1,"foo",3.14},static_cast<Array&>(f));
 	EXPECT_TRUE(a.isNull());
+
 }
 
 TEST(Any, ObjectConstructorsAndAssignments) {
@@ -245,6 +246,7 @@ TEST(Any, ObjectConstructorsAndAssignments) {
 	EXPECT_EQ(Any::OBJECT,a.getType());
 	EXPECT_TRUE(a.isObject());
 	EXPECT_EQ_MAP(Map{{"foo","bar"},{"baz",234}},static_cast<Map&>(a));
+
 
 	// Copy Constructor
 	Any b{a};
@@ -728,6 +730,17 @@ TEST(Any,ArrayIndexOperators){
 	EXPECT_THROW({
 		a["foo"] = "bar";
 	},Any::WrongTypeException);
+}
+
+
+
+TEST(Any, JSON) {
+
+	Any d = std::deque<Any>{true, 5, 7.8,"FOO", Any(std::deque<Any>{"A",2}) , Any(std::deque<Any>{"B",4, false})};
+	
+	std::string js_str = d.toString();
+	std::cout<<"TEST:"<<js_str<<std::endl;
+	Any a_fs = Any::fromString(js_str);
 }
 
 TEST(Any,ArrayHelper){

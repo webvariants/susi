@@ -12,6 +12,9 @@
 #ifndef __SUSI_ANY__
 #define __SUSI_ANY__
 
+#define BUFFER_SIZE 32768
+#define JSON_TOKENS 256
+
 #include <stdexcept>
 #include <memory>
 #include <deque>
@@ -161,6 +164,9 @@ namespace Susi {
 			std::string toString();
 			std::string __parseToString(std::string & current);
 			static Any fromString(std::string str);
+
+			// json helper
+			static std::string json_token_tostr(const char *js, jsmntok_t *t);
 		};
 	}
 }

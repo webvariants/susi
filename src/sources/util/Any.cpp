@@ -496,22 +496,24 @@ std::string Any::__parseToString(std::string & current) {
 	return current + "" + result;
 }
 
-static Any fromString(std::string str) {
+Any Any::fromString(std::string str) {
 	Any result = Any();
 	
 	const char *js;
 	int r;
 	jsmn_parser p;
-	jsmntok_t tokens[10];
+	jsmntok_t tokens[JSON_TOKENS];
 
-	js = "{\"a\": 0}";
+	//js = "{\"a\": 0}";
+	js = str.c_str();
+	int js_size = strlen(js);
 
 	jsmn_init(&p);
-	r = jsmn_parse(&p, js, strlen(js), tokens, 10);
+	r = jsmn_parse(&p, js, strlen(js), tokens, JSON_TOKENS);
 
-	for(int i = 0; i < 10; ++i) {
+	/*for(int i = 0; i < 10; ++i) {
 		std::cout<<tokens[i]<<std::endl;
-	}
+	}*/
 	
 	/*
 	check(r >= 0);
@@ -527,11 +529,202 @@ static Any fromString(std::string str) {
 	js = "[\"a\":{},\"b\":{}]";
 	r = jsmn_parse(&p, js, strlen(js), tokens, 10);
 	//check(r >= 0);
+	 typedef enum {
+        START,
+        WRAPPER, OBJECT,
+        TRENDS, ARRAY,
+        TREND, NAME,
+        SKIP,
+        STOP
+    } parse_state;
 
-	jsmn_init(&p);
-	js = "{\n \"Day\": 26,\n \"Month\": 9,\n \"Year\": 12\n }";
-	r = jsmn_parse(&p, js, strlen(js), tokens, 10);
-	//check(r >= 0);
+    parse_state state = START;
+
+     // Counters to keep track of how far through parsing we are
+    size_t object_tokens = 0;
+    size_t skip_tokens = 0;
+    size_t trends = 0;
+    size_t trend_tokens = 0;
+
+	//for(int i = 0; i < JSON_TOKENS; ++i) {
+	for (size_t i = 0, j = 1; j > 0; i++, j--) {
+
+		jsmntok_t *t = &tokens[i];
+
+
+		if (t->type == JSMN_ARRAY || t->type == JSMN_OBJECT) {
+            j += t->size;
+		}
+
+		/*
+		switch (state)
+        {
+        	case START:
+                if (t->type != JSMN_ARRAY)
+                    std::cout<<"Invalid response: root element must be array."<<std::endl;
+                if (t->size != 1)
+                    std::cout<<"Invalid response: array must have one element."<<std::endl;
+
+                state = WRAPPER;
+                break;
+
+            case WRAPPER:
+                if (t->type != JSMN_OBJECT)
+                    std::cout<<"Invalid response: wrapper must be an object."<<std::endl;
+
+                state = OBJECT;
+                object_tokens = t->size;
+                break;
+
+            case OBJECT:
+                object_tokens--;
+
+                // Keys are odd-numbered tokens within the object
+                if (object_tokens % 2 == 1)
+                {
+                    if (t->type == JSMN_STRING && json_token_streq(js, t, "trends"))
+                        state = TRENDS;
+                }
+                else if (t->type == JSMN_ARRAY || t->type == JSMN_OBJECT)
+                {
+                    state = SKIP;
+                    stack = OBJECT;
+                    skip_tokens = t->size;
+                }
+
+                // Last object value
+                if (object_tokens == 0)
+                    state = STOP;
+
+                break;
+
+            case SKIP:
+                skip_tokens--;
+
+                if (t->type == JSMN_ARRAY || t->type == JSMN_OBJECT)
+                    skip_tokens += t->size;
+
+                if (skip_tokens == 0)
+                    state = stack;
+
+                break;
+
+            case TRENDS:
+                if (t->type != JSMN_ARRAY)
+                    std::cout<<"Unknown trends value: expected array."<<std::endl;
+
+                trends = t->size;
+                state = ARRAY;
+                stack = ARRAY;
+
+                // No trends found
+                if (trends == 0)
+                    state = STOP;
+
+                break;
+
+            case ARRAY:
+                trends--;
+
+                trend_tokens = t->size;
+                state = TREND;
+
+                // Empty trend object
+                if (trend_tokens == 0)
+                    state = STOP;
+
+                // Last trend object
+                if (trends == 0)
+                    stack = STOP;
+
+                break;
+
+            case TREND:
+            case NAME:
+                trend_tokens--;
+
+                // Keys are odd-numbered tokens within the object
+                if (trend_tokens % 2 == 1)
+                {
+                    if (t->type == JSMN_STRING && json_token_streq(js, t, "name"))
+                        state = NAME;
+                }
+                // Only care about values in the NAME state
+                else if (state == NAME)
+                {
+                    if (t->type != JSMN_STRING)
+                        std::cout<<"Invalid trend name."<<std::endl;
+
+                    char *str = json_token_tostr(js, t);
+                    puts(str);
+
+                    state = TREND;
+                }
+                else if (t->type == JSMN_ARRAY || t->type == JSMN_OBJECT)
+                {
+                    state = SKIP;
+                    stack = TREND;
+                    skip_tokens = t->size;
+                }
+
+                // Last object value
+                if (trend_tokens == 0)
+                    state = stack;
+
+                break;
+
+            case STOP:
+                // Just consume the tokens
+                break;
+
+            default:
+                std::cout<<"Invalid state"<<state<<std::endl;
+        }
+        */
+
+
+		if(t->start >= 0 && t->start < js_size && t->end > 1 && t->end <= js_size) {
+
+			std::cout<<"MAX"<<js_size<<" START:"<<t->start<<" END:"<<t->end<<" SIZE:"<<t->size<<std::endl;
+
+			switch(t->type) {
+				case JSMN_PRIMITIVE: 
+					{
+						std::cout<<"PRIMITIVE"<<" START:"<<t->start<<" END:"<<t->end<<std::endl;
+
+						std::cout<<"VALUE:"<<Any::json_token_tostr(js, t)<<std::endl;
+						break;
+					}
+				case JSMN_OBJECT : 
+					{
+						std::cout<<"OBJECT"<<" START:"<<t->start<<" END:"<<t->end<<std::endl;
+						break;
+					}
+				case JSMN_ARRAY: 
+					{
+						std::cout<<"ARRAY"<<" START:"<<t->start<<" END:"<<t->end<<std::endl;
+						break;
+					}
+				case JSMN_STRING: 
+					{
+						std::cout<<"STRING"<<" START:"<<t->start<<" END:"<<t->end<<std::endl;
+
+						std::cout<<"VALUE:"<<Any::json_token_tostr(js, t)<<std::endl;
+						break;
+					}
+
+			}
+
+
+			//std::cout<<t->type<<std::endl;
+		}
+	}
 
 	return result;
+}
+
+// json helper
+std::string Any::json_token_tostr(const char *js, jsmntok_t *t)
+{
+    return std::string(js+t->start, js+t->end);
 }
