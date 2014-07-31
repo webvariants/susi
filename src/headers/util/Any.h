@@ -12,11 +12,6 @@
 #ifndef __SUSI_ANY__
 #define __SUSI_ANY__
 
-#include "Poco/NumberFormatter.h"
-#include "Poco/JSON/Parser.h"
-#include "Poco/JSON/ParseHandler.h"
-#include "Poco/JSON/JSONException.h"
-
 #include <stdexcept>
 #include <memory>
 #include <deque>
@@ -24,6 +19,12 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <cstring>
+
+#include "util/jsmn.h"
 
 namespace Susi {
 	namespace Util {
@@ -148,7 +149,7 @@ namespace Susi {
 
 			// json de/encoder; 
 			std::string toString();
-			std::string toStringRecursive(std::string & current);
+			std::string __parseToString(std::string & current);
 			static Any fromString(std::string str);
 		};
 	}
