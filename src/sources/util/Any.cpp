@@ -439,61 +439,62 @@ bool Any::operator==(const Any & other) const {
 bool Any::operator!=(const Any & other) const{
 	return !(*this == other);
 }
-// json de/encoder; 
-std::string Any::toString() {
-	std::string result = "";
-	result = this->__parseToString(result);
 
-	return result;
-}
-
-std::string Any::__parseToString(std::string & current) {
-	int max_size;
-	std::string result = "";
-
+std::string Any::toString(){
+	std::string result;
 	switch(this->type) {
-		case UNDEFINED:
+		case UNDEFINED: {
 			result = "null";
 			break;
-		case BOOL:
+		}
+		case BOOL: {
 			result = boolValue ? "true" : "false";
 			break;
-		case INTEGER:
+		}
+		case INTEGER: {
 			result = std::to_string(integerValue);
-			break;			
-		case DOUBLE:
+			break;	
+		}
+		case DOUBLE: {
 			result = std::to_string(doubleValue);
-			break;
-		case STRING:
+			break;	
+		}		
+		case STRING: {
 			result += "\"";
 			result += stringValue;
 			result += "\"";
 			break;
-		case ARRAY:
-			max_size = this->size() - 1;
+		}
+		case ARRAY: {
+			size_t max_size = this->size() - 1;
 			result = "[";
-			for (int i = 0; i <= max_size; ++i) {
-				result = arrayValue[i].__parseToString(result);
-
+			if(this->size())for (size_t i = 0; i <= max_size; ++i) {
+				result += arrayValue[i].toString();
 				if(i < max_size) {
 					result += ",";
 				}
 			}
 			result += "]";
 			break;
-		case OBJECT:
+		}
+		case OBJECT: {
 			result += "{";
-			for (std::map<std::string,Any>::iterator it=objectValue.begin(); it!=objectValue.end(); ++it) {
+			size_t current = 0;
+			size_t max_size = size();
+			for (auto & kv : objectValue) {
 				result += "\"";
-				result += it->first;
+				result += kv.first;
 				result += "\":";
-				result = objectValue[it->first].__parseToString(result);
+				result += kv.second.toString();
+				if(current++ < max_size-1){
+					result += ",";
+				}
 			}
 			result += "}";
 			break;
+		}
 	}
-
-	return current + "" + result;
+	return result;
 }
 
 Any Any::fromString(std::string str) {

@@ -162,7 +162,6 @@ namespace Susi {
 
 			// json de/encoder; 
 			std::string toString();
-			std::string __parseToString(std::string & current);
 			static Any fromString(std::string str);
 
 			// json helper

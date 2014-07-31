@@ -27,7 +27,7 @@ void EXPECT_EQ_MAP(Map a, Map b){
 	}
 };
 
-void EXPECT_EQ_MAP(Array a, Array b){
+void EXPECT_EQ_ARRAY(Array a, Array b){
 	EXPECT_EQ(a.size(),b.size());
 	for(size_t i=0;i<a.size();i++){
 		const Any & m1 = a[i];
@@ -209,33 +209,33 @@ TEST(Any, ArrayConstructorsAndAssignments) {
 	Any a{Array{1,"foo",3.14}};
 	EXPECT_EQ(Any::ARRAY,a.getType());
 	EXPECT_TRUE(a.isArray());
-	EXPECT_EQ_MAP(Array{1,"foo",3.14},static_cast<Array&>(a));
+	EXPECT_EQ_ARRAY(Array{1,"foo",3.14},static_cast<Array&>(a));
 
 	// Copy Constructor
 	Any b{a};
 	EXPECT_EQ(Any::ARRAY,b.getType());
 	EXPECT_TRUE(b.isArray());
-	EXPECT_EQ_MAP(Array{1,"foo",3.14},static_cast<Array&>(b));
+	EXPECT_EQ_ARRAY(Array{1,"foo",3.14},static_cast<Array&>(b));
 	
 	// Move Constructor
 	Any c{Array{1,"foo",3.14}};
 	Any d{std::move(c)};
 	EXPECT_EQ(Any::ARRAY,d.getType());
 	EXPECT_TRUE(d.isArray());
-	EXPECT_EQ_MAP(Array{1,"foo",3.14},static_cast<Array&>(d));
+	EXPECT_EQ_ARRAY(Array{1,"foo",3.14},static_cast<Array&>(d));
 	EXPECT_TRUE(c.isNull());
 
 	// Copy asignment operator
 	Any e = a;
 	EXPECT_EQ(Any::ARRAY,e.getType());
 	EXPECT_TRUE(e.isArray());
-	EXPECT_EQ_MAP(Array{1,"foo",3.14},static_cast<Array&>(e));
+	EXPECT_EQ_ARRAY(Array{1,"foo",3.14},static_cast<Array&>(e));
 	
 	// Move asignment operator
 	Any f = std::move(a);	
 	EXPECT_EQ(Any::ARRAY,f.getType());
 	EXPECT_TRUE(f.isArray());
-	EXPECT_EQ_MAP(Array{1,"foo",3.14},static_cast<Array&>(f));
+	EXPECT_EQ_ARRAY(Array{1,"foo",3.14},static_cast<Array&>(f));
 	EXPECT_TRUE(a.isNull());
 
 }
@@ -473,7 +473,7 @@ TEST(Any,ArrayConversion){
 
 	EXPECT_NO_THROW({
 		Array v = a;
-		EXPECT_EQ_MAP(base,v);
+		EXPECT_EQ_ARRAY(base,v);
 	});
 	
 	EXPECT_THROW({
@@ -732,16 +732,47 @@ TEST(Any,ArrayIndexOperators){
 	},Any::WrongTypeException);
 }
 
+TEST(Any, toString){
+	Any a;
+	EXPECT_EQ("null",a.toString());
+	Any b{true};
+	EXPECT_EQ("true",b.toString());
+	Any c{false};
+	EXPECT_EQ("false",c.toString());
+	Any d{123};
+	EXPECT_EQ("123",d.toString());
+	Any e{123.45};
+	EXPECT_EQ("123.450000",e.toString());
+	Any f{Array{}};
+	EXPECT_EQ("[]",f.toString());
+	Any g{Map{}};
+	EXPECT_EQ("{}",g.toString());
 
+	Any h{Array{1,2,3}};
+	EXPECT_EQ("[1,2,3]",h.toString());
 
+	Any i{Map{{"foo","bar"}}};
+	EXPECT_EQ("{\"foo\":\"bar\"}",i.toString());
+
+	Any j{Map{
+		{"array",Array{
+			1,
+			Map{
+				{"foo","bar"}
+			}
+		}
+	}}};
+	EXPECT_EQ("{\"array\":[1,{\"foo\":\"bar\"}]}",j.toString());
+}
+
+/*
 TEST(Any, JSON) {
-
 	Any d = std::deque<Any>{true, 5, 7.8,"FOO", Any(std::deque<Any>{"A",2}) , Any(std::deque<Any>{"B",4, false})};
-	
 	std::string js_str = d.toString();
 	std::cout<<"TEST:"<<js_str<<std::endl;
 	Any a_fs = Any::fromString(js_str);
 }
+*/
 
 TEST(Any,ArrayHelper){
 	Any a{Array{}};
