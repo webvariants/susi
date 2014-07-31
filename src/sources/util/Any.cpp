@@ -510,7 +510,7 @@ static Any fromString(std::string str) {
 	r = jsmn_parse(&p, js, strlen(js), tokens, 10);
 
 	for(int i = 0; i < 10; ++i) {
-		std::cout<<token[i]<<std::endl;
+		std::cout<<tokens[i]<<std::endl;
 	}
 	
 	/*

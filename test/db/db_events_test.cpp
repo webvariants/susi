@@ -12,12 +12,14 @@ protected:
 		world.setupEventSystem();
 		world.setupDBManager();
 	}
+	void TearDown() override {
+		Susi::IOController controller;
+	    controller.deletePath("./test_sqlite_db_3");
+	}
 };
 
 TEST_F(DBEventInterfaceTest, Query) {
 
-	Susi::IOController controller;
-    controller.deletePath("./test_sqlite_db_3");
 
 	std::vector<std::tuple<std::string,std::string,std::string>> dbs;
     dbs.push_back(std::make_tuple("test_sqlite_db_3", "sqlite3", "./test_sqlite_db_3"));
