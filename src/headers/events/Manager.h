@@ -40,7 +40,7 @@ namespace Events{
 
 	typedef std::unique_ptr<Event,std::function<void(Event*)>> EventPtr; 
 	typedef std::function<void( EventPtr )> Handler;
-	typedef std::function<bool( Event & )> Predicate;
+	typedef std::function<bool( const Event & )> Predicate;
 
 
 	class Manager {
