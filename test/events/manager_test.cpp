@@ -314,3 +314,36 @@ TEST_F(EventManagerTest, PredicateUnsubscribe){
 	}
 }
 
+TEST_F(EventManagerTest,StressTest){
+	// setup 1000 handlers
+	size_t numOfHandlers = 1000;
+	struct Handler {
+		size_t num;
+		void operator()(EventPtr event){
+			event->headers.push_back(std::make_pair("foo",std::to_string(num)));
+		}
+	};
+	for(size_t i=0; i<numOfHandlers; i++){
+		subscribe("test",Handler{i});
+	}
+
+	//publish
+	auto event = createEvent("test");
+	publish(std::move(event),[this,numOfHandlers](EventPtr event){
+		EXPECT_EQ(numOfHandlers,event->headers.size());
+		for(size_t i=0;i<numOfHandlers;i++){
+			EXPECT_EQ("foo",event->headers[i].first);
+			EXPECT_EQ(std::to_string(i),event->headers[i].second);
+		}
+		callbackCalledOne = true;
+		condOne.notify_all();
+	});
+
+	// wait for finish callback 
+	{
+		std::unique_lock<std::mutex> lk(mutex);
+		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		EXPECT_TRUE(callbackCalledOne);
+	}
+}
+

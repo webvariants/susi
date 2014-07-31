@@ -86,7 +86,8 @@ namespace Events{
 		std::vector<std::thread> workers;
 
 	public:
-		Manager();
+		Manager() : Manager(4,32) {};
+		Manager(int threadCount, int channelBuffSize);
 		//register handler by topic. returns subscription-id
 		long subscribe(std::string topic, Handler handler);
 		//register handler by predicate. returns subscription-id
