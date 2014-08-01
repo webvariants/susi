@@ -513,20 +513,6 @@ Any Any::fromString(std::string str) {
 	jsmn_init(&p);
 	r = jsmn_parse(&p, js, strlen(js), tokens, JSON_TOKENS);
 
-	/*for(int i = 0; i < 10; ++i) {
-		std::cout<<tokens[i]<<std::endl;
-	}*/
-	
-	/*
-	check(r >= 0);
-	check(TOKEN_EQ(tokens[0], 0, 8, JSMN_OBJECT));
-	check(TOKEN_EQ(tokens[1], 2, 3, JSMN_STRING));
-	check(TOKEN_EQ(tokens[2], 6, 7, JSMN_PRIMITIVE));
-
-	check(TOKEN_STRING(js, tokens[0], js));
-	check(TOKEN_STRING(js, tokens[1], "a"));
-	check(TOKEN_STRING(js, tokens[2], "0"));
-    */
 	jsmn_init(&p);
 	js = "[\"a\":{},\"b\":{}]";
 	r = jsmn_parse(&p, js, strlen(js), tokens, 10);
@@ -745,55 +731,84 @@ Any Any::fromString(std::string str) {
 	jsmn_init(&p);
 	jsmn_parse(&p, js, strlen(js), tokens, JSON_TOKENS);
 
-	 typedef enum {
-        START,
-        WRAPPER, OBJECT,
-        TRENDS, ARRAY,
-        TREND, NAME,
-        SKIP,
-        STOP
-    } parse_state;
-
-    // state is the current state of the parser
-    parse_state state = START;
-
-    // stack is the state we return to when reaching the end of an object
-    parse_state stack = STOP;
-
-    result = __parseFromString(result, 0, 1, js, tokens);
+	size_t i = 0;
+	int max_size = strlen(js);
+    
+    result = __parseFromString(result, i, 1, js, tokens, max_size);
 
     return result;
 }
 
-Any Any::__parseFromString(Any & current, int ii, int nz, const char *js, jsmntok_t *tokens) {
+Any Any::__parseFromString(Any current, size_t &i, size_t jj, const char *js, jsmntok_t *tokens, int max_size) {
 
-	std::cout<<"POS:"<<ii<<std::endl;
-
-	for (size_t i = ii, j = nz; j > 0; i++, j--) {
-
+	for (size_t j = jj; j > 0; j--) {
+	
 		jsmntok_t *t = &tokens[i];
-
-		if (t->type == JSMN_ARRAY || t->type == JSMN_OBJECT) {
+		
+		
+		if ((t->type == JSMN_ARRAY || t->type == JSMN_OBJECT) && (current.getType() == UNDEFINED)) {
             j += t->size;
 		}
 
-		switch(t->type) {
-			case JSMN_OBJECT:
-					std::cout<<"OBJECT->"<<t->size<<std::endl;
-					current = __parseFromString(current, i+1, 1, js, tokens);
-				break;
-			case JSMN_ARRAY:
-					std::cout<<"ARRAY->"<<t->size<<std::endl;
-					current = __parseFromString(current, i+1, 1, js, tokens);
-				break;
-			case JSMN_STRING:
-					std::cout<<"STRING->"<<std::endl;
-					current = __parseFromString(current, i+1, 1, js, tokens);
-				break;
-			case JSMN_PRIMITIVE:
-					std::cout<<"PRIMITIVE->"<<std::endl;
-					current = __parseFromString(current, i+1, 1, js, tokens);
-				break;
+		if(t->start >= 0 && t->start < max_size && t->end > 0 && t->end <= max_size) {
+
+			switch(t->type) {
+				case JSMN_OBJECT:
+					{
+						/*
+						if(current.getType() == UNDEFINED) {
+							current = Any{Any::Object{}};
+						}
+						*/
+						std::cout<<"OBJECT->"<<t->size<<std::endl;
+						i++;
+						current = __parseFromString(current, i, 1, js, tokens, max_size);
+						break;
+					}
+				case JSMN_ARRAY:
+					{	
+						
+						if(current.getType() == UNDEFINED) {
+							current = Any{Any::Array{}};		
+							i++;
+						} else {
+							if(current.getType() == ARRAY) {
+								i++;
+								Any arr = Any{Any::Array{}};														
+								current.push_back(__parseFromString(arr, i, t->size, js, tokens, max_size));																
+							}
+						}					
+						
+						break;
+					}
+				case JSMN_STRING:
+					{
+						Any result = Any{Any::json_token_tostr(js, t)};											
+						current.push_back(result);
+						i++;
+						break;
+					}
+				case JSMN_PRIMITIVE:
+					{
+						std::string prim = Any::json_token_tostr(js, t);
+						Any result;
+						if(prim.compare("null") == 0) {
+							result = Any{};										
+						} else if(prim.compare("true") == 0) {
+							result = true;
+						} else if(prim.compare("false") == 0) {
+							result = false;
+						} else if(prim.find('.') != std::string::npos) {
+							result = std::stod(prim);
+						} else {
+							result = std::stoi(prim);
+						}
+						
+						current.push_back(result);						
+						i++;
+						break;
+					}
+			}
 		}
 	}
 
