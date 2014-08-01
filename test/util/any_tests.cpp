@@ -752,14 +752,9 @@ TEST(Any, toString){
 	EXPECT_EQ("{\"foo\":\"bar\"}",i.toString());
 
 	Any j{Any::Object{
-		{"array",Any::Array{
-			1,
-			Any::Object{
-				{"foo","bar"}
-			}
-		}
-	}}};
-	EXPECT_EQ("{\"array\":[1,{\"foo\":\"bar\"}]}",j.toString());
+		{"array",Any::Array{Any::Object{{"foo","bar"}}}}
+	}};
+	EXPECT_EQ("{\"array\":[{\"foo\":\"bar\"}]}",j.toString());
 }
 
 /*

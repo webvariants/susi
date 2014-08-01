@@ -45,7 +45,7 @@ TEST_F(EventManagerTest,SubscribeOneAndFinish){
 	auto event = createEvent("test");
 	
 	// and publish it! The first parameter is the event you want to publish. 
-	// You have to move the EventPtr, because it is an std::unique_ptr .
+	// You have to move the EventPtr, because it is an std::unique_ptr.
 	// e.g. we only move events, but do not copy them.
 	// Second parameter is the finishCallback, which will be fired once the eventsystem is finished with the event
 	publish(std::move(event),[this](EventPtr event){
@@ -314,6 +314,7 @@ TEST_F(EventManagerTest, PredicateUnsubscribe){
 	}
 }
 
+// Lets stress the system. We setup 1000 handlers, and look what's happening.
 TEST_F(EventManagerTest,StressTest){
 	// setup 1000 handlers
 	size_t numOfHandlers = 1000;
