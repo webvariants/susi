@@ -757,16 +757,6 @@ TEST(Any, toString){
 	EXPECT_EQ("{\"array\":[{\"foo\":\"bar\"}]}",j.toString());
 }
 
-
-TEST(Any, JSON) {
-	Any d = std::deque<Any>{true, Any::Object{{"foo","bar"}, {"john",2}} , 5, Any(std::deque<Any>{"A","B", Any(std::deque<Any>{"D","E",2}) ,2}), 7.8,"FOO"};
-	std::string js_str = d.toString();
-	std::cout<<"TEST-->:"<<js_str<<std::endl;
-	Any a_fs = Any::fromString(js_str);
-
-	std::cout<<"<--TEST:"<<a_fs.toString()<<std::endl;
-}
-
 TEST(Any, JsonEncoderDecoderTest){
 	Any a = Any::Object{
 		{"undefined",Any{}},
@@ -779,7 +769,7 @@ TEST(Any, JsonEncoderDecoderTest){
 		{"object",Any::Object{{"foo","bar"}}}
 	};
 	std::string jsonEncoded = a.toString();
-	Any b = Any::fromString2(jsonEncoded);
+	Any b = Any::fromString(jsonEncoded);
 	EXPECT_EQ(jsonEncoded,b.toString());
 }
 
