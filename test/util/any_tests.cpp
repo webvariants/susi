@@ -770,9 +770,8 @@ TEST(Any, JsonEncoderDecoderTest){
 	};
 	std::string jsonEncoded = a.toString();
 	Any b = Any::fromString(jsonEncoded);
-	EXPECT_EQ(jsonEncoded,b.toString());
+	EXPECT_EQ(a,b);
 }
-
 
 TEST(Any,ArrayHelper){
 	Any a{Any::Array{}};
@@ -791,4 +790,58 @@ TEST(Any,ArrayHelper){
 	});
 	EXPECT_EQ(1,a.size());
 	EXPECT_EQ(Any{1},a[0]);
+}
+
+TEST(Any,BenchmarkUndefinedOneMillion){
+	for(int i=0;i<1000000;i++){
+		Any a;
+	}
+}
+
+TEST(Any,BenchmarkBoolOneMillion){
+	for(int i=0;i<1000000;i++){
+		Any a{true};
+		bool b = a;
+		if(b);
+	}
+}
+
+TEST(Any,BenchmarkIntegerOneMillion){
+	for(int i=0;i<1000000;i++){
+		Any a{23};
+		int b = a;
+		if(b);
+	}
+}
+
+TEST(Any,BenchmarkDoubleOneMillion){
+	for(int i=0;i<1000000;i++){
+		Any a{23.45};
+		double b = a;
+		if(b);
+	}
+}
+
+TEST(Any,BenchmarkStringOneMillion){
+	for(int i=0;i<1000000;i++){
+		Any a{""};
+		std::string b = a;
+		if(b.size());
+	}
+}
+
+TEST(Any,BenchmarkArrayOneMillion){
+	for(int i=0;i<1000000;i++){
+		Any a{Any::Array{}};
+		Any::Array b = a;
+		if(b.size());
+	}
+}
+
+TEST(Any,BenchmarkObjectOneMillion){
+	for(int i=0;i<1000000;i++){
+		Any a{Any::Object{}};
+		Any::Object b = a;
+		if(b.size());
+	}
 }
