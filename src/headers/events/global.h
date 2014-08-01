@@ -41,7 +41,7 @@ namespace Susi {
 				try{
 					ack(std::move(ptr));
 				}catch(const std::exception & e){
-					std::cout<<e.what()<<std::endl;
+					std::cout<<"error in deleter:"<<e.what()<<std::endl;
 				}
 			}
 		}
