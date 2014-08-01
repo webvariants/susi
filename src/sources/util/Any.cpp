@@ -412,28 +412,32 @@ Any::operator std::map<std::string,Any>&() {
 
 bool Any::operator==(const Any & other) const {
 	if(type != other.type)return false;
-	switch(type){
-		case UNDEFINED: return true;
-		case BOOL: return boolValue==other.boolValue;
-		case INTEGER: return integerValue==other.integerValue;
-		case DOUBLE: return doubleValue==other.doubleValue;
-		case STRING: return stringValue==other.stringValue;
-		case ARRAY: {
-			if(size()!=other.size())return false;
-			for(size_t i=0;i<size();i++){
-				if(arrayValue[i]!=other.arrayValue.at(i))return false;
-			}
-			return true;
-		}
-		case OBJECT:{
-			for(auto & kv : objectValue){
-				if(kv.second != other.objectValue.at(kv.first)){
-					return false;
+	try{
+		switch(type){
+			case UNDEFINED: return true;
+			case BOOL: return boolValue==other.boolValue;
+			case INTEGER: return integerValue==other.integerValue;
+			case DOUBLE: return doubleValue==other.doubleValue;
+			case STRING: return stringValue==other.stringValue;
+			case ARRAY: {
+				if(size()!=other.size())return false;
+				for(size_t i=0;i<size();i++){
+					if(arrayValue[i]!=other.arrayValue.at(i))return false;
 				}
+				return true;
 			}
-			return true;
+			case OBJECT:{
+				for(auto & kv : objectValue){
+					if(kv.second != other.objectValue.at(kv.first)){
+						return false;
+					}
+				}
+				return true;
+			}
+			default: return false;
 		}
-		default: return false;
+	}catch(...){
+		return false;
 	}
 }
 bool Any::operator!=(const Any & other) const{
@@ -819,4 +823,64 @@ Any Any::__parseFromString(Any current, size_t &i, size_t jj, const char *js, js
 std::string Any::json_token_tostr(const char *js, jsmntok_t *t)
 {
     return std::string(js+t->start, js+t->end);
+}
+
+
+Any Any::tokenToAny(jsmntok_t * & t, const  char *js){
+	Any result;
+	switch(t->type){
+		case JSMN_OBJECT: {
+			int objectSize = t->size;
+			t++;
+			result = Any::Object{};
+			for(int i=0; i<objectSize; i+=2){
+				std::string key = tokenToAny(t,js);
+				Any value = tokenToAny(t,js);
+				result[key] = value;
+			}
+			break;
+		}
+		case JSMN_ARRAY: {
+			int arraySize = t->size;
+			t++;
+			result = Any::Array{};
+			for(int i=0; i<arraySize; i++){
+				Any value = tokenToAny(t,js);
+				result.push_back(value);
+			}
+			break;
+		}
+		case JSMN_STRING: {
+			std::string value{js+(t->start),js+(t->end)};
+			result = value;
+			t++;
+			break;
+		}
+		case JSMN_PRIMITIVE: {
+			std::string str{js+(t->start),js+(t->end)};
+			if(str.compare("null") == 0) {
+				result = Any{};										
+			} else if(str.compare("true") == 0) {
+				result = true;
+			} else if(str.compare("false") == 0) {
+				result = false;
+			} else if(str.find('.') != std::string::npos) {
+				result = std::stod(str);
+			} else {
+				result = std::stoi(str);
+			}
+			t++;
+			break;
+		}
+	}
+	return result;
+}
+
+Any Any::fromString2(std::string str) {
+	jsmn_parser p;
+	jsmntok_t tokens[JSON_TOKENS];
+	jsmn_init(&p);
+	jsmn_parse(&p, str.c_str(), str.size(), tokens, JSON_TOKENS);
+	jsmntok_t * start = &tokens[0];
+    return tokenToAny(start,str.c_str());
 }

@@ -779,8 +779,8 @@ TEST(Any, JsonEncoderDecoderTest){
 		{"object",Any::Object{{"foo","bar"}}}
 	};
 	std::string jsonEncoded = a.toString();
-	Any b = Any::fromString(jsonEncoded);
-	EXPECT_EQ(a,b);
+	Any b = Any::fromString2(jsonEncoded);
+	EXPECT_EQ(jsonEncoded,b.toString());
 }
 
 
