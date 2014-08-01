@@ -767,6 +767,22 @@ TEST(Any, JSON) {
 	std::cout<<"<--TEST:"<<a_fs.toString()<<std::endl;
 }
 
+TEST(Any, JsonEncoderDecoderTest){
+	Any a = Any::Object{
+		{"undefined",Any{}},
+		{"true",Any{true}},
+		{"false",Any{false}},
+		{"integer",Any{23}},
+		{"double",Any{12.34}},
+		{"string",Any{"foobar"}},
+		{"array",Any::Array{1,2,Any::Object{{"foo","bar"}}}},
+		{"object",Any::Object{{"foo","bar"}}}
+	};
+	std::string jsonEncoded = a.toString();
+	Any b = Any::fromString(jsonEncoded);
+	EXPECT_EQ(a,b);
+}
+
 
 TEST(Any,ArrayHelper){
 	Any a{Any::Array{}};
