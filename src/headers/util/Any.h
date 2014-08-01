@@ -166,10 +166,12 @@ namespace Susi {
 			std::string toString();
 			static Any fromString(std::string str);
 			static Any __parseFromString(Any current, size_t &i, size_t jj, const char *js, jsmntok_t *tokens, int max_size);
+			static Any fromString2(std::string str);
 
 		protected:
 			// json helper
 			static std::string json_token_tostr(const char *js, jsmntok_t *t);
+			static Any tokenToAny(jsmntok_t * & t, const char *js);
 		};
 	}
 }
