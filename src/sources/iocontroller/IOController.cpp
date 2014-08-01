@@ -127,53 +127,12 @@ bool Susi::IOController::makeDir(std::string dir) {
 
 	Poco::Path p(true);
 
-	//std::cout<<p.isAbsolute()<<std::endl;
-
 	p.append(this->base_path);
 	p.append(dir);
-
-	/*
-	if(!p.isAbsolute()) {
-		p.makeAbsolute(this->base_path);
-		std::cout<<"APPENDED:"<<p.toString()<<std::endl;
-	} else {
-		std::cout<<"ABSOLUT:"<<p.toString()<<std::endl;
-	}
-*/
-	//std::cout<<"APPENDED:"<<p.toString()<<std::endl;
-	//std::cout<<"FILENAME:"<<p.getFileName()<<std::endl;
 
 	Poco::File f(p);
 	f.createDirectories();
 
-	/*
-	Poco::Path p(Poco::Path::current());
-	Poco::File f;
-
-	p.pushDirectory("Thomas");
-	p.pushDirectory("Test");
-
-	//p.setFileName("test.dat");
-
-	f = Poco::File(p);
-	f.createDirectories();
-
-	std::string s = p.toString(); 
-
-	std::cout<<s<<" "<<p.depth()<<std::endl;
-
-	Poco::Path p2("./");
-
-	std::string s2 = p2.toString(); 
-
-	std::cout<<s2<<" "<<p2.depth()<<std::endl;
-
-	std::cout 
-		<< "cwd: "  << Poco::Path::current() << std::endl
-		<< "home: " << Poco::Path::home() << std::endl
-		<< "temp: " << Poco::Path::temp() << std::endl
-		<< "null: " << Poco::Path::null() << std::endl;
-*/
 	return true;
 }
 
