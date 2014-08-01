@@ -764,7 +764,7 @@ TEST(Any, toString){
 
 
 TEST(Any, JSON) {
-	Any d = std::deque<Any>{true, 5, Any(std::deque<Any>{"A","B", Any(std::deque<Any>{"D","E",2}) ,2}), 7.8,"FOO"};
+	Any d = std::deque<Any>{true, Any::Object{{"foo","bar"}, {"john",2}} , 5, Any(std::deque<Any>{"A","B", Any(std::deque<Any>{"D","E",2}) ,2}), 7.8,"FOO"};
 	std::string js_str = d.toString();
 	std::cout<<"TEST-->:"<<js_str<<std::endl;
 	Any a_fs = Any::fromString(js_str);

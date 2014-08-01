@@ -790,7 +790,20 @@ Any Any::__parseFromString(Any current, size_t &i, size_t jj, const char *js, js
 					}
 				case JSMN_PRIMITIVE:
 					{
-						Any result = Any{Any::json_token_tostr(js, t)};										
+						std::string prim = Any::json_token_tostr(js, t);
+						Any result;
+						if(prim.compare("null") == 0) {
+							result = Any{};										
+						} else if(prim.compare("true") == 0) {
+							result = true;
+						} else if(prim.compare("false") == 0) {
+							result = false;
+						} else if(prim.find('.') != std::string::npos) {
+							result = std::stod(prim);
+						} else {
+							result = std::stoi(prim);
+						}
+						
 						current.push_back(result);						
 						i++;
 						break;
