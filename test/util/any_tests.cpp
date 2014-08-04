@@ -765,7 +765,7 @@ TEST(Any, JsonEncoderDecoderTest){
 		{"integer",Any{23}},
 		{"double",Any{12.34}},
 		{"string",Any{"foobar"}},
-		{"array",Any::Array{1,2,Any::Object{{"foo","bar"}}}},
+		{"array",Any::Array{1,2,Any::Object{{"foo","bar"}},Any::Array{1,2,3}}},
 		{"object",Any::Object{{"foo","bar"}}}
 	};
 	std::string jsonEncoded = a.toString();

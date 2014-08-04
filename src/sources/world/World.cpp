@@ -8,14 +8,14 @@ void Susi::World::setup(){
 	setupEventManager();
 	setupTCPServer();
 	setupHttpServer();
+	setupHeartBeat();
 	setupSessionManager();
 	setupDBManager();
 	setupIOController();
-	setupHeartBeat();
 	setupEngineStarter();
 	setupAuthController();
 	setupStateController();
-	setupSysCallController();
+	//setupSysCallController();
 }
 
 void Susi::World::tearDown(){
