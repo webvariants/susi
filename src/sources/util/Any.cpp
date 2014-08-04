@@ -465,7 +465,7 @@ std::string Any::toString(){
 		}		
 		case STRING: {
 			result += "\"";
-			result += stringValue;
+			result += escapeJSON(stringValue);
 			result += "\"";
 			break;
 		}
@@ -487,7 +487,7 @@ std::string Any::toString(){
 			size_t max_size = size();
 			for (auto & kv : objectValue) {
 				result += "\"";
-				result += kv.first;
+				result += escapeJSON(kv.first);
 				result += "\":";
 				result += kv.second.toString();
 				if(current++ < max_size-1){
@@ -559,4 +559,107 @@ Any Any::tokenToAny(jsmntok_t * & t, const  char *js){
 		}
 	}
 	return result;
+}
+
+std::string Any::escapeJSON(const std::string& input) {
+    std::string output;
+    output.reserve(input.length());
+
+    for (std::string::size_type i = 0; i < input.length(); ++i)
+    {
+        switch (input[i]) {
+            case '"':
+                output += "\\\"";
+                break;
+            case '/':
+                output += "\\/";
+                break;
+            case '\b':
+                output += "\\b";
+                break;
+            case '\f':
+                output += "\\f";
+                break;
+            case '\n':
+                output += "\\n";
+                break;
+            case '\r':
+                output += "\\r";
+                break;
+            case '\t':
+                output += "\\t";
+                break;
+            case '\\':
+                output += "\\\\";
+                break;
+            default:
+                output += input[i];
+                break;
+        }
+
+    }
+
+    return output;
+}
+
+std::string Any::unescapeJSON(const std::string& input) {
+    Any::State s = Any::UNESCAPED;
+    std::string output;
+    output.reserve(input.length());
+
+    for (std::string::size_type i = 0; i < input.length(); ++i)
+    {
+        switch(s)
+        {
+            case Any::ESCAPED:
+                {
+                    switch(input[i])
+                    {
+                        case '"':
+                            output += '\"';
+                            break;
+                        case '/':
+                            output += '/';
+                            break;
+                        case 'b':
+                            output += '\b';
+                            break;
+                        case 'f':
+                            output += '\f';
+                            break;
+                        case 'n':
+                            output += '\n';
+                            break;
+                        case 'r':
+                            output += '\r';
+                            break;
+                        case 't':
+                            output += '\t';
+                            break;
+                        case '\\':
+                            output += '\\';
+                            break;
+                        default:
+                            output += input[i];
+                            break;
+                    }
+                
+                    s = Any::UNESCAPED;
+                    break;
+                }
+            case Any::UNESCAPED:
+                {
+                    switch(input[i])
+                    {
+                        case '\\':
+                            s = Any::ESCAPED;
+                            break;
+                        default:
+                            output += input[i];
+                            break;
+                    }
+                }
+        }
+    }
+    return output;
 }
