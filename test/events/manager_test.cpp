@@ -2,7 +2,6 @@
 #include "events/global.h"
 #include <condition_variable>
 #include <chrono>
-#include <initializer_list>
 
 // This is the EventManagerTest, here you can see how to use the new eventsystem.
 class EventManagerTest : public ::testing::Test {
@@ -48,7 +47,7 @@ TEST_F(EventManagerTest,SubscribeOneAndFinish){
 	// You have to move the EventPtr, because it is an std::unique_ptr.
 	// e.g. we only move events, but do not copy them.
 	// Second parameter is the finishCallback, which will be fired once the eventsystem is finished with the event
-	publish(std::move(event),[this](EventPtr event){
+	publish(std::move(event),[this](SharedEventPtr event){
 		// set the finished condition to true, and notify the main test.
 		callbackCalledTwo = true;
 		condTwo.notify_all();
@@ -86,7 +85,7 @@ TEST_F(EventManagerTest,SubscribeOneAndFinishWithoutAck){
 
 	// publish event
 	auto event = createEvent("test");
-	publish(std::move(event),[this](EventPtr event){
+	publish(std::move(event),[this](SharedEventPtr event){
 		callbackCalledTwo = true;
 		condTwo.notify_all();
 	});
@@ -127,7 +126,7 @@ TEST_F(EventManagerTest,SubscribeMultipleAndFinish){
 
 	// publish and check if event manipulation worked like expected
 	auto event = createEvent("test");
-	publish(std::move(event),[this](EventPtr  event){
+	publish(std::move(event),[this](SharedEventPtr  event){
 		// the event should contain three foo headers with values 1, 2, 3.
 		EXPECT_EQ(3,event->headers.size());
 		EXPECT_EQ("foo",event->headers[0].first);
@@ -172,10 +171,9 @@ TEST_F(EventManagerTest,AckInFinishHandler){
 			Callback(Callback && other) : mainEvent{std::move(other.mainEvent)} {}
 			Callback(Callback & other) : mainEvent{std::move(other.mainEvent)} {}
 			// the callback corpus
-			void operator()(EventPtr subEvent){
+			void operator()(SharedEventPtr subEvent){
 				// copy first header of subEvent to mainEvent and acknowledge both.
 				mainEvent->headers.push_back(subEvent->headers[0]);
-				ack(std::move(subEvent));
 				ack(std::move(mainEvent));
 			}
 		};
@@ -187,7 +185,7 @@ TEST_F(EventManagerTest,AckInFinishHandler){
 
 	// publish event to main controller
 	auto event = createEvent("topic1");
-	publish(std::move(event),[this](EventPtr event){
+	publish(std::move(event),[this](SharedEventPtr event){
 		// the event must contain a header {foo:bar} which was created by the subcontroller
 		// and forwarded by the main controller
 		EXPECT_TRUE(event->headers.size()>0);
@@ -221,7 +219,7 @@ TEST_F(EventManagerTest,unsubscribe){
 
 	// publish event
 	auto event = createEvent("test");
-	publish(std::move(event),[this](EventPtr event){
+	publish(std::move(event),[this](SharedEventPtr event){
 		callbackCalledTwo = true;
 		condTwo.notify_all();
 	});
@@ -258,7 +256,7 @@ TEST_F(EventManagerTest, PredicateSubscribe){
 
 	// publish event
 	auto event = createEvent("test");
-	publish(std::move(event),[this](EventPtr event){
+	publish(std::move(event),[this](SharedEventPtr event){
 		callbackCalledTwo = true;
 		condTwo.notify_all();
 	});
@@ -295,7 +293,7 @@ TEST_F(EventManagerTest, PredicateUnsubscribe){
 
 	// publish event
 	auto event = createEvent("test");
-	publish(std::move(event),[this](EventPtr event){
+	publish(std::move(event),[this](SharedEventPtr event){
 		callbackCalledTwo = true;
 		condTwo.notify_all();
 	});
@@ -330,7 +328,7 @@ TEST_F(EventManagerTest,StressTest){
 
 	//publish
 	auto event = createEvent("test");
-	publish(std::move(event),[this,numOfHandlers](EventPtr event){
+	publish(std::move(event),[this,numOfHandlers](SharedEventPtr event){
 		EXPECT_EQ(numOfHandlers,event->headers.size());
 		for(size_t i=0;i<numOfHandlers;i++){
 			EXPECT_EQ("foo",event->headers[i].first);
