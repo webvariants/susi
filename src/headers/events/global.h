@@ -16,16 +16,22 @@
 
 namespace Susi {
 	namespace Events {
-		long subscribe(std::string topic, Handler handler){
+		long subscribe(std::string topic, Processor handler){
 			return world.eventManager->subscribe(topic,handler);
 		}
-		long subscribe(Predicate pred, Handler handler){
+		long subscribe(Predicate pred, Processor handler){
+			return world.eventManager->subscribe(pred,handler);
+		}
+		long subscribe(std::string topic, Consumer handler){
+			return world.eventManager->subscribe(topic,handler);
+		}
+		long subscribe(Predicate pred, Consumer handler){
 			return world.eventManager->subscribe(pred,handler);
 		}
 		bool unsubscribe(long id){
 			return world.eventManager->unsubscribe(id);
 		}
-		void publish(EventPtr event, Handler finishCallback){
+		void publish(EventPtr event, Consumer finishCallback){
 			world.eventManager->publish(std::move(event),std::move(finishCallback));
 		}
 		void ack(EventPtr event){
@@ -37,7 +43,7 @@ namespace Susi {
 		void deleter(Event *event){
 			//std::cout<<"calling deleter of "<<event<<std::endl;
 			if(event!=nullptr){
-				EventPtr ptr(event,deleter);
+					EventPtr ptr(event,deleter);
 				try{
 					ack(std::move(ptr));
 				}catch(const std::exception & e){
