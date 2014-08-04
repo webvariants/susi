@@ -44,6 +44,12 @@ namespace Susi {
 				ARRAY,
 				OBJECT
 			};
+
+			enum State {
+				ESCAPED,
+				UNESCAPED
+			};
+
 		protected:	
 			Type type;
 
@@ -164,10 +170,12 @@ namespace Susi {
 			// json de/encoder; 
 			std::string toString();
 			static Any fromString(std::string str);
+			static std::string escapeJSON(const std::string& input);
+			static std::string unescapeJSON(const std::string& input);
 
 		protected:
 			// json helper			
-			static Any tokenToAny(jsmntok_t * & t, const char *js);
+			static Any tokenToAny(jsmntok_t * & t, const char *js);			
 		};
 	}
 }

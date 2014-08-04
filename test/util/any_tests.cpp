@@ -845,3 +845,12 @@ TEST(Any,BenchmarkObjectOneMillion){
 		if(b.size());
 	}
 }
+
+TEST (Any, StringEscaping){
+
+	Any j{Any::Object{
+		{"array",Any::Array{Any::Object{{"foo","bar \" / \b \f \n \r \t \\ "}}}}
+	}};
+	
+	EXPECT_EQ("{\"array\":[{\"foo\":\"bar \\\" \\/ \\b \\f \\n \\r \\t \\\\ \"}]}",j.toString());
+}
