@@ -1,3 +1,4 @@
+/*
 #include "gtest/gtest.h"
 #include "iocontroller/IOController.h"
 #include "world/World.h"
@@ -12,7 +13,7 @@ protected:
 	std::mutex m;
 	virtual void SetUp() override {
 		world.setupLogger();
-		world.setupEventSystem();
+		world.setupEventManager();
 		world.setupHeartBeat();
 		world.setupIOController();
 		controller = std::make_shared<Susi::States::StateController>(std::string("./states.json"));
@@ -98,3 +99,4 @@ TEST_F(StateControllerEventsTest,getPersistentState){
 		EXPECT_TRUE(callbackCalled);		
 	}
 }
+*/
