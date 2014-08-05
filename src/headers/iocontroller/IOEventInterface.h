@@ -12,12 +12,15 @@
 #ifndef __IO_EVENT_INTERFACE__
 #define __IO_EVENT_INTERFACE__
 
+//old
 #include "events/EventSystem.h"
-#include "iocontroller/IOController.h"
+
+#include "events/global.h"
 
 namespace Susi {
 	namespace IOEventInterface {
-		void handleWriteFile(Susi::Event & event);
+		void handleWriteFile(Susi::Events::EventPtr event);
+		
 		void handleReadFile(Susi::Event & event);
 
 		void handleMovePath(Susi::Event & event);

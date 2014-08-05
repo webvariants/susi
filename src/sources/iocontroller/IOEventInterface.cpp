@@ -10,10 +10,11 @@
  */
 
 #include "iocontroller/IOEventInterface.h"
-#include "world/World.h"
 
 void Susi::IOEventInterface::initEventInterface() {	
-	subscribe("io::writeFile", handleWriteFile);
+	Susi::Events::subscribe("io::writeFile", handleWriteFile);
+	
+
 	subscribe("io::readFile", handleReadFile);
 	subscribe("io::deletePath", handleDeletePath);
 	subscribe("io::movePath", handleMovePath);
@@ -24,17 +25,15 @@ void Susi::IOEventInterface::initEventInterface() {
 	subscribe("io::getExecutable", handleGetExecutable);
 }
 
-void Susi::IOEventInterface::handleWriteFile(Event & event) {
+void Susi::IOEventInterface::handleWriteFile(Susi::Events::EventPtr event) {
 	try{
-		std::string filename = event.payload["filename"];
-		std::string content  = event.payload["content"];
-		world.ioController->writeFile(filename, content);
-		answerEvent(event, true);
+		std::string filename = event->payload["filename"];
+		std::string content  = event->payload["content"];
+		world.ioController->writeFile(filename, content);			
 	}catch(const std::exception & e){
 		std::string msg = "Error in handleWriteFile(): ";
 		msg += e.what();
-		Susi::error(msg);
-		answerEvent(event, false);
+		throw std::runtime_error(msg);
 	}
 }
 

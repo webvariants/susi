@@ -13,7 +13,7 @@
 #define __EVENTSGLOBAL__
 
 #include "world/World.h"
-
+#include "events/Manager.h"
 namespace Susi {
 	namespace Events {
 		long subscribe(std::string topic, Processor handler){
