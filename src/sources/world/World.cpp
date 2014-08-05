@@ -37,6 +37,8 @@ void Susi::World::setupStateController(){
 	stateController = std::shared_ptr<Susi::States::StateController>{
 		new Susi::States::StateController(file)
 	};
+
+	Susi::States::EventInterface::init();
 }
 
 void Susi::World::setupEngineStarter(){

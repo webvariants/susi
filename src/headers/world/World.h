@@ -35,6 +35,7 @@
 #include "auth/AuthController.h"
 #include "auth/AuthEventInterface.h"
 #include "states/StateController.h"
+#include "states/StateEventInterface.h"
 #include "syscall/SysCallEventInterface.h"
 #include "syscall/SysCallController.h"
 
