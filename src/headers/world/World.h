@@ -19,6 +19,7 @@
 #include <Poco/JSON/Array.h>
 
 #include "events/EventSystem.h"
+#include "events/Manager.h"
 #include "apiserver/TCPServer.h"
 #include "webstack/HttpServer.h"
 #include "sessions/SessionManager.h"
@@ -34,7 +35,6 @@
 #include "auth/AuthController.h"
 #include "auth/AuthEventInterface.h"
 #include "states/StateController.h"
-#include "events/Manager.h"
 #include "syscall/SysCallEventInterface.h"
 #include "syscall/SysCallController.h"
 
@@ -82,5 +82,6 @@ namespace Susi{
 }
 
 extern Susi::World world;
+
 
 #endif // __WORLD__

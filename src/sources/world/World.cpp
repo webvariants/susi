@@ -1,5 +1,6 @@
 #include "world/World.h"
-
+#include "events/global.h"
+ 
 Susi::World world;
 
 void Susi::World::setup(){
