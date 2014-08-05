@@ -23,17 +23,17 @@
 namespace Susi {
 	namespace IOEventInterface {
 		void handleWriteFile(Susi::Events::EventPtr event);
-		/*
-		void handleReadFile(Susi::Event & event);
+		
+		void handleReadFile(Susi::Events::EventPtr event);
 
-		void handleMovePath(Susi::Event & event);
-		void handleCopyPath(Susi::Event & event);	
-		void handleDeletePath(Susi::Event & event);
+		void handleMovePath(Susi::Events::EventPtr event);
+		void handleCopyPath(Susi::Events::EventPtr event);	
+		void handleDeletePath(Susi::Events::EventPtr event);
 
-		void handleMakeDir(Susi::Event & event);
-		void handleSetExecutable(Susi::Event & event);
-		void handleGetExecutable(Susi::Event & event);
-*/
+		void handleMakeDir(Susi::Events::EventPtr event);
+		void handleSetExecutable(Susi::Events::EventPtr event);
+		void handleGetExecutable(Susi::Events::EventPtr event);
+
 		void initEventInterface();
 	}
 }
