@@ -125,6 +125,7 @@ void Susi::Events::Manager::ack(EventPtr event){
 				delete event.release();
 				return;
 			}
+	
 			std::unique_lock<std::mutex> lock(process->mutex);
 			while(process->errors.size() > 0){
 				event->headers.push_back(std::make_pair("error",process->errors.back()));
