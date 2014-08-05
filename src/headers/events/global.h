@@ -12,56 +12,19 @@
 #ifndef __EVENTSGLOBAL__
 #define __EVENTSGLOBAL__
 
-#include "world/World.h"
 #include "events/Manager.h"
+ 
 namespace Susi {
 	namespace Events {
-		long subscribe(std::string topic, Processor handler){
-			return world.eventManager->subscribe(topic,handler);
-		}
-		long subscribe(Predicate pred, Processor handler){
-			return world.eventManager->subscribe(pred,handler);
-		}
-		long subscribe(std::string topic, Consumer handler){
-			return world.eventManager->subscribe(topic,handler);
-		}
-		long subscribe(Predicate pred, Consumer handler){
-			return world.eventManager->subscribe(pred,handler);
-		}
-		bool unsubscribe(long id){
-			return world.eventManager->unsubscribe(id);
-		}
-		void publish(EventPtr event, Consumer finishCallback){
-			world.eventManager->publish(std::move(event),std::move(finishCallback));
-		}
-		void ack(EventPtr event){
-			if(world.eventManager.get() != nullptr){
-				world.eventManager->ack(std::move(event));
-			}
-		}
-		
-		void deleter(Event *event){
-			//std::cout<<"calling deleter of "<<event<<std::endl;
-			if(event!=nullptr){
-					EventPtr ptr(event,deleter);
-				try{
-					ack(std::move(ptr));
-				}catch(const std::exception & e){
-					std::cout<<"error in deleter:"<<e.what()<<std::endl;
-				}
-			}
-		}
-
-		EventPtr createEvent(std::string topic){
-			auto event = EventPtr{new Event,deleter};
-			long id = std::chrono::system_clock::now().time_since_epoch().count();
-			event->id = id;
-			event->topic = topic;
-			return event;
-		}
-
-
-
+		long subscribe(std::string topic, Processor handler);
+		long subscribe(Predicate pred, Processor handler);
+		long subscribe(std::string topic, Consumer handler);
+		long subscribe(Predicate pred, Consumer handler);
+		bool unsubscribe(long id);
+		void publish(EventPtr event, Consumer finishCallback);
+		void ack(EventPtr event);
+		void deleter(Event *event);
+		EventPtr createEvent(std::string topic);
 	}	
 }
 

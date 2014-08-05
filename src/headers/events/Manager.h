@@ -1,5 +1,5 @@
-#ifndef __MANAGER__
-#define __MANAGER__
+#ifndef __EVENTSMANAGER__
+#define __EVENTSMANAGER__
 
 #include <functional>
 #include <mutex>
@@ -52,6 +52,7 @@ protected:
 		std::vector<Processor>   processors;
 		std::vector<Consumer>    consumers;
 		std::vector<std::string> errors;
+		std::mutex				 mutex;
 		size_t current = 0;
 	};
 	std::map<long,std::shared_ptr<PublishProcess>> publishProcesses;
@@ -65,4 +66,4 @@ protected:
 }//end namespace Events
 }//end namespace Susi
 
-#endif // __MANAGER__
+#endif // __EVENTSMANAGER__

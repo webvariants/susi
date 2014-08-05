@@ -12,9 +12,7 @@
 #ifndef __IO_EVENT_INTERFACE__
 #define __IO_EVENT_INTERFACE__
 
-//old
-#include "events/EventSystem.h"
-
+#include "world/World.h"
 #include "events/global.h"
 
 namespace Susi {

@@ -1,5 +1,7 @@
 #include "apiserver/ConnectionHandler.h"
 
+
+
 void Susi::ConnectionHandler::handleConnection(std::shared_ptr<Susi::Connection> conn){
 	/*Poco::Dynamic::Struct<std::string> payload(std::map<std::string,Poco::Dynamic::Var>{
 		std::make_pair("id",conn->getSessionID())

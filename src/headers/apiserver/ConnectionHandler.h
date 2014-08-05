@@ -15,6 +15,7 @@
 #include "apiserver/Connection.h"
 #include "events/EventSystem.h"
 #include "util/VarHelper.h"
+#include "util/Any.h"
 #include <Poco/Dynamic/Struct.h>
 #include <Poco/Dynamic/Var.h>
 #include <memory>

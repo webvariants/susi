@@ -10,10 +10,9 @@
  */
 
 #include "iocontroller/IOEventInterface.h"
-
+ 
 void Susi::IOEventInterface::initEventInterface() {	
 	Susi::Events::subscribe("io::writeFile", handleWriteFile);
-	
 
 	subscribe("io::readFile", handleReadFile);
 	subscribe("io::deletePath", handleDeletePath);
