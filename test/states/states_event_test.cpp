@@ -16,7 +16,8 @@ protected:
 		world.setupEventManager();
 		world.setupHeartBeat();
 		world.setupIOController();
-		controller = std::make_shared<Susi::States::StateController>(std::string("./states.json"));
+		world.setupStateController();
+		controller = std::shared_ptr<Susi::States::StateController>(world.stateController);
 	}
 	virtual void TearDown() override {
 		world.ioController->deletePath("./states.json");

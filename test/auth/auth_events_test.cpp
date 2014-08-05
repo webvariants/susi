@@ -26,7 +26,6 @@ class AuthEventInterfaceTest : public ::testing::Test {
 
 	void SetUp() override {
 		world.setupEventSystem();
-		world.setupEventManager();
 		world.setupIOController();
 		world.setupSessionManager();
 		world.setupDBManager();
