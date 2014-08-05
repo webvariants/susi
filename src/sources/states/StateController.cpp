@@ -6,65 +6,58 @@
  *
  * http://www.opensource.org/licenses/mit-license.php
  *
- * @author: Christian Sonderfeld (christian.sonderfeld@webvariants.de)
+ * @author: Christian Sonderfeld (christian.sonderfeld@webvariants.de), Thomas Krause (thomas.krause@webvariants.de)
  */
 
 #include "states/StateController.h"
 using namespace Susi::States;
 
 StateController::StateController(std::string file) {
-	subId = Susi::subscribe("heartbeat::fiveMinute",[this](Susi::Event & event){
+	
+	subId = Susi::Events::subscribe("heartbeat::fiveMinute",[this](Susi::Events::EventPtr event){
 		if(this->persistentChanged) {
 			this->savePersistent();
+			this->persistentChanged = false;
 		}
 	});
+
 	// Todo: set fileLocation to a value
 	this->fileLocation = file;
 }
 
 StateController::~StateController() {
-	Susi::unsubscribe("heartbeat::fiveMinute",subId);
+	Susi::Events::unsubscribe(subId);
 }
 
 void StateController::savePersistent() {
-	Poco::Dynamic::Struct<std::string> obj;
-	for(auto & kv : persistentStates){
-		obj[kv.first] = kv.second;
-	}
-	std::stringstream ss;
-	Poco::JSON::Stringifier::stringify(obj,ss,0);
-	std::string json = ss.str();
+	Susi::Util::Any obj = persistentStates;
+
 	Susi::IOController io;
-	io.writeFile(fileLocation,json);
+	io.writeFile(fileLocation,obj.toString());
 }
 
 bool StateController::loadPersistent() {
 	Susi::IOController io;
 	std::string fileContent = io.readFile(fileLocation);
-	Poco::JSON::Parser parser;
-	Poco::Dynamic::Var data;
-	try{
-		data = parser.parse(fileContent);
-	}catch(const std::exception & e){
-		std::string msg = "cannot parse persistent state file: ";
-		msg += e.what();
-		Susi::error(msg);
-		return false;
-	}
-	persistentStates = data.extract<std::map<std::string, Poco::Dynamic::Var>>();
+
+	persistentStates = Susi::Util::Any::fromString(fileContent);
 	return true;
 }
 
-bool StateController::setState(std::string stateID, Poco::Dynamic::Var value){
+bool StateController::setState(std::string stateID, Susi::Util::Any value){
+
 	std::lock_guard<std::mutex> lock(mutex);
+
 	if( stateID.length() > 0) {
 		volatileStates[stateID] = value;
 		return true;
 	}
 	return false;
 }
-bool StateController::setPersistentState(std::string stateID, Poco::Dynamic::Var value){
+
+bool StateController::setPersistentState(std::string stateID, Susi::Util::Any value){
 	std::lock_guard<std::mutex> lock(mutex);
+
 	if( stateID.length() > 0) {
 		persistentStates[stateID] = value;
 		persistentChanged = true;
@@ -72,20 +65,24 @@ bool StateController::setPersistentState(std::string stateID, Poco::Dynamic::Var
 	}
 	return false;
 }
-Poco::Dynamic::Var StateController::getState(std::string stateID) {
+
+Susi::Util::Any StateController::getState(std::string stateID) {
 	if(stateID.length() > 0) {
-		return volatileStates.at(stateID);
+		return volatileStates[stateID];
 	}
-	return Poco::Dynamic::Var();
+	return Susi::Util::Any();
 }
-Poco::Dynamic::Var StateController::getPersistentState(std::string stateID) {
+
+Susi::Util::Any StateController::getPersistentState(std::string stateID) {
 	if(stateID.length() > 0) {
-		return persistentStates.at(stateID);
+		return persistentStates[stateID];
 	}
-	return Poco::Dynamic::Var();
+	return Susi::Util::Any();
 }
+
 bool StateController::removeState(std::string stateID){
 	std::lock_guard<std::mutex> lock(mutex);
+
 	if( stateID.length() > 0) {
 		return volatileStates.erase(stateID);
 	}

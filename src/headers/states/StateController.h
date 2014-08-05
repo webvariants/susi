@@ -6,7 +6,7 @@
  *
  * http://www.opensource.org/licenses/mit-license.php
  *
- * @author: Christian Sonderfeld (christian.sonderfeld@webvariants.de)
+ * @author: Christian Sonderfeld (christian.sonderfeld@webvariants.de), Thomas Krause (thomas.krause@webvariants.de)
  */
 
 #ifndef __STATECONTROLLER__
@@ -18,26 +18,31 @@
 #include <Poco/Dynamic/Var.h>
 #include <Poco/JSON/Parser.h>
 
- #include "events/EventSystem.h"
- #include "iocontroller/IOController.h"
- #include "logger/Logger.h"
+#include "events/EventSystem.h"
+#include "iocontroller/IOController.h"
+#include "logger/Logger.h"
+
+#include "util/Any.h"
+#include "events/global.h"
+#include "events/Manager.h"
 
 namespace Susi {
 	namespace States {
 		class StateController {
 		protected:
-			std::map<std::string, Poco::Dynamic::Var> volatileStates;
-			std::map<std::string, Poco::Dynamic::Var> persistentStates;
+			std::map<std::string, Susi::Util::Any> volatileStates;
+			std::map<std::string, Susi::Util::Any> persistentStates;
+
 			std::mutex mutex;
 			std::string fileLocation;
 			long subId;
 			bool persistentChanged = false;
 		public:
-			StateController(std::string file);
-			bool setState(std::string stateID, Poco::Dynamic::Var value);
-			bool setPersistentState(std::string stateID, Poco::Dynamic::Var value);
-			Poco::Dynamic::Var getState(std::string stateID);
-			Poco::Dynamic::Var getPersistentState(std::string stateID);
+			StateController(std::string file);		
+			bool setState(std::string stateID, Susi::Util::Any value);
+			bool setPersistentState(std::string stateID, Susi::Util::Any value);
+			Susi::Util::Any getState(std::string stateID);
+			Susi::Util::Any getPersistentState(std::string stateID);
 			bool removeState(std::string stateID);
 			bool removePersistentState(std::string stateID);
 			void savePersistent();
