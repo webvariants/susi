@@ -1,4 +1,5 @@
 #include "gtest/gtest.h"
+#include "events/global.h"
 #include "world/World.h"
 #include <condition_variable>
 #include <chrono>
