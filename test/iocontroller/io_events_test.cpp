@@ -9,6 +9,30 @@
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
+#include "gtest/gtest.h"
+#include "events/global.h"
+#include <condition_variable>
+#include <chrono>
+
+#include "iocontroller/IOEventInterface.h"
+
+class IOEventInterfaceTest : public ::testing::Test {
+	protected:
+		bool callbackCalled = false;
+		std::condition_variable cond;
+		std::mutex m;
+
+		void SetUp() override {
+			//world.setupLogger();
+			//Susi::setLogLevel(Susi::Logger::ALL);
+			world.setupIOController();
+			world.ioController->makeDir("./IO_EVENT_TESTS/CHECKDIR/");
+		}
+		virtual void TearDown() override {
+			world.ioController->deletePath("./IO_EVENT_TESTS/");
+		}
+};
+/*
 #include <gtest/gtest.h>
 #include <Poco/Dynamic/Var.h>
 #include "iocontroller/IOEventInterface.h"
@@ -195,3 +219,4 @@ TEST_F(IOEventInterfaceTest, CopyPath) {
 		EXPECT_TRUE(callbackCalled);
 	}
 }
+*/

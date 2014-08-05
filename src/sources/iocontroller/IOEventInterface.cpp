@@ -14,7 +14,7 @@
 void Susi::IOEventInterface::initEventInterface() {	
 	Susi::Events::subscribe("io::writeFile", handleWriteFile);
 	
-
+	/*
 	subscribe("io::readFile", handleReadFile);
 	subscribe("io::deletePath", handleDeletePath);
 	subscribe("io::movePath", handleMovePath);
@@ -23,6 +23,7 @@ void Susi::IOEventInterface::initEventInterface() {
 	subscribe("io::makeDir", handleMakeDir);
 	subscribe("io::setExecutable", handleSetExecutable);
 	subscribe("io::getExecutable", handleGetExecutable);
+	*/
 }
 
 void Susi::IOEventInterface::handleWriteFile(Susi::Events::EventPtr event) {
@@ -37,6 +38,7 @@ void Susi::IOEventInterface::handleWriteFile(Susi::Events::EventPtr event) {
 	}
 }
 
+/*
 void Susi::IOEventInterface::handleReadFile(Event & event) {
 	try{
 		std::string filename = event.payload["filename"];
@@ -123,3 +125,5 @@ void Susi::IOEventInterface::handleGetExecutable(Event & event) {
 		answerEvent(event, false);
 	}
 }
+
+*/
