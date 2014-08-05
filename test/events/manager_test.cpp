@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "events/global.h"
+#include "world/World.h"
 #include <condition_variable>
 #include <chrono>
 
@@ -309,6 +309,35 @@ TEST_F(EventManagerTest, PredicateUnsubscribe){
 		std::unique_lock<std::mutex> lk(mutex);
 		condTwo.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledTwo;});
 		EXPECT_TRUE(callbackCalledTwo);
+	}
+}
+
+// You can use native c++ error handling inside of your Processors.
+// Exceptions are translated into error headers and can be processed in the finishCallback.
+TEST_F(EventManagerTest,ErrorHandling){
+	// subscribe and throw error in handler
+	subscribe("test",[this](EventPtr event){
+		throw std::runtime_error{"this failed..."};
+	});
+	// publish event
+	auto event = createEvent("test");
+	publish(std::move(event),[this](SharedEventPtr event){
+		// there should be one header...
+		EXPECT_EQ(1,event->headers.size());
+		if(event->headers.size()>0){
+			// of type error...
+			EXPECT_EQ("error",event->headers[0].first);
+			// and with this content.
+			EXPECT_EQ("this failed...",event->headers[0].second);
+		}
+		callbackCalledOne = true;
+		condOne.notify_all();
+	});
+	//wait for finish callback
+	{
+		std::unique_lock<std::mutex> lk(mutex);
+		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		EXPECT_TRUE(callbackCalledOne);
 	}
 }
 
