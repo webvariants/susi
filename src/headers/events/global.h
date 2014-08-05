@@ -21,7 +21,7 @@ namespace Susi {
 		long subscribe(std::string topic, Consumer handler);
 		long subscribe(Predicate pred, Consumer handler);
 		bool unsubscribe(long id);
-		void publish(EventPtr event, Consumer finishCallback);
+		void publish(EventPtr event, Consumer finishCallback = Consumer{});
 		void ack(EventPtr event);
 		void deleter(Event *event);
 		EventPtr createEvent(std::string topic);
