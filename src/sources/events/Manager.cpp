@@ -119,11 +119,13 @@ void Susi::Events::Manager::ack(EventPtr event){
 					}
 				}
 			}
-			std::unique_lock<std::mutex> lock(process->mutex);
 			if(process.get()==nullptr){
-				std::cout<<"cant find process, this should not happen"<<std::endl;
+				//std::cout<<"cant find process, this should not happen"<<std::endl;
+				//std::cout<<event->topic<<std::endl;
+				delete event.release();
 				return;
 			}
+			std::unique_lock<std::mutex> lock(process->mutex);
 			while(process->errors.size() > 0){
 				event->headers.push_back(std::make_pair("error",process->errors.back()));
 				process->errors.pop_back();
@@ -137,7 +139,7 @@ void Susi::Events::Manager::ack(EventPtr event){
 			}else{
 				std::shared_ptr<Event> sharedEvent{event.release()};
 				for(auto & consumer : process->consumers){
-					manager->pool.add([consumer,sharedEvent](){
+					if(consumer) manager->pool.add([consumer,sharedEvent](){
 						consumer(sharedEvent);
 					});
 				}
