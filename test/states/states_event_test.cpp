@@ -1,18 +1,32 @@
 /*
-#include "gtest/gtest.h"
-#include "iocontroller/IOController.h"
-#include "world/World.h"
-#include "logger/Logger.h"
-#include "states/StateController.h"
+ * Copyright (c) 2014, webvariants GmbH, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ *
+ * @author: Thomas Krause (thomas.krause@webvariants.de)
+ */
 
-class StateControllerEventsTest : public ::testing::Test {
-protected:
-	std::shared_ptr<Susi::States::StateController> controller{nullptr};
-	bool callbackCalled = false;
-	std::condition_variable cond;
-	std::mutex m;
+#include "gtest/gtest.h"
+#include "events/global.h"
+#include <condition_variable>
+#include <chrono>
+
+#include "states/StateEventInterface.h"
+#include "iocontroller/IOController.h"
+
+class StateEventsTest : public ::testing::Test {
+	protected:
+		std::shared_ptr<Susi::States::StateController> controller{nullptr};
+		std::mutex mutex;
+		bool callbackCalledOne = false;
+		std::condition_variable condOne;
+		bool callbackCalledTwo = false;
+		std::condition_variable condTwo;
+	
 	virtual void SetUp() override {
-		world.setupLogger();
 		world.setupEventManager();
 		world.setupHeartBeat();
 		world.setupIOController();
@@ -24,80 +38,100 @@ protected:
 	}
 };
 
-TEST_F(StateControllerEventsTest,setState){
-	Susi::Event event("states::setState",Susi::Event::Payload({
-		{"key","foo"},
+using namespace Susi::Events;
+
+TEST_F(StateEventsTest,setState){
+	auto event = createEvent("state::setState");
+	event->payload =  Susi::Util::Any::Object{
+		{"stateID","foo"},
 		{"value","bar"}
-	}));
-	Susi::publish(event,[this](Susi::Event & event){
-		EXPECT_TRUE(event.payload.convert<bool>());
-		this->callbackCalled = true;
-		this->cond.notify_all();
+	};
+
+	publish(std::move(event),[this](SharedEventPtr event){
+		EXPECT_NO_THROW ({
+			bool success = event->payload["success"];
+			EXPECT_TRUE(success);
+		});
+		callbackCalledOne = true;
+		condOne.notify_all();
 	});
+
 	{
-		std::unique_lock<std::mutex> lock(m);
-		cond.wait_for(lock,
-			std::chrono::duration<int,std::milli>{250},
-			[this](){return callbackCalled;});
-		EXPECT_TRUE(callbackCalled);		
+		std::unique_lock<std::mutex> lk(mutex);
+		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		EXPECT_TRUE(callbackCalledOne);
 	}
 }
 
-TEST_F(StateControllerEventsTest,setPersistentState){
-	Susi::Event event("states::setPersistentState",Susi::Event::Payload({
-		{"key","foo"},
+TEST_F(StateEventsTest,setPersistentState){
+	auto event = createEvent("state::setPersistentState");
+	event->payload =  Susi::Util::Any::Object{
+		{"stateID","foo"},
 		{"value","bar"}
-	}));
-	Susi::publish(event,[this](Susi::Event & event){
-		EXPECT_TRUE(event.payload.convert<bool>());
-		this->callbackCalled = true;
-		this->cond.notify_all();
+	};
+
+	publish(std::move(event),[this](SharedEventPtr event){
+		EXPECT_NO_THROW ({
+			bool success = event->payload["success"];
+			EXPECT_TRUE(success);
+		});
+		callbackCalledOne = true;
+		condOne.notify_all();
 	});
+
 	{
-		std::unique_lock<std::mutex> lock(m);
-		cond.wait_for(lock,
-			std::chrono::duration<int,std::milli>{250},
-			[this](){return callbackCalled;});
-		EXPECT_TRUE(callbackCalled);		
+		std::unique_lock<std::mutex> lk(mutex);
+		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		EXPECT_TRUE(callbackCalledOne);
 	}
 }
 
-TEST_F(StateControllerEventsTest,getState){
+TEST_F(StateEventsTest,getState){
 	controller->setState("foo","bar");
-	Susi::Event event("states::getState",Susi::Event::Payload({
-		{"key","foo"}
-	}));
-	Susi::publish(event,[this](Susi::Event & event){
-		EXPECT_EQ("bar",event.payload.convert<std::string>());
-		this->callbackCalled = true;
-		this->cond.notify_all();
+
+	auto event = createEvent("state::getState");
+	event->payload =  Susi::Util::Any::Object{
+		{"stateID","foo"},
+	};
+
+	publish(std::move(event),[this](SharedEventPtr event){
+		EXPECT_NO_THROW ({
+			Susi::Util::Any value = event->payload["value"];
+			std::string val = value;
+			EXPECT_EQ("bar", val);
+		});
+		callbackCalledOne = true;
+		condOne.notify_all();
 	});
+
 	{
-		std::unique_lock<std::mutex> lock(m);
-		cond.wait_for(lock,
-			std::chrono::duration<int,std::milli>{250},
-			[this](){return callbackCalled;});
-		EXPECT_TRUE(callbackCalled);		
+		std::unique_lock<std::mutex> lk(mutex);
+		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		EXPECT_TRUE(callbackCalledOne);
 	}
 }
 
-
-TEST_F(StateControllerEventsTest,getPersistentState){
+TEST_F(StateEventsTest,getPersistentState){
 	controller->setPersistentState("foo","bar");
-	Susi::Event event("states::getPersistentState",Susi::Event::Payload({
-		{"key","foo"}
-	}));
-	Susi::publish(event,[this](Susi::Event & event){
-		EXPECT_EQ("bar",event.payload.convert<std::string>());
-		this->callbackCalled = true;
-		this->cond.notify_all();
+
+	auto event = createEvent("state::getPersistentState");
+	event->payload =  Susi::Util::Any::Object{
+		{"stateID","foo"},
+	};
+
+	publish(std::move(event),[this](SharedEventPtr event){
+		EXPECT_NO_THROW ({
+			Susi::Util::Any value = event->payload["value"];
+			std::string val = value;
+			EXPECT_EQ("bar", val);
+		});
+		callbackCalledOne = true;
+		condOne.notify_all();
 	});
+
 	{
-		std::unique_lock<std::mutex> lock(m);
-		cond.wait_for(lock,
-			std::chrono::duration<int,std::milli>{250},
-			[this](){return callbackCalled;});
-		EXPECT_TRUE(callbackCalled);		
+		std::unique_lock<std::mutex> lk(mutex);
+		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		EXPECT_TRUE(callbackCalledOne);
 	}
 }
-*/
