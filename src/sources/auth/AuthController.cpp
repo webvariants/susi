@@ -17,7 +17,8 @@ bool Susi::Auth::Controller::login(std::string sessionID, std::string username, 
 		if(vec.size()==0) {
 			return false;
 		} else {
-		 	world.sessionManager->setSessionAttribute(sessionID, "User", Susi::Event::Payload({{"username",username}}));
+		 	//world.sessionManager->setSessionAttribute(sessionID, "User", Susi::Event::Payload({{"username",username}}));
+		 	world.sessionManager->setSessionAttribute(sessionID, "User", Susi::Util::Any::Object({{"username",username}}));
 			return true;
 		}
 	} else {
@@ -31,16 +32,17 @@ void Susi::Auth::Controller::logout(std::string sessionID) {
 }
 
 bool Susi::Auth::Controller::isLoggedIn(std::string sessionID) {
-	Poco::Dynamic::Var user = world.sessionManager->getSessionAttribute(sessionID, "User");
-	return !user.isEmpty();
+	Susi::Util::Any user = world.sessionManager->getSessionAttribute(sessionID, "User");
+	return (user.getType() != Susi::Util::Any::UNDEFINED);
 }
 
-std::string Susi::Auth::Controller::getUsername(std::string sessionID) {
-	Poco::Dynamic::Var user = world.sessionManager->getSessionAttribute(sessionID, "User");
+std::string Susi::Auth::Controller::getUsername(std::string sessionID) {	
+	Susi::Util::Any user = world.sessionManager->getSessionAttribute(sessionID, "User");
 
-	if(user.isEmpty()) {
+	if(user.getType() == Susi::Util::Any::UNDEFINED) {
 		return "";
 	} else {
-		return user["username"].convert<std::string>();	
+		std::string username = user["username"];
+		return username;	
 	}
 }

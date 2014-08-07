@@ -21,6 +21,8 @@
 
 #include <db/Database.h>
 
+#include "util/Any.h"
+
 namespace Susi {
 	namespace Auth {
 		class Controller{
