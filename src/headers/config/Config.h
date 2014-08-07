@@ -12,7 +12,12 @@
 #ifndef __CONFIG__
 #define __CONFIG__
 
+#include <sstream>
+#include <iostream>
+
 #include "util/Any.h"
+#include "util/Helpers.h"
+#include "iocontroller/IOController.h"
 
 namespace Susi{
 
@@ -21,7 +26,7 @@ using Susi::Util::Any;
 class Config {
 protected:
 	// holds the config
-	Any::Object _configVar;
+	Any _configVar;
 
 	// holds infos to all possible commandline options
 	std::map<std::string,std::string> _knownCommandLineOptions;
@@ -45,7 +50,7 @@ public:
 	// loops though the args and check if it is in _knownCommandLineOptions
 	// if so, place it in the _configVar at the specified key
 	// should throw an error if unknown commandline options are supplied, but should parse everything else
-	void parseCommandLine(int argc, char **argv);
+	void parseCommandLine(int argc, char *argv[]);
 
 	// get a config variable.
 	// keys are in this format: "foo.bar.baz"
