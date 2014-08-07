@@ -6,7 +6,7 @@
  *
  * http://www.opensource.org/licenses/mit-license.php
  *
- * @author: Tino Rusch (tino.rusch@webvariants.de)
+ * @author: Tino Rusch (tino.rusch@webvariants.de), Thomas Krause (thomas.krause@webvariants.de)
  */
 
 #ifndef __SESSIONMANAGER__
@@ -17,10 +17,15 @@
 #include <mutex>
 #include <chrono>
 #include <thread>
-#include <Poco/Util/Application.h>
-#include <Poco/Dynamic/Var.h>
+#include <iostream> 
+//#include <Poco/Util/Application.h>
+//#include <Poco/Dynamic/Var.h>
 #include "sessions/Session.h"
 #include "events/EventSystem.h"
+
+#include "util/Any.h"
+#include "events/global.h"
+#include "events/Manager.h" 
 
 namespace Susi{
 	namespace Sessions {
@@ -37,10 +42,10 @@ namespace Susi{
 			void updateSession(std::string id);
 			void updateSession(std::string id, std::chrono::milliseconds lifeTime);
 			bool killSession(std::string id);
-			bool setSessionAttribute(std::string sessionID, std::string key, Poco::Dynamic::Var value);
-			Poco::Dynamic::Var getSessionAttribute(std::string sessionID, std::string key);
+			bool setSessionAttribute(std::string sessionID, std::string key, Susi::Util::Any value);
+			Susi::Util::Any getSessionAttribute(std::string sessionID, std::string key);
 			bool init(std::chrono::milliseconds stdSessionLifetime, std::chrono::milliseconds checkInterval);
-			bool pushSessionAttribute(std::string sessionID, std::string key, Poco::Dynamic::Var value);
+			bool pushSessionAttribute(std::string sessionID, std::string key, Susi::Util::Any value);
 			bool removeSessionAttribute(std::string sessionID, std::string key);
 
 			~SessionManager();

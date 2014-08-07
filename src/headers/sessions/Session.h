@@ -6,30 +6,33 @@
  *
  * http://www.opensource.org/licenses/mit-license.php
  *
- * @author: Christian Sonderfeld (christian.sonderfeld@webvariants.de)
+ * @author: Christian Sonderfeld (christian.sonderfeld@webvariants.de), Thomas Krause (thomas.krause@webvariants.de)
  */
 
 #include <map>
 #include <Poco/Timestamp.h>
-#include <Poco/Dynamic/Var.h>
+// #include <Poco/Dynamic/Var.h>
 #include <chrono>
+#include <iostream> 
+
+#include "util/Any.h"
 
 namespace Susi {
 	class Session {
 	protected:
 		Poco::Timestamp deadline;
-		std::map<std::string, Poco::Dynamic::Var> attributes;
-		std::map<std::string, std::vector<Poco::Dynamic::Var>> multiAttributes;
+		std::map<std::string, Susi::Util::Any> attributes;
+		std::map<std::string, std::deque<Susi::Util::Any>> multiAttributes;
 
 	public:
 		Session() : Session(std::chrono::milliseconds(10000)) {}
 		Session(std::chrono::milliseconds milliseconds);
 		bool isDead();
 		void addTime(std::chrono::milliseconds milliseconds);
-		bool setAttribute(std::string key, Poco::Dynamic::Var value);
-		void pushAttribute(std::string key, Poco::Dynamic::Var value);
+		bool setAttribute(std::string key, Susi::Util::Any value);
+		void pushAttribute(std::string key, Susi::Util::Any value);
 		bool removeAttribute(std::string key);
-		Poco::Dynamic::Var getAttribute(std::string key);
+		Susi::Util::Any getAttribute(std::string key);
 		bool die();
 	};
 }

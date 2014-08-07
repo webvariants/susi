@@ -10,7 +10,7 @@
  */
 
 #include "sessions/Session.h"
-#include <iostream>
+
 namespace Susi {
 	Session::Session(std::chrono::milliseconds milliseconds) {
 		addTime(milliseconds);
@@ -24,14 +24,15 @@ namespace Susi {
 	void Session::addTime(std::chrono::milliseconds milliseconds) {
 		deadline += std::chrono::duration_cast<std::chrono::microseconds>(milliseconds).count();
 	}
-	void Session::pushAttribute(std::string key, Poco::Dynamic::Var value) {
+	void Session::pushAttribute(std::string key, Susi::Util::Any value) {
 		if(attributes.count(key) > 0) {
-			multiAttributes[key] = {attributes[key], value};
+			multiAttributes[key].push_back(attributes[key]);
+			multiAttributes[key].push_back(value);
 			attributes.erase(key);
 		} else if(multiAttributes.count(key) > 0) {
 			multiAttributes[key].push_back(value);
 		} else {
-			attributes[key] = Poco::Dynamic::Var(value);
+			attributes[key] = Susi::Util::Any(value);
 		}
 	}
 	bool Session::removeAttribute(std::string key) {
@@ -45,7 +46,7 @@ namespace Susi {
 		}
 		return false;
 	}
-	Poco::Dynamic::Var Session::getAttribute(std::string key) {
+	Susi::Util::Any Session::getAttribute(std::string key) {
 		if(key.length() > 0) {
 			if(attributes.count(key) > 0) {
 				return attributes[key];
@@ -54,9 +55,9 @@ namespace Susi {
 				return multiAttributes[key];
 			}
 		}
-		return Poco::Dynamic::Var();
+		return Susi::Util::Any();
 	}
-	bool Session::setAttribute(std::string key, Poco::Dynamic::Var value) {
+	bool Session::setAttribute(std::string key, Susi::Util::Any value) {
 		if(key.length() > 0) {
 			attributes[key] = value;
 			return true;

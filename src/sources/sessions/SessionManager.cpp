@@ -6,38 +6,36 @@
  *
  * http://www.opensource.org/licenses/mit-license.php
  *
- * @authors: Tino Rusch (tino.rusch@webvariants.de), Christian Sonderfeld (christian.sondefeld@webvariants.de)
+ * @authors: Tino Rusch (tino.rusch@webvariants.de), Christian Sonderfeld (christian.sondefeld@webvariants.de), Thomas Krause (thomas.krause@webvariants.de)
  */
 
 #include "sessions/SessionManager.h"
-#include <iostream>
+
 using namespace Susi::Sessions;
 
 bool SessionManager::init(std::chrono::milliseconds stdSessionLifetime, std::chrono::milliseconds checkInterval) {
 	// Causes problem in tests, since we have a world object which does all the init stuff
 	// Second init fails...
-	if(initialized) {
+	if(initialized) {		
 		return false;
 	}
+
 	initialized = true;
 	if(stdLifetime.count() <= 0) {
 		stdLifetime = std::chrono::milliseconds(1000);
 	}
 	this->stdLifetime = stdSessionLifetime;
-	subId = Susi::subscribe("heartbeat::one",[this](Susi::Event & event){
+
+	subId = Susi::Events::subscribe("heartbeat::one",[this](Susi::Events::EventPtr event){
 		this->checkSessions();
-	});
-	/*std::thread t{[this,checkInterval](){
-		while(true){
-			try{
-				this->checkSessions();
-		    	std::this_thread::sleep_for(checkInterval);
-			}catch(const std::exception & e){
-			}
-		}
-	}};
-	t.detach();*/
+	});	
+	
 	return true;
+}
+
+
+SessionManager::~SessionManager(){	
+	Susi::Events::unsubscribe(subId);
 }
 
 int SessionManager::checkSessions(){
@@ -61,6 +59,7 @@ int SessionManager::checkSessions(){
 
 bool SessionManager::checkSession(std::string id){
 	std::lock_guard<std::mutex> lock(mutex);
+
 	try{
 		return !sessions.at(id).isDead();
 	}catch(const std::exception & e){
@@ -68,7 +67,7 @@ bool SessionManager::checkSession(std::string id){
 	}
 }
 
-bool SessionManager::setSessionAttribute(std::string sessionID, std::string key, Poco::Dynamic::Var value) {
+bool SessionManager::setSessionAttribute(std::string sessionID, std::string key, Susi::Util::Any value) {
 	std::lock_guard<std::mutex> lock(mutex);
 	if (sessionID.length() > 0)
 	{
@@ -85,7 +84,7 @@ bool SessionManager::setSessionAttribute(std::string sessionID, std::string key,
 	return false;
 }
 
-bool SessionManager::pushSessionAttribute(std::string sessionID, std::string key, Poco::Dynamic::Var value) {
+bool SessionManager::pushSessionAttribute(std::string sessionID, std::string key, Susi::Util::Any value) {
 	std::lock_guard<std::mutex> lock(mutex);
 	if (sessionID.length() > 0)
 	{
@@ -113,13 +112,13 @@ bool SessionManager::removeSessionAttribute(std::string sessionID, std::string k
 	return false;
 }
 
-Poco::Dynamic::Var SessionManager::getSessionAttribute(std::string sessionID, std::string key) {
+Susi::Util::Any SessionManager::getSessionAttribute(std::string sessionID, std::string key) {
 	std::lock_guard<std::mutex> lock(mutex);
 	if (sessionID.length() > 0 && sessions.count(sessionID) > 0)
 	{
 		return sessions[sessionID].getAttribute(key);
 	}
-	return Poco::Dynamic::Var();
+	return Susi::Util::Any();
 }
 
 void SessionManager::updateSession(std::string id){
@@ -147,9 +146,4 @@ bool SessionManager::killSession(std::string id) {
 		return sessions[id].die();
 	}
 	return false;
-}
-
-
-SessionManager::~SessionManager(){
-	Susi::unsubscribe("heartbeat::one",subId);
 }
