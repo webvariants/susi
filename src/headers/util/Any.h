@@ -28,6 +28,7 @@
 #include <cstring>
 
 #include "util/jsmn.h"
+#include "util/Helpers.h"
 
 namespace Susi {
 	namespace Util {
@@ -175,7 +176,8 @@ namespace Susi {
 
 		protected:
 			// json helper			
-			static Any tokenToAny(jsmntok_t * & t, const char *js);			
+			static bool testIsStringJsonPrimitive(std::string str);
+			static Any tokenToAny(jsmntok_t * & t, const char *js);
 		};
 	}
 }
