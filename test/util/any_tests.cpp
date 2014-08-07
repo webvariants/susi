@@ -791,7 +791,7 @@ TEST(Any,ArrayHelper){
 	EXPECT_EQ(1,a.size());
 	EXPECT_EQ(Any{1},a[0]);
 }
-
+/*
 TEST(Any,BenchmarkUndefinedOneMillion){
 	for(int i=0;i<1000000;i++){
 		Any a;
@@ -846,6 +846,8 @@ TEST(Any,BenchmarkObjectOneMillion){
 	}
 }
 
+*/
+
 TEST (Any, StringEscaping){
 
 	Any j{Any::Object{
@@ -854,3 +856,19 @@ TEST (Any, StringEscaping){
 	
 	EXPECT_EQ("{\"array\":[{\"foo\":\"bar \\\" \\/ \\b \\f \\n \\r \\t \\\\ \"}]}",j.toString());
 }
+
+TEST (Any, FromString){
+
+	Any i = Any::fromString("123");
+	EXPECT_EQ(Any{123}.toString(), i.toString());
+
+	Any d = Any::fromString("123.45");
+	EXPECT_EQ(Any{123.45}.toString(), d.toString());	
+
+	Any s = Any::fromString("this is it!");
+	EXPECT_EQ(Any{"this is it!"}.toString(), s.toString());	
+
+	Any s2 = Any::fromString("\"foo bar!\"");
+	EXPECT_EQ(Any{"foo bar!"}.toString(), s2.toString());	
+}
+
