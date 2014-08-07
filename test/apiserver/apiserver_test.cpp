@@ -1,4 +1,4 @@
-#include "gtest/gtest.h"
+/*#include "gtest/gtest.h"
 #include "events/EventSystem.h"
 #include "client/SusiClient.h"
 #include "apiserver/TCPServer.h"
@@ -145,3 +145,4 @@ TEST_F(ApiServerTest,Unsubscribe){
 	EXPECT_EQ("error",keyVar.convert<std::string>());
 	EXPECT_EQ("you are not subscribed to foobar",payloadVar.convert<std::string>());
 }
+*/

@@ -13,7 +13,7 @@ namespace Events{
 //basic Event definition
 typedef std::pair<std::string,std::string> Header;
 struct Event {
-	long id;
+	long id = 0;
 	std::string topic;
 	std::vector<Header> headers;
 	Susi::Util::Any payload;

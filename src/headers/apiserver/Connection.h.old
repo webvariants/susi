@@ -26,6 +26,7 @@
 
 #include "logger/Logger.h"
 #include "events/EventSystem.h"
+#include "util/Any.h"
 
 namespace Susi {
 
@@ -37,12 +38,12 @@ namespace Susi {
 		/**
 		 * This has to be implemented by subclasses
 		 */
-		virtual bool send(Poco::Dynamic::Var & data) = 0;
-		virtual bool recv(Poco::Dynamic::Var & data) = 0;
+		virtual bool send(Susi::Util::Any & data) = 0;
+		virtual bool recv(Susi::Util::Any & data) = 0;
 		virtual void close() = 0;
 		virtual ~Connection();
 
-		bool send(Poco::Dynamic::Var && data){
+		bool send(Susi::Util::Any data){
 			return send(data);
 		};
 		/**
@@ -58,10 +59,12 @@ namespace Susi {
 		 */
 		void subscribe(std::string topic,int requestID);
 		void unsubscribe(std::string topic,int requestID);
+		void ack(Susi::Util::Any eventData);
 
 	protected:
 		std::string sessionID = "";
 		std::vector<std::pair<long,std::string>> subscriptions;
+		std::vector<Susi::Events::EventPtr> eventsToAck;
 	};
 
 
@@ -70,8 +73,8 @@ namespace Susi {
 		TCPConnection(const Poco::Net::StreamSocket & sock) 
 			: socket(sock), 
 			  ss(sock) {};
-		virtual bool send(Poco::Dynamic::Var & data) override;
-		virtual bool recv(Poco::Dynamic::Var & data) override;
+		virtual bool send(Susi::Util::Any & data) override;
+		virtual bool recv(Susi::Util::Any & data) override;
 		virtual void close(){
 			try{
 				socket.shutdown();
@@ -96,8 +99,8 @@ namespace Susi {
 	class WebSocketConnection : public Connection {
 	public:
 		WebSocketConnection(Poco::Net::WebSocket socket) : socket(socket) {};
-		virtual bool send(Poco::Dynamic::Var & data) override;
-		virtual bool recv(Poco::Dynamic::Var & data) override;
+		virtual bool send(Susi::Util::Any & data) override;
+		virtual bool recv(Susi::Util::Any & data) override;
 		virtual void close() override{
 			try{
 				socket.shutdown();

@@ -9,8 +9,8 @@
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
-#ifndef __JSENGINE__
-#define __JSENGINE__
+#ifndef __TINYJSENGINE__
+#define __TINYJSENGINE__
 
 #include "tiny-js/TinyJS.h"
 #include <memory>
@@ -19,16 +19,16 @@
 
 namespace Susi {
 
-class JSEngine {
+class TinyJSEngine {
 private:
 	std::shared_ptr<CTinyJS> js;
 public:
-	JSEngine();
-	JSEngine(std::string source);
+	TinyJSEngine();
+	TinyJSEngine(std::string source);
 	std::string run(std::string source);
 	std::string runFile(std::string filename);
 };
 
 }
 
-#endif // __JSENGINE__
+#endif // __TINYJSENGINE__

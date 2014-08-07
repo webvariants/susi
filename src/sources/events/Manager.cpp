@@ -64,6 +64,7 @@ bool Susi::Events::Manager::unsubscribe(long id){
 // public publish api function
 void Susi::Events::Manager::publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback){
 	{
+		if(event.get()==nullptr)return;
 		std::lock_guard<std::mutex> lock(mutex);	
 		auto process = std::make_shared<PublishProcess>();
 		for(auto & kv : processorsByTopic){

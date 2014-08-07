@@ -7,7 +7,7 @@ void Susi::World::setup(){
 	setupLogger();
 	setupEventSystem();
 	setupEventManager();
-	setupTCPServer();
+	//setupTCPServer();
 	setupHttpServer();
 	setupHeartBeat();
 	setupSessionManager();
@@ -16,11 +16,22 @@ void Susi::World::setup(){
 	setupEngineStarter();
 	setupAuthController();
 	setupStateController();
+	setupJSEngine();
 	//setupSysCallController();
 }
 
 void Susi::World::tearDown(){
 
+}
+
+void Susi::World::setupJSEngine(){
+	std::string file = "./controller.js";
+	try{
+		auto & app = Poco::Util::Application::instance();
+		auto & cfg = app.config();
+		file = cfg.getString("jsengine.source");
+	}catch(const std::exception & e){}
+	jsEngine = std::shared_ptr<Susi::JSEngine>(new Susi::JSEngine(file));
 }
 
 void Susi::World::setupEventManager(){
@@ -66,7 +77,7 @@ void Susi::World::setupLogger(){
 	logger = std::shared_ptr<Susi::Logger>{new Susi::Logger( level )};
 }
 
-void Susi::World::setupTCPServer(){
+/*void Susi::World::setupTCPServer(){
 	std::string addr = "[::1]:4000";
 	try{
 		auto & app = Poco::Util::Application::instance();
@@ -76,7 +87,7 @@ void Susi::World::setupTCPServer(){
 	auto tcpParams = new Poco::Net::TCPServerParams();
 	tcpParams->setMaxQueued(250);
 	tcpServer = std::shared_ptr<Susi::TCPServer>{new Susi::TCPServer(addr,tcpParams)};
-}
+}*/
 
 void Susi::World::setupHttpServer(){
 	std::string addr = "[::1]:8080";

@@ -27,15 +27,19 @@ TESTS=$(subst .cpp,.o,$(TESTS_INTERMEDIATE))
 TEST_MAIN=$(shell find ./test/gtest*/lib -name "*.a")
 
 DEBUG=-g -Wall
-CCFLAGS=$(DEBUG) -I src/headers -I /usr/local/include/soci --std=c++11 -c
-LDFLAGS=$(DEBUG) --std=c++11 -L /usr/local/lib64
+CCFLAGS=$(DEBUG) -I src/headers -I /opt/v8/include -I /usr/local/include/soci --std=c++11 -c
+LDFLAGS=$(DEBUG) --std=c++11 -L /usr/local/lib64 -L /opt/v8/out/x64.release/lib.target
 LIBS=-l PocoFoundation \
 		-l PocoUtil \
 		-l PocoJSON \
 		-l PocoNet \
 		-l soci_core \
 		-l soci_sqlite3 \
-		-l soci_firebird
+		-l soci_firebird \
+		-l v8 \
+		-l icuuc \
+		-l icui18n \
+		-l event
 
 susi: ./bin/susi
 

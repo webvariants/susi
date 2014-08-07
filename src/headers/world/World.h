@@ -38,6 +38,7 @@
 #include "states/StateEventInterface.h"
 #include "syscall/SysCallEventInterface.h"
 #include "syscall/SysCallController.h"
+#include "v8/JSEngine.h"
 
 namespace Susi{
 
@@ -46,7 +47,7 @@ namespace Susi{
 	public:
 		void setupEventSystem();
 		void setupEventManager();
-		void setupTCPServer();
+		//void setupTCPServer();
 		void setupHttpServer();
 		void setupSessionManager();
 		void setupJSEngine();
@@ -61,10 +62,8 @@ namespace Susi{
 
 		std::shared_ptr<Susi::EventSystem> 				eventSystem{nullptr};
 		std::shared_ptr<Susi::Events::Manager> 			eventManager{nullptr};
-		std::shared_ptr<Susi::TCPServer> 				tcpServer{nullptr};
 		std::shared_ptr<Susi::HttpServer> 				httpServer{nullptr};
 		std::shared_ptr<Susi::Sessions::SessionManager> sessionManager{nullptr};
-		std::shared_ptr<Susi::JSEngine> 				jsEngine{nullptr};
 		std::shared_ptr<Susi::IOController>				ioController{nullptr};
 		std::shared_ptr<Susi::HeartBeat>				heartBeat{nullptr};
 		std::shared_ptr<Susi::DB::Manager>				dbManager{nullptr};
@@ -73,6 +72,9 @@ namespace Susi{
 		std::shared_ptr<Susi::Auth::Controller>			authController{nullptr};
 		std::shared_ptr<Susi::States::StateController>	stateController{nullptr};
 		std::shared_ptr<Susi::Syscall::Controller>		syscallController{nullptr};
+		std::shared_ptr<Susi::JSEngine>					jsEngine{nullptr};
+
+
 
 		void setup();
 		void tearDown();

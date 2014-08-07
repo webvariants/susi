@@ -1,20 +1,20 @@
 #include "tiny-js/JSEngine.h"
 
 
-Susi::JSEngine::JSEngine() : js(new CTinyJS()) {}
+Susi::TinyJSEngine::TinyJSEngine() : js(new CTinyJS()) {}
 
-Susi::JSEngine::JSEngine(std::string filename) : js(new CTinyJS()) {
+Susi::TinyJSEngine::TinyJSEngine(std::string filename) : js(new CTinyJS()) {
 	runFile(filename);
 }
 
-std::string Susi::JSEngine::runFile(std::string filename) {
+std::string Susi::TinyJSEngine::runFile(std::string filename) {
 	std::ifstream file(filename, std::ios::binary);
 	std::string fileContents((std::istreambuf_iterator<char>(file)),
 		std::istreambuf_iterator<char>());
 	return run(fileContents);
 }
 
-std::string Susi::JSEngine::run(std::string source) {
+std::string Susi::TinyJSEngine::run(std::string source) {
 	std::string result = "error";
 	try{
 		result = js->evaluate(source);

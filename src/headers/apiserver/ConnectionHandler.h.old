@@ -27,11 +27,12 @@ class ConnectionHandler {
 public:
 	static void handleConnection(std::shared_ptr<Susi::Connection> conn);
 protected:
-	static void handlePacket(std::shared_ptr<Susi::Connection> conn, Poco::Dynamic::Var packet);
-	static void handlePublish(std::shared_ptr<Susi::Connection> conn, Poco::Dynamic::Var packet);
-	static void handleSubscribe(std::shared_ptr<Susi::Connection> conn, Poco::Dynamic::Var packet);	
-	static void handleUnsubscribe(std::shared_ptr<Susi::Connection> conn, Poco::Dynamic::Var packet);	
-	static void sendStatus(std::shared_ptr<Susi::Connection> conn, Poco::Dynamic::Var & request, std::string msg,bool success = true);
+	static void handlePacket(std::shared_ptr<Susi::Connection> conn, Susi::Util::Any packet);
+	static void handlePublish(std::shared_ptr<Susi::Connection> conn, Susi::Util::Any packet);
+	static void handleSubscribe(std::shared_ptr<Susi::Connection> conn, Susi::Util::Any packet);	
+	static void handleUnsubscribe(std::shared_ptr<Susi::Connection> conn, Susi::Util::Any packet);	
+	static void handleAck(std::shared_ptr<Susi::Connection> conn, Susi::Util::Any packet);	
+	static void sendStatus(std::shared_ptr<Susi::Connection> conn, Susi::Util::Any & request, std::string msg,bool success = true);
 };	
 	
 }

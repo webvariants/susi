@@ -19,7 +19,7 @@
 #include "webstack/AssetsRequestHandler.h"
 #include "webstack/SessionRequestHandler.h"
 #include "webstack/RedirectRequestHandler.h"
-#include "webstack/WebSocketRequestHandler.h"
+//#include "webstack/WebSocketRequestHandler.h"
 #include "webstack/CompabilityRequestHandler.h"
 
 namespace Susi {
@@ -35,9 +35,9 @@ public:
         try{
             if(request.getURI().find("/assets/")==0){
             	return new SessionRequestHandler(new AssetsRequestHandler(_assetRoot));
-            }else if(request.getURI() == "/ws"){
+            }/*else if(request.getURI() == "/ws"){
             	return new SessionRequestHandler(new WebSocketRequestHandler());
-            }else if(request.getURI() == "/compability"){
+            }*/else if(request.getURI() == "/compability"){
                 return new SessionRequestHandler(new CompabilityRequestHandler());
             }else if(request.getURI() == "/"){
             	return new SessionRequestHandler(new RedirectRequestHandler());
