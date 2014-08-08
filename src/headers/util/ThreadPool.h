@@ -26,7 +26,6 @@ class ThreadPool {
 protected:
 	struct Work {
 		std::function<void()> 				work;
-		std::function<void()> 				finish;
 		std::function<void(std::string)> 	error;
 	};
 
@@ -38,7 +37,6 @@ protected:
 public:
 	ThreadPool(size_t workers, size_t buffsize);
 	void add(std::function<void()> work, 
-			 std::function<void()> finish 			= std::function<void()>{},
 			 std::function<void(std::string)> error = std::function<void(std::string)>{});
 	~ThreadPool();
 };
