@@ -6,61 +6,64 @@
  *
  * http://www.opensource.org/licenses/mit-license.php
  * 
- * @author: Tino Rusch (tino.rusch@webvariants.de)
+ * @author: Tino Rusch (tino.rusch@webvariants.de), Thomas Krause (thomas.krause@webvariants.de)
  */
 
 #include "gtest/gtest.h"
+#include "events/global.h"
 #include "db/EventInterface.h"
 #include "iocontroller/IOController.h"
 #include <condition_variable>
 
 #include "world/World.h"
-#include "logger/Logger.h"
+
 
 class DBEventInterfaceTest : public ::testing::Test {
-protected:
-	void SetUp() override {
-		world.setupEventSystem();
-		world.setupDBManager();
-	}
-	void TearDown() override {
-		Susi::IOController controller;
-	    controller.deletePath("./test_sqlite_db_3");
-	}
+	protected:
+		std::mutex mutex;
+		bool callbackCalledOne = false;
+		std::condition_variable condOne;	
+		
+		void SetUp() override {
+			world.setupEventManager();
+			world.setupDBManager();
+		}
+		void TearDown() override {
+			Susi::IOController controller;
+		    controller.deletePath("./test_sqlite_db_3");
+		}
 };
 
+using namespace Susi::Events;
+
 TEST_F(DBEventInterfaceTest, Query) {
-
-
-	std::vector<std::tuple<std::string,std::string,std::string>> dbs;
-    dbs.push_back(std::make_tuple("test_sqlite_db_3", "sqlite3", "./test_sqlite_db_3"));
-    dbs.push_back(std::make_tuple("test_sqlite_db_4", "sqlite3", "./test_sqlite_db_4"));
-    Poco::Dynamic::Var config(dbs);
+	
+	Susi::Util::Any config{Susi::Util::Any::Array{
+        Susi::Util::Any::Array{"test_sqlite_db_3", "sqlite3", "./test_sqlite_db_3"},
+        Susi::Util::Any::Array{"test_sqlite_db_4", "sqlite4", "./test_sqlite_db_4"}
+    }};
 
 	world.dbManager->init(config);
 	
-	bool callbackCalled = false;
-	std::condition_variable cond;
-	std::mutex m;
-
-	Susi::once("sqlite_result",[&cond,&callbackCalled](Susi::Event event){
-		callbackCalled = true;
-		cond.notify_one();
-	});
-
-	auto event = Susi::Event("db::query",Susi::Event::Payload({
+	auto event = createEvent("db::query");
+	event->payload =  Susi::Util::Any::Object{
 		{"identifier","test_sqlite_db_3"},
 		{"query","create table test1 (id integer,name varchar(100));"}
-	}));
-	event.returnAddr = "sqlite_result";
-	Susi::publish(event);
+		//{"query","insert into test1(id, name) values(7, \'John\');"}
+		//{"query","select id, name from test1 where id = 7;"}			
+	};
+
+	publish(std::move(event),[this](SharedEventPtr event){
+		EXPECT_NO_THROW ({
+			Susi::Util::Any result = event->payload["result"];			
+		});
+		callbackCalledOne = true;
+		condOne.notify_all();
+	});
 
 	{
-		std::unique_lock<std::mutex> lk(m);
-		cond.wait_for(lk,
-			std::chrono::duration<int,std::milli>{250},
-			[&callbackCalled](){return callbackCalled;});
-		EXPECT_TRUE(callbackCalled);
+		std::unique_lock<std::mutex> lk(mutex);
+		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		EXPECT_TRUE(callbackCalledOne);
 	}
-
 }

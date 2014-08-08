@@ -2,16 +2,8 @@
 
 Susi::DB::Manager::Manager() {}
 
-Susi::DB::Manager::Manager(Poco::Dynamic::Var config) {
-
-	std::vector<std::tuple<std::string,std::string,std::string>> dbs;
-	if(config.isVector()) {
-		dbs = config.extract<std::vector<std::tuple<std::string,std::string,std::string>>>();
-
-		for(std::size_t i=0; i<dbs.size(); ++i){
-  	  		this->addDatabase(std::get<0>(dbs[i]), std::get<1>(dbs[i]),std::get<2>(dbs[i]));
-		}	
-	}
+Susi::DB::Manager::Manager(Susi::Util::Any config) {
+	this->init(config);	
 }
 
 Susi::DB::Manager::Manager(std::vector<std::tuple<std::string,std::string,std::string>> dbs) {
@@ -24,14 +16,18 @@ Susi::DB::Manager::Manager(std::vector<std::tuple<std::string,std::string,std::s
 	Susi::info(msg);
 }
 
-void Susi::DB::Manager::init(Poco::Dynamic::Var config) {
-	std::vector<std::tuple<std::string,std::string,std::string>> dbs;
-	if(config.isVector()) {
-		dbs = config.extract<std::vector<std::tuple<std::string,std::string,std::string>>>();
+void Susi::DB::Manager::init(Susi::Util::Any config) {	
+	if(config.isArray()) {
+		for(std::size_t i=0; i<config.size(); ++i){
+			Susi::Util::Any entry = config[i];
 
-		for(std::size_t i=0; i<dbs.size(); ++i){
-  	  		addDatabase(std::get<0>(dbs[i]), std::get<1>(dbs[i]),std::get<2>(dbs[i]));
-		}	
+			if(entry.isArray() && entry.size() == 3) {
+				std::string identifier = entry[0];
+				std::string dbtype     = entry[1];
+				std::string connectURI = entry[2];
+				addDatabase(identifier, dbtype, connectURI);
+			}
+		}
 	}
 }
 

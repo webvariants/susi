@@ -3,6 +3,7 @@
 #include "util/VarHelper.h"
 #include "iocontroller/IOController.h"
 
+
 TEST(DBManager, Contruct) {
 
     Susi::DB::Manager dbm_1();
@@ -15,18 +16,23 @@ TEST(DBManager, Contruct) {
 
     Susi::DB::Manager dbm_2(dbs);
 
-    //-----------------------------
-    Poco::Dynamic::Var config =  Poco::Dynamic::Var(dbs);
+    //-----------------------------    
+    Susi::Util::Any config{Susi::Util::Any::Array{
+        Susi::Util::Any::Array{"test_sqlite_db_3", "sqlite3", "./test_sqlite_db_3"},
+        Susi::Util::Any::Array{"test_sqlite_db_4", "sqlite4", "./test_sqlite_db_4"}
+    }};
 
     Susi::DB::Manager dbm_3(config);    
 
-    dbm_2.getDatabase("test_sqlite_db_1");
-    dbm_3.getDatabase("test_sqlite_db_2");
+    EXPECT_NE(nullptr,dbm_2.getDatabase("test_sqlite_db_1"));
+    EXPECT_NE(nullptr,dbm_3.getDatabase("test_sqlite_db_3"));
 
     Susi::IOController controller;
     controller.deletePath("./test_sqlite_db_1");
-    controller.deletePath("./test_sqlite_db_2");
+    controller.deletePath("./test_sqlite_db_3");
 }
+
+
 
 TEST(DBManager, Sqlite3) {
 	using Susi::Util::getFromVar;
@@ -40,11 +46,10 @@ TEST(DBManager, Sqlite3) {
 	// this creates the file if not exist
 	auto db_1 = dm.getDatabase("test_sqlite_db_1");
 
-    Poco::Dynamic::Var table_exits = db_1->query("select count(type) from sqlite_master where type=\'table\' and name=\'test1\';");
+    Susi::Util::Any table_exits1 = db_1->query("select count(type) from sqlite_master where type=\'table\' and name=\'test1\';");
+    std::string result_str1 = table_exits1[0]["count(type)"];
 
-    //std::cout<<table_exits.toString()<<std::endl;
-
-    if(table_exits[0]["count(type)"].convert<int>() == 0) {
+    if(result_str1 == "0") {    
 	   db_1->query("create table test1 ("
         "    id integer,"
         "    name varchar(100)"
@@ -56,19 +61,19 @@ TEST(DBManager, Sqlite3) {
 
     auto db_2 = dm.getDatabase("test_sqlite_db_1");
 
-    Poco::Dynamic::Var result = db_2->query("select id, name from test1 where id = 7");
+    Susi::Util::Any result = db_2->query("select id, name from test1 where id = 7");
 
-    EXPECT_TRUE(result.isVector());
-
-    EXPECT_FALSE(result[0].isEmpty());
+    EXPECT_TRUE(result.isArray());
+    EXPECT_FALSE(result[0].isNull());
     auto idVar = result[0]["id"];
     auto nameVar = result[0]["name"];
-    EXPECT_FALSE(idVar.isEmpty());
-    EXPECT_FALSE(nameVar.isEmpty());
+    EXPECT_FALSE(idVar.isNull());
+    EXPECT_FALSE(nameVar.isNull());
     EXPECT_TRUE(idVar.isInteger());
     EXPECT_TRUE(nameVar.isString());
-    EXPECT_EQ(7,idVar.convert<int>());
-    EXPECT_EQ("John",nameVar.convert<std::string>());
+
+   EXPECT_EQ(7,static_cast<int>(idVar));
+    EXPECT_EQ("John",static_cast<std::string>(nameVar));
 
     Susi::IOController controller;
     controller.deletePath("./test_sqlite_db");

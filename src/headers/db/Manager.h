@@ -29,10 +29,10 @@ namespace Susi {
 				std::map <std::string, Susi::DB::ManagerItem> dbMap;
 			public:
 				Manager();
-				Manager(Poco::Dynamic::Var config);
+				Manager(Susi::Util::Any config);
 				Manager(std::vector<std::tuple<std::string,std::string,std::string>> dbs);
 
-				void init(Poco::Dynamic::Var config);
+				void init(Susi::Util::Any config);
 				void addDatabase(std::string identifier,std::string dbtype,std::string connectURI);
 				std::shared_ptr<Database> getDatabase(std::string identifier);
 		};

@@ -4,8 +4,9 @@
 #include <soci.h>
 #include <sqlite3/soci-sqlite3.h>
 #include <firebird/soci-firebird.h>
-#include <Poco/Dynamic/Struct.h>
 #include <iostream>
+
+#include "util/Any.h"
 
 namespace Susi {
 	namespace DB{
@@ -14,7 +15,7 @@ namespace Susi {
 			soci::session session;
 		public:
 			Database(std::string dbtype,std::string connectURI) : session(dbtype,connectURI) {};
-			Poco::Dynamic::Var query(std::string query);
+			Susi::Util::Any query(std::string query);
 		};
 	}
 }
