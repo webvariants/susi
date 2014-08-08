@@ -60,7 +60,7 @@ test: ./bin/test
 	-@mkdir -p $(shell dirname $@)
 	$(CC) $(CCFLAGS) -o $@ $<
 
-./src/objects/%.o: ./test/%.cpp Makefile
+./src/objects/%.o: ./test/%.cpp Makefile ./src/headers/**/*
 	-@mkdir -p $(shell dirname $@)
 	$(CC) $(CCFLAGS) -I ./test/gtest*/include -o $@ $<
 

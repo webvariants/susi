@@ -9,25 +9,22 @@
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
-#include "apiserver/ServerInterfaces.h"
 #include <memory>
+#include "apiserver/JSONServer.h"
 
 namespace Susi {
 namespace Api {
 
-class ApiServer {
+class ApiServer : JSONServer {
 protected:
+	
+	virtual void onMessage(std::string & id, Susi::Util::Any & packet) override;
+	
 	void handleRegisterConsumer(std::string & id, Susi::Util::Any & packet);
 	void handleRegisterProcessor(std::string & id, Susi::Util::Any & packet);
 	void handleUnregister(std::string & id, Susi::Util::Any & packet);
 	void handlePublish(std::string & id, Susi::Util::Any & packet);
 	
-	virtual void onMessage(std::string & id, Susi::Util::Any & packet) override;
-	virtual void send(std::string & id, Susi::Util::Any & packet) = 0;
-	virtual void close(std::string & id) = 0;
-
-public:
-	virtual void run() = 0;
 };
 
 }
