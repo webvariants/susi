@@ -115,10 +115,10 @@ bool SessionManager::removeSessionAttribute(std::string sessionID, std::string k
 Susi::Util::Any SessionManager::getSessionAttribute(std::string sessionID, std::string key) {
 	std::lock_guard<std::mutex> lock(mutex);
 	if (sessionID.length() > 0 && sessions.count(sessionID) > 0)
-	{
+	{		
 		return sessions[sessionID].getAttribute(key);
 	}
-	return Susi::Util::Any();
+	return Susi::Util::Any{};
 }
 
 void SessionManager::updateSession(std::string id){

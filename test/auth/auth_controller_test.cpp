@@ -9,23 +9,24 @@ class AuthControllerTest : public ::testing::Test {
 protected:
 	std::string sessionID = "ljcfbhsdlfsdpf434sdff";
 
-	void SetUp() override {
-		world.setupEventSystem();
+	void SetUp() override {		
+		world.setupEventManager();
 		world.setupIOController();
 		world.setupSessionManager();
 		world.setupDBManager();
 		world.setupAuthController();
 		
 		Susi::setLogLevel(Susi::Logger::NOTHING);
-		auto db = world.dbManager->getDatabase("auth");
 
+		auto db = world.dbManager->getDatabase("auth");
+	
 		db->query("create table users("
         "    id integer,"
         "    username varchar(100),"
         "    password varchar(100)"
         ");");
 
-        db->query("insert into users(id, username, password) values(7, \'John\', \'Doe\');");
+        db->query("insert into users(id, username, password) values(7, \'John\', \'Doe\');");	
 	}
 
 	virtual void TearDown() override {

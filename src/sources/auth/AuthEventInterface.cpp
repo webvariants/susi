@@ -10,59 +10,54 @@
  */
 
 #include "auth/AuthEventInterface.h"
-#include "world/World.h"
 
 void Susi::Auth::EventInterface::init() {	
-	subscribe("auth::login", handleLogin);
-	subscribe("auth::logout", handleLogout);
-	subscribe("auth::isLoggedIn", handleIsLoggedIn);
+	Susi::Events::subscribe("auth::login", handleLogin);
+	Susi::Events::subscribe("auth::logout", handleLogout);
+	Susi::Events::subscribe("auth::isLoggedIn", handleIsLoggedIn);
 
-	subscribe("auth::getUsername", handleGetUsername);
+	Susi::Events::subscribe("auth::getUsername", handleGetUsername);
 }
 
-void Susi::Auth::EventInterface::handleLogin(Event & event) {
+void Susi::Auth::EventInterface::handleLogin(Susi::Events::EventPtr event) {
 	try{
-		std::string username = event.payload["username"];
-		std::string password  = event.payload["password"];
-		answerEvent(event, world.authController->login(event.sessionID, username, password));
+		std::string username = event->payload["username"];
+		std::string password  = event->payload["password"];
+
+		event->payload["success"] = world.authController->login(event->sessionID, username, password);
 	}catch(const std::exception & e){
 		std::string msg = "Error in handleLogin(): ";
 		msg += e.what();
-		Susi::error(msg);
-		answerEvent(event, false);
+		throw std::runtime_error(msg);
 	}
 }
 
-void Susi::Auth::EventInterface::handleLogout(Event & event) {
+void Susi::Auth::EventInterface::handleLogout(Susi::Events::EventPtr event) {
 	try{
-		world.authController->logout(event.sessionID);
-		answerEvent(event, true);
+		world.authController->logout(event->sessionID);		
 	}catch(const std::exception & e){
 		std::string msg = "Error in handleLogout(): ";
 		msg += e.what();
-		Susi::error(msg);
-		answerEvent(event, false);
+		throw std::runtime_error(msg);
 	}
 }
 
-void Susi::Auth::EventInterface::handleIsLoggedIn(Event & event) {
+void Susi::Auth::EventInterface::handleIsLoggedIn(Susi::Events::EventPtr event) {
 	try{
-		answerEvent(event, world.authController->isLoggedIn(event.sessionID));
+		event->payload["success"] = world.authController->isLoggedIn(event->sessionID);
 	}catch(const std::exception & e){
 		std::string msg = "Error in handleIsLoggedIn(): ";
 		msg += e.what();
-		Susi::error(msg);
-		answerEvent(event, false);
+		throw std::runtime_error(msg);
 	}
 }
 
-void Susi::Auth::EventInterface::handleGetUsername(Event & event) {
+void Susi::Auth::EventInterface::handleGetUsername(Susi::Events::EventPtr event) {
 	try{
-		answerEvent(event, world.authController->getUsername(event.sessionID));
+		event->payload["username"] = world.authController->getUsername(event->sessionID);
 	}catch(const std::exception & e){
 		std::string msg = "Error in handleIsLoggedIn(): ";
 		msg += e.what();
-		Susi::error(msg);
-		answerEvent(event, false);
+		throw std::runtime_error(msg);
 	}
 }

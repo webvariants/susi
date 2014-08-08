@@ -13,19 +13,20 @@
 #include "auth/AuthEventInterface.h"
 #include <condition_variable>
 
-#include "world/World.h"
-#include "logger/Logger.h"
+//#include "world/World.h"
+#include "events/global.h"
+//#include "logger/Logger.h"
 
 class AuthEventInterfaceTest : public ::testing::Test {
 	protected:
-		bool callbackCalled = false;
-		std::condition_variable cond;
-		std::mutex m;
+		std::mutex mutex;
+		bool callbackCalledOne = false;
+		std::condition_variable condOne;
 
 		std::string sessionID = "ljcfbhsdlfsdpf434sdff";
 
 	void SetUp() override {
-		world.setupEventSystem();
+		world.setupEventManager();
 		world.setupIOController();
 		world.setupSessionManager();
 		world.setupDBManager();
@@ -47,103 +48,114 @@ class AuthEventInterfaceTest : public ::testing::Test {
 	}
 };
 
-TEST_F(AuthEventInterfaceTest, LogIn_Wrong_User) {
-	Susi::once("login_fail_result",[this](Susi::Event & event){
-		EXPECT_FALSE(event.payload.convert<bool>());
-		callbackCalled = true;
-		cond.notify_one();
-	});
+using namespace Susi::Events;
 
-	auto event = Susi::Event("auth::login",Susi::Event::Payload({
+TEST_F(AuthEventInterfaceTest, LogIn_Wrong_User) {
+
+	auto event = createEvent("auth::login");
+	event->payload =  Susi::Util::Any::Object{
 		{"username","FOO"},
 		{"password","BAR"}
-	}));
-	event.returnAddr = "login_fail_result";
-	Susi::publish(event);
+	};
+	event->sessionID = sessionID;
+
+
+	publish(std::move(event),[this](SharedEventPtr event){
+		EXPECT_NO_THROW ({
+			bool success = event->payload["success"];
+			EXPECT_FALSE(success);
+		});
+		callbackCalledOne = true;
+		condOne.notify_all();
+	});
+
 	{
-		std::unique_lock<std::mutex> lk(m);
-		cond.wait_for(lk,
-			std::chrono::duration<int,std::milli>{500},
-			[this](){return callbackCalled;});
-		EXPECT_TRUE(callbackCalled);
+		std::unique_lock<std::mutex> lk(mutex);
+		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		EXPECT_TRUE(callbackCalledOne);
 	}
 }
 
 TEST_F(AuthEventInterfaceTest, LogIn_Right_User) {
-	Susi::once("login_success_result",[this](Susi::Event & event){
-		EXPECT_TRUE(event.payload.convert<bool>());
-		callbackCalled = true;
-		cond.notify_one();
-	});
 
-	auto event = Susi::Event("auth::login",Susi::Event::Payload({
+	auto event = createEvent("auth::login");
+	event->payload =  Susi::Util::Any::Object{
 		{"username","John"},
 		{"password","Doe"}
-	}));
-	event.returnAddr = "login_success_result";
-	Susi::publish(event);
+	};
+	event->sessionID = sessionID;
+
+	publish(std::move(event),[this](SharedEventPtr event){
+		EXPECT_NO_THROW ({
+			bool success = event->payload["success"];
+			EXPECT_TRUE(success);
+		});
+		callbackCalledOne = true;
+		condOne.notify_all();
+	});
+
 	{
-		std::unique_lock<std::mutex> lk(m);
-		cond.wait_for(lk,
-			std::chrono::duration<int,std::milli>{500},
-			[this](){return callbackCalled;});
-		EXPECT_TRUE(callbackCalled);
+		std::unique_lock<std::mutex> lk(mutex);
+		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		EXPECT_TRUE(callbackCalledOne);
 	}
 }
 
 TEST_F(AuthEventInterfaceTest, LogOut) {
-	Susi::once("logout_result",[this](Susi::Event & event){
-		callbackCalled = true;
-		cond.notify_one();
+
+	auto event = createEvent("auth::logout");
+	event->sessionID = sessionID;
+	
+	publish(std::move(event),[this](SharedEventPtr event){		
+		callbackCalledOne = true;
+		condOne.notify_all();
 	});
 
-	auto event = Susi::Event("auth::logout",Susi::Event::Payload({
-	}));
-	event.returnAddr = "logout_result";
-	Susi::publish(event);
 	{
-		std::unique_lock<std::mutex> lk(m);
-		cond.wait_for(lk,
-			std::chrono::duration<int,std::milli>{500},
-			[this](){return callbackCalled;});
-		EXPECT_TRUE(callbackCalled);
-	}
+		std::unique_lock<std::mutex> lk(mutex);
+		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		EXPECT_TRUE(callbackCalledOne);
+	}	
 }
 
 TEST_F(AuthEventInterfaceTest, IsLoggedIn) {
-	Susi::once("isloggedin_result",[this](Susi::Event & event){
-		callbackCalled = true;
-		cond.notify_one();
+
+	auto event = createEvent("auth::isLoggedIn");
+	event->sessionID = sessionID;
+	
+	publish(std::move(event),[this](SharedEventPtr event){
+		EXPECT_NO_THROW ({
+			bool success = event->payload["success"];
+			EXPECT_FALSE(success);
+		});
+		callbackCalledOne = true;
+		condOne.notify_all();
 	});
 
-	auto event = Susi::Event("auth::isLoggedIn",Susi::Event::Payload({
-	}));
-	event.returnAddr = "isloggedin_result";
-	Susi::publish(event);
 	{
-		std::unique_lock<std::mutex> lk(m);
-		cond.wait_for(lk,
-			std::chrono::duration<int,std::milli>{500},
-			[this](){return callbackCalled;});
-		EXPECT_TRUE(callbackCalled);
+		std::unique_lock<std::mutex> lk(mutex);
+		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		EXPECT_TRUE(callbackCalledOne);
 	}
 }
 
 TEST_F(AuthEventInterfaceTest, GetUsername) {
-	Susi::once("getusername_result",[this](Susi::Event & event){
-		callbackCalled = true;
-		cond.notify_one();
+
+	auto event = createEvent("auth::getUsername");
+	event->sessionID = sessionID;
+
+	publish(std::move(event),[this](SharedEventPtr event){
+		EXPECT_NO_THROW ({
+			std::string username = event->payload["username"];
+			EXPECT_EQ("", username);
+		});
+		callbackCalledOne = true;
+		condOne.notify_all();
 	});
 
-	auto event = Susi::Event("auth::getUsername",Susi::Event::Payload({
-	}));
-	event.returnAddr = "getusername_result";
-	Susi::publish(event);
 	{
-		std::unique_lock<std::mutex> lk(m);
-		cond.wait_for(lk,
-			std::chrono::duration<int,std::milli>{500},
-			[this](){return callbackCalled;});
-		EXPECT_TRUE(callbackCalled);
+		std::unique_lock<std::mutex> lk(mutex);
+		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		EXPECT_TRUE(callbackCalledOne);
 	}
 }

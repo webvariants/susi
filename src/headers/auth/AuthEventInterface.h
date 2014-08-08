@@ -12,17 +12,20 @@
 #ifndef __AUTH_EVENT_INTERFACE__
 #define __AUTH_EVENT_INTERFACE__
 
-#include "events/EventSystem.h"
+//#include "events/EventSystem.h"
 #include "auth/AuthController.h"
+
+#include "world/World.h"
+#include "events/global.h"
 
 
 namespace Susi {
 	namespace Auth {
 		namespace EventInterface {
-			void handleLogin(Susi::Event & event);
-			void handleLogout(Susi::Event & event);
-			void handleIsLoggedIn(Susi::Event & event);
-			void handleGetUsername(Susi::Event & event);
+			void handleLogin(Susi::Events::EventPtr event);
+			void handleLogout(Susi::Events::EventPtr event);
+			void handleIsLoggedIn(Susi::Events::EventPtr event);
+			void handleGetUsername(Susi::Events::EventPtr event);
 
 			void init();
 		}
