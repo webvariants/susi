@@ -17,6 +17,7 @@ struct Event {
 	std::string topic;
 	std::vector<Header> headers;
 	Susi::Util::Any payload;
+	std::string sessionID;
 };
 
 //Event pointer types

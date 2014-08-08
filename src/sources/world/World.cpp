@@ -134,9 +134,11 @@ void Susi::World::setupDBManager(){
 		auto & cfg = app.config();
 		dbConfigPath = cfg.getString("db.config");
 	}catch(const std::exception & e){}
+	
 	try{
-		IOController io;
+		IOController io;		
 		std::string configData = io.readFile(dbConfigPath);
+				
 		if(configData != ""){
 			Poco::JSON::Parser parser;
 			Poco::Dynamic::Var var = parser.parse(configData);
@@ -148,7 +150,7 @@ void Susi::World::setupDBManager(){
 											 obj->get("uri").toString());
 				dbs.push_back(tuple);
 			}
-		}
+		} 			
 	}catch(const std::exception & e){
 		std::string msg = "Execption while setup DBManager: ";
 		msg += e.what();
