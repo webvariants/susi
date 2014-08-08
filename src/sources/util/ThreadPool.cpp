@@ -18,9 +18,6 @@ void Susi::Util::ThreadPool::startThread(){
 			}
 			try{
 				work.work();
-				if(work.finish) {
-					work.finish();
-				}
 			}catch(const std::exception & e){
 				if(work.error) {
 					work.error(e.what());
@@ -32,9 +29,8 @@ void Susi::Util::ThreadPool::startThread(){
 }
 
 void Susi::Util::ThreadPool::add(std::function<void()> work,
-								 std::function<void()> finish,
 								 std::function<void(std::string)> error){
-	_workChannel.put(Work{work,finish,error});
+	_workChannel.put(Work{work,error});
 }
 
 Susi::Util::ThreadPool::~ThreadPool(){

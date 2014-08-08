@@ -175,5 +175,5 @@ void Susi::Events::Manager::ack(EventPtr event){
 	};
 
 	Work work{std::move(event),this};
-	pool.add(std::move(work),std::function<void()>{},error);
+	pool.add(std::move(work),error);
 }
