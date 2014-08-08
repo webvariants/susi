@@ -6,161 +6,255 @@
  *
  * http://www.opensource.org/licenses/mit-license.php
  *
- * @author: Christian Sonderfeld (christian.sonderfeld@webvariants.de)
+ * @author: Christian Sonderfeld (christian.sonderfeld@webvariants.de), Thomas Krause (thomas.krause@webvariants.de)
  */
 
 #include <gtest/gtest.h>
-#include <Poco/Dynamic/Var.h>
+#include <condition_variable>
+#include <chrono>
+//#include <Poco/Dynamic/Var.h>
+#include "events/global.h"
 #include "sessions/SessionManagerEventInterface.h"
-#include "world/World.h"
+//#include "world/World.h"
 
 using namespace Susi::Sessions;
+using namespace Susi::Events;
 
 class SessionManagerEventInterfaceTest : public ::testing::Test {
-protected:
-	void SetUp(){
-		world.setupHeartBeat();
-		world.setupSessionManager();
-	}
+	protected:
+		std::mutex mutex;
+		bool callbackCalledOne = false;
+		std::condition_variable condOne;
+		bool callbackCalledTwo = false;
+		std::condition_variable condTwo;
+		bool callbackCalledThree = false;
+		std::condition_variable condThree;
+		bool callbackCalledFour = false;
+		std::condition_variable condFour;
+		
+		void SetUp(){
+			world.setupEventManager();
+			world.setupHeartBeat();
+			world.setupSessionManager();
+		}
 };
 
+
 TEST_F(SessionManagerEventInterfaceTest, updateAndCheck) {
-	bool callbackCalled = false;
-	std::condition_variable cond;
-	std::mutex m;
-	auto payload = Susi::Event::Payload({{"id", "session1"}, {"seconds", 120}});
-	Susi::Event evt("session::update", payload);
-	publish(evt, [&cond, &callbackCalled](Susi::Event &event){
-		callbackCalled = true;
-		cond.notify_all();
-		EXPECT_TRUE(event.payload.convert<bool>());
+	
+	auto event = createEvent("session::update");
+	event->payload =  Susi::Util::Any::Object{
+		{"id", "session1"}, {"seconds", 120}
+	};
+
+	publish(std::move(event),[this](SharedEventPtr event){
+		EXPECT_NO_THROW ({
+			bool success = event->payload["success"];
+			EXPECT_TRUE(success);
+		});
+		callbackCalledOne = true;
+		condOne.notify_all();
 	});
+
 	{
-		std::unique_lock<std::mutex> lk(m);
-		cond.wait(lk,[&callbackCalled](){return callbackCalled;});
-		EXPECT_TRUE(callbackCalled);
-	}
-	payload = Susi::Event::Payload({{"id", "session1"}});
-	evt = Susi::Event("session::check", payload);
-	publish(evt, [&cond, &callbackCalled](Susi::Event &event){
-		callbackCalled = true;
-		cond.notify_all();
-		EXPECT_TRUE(event.payload.convert<bool>());
-	});
-	{
-		std::unique_lock<std::mutex> lk(m);
-		cond.wait(lk,[&callbackCalled](){return callbackCalled;});
-		EXPECT_TRUE(callbackCalled);
-	}
-}
-TEST_F(SessionManagerEventInterfaceTest, setAndgetAttribute) {
-	bool callbackCalled = false;
-	std::condition_variable cond;
-	std::mutex m;
-	auto payload = Susi::Event::Payload({{"id", "session1"}, {"key", "real"}, {"value", 200}});
-	Susi::Event evt("session::setAttribute", payload);
-	publish(evt, [&cond, &callbackCalled](Susi::Event &event){
-		callbackCalled = true;
-		cond.notify_all();
-		EXPECT_TRUE(event.payload.convert<bool>());
-	});
-	{
-		std::unique_lock<std::mutex> lk(m);
-		cond.wait(lk,[&callbackCalled](){return callbackCalled;});
-		EXPECT_TRUE(callbackCalled);
+		std::unique_lock<std::mutex> lk(mutex);
+		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		EXPECT_TRUE(callbackCalledOne);
 	}
 
-	payload = Susi::Event::Payload({{"id", "session1"}, {"key", "real"}});
-	evt = Susi::Event("session::getAttribute", payload);
-	publish(evt, [&cond, &callbackCalled](Susi::Event &event){
-		callbackCalled = true;
-		cond.notify_all();
-		EXPECT_EQ(200, event.payload.convert<int>());
+	
+	auto event2 = createEvent("session::check");
+	event2->payload =  Susi::Util::Any::Object{
+		{"id", "session1"}
+	};
+
+	publish(std::move(event2),[this](SharedEventPtr event){
+		EXPECT_NO_THROW ({
+			bool success = event->payload["success"];
+			EXPECT_TRUE(success);
+		});
+		callbackCalledTwo = true;
+		condTwo.notify_all();
 	});
+
 	{
-		std::unique_lock<std::mutex> lk(m);
-		cond.wait(lk,[&callbackCalled](){return callbackCalled;});
-		EXPECT_TRUE(callbackCalled);
+		std::unique_lock<std::mutex> lk(mutex);
+		condTwo.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledTwo;});
+		EXPECT_TRUE(callbackCalledTwo);
 	}
 }
+
+
+TEST_F(SessionManagerEventInterfaceTest, setAndgetAttribute) {
+
+	auto event = createEvent("session::setAttribute");
+	event->payload =  Susi::Util::Any::Object{
+		{"id", "session1"}, {"key", "real"}, {"value", 200}
+	};
+
+	publish(std::move(event),[this](SharedEventPtr event){
+		EXPECT_NO_THROW ({
+			bool success = event->payload["success"];
+			EXPECT_TRUE(success);
+		});
+		callbackCalledOne = true;
+		condOne.notify_all();
+	});
+
+	{
+		std::unique_lock<std::mutex> lk(mutex);
+		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		EXPECT_TRUE(callbackCalledOne);
+	}
+
+	
+	auto event2 = createEvent("session::getAttribute");
+	event2->payload =  Susi::Util::Any::Object{
+		{"id", "session1"}, {"key", "real"}
+	};
+
+	publish(std::move(event2),[this](SharedEventPtr event){
+		EXPECT_NO_THROW ({
+			Susi::Util::Any value = event->payload["value"];
+			int val_int = value;
+			EXPECT_EQ(200, val_int);
+		});
+		callbackCalledTwo = true;
+		condTwo.notify_all();
+	});
+
+	{
+		std::unique_lock<std::mutex> lk(mutex);
+		condTwo.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledTwo;});
+		EXPECT_TRUE(callbackCalledTwo);
+	}	
+}
+
 
 TEST_F(SessionManagerEventInterfaceTest, pushAttribute) {
-	bool callbackCalled = false;
-	std::condition_variable cond;
-	std::mutex m;
-	auto payload = Susi::Event::Payload({{"id", "session1"}, {"key", "real"}, {"value", 100}});
-	Susi::Event evt("session::pushAttribute", payload);
-	publish(evt, [&cond, &callbackCalled](Susi::Event &event){
-		callbackCalled = true;
-		cond.notify_all();
-		EXPECT_TRUE(event.payload.convert<bool>());
+
+	auto event = createEvent("session::pushAttribute");
+	event->payload =  Susi::Util::Any::Object{
+		{"id", "session1"}, {"key", "real"}, {"value", 100}
+	};
+
+	publish(std::move(event),[this](SharedEventPtr event){
+		EXPECT_NO_THROW ({
+			bool success = event->payload["success"];
+			EXPECT_TRUE(success);
+		});
+		callbackCalledOne = true;
+		condOne.notify_all();
 	});
+
 	{
-		std::unique_lock<std::mutex> lk(m);
-		cond.wait(lk,[&callbackCalled](){return callbackCalled;});
-		EXPECT_TRUE(callbackCalled);
+		std::unique_lock<std::mutex> lk(mutex);
+		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		EXPECT_TRUE(callbackCalledOne);
 	}
 
-	payload = Susi::Event::Payload({{"id", "session1"}, {"key", "real"}});
-	evt.topic = "session::getAttribute";
-	evt.payload = payload;
-	publish(evt, [&cond, &callbackCalled](Susi::Event &event){
-		callbackCalled = true;
-		cond.notify_all();
-		auto ret = event.payload;
-		EXPECT_EQ(100, ret[0].convert<int>());
+	auto event2 = createEvent("session::getAttribute");
+	event2->payload =  Susi::Util::Any::Object{
+		{"id", "session1"}, {"key", "real"}
+	};
+
+	publish(std::move(event2),[this](SharedEventPtr event){
+		EXPECT_NO_THROW ({
+			Susi::Util::Any value = event->payload["value"];
+			int val_int = value;
+			EXPECT_EQ(100, val_int);
+		});
+		callbackCalledTwo = true;
+		condTwo.notify_all();
 	});
+
 	{
-		std::unique_lock<std::mutex> lk(m);
-		cond.wait(lk,[&callbackCalled](){return callbackCalled;});
-		EXPECT_TRUE(callbackCalled);
-	}
+		std::unique_lock<std::mutex> lk(mutex);
+		condTwo.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledTwo;});
+		EXPECT_TRUE(callbackCalledTwo);
+	}	
 }
 
+
 TEST_F(SessionManagerEventInterfaceTest, removeAttribute) {
-	bool callbackCalled = false;
-	std::condition_variable cond;
-	std::mutex m;
-	auto payload = Susi::Event::Payload({{"id", "session1"}, {"key", "real"}});
-	Susi::Event evt("session::removeAttribute", payload);
-	publish(evt, [&cond, &callbackCalled](Susi::Event &event){
-		callbackCalled = true;
-		cond.notify_all();
-		EXPECT_FALSE(event.payload.convert<bool>());
+
+	auto event = createEvent("session::removeAttribute");
+	event->payload =  Susi::Util::Any::Object{
+		{"id", "session1"}, {"key", "real"}
+	};
+
+	publish(std::move(event),[this](SharedEventPtr event){
+		EXPECT_NO_THROW ({
+			bool success = event->payload["success"];
+			EXPECT_FALSE(success);
+		});
+		callbackCalledOne = true;
+		condOne.notify_all();
 	});
+
 	{
-		std::unique_lock<std::mutex> lk(m);
-		cond.wait(lk,[&callbackCalled](){return callbackCalled;});
-		EXPECT_TRUE(callbackCalled);
+		std::unique_lock<std::mutex> lk(mutex);
+		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		EXPECT_TRUE(callbackCalledOne);
 	}
 
-	payload = Susi::Event::Payload({{"id", "session1"}, {"key", "real"}, {"value", 200}});
-	Susi::Event evt1("session::setAttribute", payload);
-	Susi::publish(evt1);
+	auto event2 = createEvent("session::setAttribute");
+	event2->payload =  Susi::Util::Any::Object{
+		{"id", "session1"}, {"key", "real"}, {"value", 200}
+	};
 
-	payload = Susi::Event::Payload({{"id", "session1"}, {"key", "real"}});
-	Susi::Event evt2("session::removeAttribute", payload);
-	publish(evt2, [&cond, &callbackCalled](Susi::Event &event){
-		callbackCalled = true;
-		cond.notify_all();
-		EXPECT_TRUE(event.payload.convert<bool>());
+	publish(std::move(event2),[this](SharedEventPtr event){
+		EXPECT_NO_THROW ({
+			bool success = event->payload["success"];
+			EXPECT_TRUE(success);
+		});
+		callbackCalledTwo = true;
+		condTwo.notify_all();
 	});
+
 	{
-		std::unique_lock<std::mutex> lk(m);
-		cond.wait(lk,[&callbackCalled](){return callbackCalled;});
-		EXPECT_TRUE(callbackCalled);
+		std::unique_lock<std::mutex> lk(mutex);
+		condTwo.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledTwo;});
+		EXPECT_TRUE(callbackCalledTwo);
 	}
 
-	payload = Susi::Event::Payload({{"id", "session1"}, {"key", "real"}});
-	evt = Susi::Event("session::getAttribute", payload);
-	publish(evt, [&cond, &callbackCalled](Susi::Event &event){
-		callbackCalled = true;
-		cond.notify_all();
-		EXPECT_TRUE(event.payload.isEmpty());
+	auto event3 = createEvent("session::removeAttribute");
+	event3->payload =  Susi::Util::Any::Object{
+		{"id", "session1"}, {"key", "real"}
+	};
+
+	publish(std::move(event3),[this](SharedEventPtr event){
+		EXPECT_NO_THROW ({
+			bool success = event->payload["success"];
+			EXPECT_TRUE(success);
+		});
+		callbackCalledThree = true;
+		condThree.notify_all();
 	});
+
 	{
-		std::unique_lock<std::mutex> lk(m);
-		cond.wait(lk,[&callbackCalled](){return callbackCalled;});
-		EXPECT_TRUE(callbackCalled);
+		std::unique_lock<std::mutex> lk(mutex);
+		condThree.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledThree;});
+		EXPECT_TRUE(callbackCalledThree);
+	}
+
+	auto event4 = createEvent("session::getAttribute");
+	event4->payload =  Susi::Util::Any::Object{
+		{"id", "session1"}, {"key", "real"}
+	};
+
+	publish(std::move(event4),[this](SharedEventPtr event){
+		EXPECT_NO_THROW ({
+			Susi::Util::Any value = event->payload["value"];
+			EXPECT_TRUE(value.isNull());
+		});
+		callbackCalledFour = true;
+		condFour.notify_all();
+	});
+
+	{
+		std::unique_lock<std::mutex> lk(mutex);
+		condFour.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledFour;});
+		EXPECT_TRUE(callbackCalledFour);
 	}
 }

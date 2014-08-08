@@ -44,7 +44,7 @@ LIBS=-l PocoFoundation \
 susi: ./bin/susi
 
 test: ./bin/test
-	LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:./test/gtest-1.7.0/lib/.libs ./bin/test
+	LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:./test/gtest-1.7.0/lib/.libs:/opt/v8/out/x64.release/lib.target ./bin/test
 
 ./bin/susi: $(OBJECTS) $(MAIN)
 	$(CC) $(LDFLAGS) -o ./bin/susi $(OBJECTS) $(MAIN) $(LIBS)

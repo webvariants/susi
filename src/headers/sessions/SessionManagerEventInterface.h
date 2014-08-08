@@ -6,7 +6,7 @@
  *
  * http://www.opensource.org/licenses/mit-license.php
  *
- * @author: Christian Sonderfeld (christian.sonderfeld@webvariants.de)
+ * @author: Christian Sonderfeld (christian.sonderfeld@webvariants.de), Thomas Krause (thomas.krause@webvariants.de)
  */
 
 #ifndef __SESSIONEVENTINTERFACE__
@@ -15,15 +15,18 @@
 #include "events/EventSystem.h"
 #include "sessions/SessionManager.h"
 
+#include "world/World.h"
+#include "events/global.h"
+
 namespace Susi {
 	namespace Sessions {
 		using Susi::Event;
-		void handleGetAttribute(Event & event);
-		void handleSetAttribute(Event & event);
-		void handlePushAttribute(Event & event);
-		void handleRemoveAttribute(Event & event);
-		void handleUpdate(Event & event);
-		void handleCheck(Event & event);
+		void handleGetAttribute(Susi::Events::EventPtr event);
+		void handleSetAttribute(Susi::Events::EventPtr event);
+		void handlePushAttribute(Susi::Events::EventPtr event);
+		void handleRemoveAttribute(Susi::Events::EventPtr event);
+		void handleUpdate(Susi::Events::EventPtr event);
+		void handleCheck(Susi::Events::EventPtr event);
 		void initEventInterface();
 	}
 }
