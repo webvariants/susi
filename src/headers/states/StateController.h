@@ -18,7 +18,6 @@
 #include <Poco/Dynamic/Var.h>
 #include <Poco/JSON/Parser.h>
 
-#include "events/EventSystem.h"
 #include "iocontroller/IOController.h"
 #include "logger/Logger.h"
 

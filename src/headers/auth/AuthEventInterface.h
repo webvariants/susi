@@ -12,7 +12,6 @@
 #ifndef __AUTH_EVENT_INTERFACE__
 #define __AUTH_EVENT_INTERFACE__
 
-//#include "events/EventSystem.h"
 #include "auth/AuthController.h"
 
 #include "world/World.h"

@@ -12,7 +12,6 @@
 #ifndef __DB_EVENT_INTERFACE__
 #define __DB_EVENT_INTERFACE__
 
-#include "events/EventSystem.h"
 #include "db/Database.h"
 #include "db/Manager.h"
 

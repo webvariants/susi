@@ -12,8 +12,6 @@
 #ifndef __STATE_EVENT_INTERFACE__
 #define __STATE_EVENT_INTERFACE__
 
-
-#include "events/EventSystem.h"
 #include "states/StateController.h"
 
 #include "world/World.h"
