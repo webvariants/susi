@@ -55,7 +55,7 @@ namespace Susi {
 			Type type;
 
 			bool boolValue;
-			int integerValue;
+			long long integerValue;
 			double doubleValue;
 			std::string stringValue;
 			std::deque<Any> arrayValue;
@@ -97,6 +97,8 @@ namespace Susi {
 			Any(const Any & value);
 			Any(const bool & value);
 			Any(const int & value);
+			Any(const long & value);
+			Any(const long long & value);
 			Any(const double & value);
 			Any(const std::string & value);
 			Any(const char* value) : Any(std::string{value}) {}
@@ -107,6 +109,8 @@ namespace Susi {
 			Any(Any && value);
 			Any(bool && value);
 			Any(int && value);
+			Any(long && value);
+			Any(long long && value);
 			Any(double && value);
 			Any(std::string && value);
 			Any(std::deque<Any> && value);
@@ -116,6 +120,8 @@ namespace Susi {
 			void operator=(Any && value);
 			void operator=(bool && value);
 			void operator=(int && value);
+			void operator=(long && value);
+			void operator=(long long && value);
 			void operator=(double && value);
 			void operator=(std::string && value);
 			void operator=(std::deque<Any> && value);
@@ -125,6 +131,8 @@ namespace Susi {
 			void operator=(const Any & value);
 			void operator=(const bool & value);
 			void operator=(const int & value);
+			void operator=(const long & value);
+			void operator=(const long long & value);
 			void operator=(const double & value);
 			void operator=(const std::string & value);
 			void operator=(const char* value);
@@ -138,13 +146,16 @@ namespace Susi {
 
 
 			//reference conversion operators
-			operator bool&(); // Any foo(true); bool & value = foo; value = false; EXPECT_FALSE(foo);
-			operator int&();
+			operator bool&(); // Any foo(true); bool & value = foo; value = false; EXPECT_FALSE(foo);			
+			operator long long&();
 			operator double&();
 			operator std::string&();
 			operator std::deque<Any>&();
 			operator std::map<std::string,Any>&();
-			
+
+			// copy conversion operators
+			operator int();
+			operator long();			
 
 			bool operator==(const Any & other) const;
 			bool operator!=(const Any & other) const;
