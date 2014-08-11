@@ -22,6 +22,8 @@ class AuthEventInterfaceTest : public ::testing::Test {
 		std::mutex mutex;
 		bool callbackCalledOne = false;
 		std::condition_variable condOne;
+		bool callbackCalledTwo = false;
+		std::condition_variable condTwo;
 
 		std::string sessionID = "ljcfbhsdlfsdpf434sdff";
 
@@ -106,7 +108,7 @@ TEST_F(AuthEventInterfaceTest, LogOut) {
 	auto event = createEvent("auth::logout");
 	event->sessionID = sessionID;
 	
-	publish(std::move(event),[this](SharedEventPtr event){		
+	publish(std::move(event),[this](SharedEventPtr event){			
 		callbackCalledOne = true;
 		condOne.notify_all();
 	});
@@ -120,13 +122,32 @@ TEST_F(AuthEventInterfaceTest, LogOut) {
 
 TEST_F(AuthEventInterfaceTest, IsLoggedIn) {
 
-	auto event = createEvent("auth::isLoggedIn");
+
+	auto event = createEvent("auth::login");
+	event->payload =  Susi::Util::Any::Object{
+		{"username","John"},
+		{"password","Doe"}
+	};
 	event->sessionID = sessionID;
-	
+
 	publish(std::move(event),[this](SharedEventPtr event){
+
+
+		auto evt = createEvent("auth::isLoggedIn");
+		evt->sessionID = event->sessionID;
+		publish(std::move(evt),[this](SharedEventPtr event){
+			EXPECT_NO_THROW ({
+				bool success = event->payload["success"];
+				EXPECT_TRUE(success);
+			});
+			callbackCalledTwo = true;
+			condTwo.notify_all();
+		});
+
+
 		EXPECT_NO_THROW ({
 			bool success = event->payload["success"];
-			EXPECT_FALSE(success);
+			EXPECT_TRUE(success);
 		});
 		callbackCalledOne = true;
 		condOne.notify_all();
@@ -137,17 +158,39 @@ TEST_F(AuthEventInterfaceTest, IsLoggedIn) {
 		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
 		EXPECT_TRUE(callbackCalledOne);
 	}
+	{
+		std::unique_lock<std::mutex> lk(mutex);
+		condTwo.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledTwo;});
+		EXPECT_TRUE(callbackCalledTwo);
+	}
 }
 
 TEST_F(AuthEventInterfaceTest, GetUsername) {
 
-	auto event = createEvent("auth::getUsername");
+	auto event = createEvent("auth::login");
+	event->payload =  Susi::Util::Any::Object{
+		{"username","John"},
+		{"password","Doe"}
+	};
 	event->sessionID = sessionID;
 
 	publish(std::move(event),[this](SharedEventPtr event){
+
+		auto evt = createEvent("auth::getUsername");
+		evt->sessionID = event->sessionID;
+		publish(std::move(evt),[this](SharedEventPtr event){
+			EXPECT_NO_THROW ({
+				std::string username = event->payload["username"];
+				EXPECT_EQ("John", username);
+			});
+			callbackCalledTwo = true;
+			condTwo.notify_all();
+		});
+
+
 		EXPECT_NO_THROW ({
-			std::string username = event->payload["username"];
-			EXPECT_EQ("", username);
+			bool success = event->payload["success"];
+			EXPECT_TRUE(success);
 		});
 		callbackCalledOne = true;
 		condOne.notify_all();
@@ -157,5 +200,10 @@ TEST_F(AuthEventInterfaceTest, GetUsername) {
 		std::unique_lock<std::mutex> lk(mutex);
 		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
 		EXPECT_TRUE(callbackCalledOne);
+	}
+	{
+		std::unique_lock<std::mutex> lk(mutex);
+		condTwo.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledTwo;});
+		EXPECT_TRUE(callbackCalledTwo);
 	}
 }
