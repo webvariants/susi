@@ -347,6 +347,9 @@ size_t Any::size() const {
 
 // index operators 
 Any& Any::operator[](const int pos) {
+	if(type == UNDEFINED){
+		type = ARRAY;
+	}
 	if(type != ARRAY) {
 		throw WrongTypeException(ARRAY, type);
 	} 
@@ -354,6 +357,9 @@ Any& Any::operator[](const int pos) {
 }
 
 Any& Any::operator[](std::string key){
+	if(type == UNDEFINED){
+		type = OBJECT;
+	}
 	if(type != OBJECT) {
 		throw WrongTypeException(OBJECT, type);
 	}
@@ -502,33 +508,36 @@ std::string Any::toString(){
 }
 
 Any Any::fromString(std::string str) {
+	try{
+		if(Susi::Util::Any::testIsStringJsonPrimitive(str)) {
+			Susi::Util::Any v;		
+			if(Susi::Util::Helpers::isInteger(str)) {			
+				v = Susi::Util::Any{std::stoi(str)};
+			} else if(Susi::Util::Helpers::isDouble(str)) {
+				v = Susi::Util::Any{std::stod(str)};
+			} else {
+				//value is String
+				v = str;	
+			}
 
-	if(Susi::Util::Any::testIsStringJsonPrimitive(str)) {
-		Susi::Util::Any v;		
-		if(Susi::Util::Helpers::isInteger(str)) {			
-			v = Susi::Util::Any{std::stoi(str)};
-		} else if(Susi::Util::Helpers::isDouble(str)) {
-			v = Susi::Util::Any{std::stod(str)};
+			return v;
 		} else {
-			//value is String
-			v = str;	
+
+			int r;
+			jsmn_parser p;
+			jsmntok_t tokens[JSON_TOKENS];
+			jsmn_init(&p);
+			r = jsmn_parse(&p, str.c_str(), str.size(), tokens, JSON_TOKENS);
+
+			if(r < 0) {
+				throw std::runtime_error{"Any::fromString parse error"};	
+			}
+
+			jsmntok_t * start = &tokens[0];
+		    return tokenToAny(start,str.c_str());
 		}
-
-		return v;
-	} else {
-
-		int r;
-		jsmn_parser p;
-		jsmntok_t tokens[JSON_TOKENS];
-		jsmn_init(&p);
-		r = jsmn_parse(&p, str.c_str(), str.size(), tokens, JSON_TOKENS);
-
-		if(r < 0) {
-			throw std::runtime_error{"Any::fromString parse error"};	
-		}
-
-		jsmntok_t * start = &tokens[0];
-	    return tokenToAny(start,str.c_str());
+	}catch(...){
+		return Susi::Util::Any{};
 	}
 }
 
