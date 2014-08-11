@@ -27,6 +27,16 @@ Any::Any(const int & value) {
 	this->integerValue = value;
 }
 
+Any::Any(const long & value) {
+	this->type = INTEGER;
+	this->integerValue = value;
+}
+
+Any::Any(const long long & value) {
+	this->type = INTEGER;
+	this->integerValue = value;
+}
+
 Any::Any(const double & value) {
 	this->type = DOUBLE;
 	this->doubleValue = value;
@@ -86,8 +96,21 @@ Any::Any(bool && value) {
 }
 Any::Any(int && value) {
 	type = INTEGER;
+	this->integerValue = value;
+	value = 0;		
+}
+
+Any::Any(long && value) {
+	type = INTEGER;	
+	this->integerValue = value;
+	value = 0;	
+}
+
+Any::Any(long long && value) {
+	type = INTEGER;
 	std::swap(this->integerValue,value);
 }
+
 Any::Any(double && value) {
 	type = DOUBLE;
 	std::swap(this->doubleValue,value);
@@ -148,6 +171,24 @@ void Any::operator=(int && value) {
 		throw WrongTypeException(INTEGER, this->type);
 	}
 	type = INTEGER;
+	this->integerValue = value;
+	value = 0;	
+}
+
+void Any::operator=(long && value) {
+	if(this->type != UNDEFINED && this->type != INTEGER){
+		throw WrongTypeException(INTEGER, this->type);
+	}
+	type = INTEGER;
+	this->integerValue = value;
+	value = 0;
+}
+
+void Any::operator=(long long && value) {
+	if(this->type != UNDEFINED && this->type != INTEGER){
+		throw WrongTypeException(INTEGER, this->type);
+	}
+	type = INTEGER;
 	std::swap(this->integerValue,value);
 }
 void Any::operator=(double && value) {
@@ -190,6 +231,22 @@ void Any::operator=(const bool & value) {
 }
 
 void Any::operator=(const int & value) {
+	if(this->type != UNDEFINED && this->type != INTEGER){
+		throw WrongTypeException(INTEGER, this->type);
+	}
+	this->type = INTEGER;
+	this->integerValue = value;
+}
+
+void Any::operator=(const long & value) {
+	if(this->type != UNDEFINED && this->type != INTEGER){
+		throw WrongTypeException(INTEGER, this->type);
+	}
+	this->type = INTEGER;
+	this->integerValue = value;
+}
+
+void Any::operator=(const long long & value) {
 	if(this->type != UNDEFINED && this->type != INTEGER){
 		throw WrongTypeException(INTEGER, this->type);
 	}
@@ -379,7 +436,8 @@ Any::operator bool&() {
 
 	return this->boolValue;
 }
-Any::operator int&() {
+
+Any::operator long long&() {
 	if(this->type != INTEGER) {
 		throw WrongTypeException(INTEGER, type);
 	}
@@ -414,6 +472,24 @@ Any::operator std::map<std::string,Any>&() {
 
 	return this->objectValue;
 }
+
+
+// copy conversion operators
+Any::operator int() {
+	if(this->type != INTEGER) {
+		throw WrongTypeException(INTEGER, type);
+	}
+
+	return static_cast<int>(this->integerValue);
+}
+Any::operator long() {
+	if(this->type != INTEGER) {
+		throw WrongTypeException(INTEGER, type);
+	}
+
+	return static_cast<long>(this->integerValue);
+}
+
 
 
 bool Any::operator==(const Any & other) const {
@@ -593,7 +669,7 @@ Any Any::tokenToAny(jsmntok_t * & t, const  char *js){
 			} else if(str.find('.') != std::string::npos) {
 				result = std::stod(str);
 			} else {
-				result = std::stoi(str);
+				result = std::stoll(str);
 			}
 			t++;
 			break;

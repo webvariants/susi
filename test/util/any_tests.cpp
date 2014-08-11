@@ -101,33 +101,33 @@ TEST(Any, IntegerConstructorsAndAssignments) {
 	Any a{123};
 	EXPECT_EQ(Any::INTEGER,a.getType());
 	EXPECT_TRUE(a.isInteger());
-	EXPECT_EQ(123,static_cast<int>(a));
+	EXPECT_EQ(123,static_cast<long long>(a));
 
 	// Copy Constructor
 	Any b{a};
 	EXPECT_EQ(Any::INTEGER,b.getType());
 	EXPECT_TRUE(b.isInteger());
-	EXPECT_EQ(123,static_cast<int>(b));
+	EXPECT_EQ(123,static_cast<long long>(b));
 	
 	// Move Constructor
 	Any c{123};
 	Any d{std::move(c)};
 	EXPECT_EQ(Any::INTEGER,d.getType());
 	EXPECT_TRUE(d.isInteger());
-	EXPECT_EQ(123,static_cast<int>(d));
+	EXPECT_EQ(123,static_cast<long long>(d));
 	EXPECT_TRUE(c.isNull());
 
 	// Copy asignment operator
 	Any e = a;
 	EXPECT_EQ(Any::INTEGER,e.getType());
 	EXPECT_TRUE(e.isInteger());
-	EXPECT_EQ(123,static_cast<int>(e));
+	EXPECT_EQ(123,static_cast<long long>(e));
 	
 	// Move asignment operator
 	Any f = std::move(a);	
 	EXPECT_EQ(Any::INTEGER,f.getType());
 	EXPECT_TRUE(f.isInteger());
-	EXPECT_EQ(123,static_cast<int>(f));
+	EXPECT_EQ(123,static_cast<long long>(f));
 	EXPECT_TRUE(a.isNull());
 }
 
@@ -282,7 +282,7 @@ TEST(Any,UndefinedConversion){
 	},Any::WrongTypeException);
 	
 	EXPECT_THROW({
-		int v = a;
+		long long v = a;
 		if(v){};
 	},Any::WrongTypeException);
 	
@@ -317,7 +317,7 @@ TEST(Any,BoolConversion){
 	});
 	
 	EXPECT_THROW({
-		int v = a;
+		long long v = a;
 		if(v){};
 	},Any::WrongTypeException);
 
@@ -351,7 +351,7 @@ TEST(Any,IntegerConversion){
 	},Any::WrongTypeException);
 	
 	EXPECT_NO_THROW({
-		int v = a;
+		long long v = a;
 		EXPECT_EQ(23,v);
 	});
 	
@@ -385,7 +385,7 @@ TEST(Any,DoubleConversion){
 	},Any::WrongTypeException);
 	
 	EXPECT_THROW({
-		int v = a;
+		long long v = a;
 		if(v){};
 	},Any::WrongTypeException);
 
@@ -419,7 +419,7 @@ TEST(Any,StringConversion){
 	},Any::WrongTypeException);
 	
 	EXPECT_THROW({
-		int v = a;
+		long long v = a;
 		if(v){};
 	},Any::WrongTypeException);
 
@@ -454,7 +454,7 @@ TEST(Any,ArrayConversion){
 	},Any::WrongTypeException);
 	
 	EXPECT_THROW({
-		int v = a;
+		long long v = a;
 		if(v){};
 	},Any::WrongTypeException);
 
@@ -489,7 +489,7 @@ TEST(Any,ObjectConversion){
 	},Any::WrongTypeException);
 	
 	EXPECT_THROW({
-		int v = a;
+		long long v = a;
 		if(v){};
 	},Any::WrongTypeException);
 
@@ -870,5 +870,15 @@ TEST (Any, FromString){
 
 	Any s2 = Any::fromString("\"foo bar!\"");
 	EXPECT_EQ(Any{"foo bar!"}.toString(), s2.toString());	
+}
+
+TEST (Any, CopyConversionOperators){
+
+	Any foo = 21;
+	int bar = foo;
+	long lbar = foo;
+
+	EXPECT_EQ(21, bar);
+	EXPECT_EQ(21, lbar);
 }
 
