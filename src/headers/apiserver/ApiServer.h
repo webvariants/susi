@@ -13,21 +13,17 @@
 #define __APISERVER__
 
 #include <memory>
-#include "apiserver/JSONTCPServer.h"
 #include "events/global.h"
+#include <functional>
 
 namespace Susi {
 namespace Api {
 
-class ApiServer : JSONTCPServer {
-public:
-	ApiServer(unsigned short port) : JSONTCPServer{port} {}
+class ApiServer {
 protected:
-	
+	std::map<std::string,std::function<void(Susi::Util::Any&)>> senders;
 	std::map<std::string,std::map<std::string,long>> subscriptions;
 	std::map<std::string,std::map<long,Susi::Events::EventPtr>> eventsToAck;
-
-	virtual void onMessage(std::string & id, Susi::Util::Any & packet) override;
 	
 	void handleRegisterConsumer(std::string & id, Susi::Util::Any & packet);
 	void handleRegisterProcessor(std::string & id, Susi::Util::Any & packet);
@@ -35,11 +31,21 @@ protected:
 	void handlePublish(std::string & id, Susi::Util::Any & packet);
 	void handleAck(std::string & id, Susi::Util::Any & packet);
 
-	void handleMalformedPacket(std::string & id, Susi::Util::Any & packet);
-	
 	void sendOk(std::string & id);
-	void sendFail(std::string & id);
+	void sendFail(std::string & id,std::string error = "");
+	
+	void send(std::string & id, Susi::Util::Any & msg){
+		auto & sender = senders[id];
+		if(sender)sender(msg);
+	}
 
+public:
+	inline void registerSender(std::string id , std::function<void(Susi::Util::Any&)> sender){
+		senders[id] = sender;
+	}
+	void onConnect(std::string & id);
+	void onMessage(std::string & id, Susi::Util::Any & packet);
+	void onClose(std::string & id);
 };
 
 }

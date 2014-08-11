@@ -39,7 +39,7 @@ protected:
 	}
 
 	void send(std::string & id, Susi::Util::Any & message){
-		std::string msg = message.toString();
+		std::string msg = message.toString()+"\n";
 		TCPServer::send(id,msg);
 	}
 };
