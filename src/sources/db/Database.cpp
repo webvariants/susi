@@ -18,17 +18,14 @@ Susi::Util::Any Susi::DB::Database::query(std::string query){
 					value = row.get<double>(i);
 					break;
 				case soci::dt_integer:
-
 					value = row.get<int>(i);
 					break;
-					/*
 				case soci::dt_long_long:
 					value = row.get<long long>(i);
 					break;
 				case soci::dt_unsigned_long_long:
-					value = row.get<unsigned long long>(i);
+					value = static_cast<long long>(row.get<unsigned long long>(i));
 					break;
-					*/
 				case soci::dt_date:
 					std::tm when = row.get<std::tm>(i);
 					value = asctime(&when);
