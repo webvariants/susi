@@ -32,6 +32,7 @@
 #include "iocontroller/IOEventInterface.h"
 #include "logger/Logger.h"
 #include "enginestarter/EngineStarter.h"
+#include "enginestarter/EngineEventinterface.h"
 #include "auth/AuthController.h"
 #include "auth/AuthEventInterface.h"
 #include "states/StateController.h"
@@ -68,7 +69,7 @@ namespace Susi{
 		std::shared_ptr<Susi::HeartBeat>				heartBeat{nullptr};
 		std::shared_ptr<Susi::DB::Manager>				dbManager{nullptr};
 		std::shared_ptr<Susi::Logger>					logger{nullptr};
-		std::shared_ptr<Susi::EngineStarter>			engineStarter{nullptr};
+		std::shared_ptr<Susi::EngineStarter::Starter>	engineStarter{nullptr};
 		std::shared_ptr<Susi::Auth::Controller>			authController{nullptr};
 		std::shared_ptr<Susi::States::StateController>	stateController{nullptr};
 		std::shared_ptr<Susi::Syscall::Controller>		syscallController{nullptr};

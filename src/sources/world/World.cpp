@@ -59,7 +59,9 @@ void Susi::World::setupEngineStarter(){
 		auto & cfg = app.config();
 		base = cfg.getString("enginestarter.root");
 	}catch(const std::exception & e){}
-	engineStarter = std::shared_ptr<Susi::EngineStarter>{new Susi::EngineStarter(base)};
+	engineStarter = std::shared_ptr<Susi::EngineStarter::Starter>{new Susi::EngineStarter::Starter(base)};
+
+	Susi::EngineStarter::EventInterface::init();
 }
 
 void Susi::World::setupEventSystem(){

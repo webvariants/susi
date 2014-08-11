@@ -18,22 +18,24 @@
 #include <iostream>
 #include <string>
 
-#include <events/EventSystem.h>
+//#include <events/EventSystem.h>
+#include "events/global.h"
+#include "events/Manager.h"
 #include <logger/Logger.h>
 
 namespace Susi {
-
-	class EngineStarter {
-			std::string path;
-			std::vector<Poco::ProcessHandle> phs; 
-		public:
-			EngineStarter(std::string path);
-			void execute();
-			void killall();
-		private:
-			void rec_dir(const std::string & path);
-	};
-
+	namespace EngineStarter {
+		class Starter {
+				std::string path;
+				std::vector<Poco::ProcessHandle> phs; 
+			public:
+				Starter(std::string path);
+				void execute();
+				void killall();
+			private:
+				void rec_dir(const std::string & path);
+		};
+	}
 }
 
 #endif // __ENGINE_STARTER__
