@@ -84,31 +84,23 @@ TEST_F(ConfigTest,CommandLine){
 	Any cfg = Any::Object{{"foo",Any::Object{{"bar", Any::Object{{"baz",123}}}}}};
 	io.writeFile("./configtest/config.cfg",cfg.toString());
 
-	char * cmdLine_1[] = {"prognameIsAllwaysFirstParam","-baz","321"};
-	char * cmdLine_2[] = {"prognameIsAllwaysFirstParam","-baz","321.123"};
-	char * cmdLine_3[] = {"prognameIsAllwaysFirstParam","-baz","this is it"};
+	std::vector<std::string> cmdLine_1 = {"prognameIsAllwaysFirstParam","-baz","321"};
+	std::vector<std::string> cmdLine_2 = {"prognameIsAllwaysFirstParam","-baz","321.123"};
+	std::vector<std::string> cmdLine_3 = {"prognameIsAllwaysFirstParam","-baz","this is it"};
 
 	EXPECT_NO_THROW({
 		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
 		config->registerCommandLineOption("baz","foo.bar.baz");		
-		config->parseCommandLine(3,cmdLine_1);		
+		config->parseCommandLine(cmdLine_1);		
 		EXPECT_EQ(Any{321}.toString(),config->get("foo.bar.baz").toString());
 
 				
-		config->parseCommandLine(3,cmdLine_2);
+		config->parseCommandLine(cmdLine_2);
 		EXPECT_EQ(Any{321.123}.toString(),config->get("foo.bar.baz").toString());
 		
 
-		config->parseCommandLine(3,cmdLine_3);
+		config->parseCommandLine(cmdLine_3);
 		EXPECT_EQ(Any{"this is it"}.toString(),config->get("foo.bar.baz").toString());
 		
 	});
-
-	/*
-	EXPECT_THROW({
-		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
-		char ** cmdLine = {"prognameIsAllwaysFirstParam","-baz",321}
-	},std::runtime_error);
-
-	*/
 }

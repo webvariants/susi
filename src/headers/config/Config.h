@@ -50,7 +50,7 @@ public:
 	// loops though the args and check if it is in _knownCommandLineOptions
 	// if so, place it in the _configVar at the specified key
 	// should throw an error if unknown commandline options are supplied, but should parse everything else
-	void parseCommandLine(int argc, char *argv[]);
+	void parseCommandLine(std::vector<std::string> argv);
 
 	// get a config variable.
 	// keys are in this format: "foo.bar.baz"

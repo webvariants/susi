@@ -61,8 +61,10 @@ void Susi::Config::registerCommandLineOption(std::string name, std::string key) 
 // loops though the args and check if it is in _knownCommandLineOptions
 // if so, place it in the _configVar at the specified key
 // should throw an error if unknown commandline options are supplied, but should parse everything else
-void Susi::Config::parseCommandLine(int argc, char *argv[]) {
+void Susi::Config::parseCommandLine(std::vector<std::string> argv) {
 	std::map<std::string,std::string>::iterator it;
+
+	int argc = argv.size();
 
 	if(argc < 3) {
 		std::cout<<"not enough args!"<<std::endl;
