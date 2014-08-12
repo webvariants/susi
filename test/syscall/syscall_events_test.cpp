@@ -62,10 +62,12 @@ TEST_F(SysCallEventInterfaceTest,StartProgress){
 		int returnVal   = result["return"];
 		std::string err = result["stderr"];
 		std::string out = result["stdout"];
+		std::string process_type = result["process_type"];
 
 		EXPECT_EQ(0, returnVal);
 		EXPECT_EQ("", err);
 		EXPECT_EQ("TTT", out);
+		EXPECT_EQ("ECHO", process_type);
 		callbackCalledTwo = true;
 		condTwo.notify_all();
 
@@ -73,8 +75,7 @@ TEST_F(SysCallEventInterfaceTest,StartProgress){
 	});
 	
 	auto event = createEvent("syscall::startProcess");
-	event->payload =  Susi::Util::Any::Object{
-		{"returnAddr","foo"},
+	event->payload =  Susi::Util::Any::Object{		
 		{"process_type","ECHO"},
 		{"argsReplace" , Susi::Util::Any::Object{{"arg", "TTT"}}}
 	};
@@ -110,10 +111,12 @@ TEST_F(SysCallEventInterfaceTest,StartProgressBackground){
 		int returnVal   = result["return"];
 		std::string err = result["stderr"];
 		std::string out = result["stdout"];
+		std::string process_type = result["process_type"];
 
 		EXPECT_EQ(0, returnVal);
 		EXPECT_EQ("", err);
 		EXPECT_EQ("", out);
+		EXPECT_EQ("INBG", process_type);
 		callbackCalledThree = true;
 		condThree.notify_all();
 
@@ -124,7 +127,10 @@ TEST_F(SysCallEventInterfaceTest,StartProgressBackground){
 
 		Susi::Util::Any result = event->payload["result"];
 		bool started   = result["started"];
+		std::string process_type = result["process_type"];
+		
 		EXPECT_TRUE(started);
+		EXPECT_EQ("INBG", process_type);
 
 		callbackCalledTwo = true;
 		condTwo.notify_all();
@@ -134,7 +140,6 @@ TEST_F(SysCallEventInterfaceTest,StartProgressBackground){
 	
 	auto event = createEvent("syscall::startProcess");
 	event->payload =  Susi::Util::Any::Object{
-		{"returnAddr","foo"},
 		{"process_type","INBG"},
 		{"argsReplace" , Susi::Util::Any::Object{{}}}
 	};
@@ -172,7 +177,6 @@ TEST_F(SysCallEventInterfaceTest,StartWrongProgress){
 
 	auto event = createEvent("syscall::startProcess");
 	event->payload =  Susi::Util::Any::Object{
-		{"returnAddr","foo"},
 		{"process_type","DONT EXIST IN CONFIG"},
 		{"argsReplace" , Susi::Util::Any::Object{{"arg", "TTT"}}}
 	};

@@ -37,7 +37,7 @@ namespace Susi {
 				Controller();
 				Controller(std::string config_path);
 
-				bool startProcess(std::string returnAddr, std::string process_type, std::map<std::string, std::string> argsReplace);				
+				bool startProcess(std::string process_type, std::map<std::string, std::string> argsReplace);				
 		};
 	}
 }

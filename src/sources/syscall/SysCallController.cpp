@@ -20,12 +20,12 @@ Susi::Syscall::Controller::Controller(std::string configPath) {
 	}
 }
 
-bool Susi::Syscall::Controller::startProcess(std::string returnAddr, std::string process_type, std::map<std::string, std::string> argsReplace) {
+bool Susi::Syscall::Controller::startProcess(std::string process_type, std::map<std::string, std::string> argsReplace) {
 
 	auto searchItem = this->processMap.find(process_type);
 	if(searchItem != this->processMap.end()) {
 
-		Susi::Syscall::Worker worker(returnAddr, searchItem->second.cmd, searchItem->second.getArgs(argsReplace), searchItem->second.background);		
+		Susi::Syscall::Worker worker(process_type, searchItem->second.cmd, searchItem->second.getArgs(argsReplace), searchItem->second.background);		
 
 		pool.start(worker);
 	    pool.joinAll();

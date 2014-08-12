@@ -1,7 +1,7 @@
 #include "syscall/SysCallWorker.h"
 
-Susi::Syscall::Worker::Worker(std::string returnAddr, std::string cmd, std::vector<std::string> args, bool bg) {
-	this->_returnAddr = returnAddr;
+Susi::Syscall::Worker::Worker(std::string process_type, std::string cmd, std::vector<std::string> args, bool bg) {
+	this->_process_type = process_type;
 	this->_cmd = cmd;
 	this->_args = args;
 	this->_bg = bg;
@@ -31,7 +31,8 @@ void Susi::Syscall::Worker::run() {
 
 	if(_bg == true) {
 		auto start_payload = Susi::Util::Any::Object{
-			{"started", true}
+			{"process_type" , _process_type },
+			{"started", true}			
 		};
 		auto started_event = Susi::Events::createEvent("syscall::startedProcess");
 		started_event->payload["result"] = start_payload;
@@ -42,6 +43,7 @@ void Susi::Syscall::Worker::run() {
 	int rc = ph.wait();
 
 	Susi::Util::Any end_payload = Susi::Util::Any::Object{
+		{"process_type" , _process_type },
 		{"stdout", this->getPipeContent(ostr)},
 		{"stderr", this->getPipeContent(estr)},
 		{"return", rc}
