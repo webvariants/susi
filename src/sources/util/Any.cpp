@@ -489,6 +489,17 @@ Any::operator long() {
 
 	return static_cast<long>(this->integerValue);
 }
+Any::operator std::map<std::string,std::string>(){
+	if(this->type != OBJECT) {
+		throw WrongTypeException(OBJECT, type);
+	}
+	std::map<std::string,std::string> result;
+	for(auto & kv : objectValue){
+		if(!kv.second.isString())throw WrongTypeException(STRING, type);
+		result[kv.first] = kv.second.stringValue;
+	}
+	return result;
+}
 
 
 

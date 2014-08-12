@@ -155,7 +155,8 @@ namespace Susi {
 
 			// copy conversion operators
 			operator int();
-			operator long();			
+			operator long();
+			operator std::map<std::string,std::string>();		
 
 			bool operator==(const Any & other) const;
 			bool operator!=(const Any & other) const;

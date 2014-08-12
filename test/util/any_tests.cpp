@@ -882,3 +882,43 @@ TEST (Any, CopyConversionOperators){
 	EXPECT_EQ(21, lbar);
 }
 
+TEST (Any, MapStringStringConversion) {
+
+	std::map<std::string,std::string> ref;
+	ref["foo"]  = "bar";
+	ref["john"] = "doe";
+
+	Any good = Any::Object{
+		{"foo" , "bar"},
+		{"john", "doe"}
+	};
+
+	Any bad = Any::Object{
+		{"foo" , "bar"},
+		{"john", Any{123} }
+	};
+
+	Any bad2 = Any::Array{ "foo" , "bar" , "john", "doe"};
+
+	//good case
+	std::map<std::string,std::string> result  = good;
+	EXPECT_EQ(ref, result);
+
+	//bad case 1 
+	auto fkt = [&bad](){
+		std::map<std::string,std::string> result2 = bad;
+	};
+
+	EXPECT_THROW({
+		fkt();
+	},Any::WrongTypeException);
+	
+	//bad case 2 ...
+	auto fkt2 = [&bad2](){
+		std::map<std::string,std::string> result3 = bad2;
+	};
+
+	EXPECT_THROW({
+		fkt2();
+	},Any::WrongTypeException);
+}
