@@ -12,7 +12,7 @@ long Susi::Events::Manager::subscribe(Susi::Events::Predicate pred, Susi::Events
 	processorsByPred.push_back(std::make_tuple(id,pred,processor));
 	return id;
 }
-long Susi::Events::Manager::subscribe(std::string topic, Susi::Events::Consumer consumer){
+long Susi::Events::Manager::subscribe(std::string topic, Susi::Events::Consumer consumer){	
 	long id = std::chrono::system_clock::now().time_since_epoch().count();
 	std::lock_guard<std::mutex> lock(mutex);
 	consumersByTopic[topic].push_back(std::make_pair(id,consumer));
@@ -63,6 +63,7 @@ bool Susi::Events::Manager::unsubscribe(long id){
 
 // public publish api function
 void Susi::Events::Manager::publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback){
+
 	{
 		if(event.get()==nullptr)return;
 		std::lock_guard<std::mutex> lock(mutex);	
@@ -102,6 +103,7 @@ void Susi::Events::Manager::publish(Susi::Events::EventPtr event, Susi::Events::
 
 // pass event back to system
 void Susi::Events::Manager::ack(EventPtr event){
+
 	struct Work {
 		EventPtr event;
 		Manager *manager;
@@ -128,7 +130,7 @@ void Susi::Events::Manager::ack(EventPtr event){
 			}
 	
 			std::unique_lock<std::mutex> lock(process->mutex);
-			while(process->errors.size() > 0){
+			while(process->errors.size() > 0){				
 				event->headers.push_back(std::make_pair("error",process->errors.back()));
 				process->errors.pop_back();
 			}

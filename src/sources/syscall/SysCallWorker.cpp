@@ -28,23 +28,29 @@ void Susi::Syscall::Worker::run() {
 	Poco::PipeInputStream ostr(outPipe);
 	Poco::PipeInputStream estr(errPipe);
 
-	if(_bg == true) {
-		auto start_payload = Susi::Event::Payload({
-			{"started", true}
-		});	
 
-		Susi::Event start_event(_returnAddr, start_payload);
-		Susi::publish(start_event);
+	if(_bg == true) {
+		auto start_payload = Susi::Util::Any::Object{
+			{"started", true}
+		};
+		auto started_event = Susi::Events::createEvent("syscall::startedProcess");
+		started_event->payload["result"] = start_payload;
+
+		Susi::Events::publish(std::move(started_event));
 	}
 
 	int rc = ph.wait();
-	
-	auto end_payload = Susi::Event::Payload({
+
+	Susi::Util::Any end_payload = Susi::Util::Any::Object{
 		{"stdout", this->getPipeContent(ostr)},
 		{"stderr", this->getPipeContent(estr)},
 		{"return", rc}
-	});
+	};
 
-	Susi::Event end_event(_returnAddr, end_payload);
-	Susi::publish(end_event);
+	//std::cout<<"Payload:"<<end_payload.toString()<<std::endl;
+
+	auto end_event = Susi::Events::createEvent("syscall::endProcess");
+	end_event->payload["result"] = end_payload;
+
+	Susi::Events::publish(std::move(end_event));	
 }

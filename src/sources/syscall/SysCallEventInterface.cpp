@@ -13,23 +13,20 @@
 #include "world/World.h"
 
 void Susi::Syscall::EventInterface::init() {	
-	subscribe("syscall::startProcess", handleStartProcess);
+	Susi::Events::subscribe("syscall::startProcess", handleStartProcess);
 }
 
-void Susi::Syscall::EventInterface::handleStartProcess(Event & event) {
+void Susi::Syscall::EventInterface::handleStartProcess(Susi::Events::EventPtr event) {
 	
 	try{
-		std::string returnAddr = event.payload["returnAddr"];
-		std::string process_type = event.payload["process_type"];
+		std::string returnAddr = event->payload["returnAddr"];
+		std::string process_type = event->payload["process_type"];
+		std::map<std::string, std::string> argsReplace = event->payload["argsReplace"];
 
-		// BUG convert not support ? ask Tino
-		//std::map<std::string, std::string> argsReplace = event.payload["argsReplace"];
-		
-		//answerEvent(event, world.syscallController->startProcess(returnAddr, process_type, argsReplace));
+		event->payload["success"] = world.syscallController->startProcess(returnAddr, process_type, argsReplace);				
 	}catch(const std::exception & e){
 		std::string msg = "Error in handleStartProcess(): ";
 		msg += e.what();
-		Susi::error(msg);
-		answerEvent(event, false);
+		throw std::runtime_error(msg);
 	}
 }

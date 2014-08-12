@@ -12,13 +12,15 @@
 #ifndef __SYS_CALL_EVENT_INTERFACE__
 #define __SYS_CALL_EVENT_INTERFACE__
 
-#include "events/EventSystem.h"
 #include "syscall/SysCallController.h"
+
+#include "world/World.h"
+#include "events/global.h"
 
 namespace Susi {
 	namespace Syscall {
 		namespace EventInterface {
-			void handleStartProcess(Susi::Event & event);
+			void handleStartProcess(Susi::Events::EventPtr event);
 			void init();
 		}
 	}
