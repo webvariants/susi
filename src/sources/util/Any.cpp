@@ -495,8 +495,14 @@ Any::operator std::map<std::string,std::string>(){
 	}
 	std::map<std::string,std::string> result;
 	for(auto & kv : objectValue){
-		if(!kv.second.isString())throw WrongTypeException(STRING, type);
-		result[kv.first] = kv.second.stringValue;
+		if(!kv.second.isNull()) { // empty object
+			if(!kv.second.isString()) {
+				throw WrongTypeException(STRING, type);
+			}	
+			result[kv.first] = kv.second.stringValue;
+		} else {
+			result[kv.first] = "";
+		}
 	}
 	return result;
 }
@@ -615,7 +621,7 @@ Any Any::fromString(std::string str) {
 			jsmntok_t tokens[JSON_TOKENS];
 			jsmn_init(&p);
 			r = jsmn_parse(&p, str.c_str(), str.size(), tokens, JSON_TOKENS);
-
+			
 			if(r < 0) {
 				throw std::runtime_error{"Any::fromString parse error"};	
 			}
