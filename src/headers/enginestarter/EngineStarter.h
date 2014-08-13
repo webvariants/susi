@@ -18,7 +18,6 @@
 #include <iostream>
 #include <string>
 
-//#include <events/EventSystem.h>
 #include "events/global.h"
 #include "events/Manager.h"
 #include <logger/Logger.h>

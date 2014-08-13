@@ -14,9 +14,11 @@
 
 #include <map>
 #include <string>
-#include <sstream>
+//#include <sstream>
 #include <vector>
-#include <iostream>
+//#include <iostream>
+
+#include "util/Helpers.h"
 
 namespace Susi {
 	namespace Syscall {
@@ -28,8 +30,7 @@ namespace Susi {
 
 				ProcessItem();
 				ProcessItem(std::string cmd, std::string args, bool background);
-
-				std::vector<std::string> & split(const std::string &s, char delim, std::vector<std::string> &elems);
+				
 				std::vector<std::string> getArgs(std::map<std::string, std::string> argsReplace);
 		};
 	}
