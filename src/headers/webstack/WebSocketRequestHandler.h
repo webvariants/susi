@@ -15,22 +15,23 @@
 #include "Poco/Net/HTTPServerRequest.h"
 #include "Poco/Net/HTTPServerResponse.h"
 #include "Poco/Net/HTTPRequestHandler.h"
-#include "Poco/Util/Application.h"
+
 #include "Poco/Net/WebSocket.h"
-#include "Poco/JSON/Parser.h"
-#include "Poco/JSON/ParseHandler.h"
-#include <mutex> 
-#include "events/EventSystem.h"
-#include "apiserver/ConnectionHandler.h"
-#include "apiserver/Connection.h"
+
+#include <chrono>
+#include "apiserver/ApiServer.h"
+#include "util/Any.h"
 
 namespace Susi {
 
-class WebSocketRequestHandler: public Poco::Net::HTTPRequestHandler {
-public:
-    void handleRequest(Poco::Net::HTTPServerRequest& request,
-                       Poco::Net::HTTPServerResponse& response);
-};
+	class WebSocketRequestHandler: public Poco::Net::HTTPRequestHandler {
+		protected:
+			Susi::Api::ApiServer *apiServer;
+		public:
+
+    		void handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
+    		WebSocketRequestHandler(Susi::Api::ApiServer* server);
+	};
 
 }
 
