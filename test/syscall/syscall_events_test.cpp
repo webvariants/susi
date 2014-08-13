@@ -34,7 +34,7 @@ class SysCallEventInterfaceTest : public ::testing::Test {
 	virtual void SetUp() override {		
 		io.makeDir(CONFIG_PATH);
 		std::string config = CONFIG_PATH+"unified.cfg";
-		io.writeFile(config,"{\"ECHO\": {\"cmd\": \"/bin/echo\",\"args\": \"-n $arg\",\"background\": false	},\"INBG\": {\"cmd\": \"/bin/bash\", \"args\": \"/home/thomas/GITHUB/susi/syscall_test/test.sh\", \"background\": true } }");
+		io.writeFile(config,"{\"ECHO\": {\"cmd\": \"/bin/echo\",\"args\": \"-n $arg\",\"background\": false	},\"INBG\": {\"cmd\": \"/bin/bash\", \"args\": \"./syscall_test/test.sh\", \"background\": true } }");
 
 		io.makeDir(TMP_PATH);
 		std::string script = TMP_PATH+"test.sh";
