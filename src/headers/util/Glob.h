@@ -9,21 +9,23 @@
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
-#ifndef __SYS_CALL_EVENT_INTERFACE__
-#define __SYS_CALL_EVENT_INTERFACE__
+#ifndef __GLOB__
+#define __GLOB__
 
-#include "syscall/SysCallController.h"
-
-#include "world/World.h"
-#include "events/global.h"
+#include <string>
 
 namespace Susi {
-	namespace Syscall {
-		namespace EventInterface {
-			void handleStartProcess(Susi::Events::EventPtr event);
-			void init();
-		}
+	namespace Util {
+		class Glob {
+			protected:
+				std::string _pattern;
+			public:		
+				Glob(std::string pattern);
+				bool match(std::string str);
+
+				static bool isGlob(std::string pattern);
+		};
 	}
 }
 
-#endif // __SYS_CALL_EVENT_INTERFACE__
+#endif // __GLOB__

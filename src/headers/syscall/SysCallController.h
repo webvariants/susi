@@ -12,15 +12,10 @@
 #ifndef __SYS_CALL_CONTROLLER__
 #define __SYS_CALL_CONTROLLER__
 
-#include <Poco/Dynamic/Var.h>
 #include <Poco/Thread.h>
 #include <Poco/ThreadPool.h>
 #include <Poco/Path.h>
 #include <Poco/Environment.h>
-
-#include <Poco/JSON/Parser.h>
-#include <Poco/JSON/Object.h>
-#include <Poco/JSON/Array.h>
 
 #include <iostream>
 #include <map>
@@ -42,7 +37,7 @@ namespace Susi {
 				Controller();
 				Controller(std::string config_path);
 
-				bool startProcess(std::string returnAddr, std::string process_type, std::map<std::string, std::string> argsReplace);
+				bool startProcess(std::string process_type, std::map<std::string, std::string> argsReplace);				
 		};
 	}
 }

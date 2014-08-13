@@ -18,7 +18,9 @@
 #include "Poco/PipeStream.h"
 #include "Poco/StreamCopier.h"
 
-#include "events/EventSystem.h"
+//#include "events/EventSystem.h"
+#include "events/global.h" 
+#include "util/Any.h"
 #include <fstream>
 #include <iostream>
 
@@ -26,13 +28,13 @@ namespace Susi {
 	namespace Syscall {
 		class Worker : public Poco::Runnable {
 			public:
-				Worker(std::string returnAddr, std::string cmd, std::vector<std::string> args, bool bg);
+				Worker(std::string process_type, std::string cmd, std::vector<std::string> args, bool bg);
 
 				std::string getPipeContent(Poco::PipeInputStream & str);
 
 				virtual void run();
 			private:
-				std::string _returnAddr;
+				std::string _process_type;
 				std::string _cmd;
 				std::vector<std::string> _args;
 				bool _bg;
