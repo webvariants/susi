@@ -13,18 +13,19 @@
 #define __GLOB__
 
 #include <string>
-#include <stdio.h>
-#include <iostream>
-#include <fstream>
-#include <stdexcept>
-
 
 namespace Susi {
+	namespace Util {
+		class Glob {
+			protected:
+				std::string _pattern;
+			public:		
+				Glob(std::string pattern);
+				bool match(std::string str);
 
-	class Glob {
-	public:		
-		Glob(std::string str);		
-	};
+				static bool isGlob(std::string pattern);
+		};
+	}
 }
 
 #endif // __GLOB__
