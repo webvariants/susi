@@ -19,8 +19,10 @@
 #include "webstack/AssetsRequestHandler.h"
 #include "webstack/SessionRequestHandler.h"
 #include "webstack/RedirectRequestHandler.h"
-//#include "webstack/WebSocketRequestHandler.h"
+#include "webstack/WebSocketRequestHandler.h"
 #include "webstack/CompabilityRequestHandler.h"
+
+#include "apiserver/ApiServer.h"
 
 namespace Susi {
 
@@ -28,16 +30,17 @@ class RequestHandlerFactory: public Poco::Net::HTTPRequestHandlerFactory
 {
 protected:
     std::string _assetRoot;
+    Susi::Api::ApiServer *_apiServer;
 public:
-    RequestHandlerFactory(std::string assetRoot) : _assetRoot{assetRoot} {}
+    RequestHandlerFactory(std::string assetRoot, Susi::Api::ApiServer *apiServer) : _assetRoot{assetRoot} , _apiServer(apiServer) {}
     Poco::Net::HTTPRequestHandler* createRequestHandler(const Poco::Net::HTTPServerRequest& request){
         Susi::debug("got request with URI: "+request.getURI());
         try{
             if(request.getURI().find("/assets/")==0){
             	return new SessionRequestHandler(new AssetsRequestHandler(_assetRoot));
-            }/*else if(request.getURI() == "/ws"){
-            	return new SessionRequestHandler(new WebSocketRequestHandler());
-            }*/else if(request.getURI() == "/compability"){
+            }else if(request.getURI() == "/ws"){
+            	return new SessionRequestHandler(new WebSocketRequestHandler(_apiServer));
+            }else if(request.getURI() == "/compability"){
                 return new SessionRequestHandler(new CompabilityRequestHandler());
             }else if(request.getURI() == "/"){
             	return new SessionRequestHandler(new RedirectRequestHandler());

@@ -16,6 +16,7 @@
 #include "Poco/Net/HTTPRequestHandler.h"
 #include <iostream>
 
+#include "apiserver/ApiServer.h"
 #include "webstack/RequestHandlerFactory.h"
 #include "logger/Logger.h"
 
@@ -26,11 +27,13 @@ protected:
 	Poco::Net::SocketAddress address;
 	Poco::Net::ServerSocket serverSocket;
 	Poco::Net::HTTPServer server;
+
+	Susi::Api::ApiServer apiServer;
 public:
 	HttpServer(std::string addr,std::string assetRoot) :
 		address(addr),
 		serverSocket(address), 
-		server(new RequestHandlerFactory(assetRoot),serverSocket,new Poco::Net::HTTPServerParams)
+		server(new RequestHandlerFactory(assetRoot, &apiServer),serverSocket,new Poco::Net::HTTPServerParams)
 		{
 			server.start();
 			Susi::info("started HTTP server on addr "+addr);
@@ -39,7 +42,7 @@ public:
 	HttpServer(std::string addr,std::string assetRoot,Poco::Net::HTTPServerParams *params) :
 		address(addr),
 		serverSocket(address),
-		server(new RequestHandlerFactory(assetRoot),serverSocket,params)
+		server(new RequestHandlerFactory(assetRoot, &apiServer),serverSocket,params)
 		{
 			server.start();
 			Susi::info("started HTTP server on addr "+addr);
