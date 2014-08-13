@@ -7,7 +7,7 @@ void Susi::World::setup(){
 	setupLogger();
 	setupEventSystem();
 	setupEventManager();
-	//setupTCPServer();
+	setupTCPServer();
 	setupHttpServer();
 	setupHeartBeat();
 	setupSessionManager();
@@ -79,8 +79,9 @@ void Susi::World::setupLogger(){
 	logger = std::shared_ptr<Susi::Logger>{new Susi::Logger( level )};
 }
 
-/*void Susi::World::setupTCPServer(){
-	std::string addr = "[::1]:4000";
+void Susi::World::setupTCPServer(){
+	tcpServer = std::make_shared<Susi::Api::PocoTCPServer>(4000);
+	/*std::string addr = "[::1]:4000";
 	try{
 		auto & app = Poco::Util::Application::instance();
 		auto & cfg = app.config();
@@ -88,8 +89,8 @@ void Susi::World::setupLogger(){
 	}catch(const std::exception & e){}
 	auto tcpParams = new Poco::Net::TCPServerParams();
 	tcpParams->setMaxQueued(250);
-	tcpServer = std::shared_ptr<Susi::TCPServer>{new Susi::TCPServer(addr,tcpParams)};
-}*/
+	tcpServer = std::shared_ptr<Susi::TCPServer>{new Susi::TCPServer(addr,tcpParams)};*/
+}
 
 void Susi::World::setupHttpServer(){
 	std::string addr = "[::1]:8080";

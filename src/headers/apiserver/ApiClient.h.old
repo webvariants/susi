@@ -14,22 +14,27 @@
 
 #include "apiserver/JSONTCPClient.h"
 #include "events/Manager.h"
+#include "events/global.h"
+#include <mutex>
 
 namespace Susi {
 namespace Api {
 
 class ApiClient : public JSONTCPClient, public Susi::Events::Manager {
 public:
-	ApiClient(std::string host, unsigned short port) : JSONTCPClient{host,port} {}
-	void publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishHandler);
+	ApiClient(std::string host, unsigned short port);
 	void subscribe(std::string topic, Susi::Events::Processor processor);
 	void subscribe(std::string topic, Susi::Events::Consumer consumer);
+	void publish(Susi::Events::EventPtr event, Susi::Events::Consumer finish = Susi::Events::Consumer{});
 protected:
 	virtual void onMessage(Susi::Util::Any & message) override;
 
-	void handleEvent(Susi::Events::EventPtr event);
-	void handleAck(Susi::Events::EventPtr event);
-	void handleStatus(bool error,std::string message);
+	void handleEvent(Susi::Util::Any & message);
+	void handleAck(Susi::Util::Any & message);
+	void handleStatus(Susi::Util::Any & message);
+
+	std::map<long,Susi::Events::EventPtr> eventsToAck;
+	std::mutex mutex;
 };
 
 }	

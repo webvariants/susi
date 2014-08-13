@@ -22,16 +22,19 @@ namespace Api {
 class JSONTCPServer : public TCPServer {
 public:
 	JSONTCPServer(unsigned short port) : TCPServer{port} {}
+	virtual ~JSONTCPServer() {}
 protected:
 	virtual void onMessage(std::string & id, Susi::Util::Any & message) = 0;
 	std::map<std::string,JSONStreamCollector> collectors;
 	virtual void onConnect(std::string & id) override {
+		std::cout<<"JSONTCPServer::onConnect()"<<std::endl;
 		collectors[id] = JSONStreamCollector{[this,id](std::string & msg){
 			auto message = Susi::Util::Any::fromString(msg);
 			this->onMessage((std::string&)id,message);
 		}};
 	}
 	virtual void onData(std::string & id, std::string & data) override {
+		std::cout<<"got data in server"<<std::endl;
 		collectors[id].collect(data);
 	}
 	virtual void onClose(std::string & id) override {

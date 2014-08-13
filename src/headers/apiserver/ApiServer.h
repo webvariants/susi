@@ -22,12 +22,14 @@ namespace Api {
 class ApiServer {
 protected:
 	std::map<std::string,std::function<void(Susi::Util::Any&)>> senders;
-	std::map<std::string,std::map<std::string,long>> subscriptions;
+	std::map<std::string,std::map<std::string,long>> consumerSubscriptions;
+	std::map<std::string,std::map<std::string,long>> processorSubscriptions;
 	std::map<std::string,std::map<long,Susi::Events::EventPtr>> eventsToAck;
 	
 	void handleRegisterConsumer(std::string & id, Susi::Util::Any & packet);
 	void handleRegisterProcessor(std::string & id, Susi::Util::Any & packet);
-	void handleUnregister(std::string & id, Susi::Util::Any & packet);
+	void handleUnregisterConsumer(std::string & id, Susi::Util::Any & packet);
+	void handleUnregisterProcessor(std::string & id, Susi::Util::Any & packet);
 	void handlePublish(std::string & id, Susi::Util::Any & packet);
 	void handleAck(std::string & id, Susi::Util::Any & packet);
 

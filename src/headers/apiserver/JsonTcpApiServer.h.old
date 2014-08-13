@@ -37,6 +37,8 @@ namespace Api{
 		}
 	public:
 		JsonTcpApiServer(unsigned short port,ApiServer* server) : JSONTCPServer{port}, apiServer{server} {}
+		virtual ~JsonTcpApiServer(){}
+			
 	};
 }
 }

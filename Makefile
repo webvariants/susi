@@ -39,7 +39,8 @@ LIBS=-l PocoFoundation \
 		-l v8 \
 		-l icuuc \
 		-l icui18n \
-		-l event
+		-l event \
+		-l event_pthreads
 
 susi: ./bin/susi
 

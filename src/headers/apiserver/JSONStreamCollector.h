@@ -29,9 +29,11 @@ protected:
 	size_t closing = 0;
 	std::function<void(std::string&)> _onMessage;
 public:
-	JSONStreamCollector(){};
-	JSONStreamCollector(std::function<void(std::string&)> onMessage) : _onMessage{onMessage} {
-	}
+	JSONStreamCollector(std::function<void(std::string&)> onMessage) : _onMessage{onMessage} {}
+	JSONStreamCollector(){}
+	void operator=(const JSONStreamCollector & other){
+		_onMessage = other._onMessage;
+	};
 	void collect(std::string & data){
 		for(size_t i=0;i<data.size();i++){
 			char c = data[i];

@@ -24,6 +24,9 @@
 #include <map>
 #include <stdexcept>
 #include <thread>
+#include <mutex>
+
+#include "apiserver/libevent_common.h"
 
 namespace Susi {
 namespace Api {
@@ -37,9 +40,20 @@ protected:
     struct event_base *base;
     std::map<std::string,struct evbuffer *> outputs;
     std::map<std::string,evutil_socket_t> sockets;
+    struct evconnlistener *listener;
     std::thread runloop;
-	
+    std::mutex mutex;
+    struct event *ev_user;
 
+    void accept_callback(struct evconnlistener *listener,
+		 evutil_socket_t fd, 
+		 struct sockaddr *address, 
+		 int socklen,
+		 void *ctx);
+    void read_callback(struct bufferevent *bev, void *ctx);	
+    void event_callback(struct bufferevent *bev, short events, void *ctx);
+    void stop_callback(evutil_socket_t, short events, void *user_data);
+    
 public:
 
 	virtual void onConnect(std::string & sessionID) {}

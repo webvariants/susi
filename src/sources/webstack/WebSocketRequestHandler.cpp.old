@@ -14,6 +14,18 @@
 void Susi::WebSocketRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request,
                        							Poco::Net::HTTPServerResponse& response) {
 	Poco::Net::WebSocket socket(request,response);
+	auto id = genId();
+	apiserver->registerSender(id,[](Any & arg){
+		socket.send(arg.toString());
+	});
+	Any packet;
+	while(true){
+		if(socket.recv(packet)){
+			apiserver->onMessage(id,packet);
+		}else{
+		break;
+		}
+	}
 	std::shared_ptr<Susi::Connection> connection(new Susi::WebSocketConnection(socket));
 	Poco::Net::NameValueCollection cookies;
 	request.getCookies(cookies);

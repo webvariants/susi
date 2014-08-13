@@ -19,6 +19,9 @@
 
 #include <arpa/inet.h>
 #include <thread>
+#include <mutex>
+#include "apiserver/libevent_common.h"
+
 
 namespace Susi{
 namespace Api{
@@ -29,19 +32,20 @@ protected:
     struct bufferevent *bev;
     std::thread runloop;
     std::string _sessionID;
+    std::mutex mutex;
+    struct event *ev_user;
     
 public:
 
-    virtual void onConnect(){};
+    virtual void onConnect() {};
     virtual void onData(std::string & data) = 0;
-    virtual void onClose(){};
+    virtual void onClose() {};
 	
 	TCPClient(std::string host, unsigned short port);
 	
 	void send(std::string & data);
 	void close();
 	void join();
-	void stop();
 
 	virtual ~TCPClient();
 

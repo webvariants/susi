@@ -1,0 +1,125 @@
+#include "apiserver/ApiClient.h"
+
+Susi::Api::ApiClient::ApiClient(std::string host, unsigned short port) : JSONTCPClient{host,port} {}
+
+void Susi::Api::ApiClient::publish(Susi::Events::EventPtr event, Susi::Events::Consumer finish){
+	std::cout<<"got event in client: forward to server"<<std::endl;
+	Susi::Util::Any::Array headers;
+	for(auto & kv : event->headers){
+		headers.push_back(Susi::Util::Any::Object{{kv.first,kv.second}});
+	}
+	Susi::Util::Any packet = Susi::Util::Any::Object{
+		{"type","publish"},
+		{"needack",true},
+		{"data",Susi::Util::Any::Object{
+			{"topic",event->topic},
+			{"id",event->id},
+			{"sessionid",event->sessionID},
+			{"payload",event->payload},
+			{"headers",headers}
+		}}
+	};
+	//std::cout<<"save event with id "<<event->id<<std::endl
+	Susi::Events::Manager::subscribe(event->topic,finish);
+	eventsToAck[event->id] = std::move(event);
+	send(packet);
+}
+
+void Susi::Api::ApiClient::onMessage(Susi::Util::Any & message) {
+	//std::lock_guard<std::mutex> lock{mutex};
+	auto & type = message["type"];
+	//std::cout<<message.toString()<<std::endl;
+	if(type.isString()){
+		std::string t = type;
+		if(t=="event"){
+			//std::cout<<"client: got event:"<<std::endl;
+			handleEvent(message);
+		}else if(t=="ack"){
+			//std::cout<<"client: got ack:"<<std::endl;
+			handleAck(message);
+		}else if(t=="status"){
+			//std::cout<<"client: got status:"<<std::endl;
+			handleStatus(message);
+		}
+	}
+}
+
+void Susi::Api::ApiClient::subscribe(std::string topic, Susi::Events::Processor processor){
+	Susi::Events::Manager::subscribe(topic,processor);
+	Susi::Util::Any packet;
+	packet["type"] = "registerProcessor";
+	packet["data"] = topic;
+	send(packet);
+}
+void Susi::Api::ApiClient::subscribe(std::string topic, Susi::Events::Consumer consumer){
+	Susi::Events::Manager::subscribe(topic,consumer);
+	Susi::Util::Any packet;
+	packet["type"] = "registerConsumer";
+	packet["data"] = topic;
+	send(packet);
+}
+
+void Susi::Api::ApiClient::handleEvent(Susi::Util::Any & message){
+	auto needack = message["needack"];
+	auto data = message["data"];
+	std::string topic = data["topic"];
+	auto event = Susi::Events::createEvent(topic);
+	event->payload = data["payload"];
+	event->sessionID = static_cast<std::string>(data["sessionid"]);
+	event->id = data["id"];
+	Susi::Util::Any::Array headersVal = data["headers"];
+	for(Susi::Util::Any::Object & obj : headersVal){
+		for(auto & kv : obj){
+			event->headers.push_back(std::make_pair(kv.first,kv.second));
+		}
+	}
+	//std::cout<<"reassebled event from network (event)"<<std::endl;
+	if(!needack.isNull() && (bool)needack){
+		Susi::Events::Manager::publish(std::move(event),[this](Susi::Events::SharedEventPtr event){
+			Susi::Util::Any packet;
+			Susi::Util::Any::Array headers;
+			for(auto & kv : event->headers){
+				headers.push_back(Susi::Util::Any::Object{{kv.first,kv.second}});
+			}
+			packet["type"] = "ack";
+			packet["data"] = Susi::Util::Any::Object{
+				{"topic",event->topic},
+				{"payload",event->payload},
+				{"sessionid",event->sessionID},
+				{"headers",headers}
+			};
+			send(packet);
+		});
+	}else{
+		//std::cout<<"no need to ack, simply publish"<<std::endl;
+		Susi::Events::Manager::publish(std::move(event));
+	}
+}
+
+void Susi::Api::ApiClient::handleAck(Susi::Util::Any & message){
+	//std::cout<<"in handle ack"<<std::endl;
+	//std::cout<<message.toString()<<std::endl;
+	auto data = message["data"];
+	long id = data["id"];
+	std::string topic = data["topic"];
+	Susi::Util::Any payload = data["payload"];
+	std::string sessionID = data["sessionid"];
+	//std::cout<<id<<" "<<topic<<" "<<payload.toString()<<" "<<sessionID<<std::endl;
+	Susi::Events::EventPtr event = std::move(eventsToAck[id]);
+	eventsToAck.erase(id);
+	event->topic = topic;
+	event->payload = payload;
+	event->sessionID = sessionID;
+	std::cout<<"reassebled event from network (ack)"<<std::endl;
+	Susi::Util::Any::Array headersVal = data["headers"];
+	for(Susi::Util::Any::Object & obj : headersVal){
+		for(auto & kv : obj){
+			event->headers.push_back(std::make_pair(kv.first,kv.second));
+		}
+	}
+	Susi::Events::Manager::ack(std::move(event));
+}
+
+void Susi::Api::ApiClient::handleStatus(Susi::Util::Any & message){
+	//std::cout<<message.toString()<<std::endl;
+}

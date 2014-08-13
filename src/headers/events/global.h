@@ -25,6 +25,10 @@ namespace Susi {
 		void ack(EventPtr event);
 		void deleter(Event *event);
 		EventPtr createEvent(std::string topic);
+
+		/*EventPtr fromAny(Susi::Util::Any & val);
+		Susi::Util::Any toAny(EventPtr);*/
+
 	}	
 }
 

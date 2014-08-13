@@ -14,7 +14,6 @@
 #include "sessions/SessionManager.h"
 #include "db/Database.h"
 #include "pluginloader/PluginLoader.h"
-#include "apiserver/TCPServer.h"
 #include "sessions/SessionManagerEventInterface.h"
 #include "tiny-js/JSEngine.h"
 
