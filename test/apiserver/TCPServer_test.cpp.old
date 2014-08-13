@@ -1,7 +1,6 @@
 #include "gtest/gtest.h"
 
 #include "apiserver/TCPServer.h"
-#include "apiserver/TCPServer.h"
 #include "apiserver/TCPClient.h"
 
 #include <mutex>
