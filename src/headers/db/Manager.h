@@ -14,7 +14,7 @@
 
 #include <soci.h>
 #include <sqlite3/soci-sqlite3.h>
-#include <iostream>
+//#include <iostream>
 #include <map>
 #include <tuple>
 #include <memory>

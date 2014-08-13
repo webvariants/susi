@@ -35,6 +35,10 @@ std::size_t Susi::IOController::writeFile(std::string filename,char* ptr, std::s
 
 		return len;
 	} else {
+		std::string msg = "WriteFile: Dir ";
+		msg += dir.current();
+		msg += " don't exists!";
+		Susi::error(msg);
 		throw std::runtime_error{"WriteFile: Dir don't exists!"+filename};
 	}
 }
@@ -63,7 +67,12 @@ std::string Susi::IOController::readFile(std::string filename) {
 		// read data as a block:
 	    s.read(buffer,length); 
 
-	    if (!s) std::cout << "error: only " << s.gcount() << " could be read";
+	    if (!s) {
+	    	std::string msg = "error: only ";
+			msg += std::to_string(s.gcount());
+			msg += " could be read";
+			Susi::error(msg);	    	
+	    }
 	    
 	    s.close();
 
@@ -73,6 +82,10 @@ std::string Susi::IOController::readFile(std::string filename) {
 
 	    return result;
 	} else {
+		std::string msg = "ReadFile: ";
+		msg += filename;
+		msg += " don't exists!";
+		Susi::error(msg);
 		throw std::runtime_error{"ReadFile: File don't exists!"};
 	}
 }
@@ -85,6 +98,10 @@ bool Susi::IOController::movePath(std::string source_path, std::string dest_path
 		sf.moveTo(dp.toString());
 		return true;
 	} else {
+		std::string msg = "movePath: SOURCE_PATH ";
+		msg += source_path;
+		msg += " don't exists!";
+		Susi::error(msg);
 		throw std::runtime_error{"movePath: SOURCE_PATH don't exist!"};	
 	}
 }
@@ -97,6 +114,10 @@ bool Susi::IOController::copyPath(std::string source_path, std::string dest_path
 		sf.copyTo(dp.toString());
 		return true;
 	} else {
+		std::string msg = "copyPath: SOURCE_PATH ";
+		msg += source_path;
+		msg += " don't exists!";
+		Susi::error(msg);
 		throw std::runtime_error{"copyPath: SOURCE_PATH don't exist!"};	
 	}
 }
@@ -115,6 +136,10 @@ bool Susi::IOController::deletePath(std::string path) {
 				return true;
 			}
 		} else {
+			std::string msg = "Delete: PATH ";
+			msg += path;
+			msg += " is no FILE or DIR! (maybe PATH is LINK or DEVICE)";
+			Susi::error(msg);
 			throw std::runtime_error{"Delete: PATH is no FILE or DIR! (maybe PATH is LINK or DEVICE)"};	
 		}
 	} else {
@@ -143,6 +168,10 @@ bool Susi::IOController::setExecutable(std::string path, bool isExecutable) {
 		f.setExecutable(isExecutable);
 		return true;
 	} else {
+		std::string msg = "setExecutable: PATH ";
+		msg += path;
+		msg += " is no FILE or DIR!";
+		Susi::error(msg);
 		throw std::runtime_error{"setExecutable: PATH is no FILE or DIR!"};
 	}
 }
@@ -153,6 +182,10 @@ bool Susi::IOController::getExecutable(std::string path) {
 	if(f.exists()) {
 		return f.canExecute();
 	} else {
+		std::string msg = "getExecutable: PATH ";
+		msg += path;
+		msg += " is no FILE or DIR!";
+		Susi::error(msg);
 		throw std::runtime_error{"getExecutable: PATH is no FILE or DIR!"};
 	}
 }

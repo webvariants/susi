@@ -14,7 +14,7 @@
 
 #include "enginestarter/EngineStarter.h"
 #include "world/World.h"
-#include "events/global.h"
+//#include "events/global.h"
 
 
 namespace Susi {

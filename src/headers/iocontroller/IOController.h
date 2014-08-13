@@ -17,10 +17,10 @@
 
 #include <string>
 #include <stdio.h>
-#include <iostream>
 #include <fstream>
 #include <stdexcept>
 
+#include "logger/Logger.h"
 
 namespace Susi {
 

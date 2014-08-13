@@ -4,6 +4,11 @@ Susi::DB::Manager::Manager() {}
 
 Susi::DB::Manager::Manager(Susi::Util::Any config) {
 	this->init(config);	
+
+	std::string msg = "initialized database manager with ";
+	msg += std::to_string(config.size());
+	msg += " databases";
+	Susi::info(msg);
 }
 
 Susi::DB::Manager::Manager(std::vector<std::tuple<std::string,std::string,std::string>> dbs) {

@@ -12,7 +12,6 @@
 #ifndef __DB_MANAGER_ITEM__
 #define __DB_MANAGER_ITEM__
 
-#include <map>
 #include <db/Database.h>
 
 namespace Susi {

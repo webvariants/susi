@@ -15,12 +15,10 @@
 #include <Poco/DirectoryIterator.h>
 #include <Poco/Process.h>
 #include <vector>
-#include <iostream>
 #include <string>
 
 #include "events/global.h"
-#include "events/Manager.h"
-#include <logger/Logger.h>
+#include "logger/Logger.h"
 
 namespace Susi {
 	namespace EngineStarter {
