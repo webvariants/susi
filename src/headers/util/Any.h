@@ -144,7 +144,6 @@ namespace Susi {
 			Any& operator[](std::string key);
 			Any& operator[](const char * key);				
 
-
 			//reference conversion operators
 			operator bool&(); // Any foo(true); bool & value = foo; value = false; EXPECT_FALSE(foo);			
 			operator long long&();
