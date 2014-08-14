@@ -1,7 +1,7 @@
 #include "util/ThreadPool.h"
 
 Susi::Util::ThreadPool::ThreadPool(size_t workers, size_t buffsize) : _workChannel{buffsize} {
-	for(size_t i=0;i<workers;i++){
+	for(size_t i=0; (i<workers); ++i){
 		startThread();
 	}
 }

@@ -66,12 +66,13 @@ namespace Susi {
 				protected:
 					Type _expected;
 					Type _actual;
+					std::string msg;
 				public:
 					WrongTypeException(Type expected, Type actual) 
 						: _expected{expected},
 						  _actual{actual} {}
 					virtual const char* what() noexcept {
-						std::string msg = "wrong type. expected: ";
+						msg = "wrong type. expected: ";
 						msg += typeToString(_expected);
 						msg += " actual: ";
 						msg += typeToString(_actual);
