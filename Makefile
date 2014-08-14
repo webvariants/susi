@@ -17,6 +17,7 @@ MAIN_INTERMEDIATE=$(subst ./src/sources,./src/objects,$(MAINFILE))
 MAIN=$(subst .cc,.o,$(MAIN_INTERMEDIATE))
 
 CPPFILES=$(shell find ./src/sources -name "*.cpp")
+HEADERFILES=$(shell find ./src/headers -name "*.h")
 OBJECTS_INTERMEDIATE=$(subst ./src/sources,./src/objects,$(CPPFILES))
 OBJECTS=$(subst .cpp,.o,$(OBJECTS_INTERMEDIATE))
 
@@ -73,7 +74,18 @@ clean:
 run: susi
 	LD_LIBRARY_PATH=/usr/local/lib64 ./susi -f ./config.json
 
-push:
+cppcheck_output.txt: $(CPPFILES) $(HEADERFILES)
+	cppcheck -I src/headers -I /usr/local/include --enable=all src -q  2>cppcheck_output.txt
+	
+check: cppcheck_output.txt
+	@echo "$(shell echo "Errors      :" $(shell cat cppcheck_output.txt|grep '(error)'|wc -l))"
+	@echo "$(shell echo "Warnings    :" $(shell cat cppcheck_output.txt|grep '(warning)'|wc -l))"
+	@echo "$(shell echo "Style       :" $(shell cat cppcheck_output.txt|grep '(style)'|wc -l))"
+	@echo "$(shell echo "Perfomance  :" $(shell cat cppcheck_output.txt|grep '(performance)'|wc -l))"
+	@echo "$(shell echo "Information :" $(shell cat cppcheck_output.txt|grep '(information)'|wc -l))"
+	@test 0 -eq $(shell cat cppcheck_output.txt|grep '(error)'|wc -l)
+
+push: check
 	$(MAKE) clean
 	git checkout .
 	$(MAKE) bin/test
