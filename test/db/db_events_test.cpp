@@ -23,13 +23,14 @@ class DBEventInterfaceTest : public ::testing::Test {
 		std::mutex mutex;
 		bool callbackCalledOne = false;
 		std::condition_variable condOne;	
+
+		Susi::IOController controller;
 		
 		void SetUp() override {
 			world.setupEventManager();
 			world.setupDBManager();
 		}
-		void TearDown() override {
-			Susi::IOController controller;
+		void TearDown() override {			
 		    controller.deletePath("./test_sqlite_db_3");
 		}
 };

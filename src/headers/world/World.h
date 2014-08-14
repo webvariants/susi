@@ -14,9 +14,9 @@
 
 #include <memory>
 #include <Poco/Util/Application.h>
-#include <Poco/JSON/Parser.h>
-#include <Poco/JSON/Object.h>
-#include <Poco/JSON/Array.h>
+//#include <Poco/JSON/Parser.h>
+//#include <Poco/JSON/Object.h>
+//#include <Poco/JSON/Array.h>
 
 #include "events/EventSystem.h"
 #include "events/Manager.h"

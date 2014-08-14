@@ -140,17 +140,18 @@ void Susi::World::setupDBManager(){
 		std::string configData = io.readFile(dbConfigPath);
 				
 		if(configData != ""){
-			Poco::JSON::Parser parser;
-			Poco::Dynamic::Var var = parser.parse(configData);
-			Poco::JSON::Array::Ptr array = var.extract<Poco::JSON::Array::Ptr>();
-			for(std::size_t i=0; i<array->size(); i++){
-				Poco::JSON::Object::Ptr obj = array->getObject(i);
-				auto tuple = std::make_tuple(obj->get("name").toString(),
-											 obj->get("type").toString(),
-											 obj->get("uri").toString());
+
+			std::map<std::string,Susi::Util::Any> data = Susi::Util::Any::fromString(configData);		
+			for (std::map<std::string,Susi::Util::Any>::iterator it=data.begin(); it!=data.end(); ++it) {
+
+				std::string name = it->second["name"];
+				std::string type = it->second["type"];
+				std::string uri  = it->second["uri"];
+				
+				auto tuple = std::make_tuple(name, type, uri);
 				dbs.push_back(tuple);
 			}
-		} 			
+		} 
 	}catch(const std::exception & e){
 		std::string msg = "Execption while setup DBManager: ";
 		msg += e.what();
