@@ -17,6 +17,7 @@ MAIN_INTERMEDIATE=$(subst ./src/sources,./src/objects,$(MAINFILE))
 MAIN=$(subst .cc,.o,$(MAIN_INTERMEDIATE))
 
 CPPFILES=$(shell find ./src/sources -name "*.cpp")
+HEADERFILES=$(shell find ./src/headers -name "*.h")
 OBJECTS_INTERMEDIATE=$(subst ./src/sources,./src/objects,$(CPPFILES))
 OBJECTS=$(subst .cpp,.o,$(OBJECTS_INTERMEDIATE))
 
@@ -73,7 +74,7 @@ clean:
 run: susi
 	LD_LIBRARY_PATH=/usr/local/lib64 ./susi -f ./config.json
 
-cppcheck_output.txt: $(CPPFILES)
+cppcheck_output.txt: $(CPPFILES) $(HEADERFILES)
 	cppcheck -I src/headers -I /usr/local/include --enable=all src -q  2>cppcheck_output.txt
 	
 check: cppcheck_output.txt
