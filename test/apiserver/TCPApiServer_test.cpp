@@ -7,6 +7,7 @@ class TCPApiServerTest : public ::testing::Test {
 protected:
 	virtual void SetUp() override {
 		world.setupEventManager();
+		world.setupSessionManager();
 		world.setupTCPServer();
 	}
 };

@@ -2,9 +2,10 @@
 #include "world/World.h"
 
 void Susi::Api::ApiServer::onConnect(std::string & id) {
-	
+	world.sessionManager->updateSession(id);
 }
 void Susi::Api::ApiServer::onClose(std::string & id) {
+	world.sessionManager->killSession(id);
 	senders.erase(id);
 	eventsToAck.erase(id);
 

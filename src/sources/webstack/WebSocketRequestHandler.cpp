@@ -27,6 +27,8 @@ void Susi::WebSocketRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& 
     	socket.sendFrame(msg.data(), msg.length(), Poco::Net::WebSocket::FRAME_TEXT);        
     });
     
+    apiServer->onConnect(id);
+
     char buffer[4096];
 	int flags;
 	size_t n;
@@ -42,4 +44,5 @@ void Susi::WebSocketRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& 
 	}
 	while (n > 0 || (flags & Poco::Net::WebSocket::FRAME_OP_BITMASK) != Poco::Net::WebSocket::FRAME_OP_CLOSE);
 
+	apiServer->onClose(id);
 }
