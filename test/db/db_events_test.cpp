@@ -64,7 +64,7 @@ TEST_F(DBEventInterfaceTest, Query) {
 
 	{
 		std::unique_lock<std::mutex> lk(mutex);
-		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		condOne.wait_for(lk,std::chrono::milliseconds{1000},[this](){return callbackCalledOne;});
 		EXPECT_TRUE(callbackCalledOne);
 	}
 }
