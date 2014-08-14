@@ -22,6 +22,8 @@
 #include "webstack/WebSocketRequestHandler.h"
 #include "webstack/CompabilityRequestHandler.h"
 
+#include "webstack/FormRequestHandler.h"
+
 #include "apiserver/ApiServer.h"
 
 namespace Susi {
@@ -42,6 +44,8 @@ public:
             	return new SessionRequestHandler(new WebSocketRequestHandler(_apiServer));
             }else if(request.getURI() == "/compability"){
                 return new SessionRequestHandler(new CompabilityRequestHandler());
+            }else if(request.getURI() == "/form"){
+                return new SessionRequestHandler(new FormRequestHandler());
             }else if(request.getURI() == "/"){
             	return new SessionRequestHandler(new RedirectRequestHandler());
             }
