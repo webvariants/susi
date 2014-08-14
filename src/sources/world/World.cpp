@@ -80,16 +80,13 @@ void Susi::World::setupLogger(){
 }
 
 void Susi::World::setupTCPServer(){
-	tcpServer = std::make_shared<Susi::Api::PocoTCPServer>(4000);
-	/*std::string addr = "[::1]:4000";
+	std::string addr = "[::1]:4000";
 	try{
 		auto & app = Poco::Util::Application::instance();
 		auto & cfg = app.config();
 		addr = cfg.getString("tcpserver.addr");
 	}catch(const std::exception & e){}
-	auto tcpParams = new Poco::Net::TCPServerParams();
-	tcpParams->setMaxQueued(250);
-	tcpServer = std::shared_ptr<Susi::TCPServer>{new Susi::TCPServer(addr,tcpParams)};*/
+	tcpServer = std::make_shared<Susi::Api::TCPApiServer>(addr);
 }
 
 void Susi::World::setupHttpServer(){

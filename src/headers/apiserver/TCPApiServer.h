@@ -9,8 +9,8 @@
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
-#ifndef __POCOTCPSERVER__
-#define __POCOTCPSERVER__
+#ifndef __TCPAPISERVER__
+#define __TCPAPISERVER__
 
 #include "Poco/Net/TCPServer.h"
 #include "Poco/Net/TCPServerConnectionFactory.h"
@@ -24,7 +24,7 @@ namespace Api {
 
 
 
-class PocoTCPServer {
+class TCPApiServer {
 protected:
 	class Connection : public Poco::Net::TCPServerConnection {
 	protected:
@@ -39,12 +39,12 @@ protected:
 				sock.sendBytes(str.c_str(),str.size());
 			});
 			api->onConnect(sessionID);
-			std::cout<<"got client!"<<std::endl;
+			//std::cout<<"got client!"<<std::endl;
 			JSONStreamCollector collector{[sessionID,this](std::string & msg){
 				std::string s = sessionID;
 				auto message = Susi::Util::Any::fromString(msg);
 				api->onMessage(s,message);
-				std::cout<<"got message!"<<std::endl;
+				//std::cout<<"got message!"<<std::endl;
 			}};
 			char buff[1024];
 			while(true){
@@ -52,11 +52,11 @@ protected:
 				if(bs<=0){
 					socket().close();
 					api->onClose(sessionID);
-					std::cout<<"lost client..."<<std::endl;
+					//std::cout<<"lost client..."<<std::endl;
 					break;
 				}
 				std::string s{buff,bs};
-				std::cout<<"got data!"<<std::endl;
+				//std::cout<<"got data!"<<std::endl;
 				collector.collect(s);
 			}
 		}
@@ -72,18 +72,20 @@ protected:
 		}
 	};
 
+	Poco::Net::SocketAddress address;
 	Poco::Net::ServerSocket serverSocket;
 	Poco::Net::TCPServerParams *params;
 	Poco::Net::TCPServer tcpServer;
 	ApiServer api;
 
 public:
-	PocoTCPServer(unsigned short port) : 
-		serverSocket{port}, 
+	TCPApiServer(std::string addr, size_t threads = 4, size_t backlog = 16) : 
+		address{addr},
+		serverSocket{address}, 
 		params{new Poco::Net::TCPServerParams}, 
 		tcpServer{new ConnectionFactory{&api},serverSocket,params} {
-			params->setMaxThreads(4);
-			params->setMaxQueued(16);
+			params->setMaxThreads(threads);
+			params->setMaxQueued(backlog);
 			params->setThreadIdleTime(100);
 			tcpServer.start();
 	}
@@ -93,4 +95,4 @@ public:
 }
 }
 
-#endif // __POCOTCPSERVER__
+#endif // __TCPAPISERVER__

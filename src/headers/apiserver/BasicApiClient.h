@@ -28,8 +28,12 @@ namespace Api {
 		void anyToEvent(Susi::Util::Any & any, Susi::Events::Event & event);
 
 	public:
-		BasicApiClient(std::string host, unsigned short port) : JSONTCPClient{host,port} {}
+		BasicApiClient(std::string addr) : JSONTCPClient{addr} {}
 		virtual ~BasicApiClient(){}
+
+		void close(){
+			JSONTCPClient::close();
+		}
 
 		virtual void onConsumerEvent(Susi::Events::SharedEventPtr event) = 0;
 		virtual void onProcessorEvent(Susi::Events::EventPtr event) = 0;

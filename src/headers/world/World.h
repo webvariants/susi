@@ -20,7 +20,7 @@
 
 #include "events/EventSystem.h"
 #include "events/Manager.h"
-#include "apiserver/PocoTCPServer.h"
+#include "apiserver/TCPApiServer.h"
 #include "webstack/HttpServer.h"
 #include "sessions/SessionManager.h"
 #include "sessions/SessionManagerEventInterface.h"
@@ -74,7 +74,7 @@ namespace Susi{
 		std::shared_ptr<Susi::States::StateController>	stateController{nullptr};
 		std::shared_ptr<Susi::Syscall::Controller>		syscallController{nullptr};
 		std::shared_ptr<Susi::JSEngine>					jsEngine{nullptr};
-		std::shared_ptr<Susi::Api::PocoTCPServer>		tcpServer{nullptr};
+		std::shared_ptr<Susi::Api::TCPApiServer>		tcpServer{nullptr};
 
 
 

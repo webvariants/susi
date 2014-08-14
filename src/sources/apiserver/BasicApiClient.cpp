@@ -16,9 +16,9 @@ void Susi::Api::BasicApiClient::sendAck(Susi::Events::Event & event){
 		{"type","ack"},
 		{"data",packedEvent}
 	};
-	std::cout<<"send ack"<<std::endl;
+	//std::cout<<"send ack"<<std::endl;
 	JSONTCPClient::send(packet);
-	std::cout<<"sended ack"<<std::endl;
+	//std::cout<<"sended ack"<<std::endl;
 }
 
 void Susi::Api::BasicApiClient::sendRegisterConsumer(std::string topic){
@@ -38,20 +38,20 @@ void Susi::Api::BasicApiClient::sendRegisterProcessor(std::string topic){
 }
 
 void Susi::Api::BasicApiClient::onMessage(Susi::Util::Any & message){
-	std::cout<<"got message in basic api client"<<std::endl;
+	//std::cout<<"got message in basic api client"<<std::endl;
 	std::string type = message["type"];
 	if(type=="ack"){
-		std::cout<<"got ack"<<std::endl;	
+		//std::cout<<"got ack"<<std::endl;	
 		auto event = std::make_shared<Susi::Events::Event>();
 		anyToEvent(message["data"],*event);
 		onAck(event);
 	}else if(type=="consumerEvent"){
-		std::cout<<"got consumer event"<<std::endl;
+		//std::cout<<"got consumer event"<<std::endl;
 		auto event = std::make_shared<Susi::Events::Event>();
 		anyToEvent(message["data"],*event);
 		onConsumerEvent(event);
 	}else if(type=="processorEvent"){
-		std::cout<<"got processor event"<<std::endl;
+		//std::cout<<"got processor event"<<std::endl;
 		auto deleter = [this](Susi::Events::Event *ptr){
 			sendAck(*ptr);
 			delete ptr;
@@ -60,7 +60,7 @@ void Susi::Api::BasicApiClient::onMessage(Susi::Util::Any & message){
 		anyToEvent(message["data"],*event);
 		onProcessorEvent(std::move(event));
 	}else{
-		std::cout<<"got status"<<std::endl;
+		//std::cout<<"got status"<<std::endl;
 	}
 }
 
