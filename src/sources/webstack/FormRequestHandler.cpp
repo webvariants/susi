@@ -1,10 +1,8 @@
 #include "webstack/FormRequestHandler.h"
 
-Susi::FormRequestHandler::FormRequestHandler() {}
-
 void Susi::FormRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response) {
 		
-		Susi::MyPartHandler partHandler;
+		Susi::MyPartHandler partHandler(this->_uploadDirectory);
 		Poco::Net::HTMLForm form(request, request.stream(), partHandler);
 
 		response.setChunkedTransferEncoding(true);

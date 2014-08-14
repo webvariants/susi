@@ -45,7 +45,7 @@ public:
             }else if(request.getURI() == "/compability"){
                 return new SessionRequestHandler(new CompabilityRequestHandler());
             }else if(request.getURI() == "/form"){
-                return new SessionRequestHandler(new FormRequestHandler());
+                return new SessionRequestHandler(new FormRequestHandler("./uploads/"));
             }else if(request.getURI() == "/"){
             	return new SessionRequestHandler(new RedirectRequestHandler());
             }

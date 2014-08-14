@@ -16,14 +16,21 @@
 #include "Poco/Net/MessageHeader.h"
 
 #include "Poco/CountingStream.h"
-#include "Poco/NullStream.h"
+//#include "Poco/NullStream.h"
 #include "Poco/StreamCopier.h"
+
+#include "Poco/FileStream.h"
+#include "Poco/File.h"
+
 
 namespace Susi {
 
 	class MyPartHandler: public Poco::Net::PartHandler {
 		public:
-			MyPartHandler(): _length(0) {};
+			MyPartHandler(std::string uploadDirectory): _length(0), _uploadDirectory(uploadDirectory) {
+
+
+			};
 		
 			void handlePart(const Poco::Net::MessageHeader& header, std::istream& stream)
 			{
@@ -38,8 +45,14 @@ namespace Susi {
 				}
 				
 				Poco::CountingInputStream istr(stream);
-				Poco::NullOutputStream ostr;
-				Poco::StreamCopier::copyStream(istr, ostr);
+
+				if(_fileName != "") {
+					Poco::FileOutputStream fos(_uploadDirectory + _fileName, std::ios::binary);
+					Poco::StreamCopier::copyStream(istr, fos);					
+					fos.close();
+				}
+				//Poco::NullOutputStream ostr;
+				//Poco::StreamCopier::copyStream(istr, ostr);
 				_length = istr.chars();
 			}
 			
@@ -65,6 +78,7 @@ namespace Susi {
 			
 		private:
 			int _length;
+			std::string _uploadDirectory;
 			std::string _type;
 			std::string _name;
 			std::string _fileName;

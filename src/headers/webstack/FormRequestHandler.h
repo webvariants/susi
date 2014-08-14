@@ -18,15 +18,6 @@
 #include "Poco/Util/Application.h"
 
 #include "Poco/Net/HTMLForm.h"
-#include "Poco/Net/NameValueCollection.h"
-/*
-#include "Poco/DateTimeFormatter.h"
-#include "Poco/DateTimeFormat.h"
-#include "Poco/File.h"
-#include "Poco/FileStream.h"
-#include "Poco/StreamCopier.h"
-*/
-
 #include "logger/Logger.h"
 
 #include "webstack/MyPartHandler.h"
@@ -34,14 +25,16 @@
 namespace Susi {
 
 	class FormRequestHandler: public Poco::Net::HTTPRequestHandler {
-		//private:
-			//Poco::File _rootDirectory;
+		private:
+			std::string _uploadDirectory;
 		public:
-			FormRequestHandler();
-			//FormRequestHandler(std::string rootDirectory) :
-	  		
-    		virtual void handleRequest(Poco::Net::HTTPServerRequest& request,
-            Poco::Net::HTTPServerResponse& response) override;
+			FormRequestHandler(std::string uploadDirectory) :
+				_uploadDirectory(uploadDirectory) {
+				Susi::debug("init form handler");
+			}			
+			
+			virtual void handleRequest(Poco::Net::HTTPServerRequest& request,
+				Poco::Net::HTTPServerResponse& response) override;
 };
 
 }
