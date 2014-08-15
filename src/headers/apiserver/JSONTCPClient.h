@@ -15,14 +15,21 @@
 #include "apiserver/TCPClient.h"
 #include "apiserver/JSONStreamCollector.h"
 #include "util/Any.h"
-
 namespace Susi {
 namespace Api {
 
 class JSONTCPClient : public TCPClient {
 public:
-	JSONTCPClient(std::string addr) : TCPClient{addr} {}
-	virtual ~JSONTCPClient(){}
+	JSONTCPClient(std::string addr) : 
+		TCPClient{addr},
+		collector{[this](std::string & msg){
+			auto message = Susi::Util::Any::fromString(msg);
+			//std::cout<<"got message in json client"<<std::endl;
+			this->onMessage(message);
+		}} {}
+	virtual ~JSONTCPClient(){
+		close();
+	}
 	void send(Susi::Util::Any & message){
 		std::string msg = message.toString();
 		TCPClient::send(msg);
@@ -31,17 +38,13 @@ public:
 		TCPClient::close();
 	}
 protected:
-	JSONStreamCollector collector{[this](std::string & msg){
-		auto message = Susi::Util::Any::fromString(msg);
-		//std::cout<<"got message in json client"<<std::endl;
-		this->onMessage(message);
-	}};
+	JSONStreamCollector collector;
 	virtual void onData(std::string & data) override {
 		//std::cout<<"JSONTCPClient::onData()"<<std::endl;
 		collector.collect(data);
 	}
 
-	virtual void onMessage(Susi::Util::Any & message) = 0;
+	virtual void onMessage(Susi::Util::Any & message){};
 
 };
 

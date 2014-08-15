@@ -179,3 +179,24 @@ void Susi::Events::Manager::ack(EventPtr event){
 	Work work{std::move(event),this};
 	pool.add(std::move(work),error);
 }
+
+Susi::Events::EventPtr Susi::Events::Manager::createEvent(std::string topic){
+	auto event = Susi::Events::EventPtr{new Susi::Events::Event{topic},[this](Event * event){
+		this->deleter(event);
+	}};
+	return event;
+}
+
+void Susi::Events::Manager::deleter(Event *event){
+	//std::cout<<"calling deleter of "<<event<<std::endl;
+	if(event!=nullptr){
+			Susi::Events::EventPtr ptr(event,[this](Event *event){
+				deleter(event);
+			});
+		try{
+			ack(std::move(ptr));
+		}catch(const std::exception & e){
+			std::cout<<"error in deleter:"<<e.what()<<std::endl;
+		}
+	}
+}

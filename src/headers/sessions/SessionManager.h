@@ -21,7 +21,6 @@
 //#include <Poco/Util/Application.h>
 //#include <Poco/Dynamic/Var.h>
 #include "sessions/Session.h"
-#include "events/EventSystem.h"
 
 #include "util/Any.h"
 #include "events/global.h"

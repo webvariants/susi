@@ -20,7 +20,6 @@
 #include "webstack/SessionRequestHandler.h"
 #include "webstack/RedirectRequestHandler.h"
 #include "webstack/WebSocketRequestHandler.h"
-#include "webstack/CompabilityRequestHandler.h"
 
 #include "apiserver/ApiServer.h"
 
@@ -40,9 +39,9 @@ public:
             	return new SessionRequestHandler(new AssetsRequestHandler(_assetRoot));
             }else if(request.getURI() == "/ws"){
             	return new SessionRequestHandler(new WebSocketRequestHandler(_apiServer));
-            }else if(request.getURI() == "/compability"){
+            }/*else if(request.getURI() == "/compability"){
                 return new SessionRequestHandler(new CompabilityRequestHandler());
-            }else if(request.getURI() == "/"){
+            }*/else if(request.getURI() == "/"){
             	return new SessionRequestHandler(new RedirectRequestHandler());
             }
             return new SessionRequestHandler(new NotFoundRequestHandler());

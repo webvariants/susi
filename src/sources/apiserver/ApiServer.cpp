@@ -2,9 +2,11 @@
 #include "world/World.h"
 
 void Susi::Api::ApiServer::onConnect(std::string & id) {
+	std::cout<<"got new connection!"<<std::endl;
 	world.sessionManager->updateSession(id);
 }
 void Susi::Api::ApiServer::onClose(std::string & id) {
+	std::cout<<"lost connection..."<<std::endl;
 	world.sessionManager->killSession(id);
 	senders.erase(id);
 	eventsToAck.erase(id);
@@ -151,6 +153,7 @@ void Susi::Api::ApiServer::handleUnregisterProcessor(std::string & id, Susi::Uti
 	}
 }
 void Susi::Api::ApiServer::handlePublish(std::string & id, Susi::Util::Any & packet){
+	std::cout<<"got publish!"<<std::endl;
 	auto & eventData = packet["data"];
 	if(!eventData.isObject() || !eventData["topic"].isString()){
 		sendFail(id,"data is not an object or topic is not set correctly");

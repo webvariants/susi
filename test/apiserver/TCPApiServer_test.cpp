@@ -6,9 +6,9 @@
 class TCPApiServerTest : public ::testing::Test {
 protected:
 	virtual void SetUp() override {
-		world.setupEventManager();
+		world.setup/*EventManager();
 		world.setupSessionManager();
-		world.setupTCPServer();
+		world.setupTCPServer*/();
 	}
 };
 
@@ -18,6 +18,7 @@ TEST_F(TCPApiServerTest,Basic){
 	class TestClient : public Susi::Api::BasicApiClient {
 	public:
 		TestClient(std::string addr) : Susi::Api::BasicApiClient{addr} {}
+		virtual ~TestClient(){}
 		std::condition_variable condConsumer,condAck,condClose;
 		bool onConnectCalled = false,
 		 onConsumerCalled = false,
@@ -27,44 +28,53 @@ TEST_F(TCPApiServerTest,Basic){
 	protected:
 		virtual void onConnect() override {
 			onConnectCalled = true;
+			std::cout<<"on connect!"<<std::endl;
+			sendRegisterConsumer("foobar");
+			sendRegisterProcessor("foobar");
+			Susi::Events::Event event{"foobar"};
+			sendPublish(event);
+			std::cout<<"sended publish"<<std::endl;
+			
 		}
-		virtual void onProcessorEvent(Susi::Events::EventPtr event) override {
+		virtual void onProcessorEvent(Susi::Events::Event & event) override {
+			std::cout<<"on proc!"<<std::endl;
 			onProcessorCalled = true;
+			sendAck(event);
 		}
-		virtual void onConsumerEvent(Susi::Events::SharedEventPtr event) override {
+		virtual void onConsumerEvent(Susi::Events::Event & event) override {
 			onConsumerCalled = true;
+			std::cout<<"on consumer!"<<std::endl;
 			condConsumer.notify_all();
 		}
-		virtual void onAck(Susi::Events::SharedEventPtr event) override {
+		virtual void onAck(Susi::Events::Event & event) override {
 			onAckCalled = true;
+			std::cout<<"on ack!"<<std::endl;
 			condAck.notify_all();
 		}
 		virtual void onClose() override {
 			onCloseCalled = true;
+			std::cout<<"on close!"<<std::endl;
 			condClose.notify_all();
 		}
 	};
 
 	TestClient client{"[::1]:4000"};
-	client.sendRegisterConsumer("foobar");
-	client.sendRegisterProcessor("foobar");
-	Susi::Events::Event event;
-	event.topic = "foobar";
-	client.sendPublish(event);
-	std::this_thread::sleep_for(std::chrono::milliseconds{100});
-	client.close();
 	std::mutex mutex;
 	{
 		std::unique_lock<std::mutex> lock(mutex);
 		client.condConsumer.wait(lock,[&client](){return client.onConsumerCalled;}); 
+		std::cout<<"got condition!"<<std::endl;
 	}
 	{
 		std::unique_lock<std::mutex> lock(mutex);
 		client.condAck.wait(lock,[&client](){return client.onAckCalled;}); 
+		std::cout<<"got condition!"<<std::endl;
 	}
+	client.close();
 	{
 		std::unique_lock<std::mutex> lock(mutex);
 		client.condClose.wait(lock,[&client](){return client.onCloseCalled;}); 
+		std::cout<<"got condition!"<<std::endl;
 	}
 
 	EXPECT_TRUE(client.onConnectCalled);

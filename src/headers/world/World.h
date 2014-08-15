@@ -35,19 +35,16 @@
 #include "states/StateEventInterface.h"
 #include "syscall/SysCallEventInterface.h"
 #include "syscall/SysCallController.h"
-#include "v8/JSEngine.h"
 
 namespace Susi{
 
 	class World {
 	protected:		
 	public:
-		void setupEventSystem();
 		void setupEventManager();
 		void setupTCPServer();
 		void setupHttpServer();
 		void setupSessionManager();
-		void setupJSEngine();
 		void setupIOController();
 		void setupHeartBeat();
 		void setupDBManager();
@@ -57,7 +54,6 @@ namespace Susi{
 		void setupSysCallController();
 		void setupStateController();
 
-		std::shared_ptr<Susi::EventSystem> 				eventSystem{nullptr};
 		std::shared_ptr<Susi::Events::Manager> 			eventManager{nullptr};
 		std::shared_ptr<Susi::HttpServer> 				httpServer{nullptr};
 		std::shared_ptr<Susi::Sessions::SessionManager> sessionManager{nullptr};
@@ -69,7 +65,6 @@ namespace Susi{
 		std::shared_ptr<Susi::Auth::Controller>			authController{nullptr};
 		std::shared_ptr<Susi::States::StateController>	stateController{nullptr};
 		std::shared_ptr<Susi::Syscall::Controller>		syscallController{nullptr};
-		std::shared_ptr<Susi::JSEngine>					jsEngine{nullptr};
 		std::shared_ptr<Susi::Api::TCPApiServer>		tcpServer{nullptr};
 
 

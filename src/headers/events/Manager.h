@@ -6,19 +6,10 @@
 #include <chrono>
 #include "util/ThreadPool.h"
 #include "util/Any.h"
+#include "events/Event.h"
 
 namespace Susi {
 namespace Events{
-
-//basic Event definition
-typedef std::pair<std::string,std::string> Header;
-struct Event {
-	long id = 0;
-	std::string topic;
-	std::vector<Header> headers;
-	Susi::Util::Any payload;
-	std::string sessionID;
-};
 
 //Event pointer types
 typedef std::unique_ptr<Event,std::function<void(Event*)>> EventPtr;
@@ -45,6 +36,8 @@ public:
 	// pass event back to system
 	void ack(EventPtr event);
 
+	EventPtr createEvent(std::string topic);
+
 protected:
 	Susi::Util::ThreadPool pool;
 	std::mutex mutex;
@@ -62,6 +55,9 @@ protected:
 	std::map<std::string,std::vector<std::pair<long,Consumer>>> consumersByTopic;
 	std::vector<std::tuple<long,Predicate,Processor>> processorsByPred;
 	std::vector<std::tuple<long,Predicate,Consumer>> consumersByPred;
+
+	void deleter(Event *event);
+
 };
 
 }//end namespace Events

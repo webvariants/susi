@@ -24,20 +24,19 @@ namespace Api {
 		
 		virtual void onMessage(Susi::Util::Any & message) override;
 
-		Susi::Util::Any eventToAny(Susi::Events::Event & event);
-		void anyToEvent(Susi::Util::Any & any, Susi::Events::Event & event);
-
 	public:
 		BasicApiClient(std::string addr) : JSONTCPClient{addr} {}
-		virtual ~BasicApiClient(){}
+		virtual ~BasicApiClient(){
+			close();
+		}
 
 		void close(){
 			JSONTCPClient::close();
 		}
 
-		virtual void onConsumerEvent(Susi::Events::SharedEventPtr event) = 0;
-		virtual void onProcessorEvent(Susi::Events::EventPtr event) = 0;
-		virtual void onAck(Susi::Events::SharedEventPtr event) = 0;
+		virtual void onConsumerEvent(Susi::Events::Event & event){};
+		virtual void onProcessorEvent(Susi::Events::Event & event){};
+		virtual void onAck(Susi::Events::Event & event){};
 
 		void sendPublish(Susi::Events::Event & event);
 		void sendRegisterConsumer(std::string topic);

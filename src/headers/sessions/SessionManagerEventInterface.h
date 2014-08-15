@@ -12,7 +12,6 @@
 #ifndef __SESSIONEVENTINTERFACE__
 #define __SESSIONEVENTINTERFACE__
 
-#include "events/EventSystem.h"
 #include "sessions/SessionManager.h"
 
 #include "world/World.h"
@@ -20,7 +19,6 @@
 
 namespace Susi {
 	namespace Sessions {
-		using Susi::Event;
 		void handleGetAttribute(Susi::Events::EventPtr event);
 		void handleSetAttribute(Susi::Events::EventPtr event);
 		void handlePushAttribute(Susi::Events::EventPtr event);

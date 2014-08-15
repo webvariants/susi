@@ -24,23 +24,6 @@ void Susi::Events::ack(Susi::Events::EventPtr event){
 		world.eventManager->ack(std::move(event));
 	}
 }
-
-void Susi::Events::deleter(Event *event){
-	//std::cout<<"calling deleter of "<<event<<std::endl;
-	if(event!=nullptr){
-			Susi::Events::EventPtr ptr(event,Susi::Events::deleter);
-		try{
-			ack(std::move(ptr));
-		}catch(const std::exception & e){
-			std::cout<<"error in deleter:"<<e.what()<<std::endl;
-		}
-	}
-}
-
 Susi::Events::EventPtr Susi::Events::createEvent(std::string topic){
-	auto event = Susi::Events::EventPtr{new Event,deleter};
-	long id = std::chrono::system_clock::now().time_since_epoch().count();
-	event->id = id;
-	event->topic = topic;
-	return event;
+	return world.eventManager->createEvent(topic);
 }

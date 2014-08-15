@@ -28,7 +28,7 @@ class StateEventsTest : public ::testing::Test {
 	
 	virtual void SetUp() override {
 		world.setupEventManager();
-		world.setupHeartBeat();
+		//world.setupHeartBeat();
 		world.setupIOController();
 		world.setupStateController();
 		controller = std::shared_ptr<Susi::States::StateController>(world.stateController);

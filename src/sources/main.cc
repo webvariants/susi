@@ -10,7 +10,6 @@
  */
 
 #include "webstack/HttpServer.h"
-#include "events/EventSystem.h"
 #include "sessions/SessionManager.h"
 #include "db/Database.h"
 #include "pluginloader/PluginLoader.h"
@@ -45,13 +44,6 @@ protected:
 			setupDefaultProperties();
 
 			world.setup();
-
-			Susi::subscribe("*",[](Susi::Event & event){
-				Susi::debug("Event: "+event.toString());
-			});
-
-			Susi::Event startEvent("global::start");
-			Susi::publish(startEvent);
 
 			waitForTerminationRequest();  // wait for CTRL-C or kill
 			world.tearDown();

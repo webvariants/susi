@@ -12,58 +12,119 @@
 #ifndef __EVENT__
 #define __EVENT__
 
-#include <Poco/Dynamic/Var.h> 
-#include <Poco/Dynamic/Struct.h>
-#include <map> 
+#include "util/Any.h"
+#include <chrono>
 
 namespace Susi {
+namespace Events {
+
+typedef std::pair<std::string,std::string> Header;
 
 class Event {
+protected:
 public:
+	long id = 0;
 	std::string topic;
-	Poco::Dynamic::Var payload;
+	std::vector<Header> headers;
+	Susi::Util::Any payload;
 	std::string sessionID;
-	std::string returnAddr;
-	Event(std::string topic) 
-		: topic{topic} {}
-	Event(std::string topic,Poco::Dynamic::Var payload) 
-		: topic{topic}, 
-		  payload{payload},
-		  sessionID{""},
-		  returnAddr{""} {}
-	Event(std::string topic,Poco::Dynamic::Var payload,std::string sessionID) 
-		: topic{topic}, 
-		  payload{payload},
-		  sessionID{sessionID},
-		  returnAddr{""} {}
-	Event(std::string topic,Poco::Dynamic::Var payload,std::string sessionID,std::string returnAddr) 
-		: topic{topic}, 
-		  payload{payload},
-		  sessionID{sessionID},
-		  returnAddr{returnAddr} {}
-	std::string toString(){
-		Poco::JSON::Object result;
-		result.set("topic",topic);
-		if(returnAddr != ""){
-			result.set("returnaddr",returnAddr);
+	Event(){
+		id = std::chrono::system_clock::now().time_since_epoch().count();
+	}
+	Event(std::string topic_) {
+		id = std::chrono::system_clock::now().time_since_epoch().count();
+		topic = topic_;
+	}
+	Event(const Event & other){
+		id = other.id;
+		topic = other.topic;
+		headers = other.headers;
+		payload = other.payload;
+		sessionID = other.sessionID;
+	}
+	Event(Susi::Util::Any & any){
+		if(!any["id"].isNull()){
+			id = any["id"];
+		}else{
+			id = std::chrono::system_clock::now().time_since_epoch().count();
 		}
-		if(sessionID != ""){
-			result.set("sessionid",sessionID);
+		if(!any["topic"].isNull()){
+			topic = static_cast<std::string>(any["topic"]);
 		}
-		if (!payload.isEmpty()){
-			result.set("payload",payload);
+		if(!any["headers"].isNull()){
+			Susi::Util::Any::Array headers = any["headers"];
+			for(Susi::Util::Any::Object & obj : headers){
+				for(auto & kv : obj){
+					this->headers.push_back(std::make_pair(kv.first,static_cast<std::string>(kv.second)));
+				}
+			}
 		}
-		std::stringstream ss;
-		result.stringify(ss);
-		return ss.str();
+		if(!any["payload"].isNull()){
+			payload = any["payload"];
+		}
+		if(!any["sessionid"].isNull()){
+			sessionID = static_cast<std::string>(any["sessionid"]);
+		}
+	}
+	Susi::Util::Any toAny(){
+		auto obj = Susi::Util::Any::Object{
+			{"id",id},
+			{"sessionid",sessionID},
+			{"topic",topic},
+			{"payload",payload}
+		};
+		for(size_t i=0; i<headers.size();++i) {
+			obj["headers"].push_back(Susi::Util::Any::Object{
+				{headers[i].first,headers[i].second}
+			});
+		}
+		return obj;
 	}
 
-	static Poco::Dynamic::Var Payload(std::map<std::string,Poco::Dynamic::Var> initList){
-		Poco::Dynamic::Struct<std::string> payload(initList);
+	inline long getID(){
+		return id;
+	}
+	inline std::string getSessionID(){
+		return sessionID;
+	}
+	inline std::string getTopic(){
+		return topic;
+	}
+	inline std::vector<Header> & getHeaders(){
+		return headers;
+	}
+	inline Susi::Util::Any & getPayload(){
 		return payload;
 	}
+
+	inline void setID(long _id){
+		id = _id;
+	}
+	inline void setSessionID(std::string _sessionID){
+		sessionID = _sessionID;
+	}
+	inline void setTopic(std::string _topic){
+		topic = _topic;
+	}
+	inline void setHeaders(std::vector<Header> _headers){
+		headers = _headers;
+	}
+	inline void setPayload(Susi::Util::Any _payload){
+		payload = _payload;
+	}
+
+	Event& operator=(Event & other){
+		setID(other.getID());
+		setSessionID(other.getSessionID());
+		setTopic(other.getTopic());
+		setHeaders(other.getHeaders());
+		setPayload(other.getPayload());
+		return *this;
+	}
+
 };
 
+}
 }
 
 #endif // __EVENT__

@@ -15,48 +15,72 @@
 #include <Poco/Net/StreamSocket.h>
 #include <Poco/Net/SocketAddress.h>
 #include <thread>
-
+#include <iostream>
 namespace Susi {
 namespace Api {
 
 	class TCPClient {
 	public:
 		
-		virtual void onConnect() = 0;
-		virtual void onData(std::string & data) = 0;
-		virtual void onClose() = 0;
+		//These functions are not pure virtual, because of destruction problems.
+		virtual void onConnect() {};
+		virtual void onData(std::string & data) {};
+		virtual void onClose() {};
 		
 		TCPClient(std::string address) : sa{address}, sock{sa} {
+			sock.setReceiveTimeout(Poco::Timespan{0,1000000});
 			runloop = std::move(std::thread{[this](){
 				onConnect();
 				char buff[1024];
-				size_t bs;
-				while(true){
-					bs = sock.receiveBytes(buff,bs);
-					if(bs<=0){
-						onClose();
+				int bs;
+				while(!isClosed){
+					try{
+						std::cout<<"wait for bytes"<<std::endl;
+						bs = sock.receiveBytes(buff,1024);
+						std::cout<<"got "<<bs<<std::endl;
+						if(bs<=0){
+							onClose();
+							break;
+						}
+						std::string data{buff,static_cast<size_t>(bs)};
+						onData(data);
+					}catch(const Poco::TimeoutException & e){
+						std::cout<<"timeout!"<<std::endl;
+						if(isClosed)break;
+					}catch(const std::exception & e){
+						std::cout<<"Exception: "<<e.what()<<std::endl;
 						break;
 					}
-					std::string data{buff,bs};
-					onData(data);
 				}
+				std::cout<<"runloop end"<<std::endl;
 			}});
 		}
 		
 		void close(){
-			try{
-				sock.shutdown();
-			}catch(...){}
+			if(!isClosed){
+				try{
+					sock.shutdown();
+					sock.close();
+					isClosed = true;
+					std::cout<<"isClosed = true" <<std::endl;
+					runloop.join();
+					onClose();
+				}catch(const std::exception & e){
+					std::cout<<"error while closing/joining: "<<e.what()<<std::endl;
+					onClose();
+				}
+			}
 		}
 		void send(std::string msg){
-			sock.sendBytes(msg.c_str(),msg.size());
+			auto bs = sock.sendBytes(msg.c_str(),msg.size());
+			std::cout<<"sended "<<bs<<"/"<<msg.size()<<" bytes"<<std::endl;
 		}
 		virtual ~TCPClient(){
 			close();
-			runloop.join();
 		}
 
 	private:
+		bool isClosed = false;
 		Poco::Net::SocketAddress sa;
     	Poco::Net::StreamSocket sock;
     	std::thread runloop;

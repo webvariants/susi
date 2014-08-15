@@ -46,10 +46,10 @@ int SessionManager::checkSessions(){
 		if(!kv.second.isDead()){
 			newSessions[kv.first] = kv.second;
 		}else{
-			std::string topic = "session::die::";
+			/*std::string topic = "session::die::";
 			topic += kv.first;
 			Susi::Event event(topic);
-			Susi::publish(event);
+			Susi::publish(event);*/
 			deleted++;
 		}
 	}

@@ -13,6 +13,7 @@
 #define __EVENTSGLOBAL__
 
 #include "events/Manager.h"
+#include "events/Event.h"
  
 namespace Susi {
 	namespace Events {

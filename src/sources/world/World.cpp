@@ -5,7 +5,6 @@ Susi::World world;
 
 void Susi::World::setup(){
 	setupLogger();
-	setupEventSystem();
 	setupEventManager();
 	setupTCPServer();
 	setupHttpServer();
@@ -16,22 +15,11 @@ void Susi::World::setup(){
 	setupEngineStarter();
 	setupAuthController();
 	setupStateController();
-	setupJSEngine();
 	//setupSysCallController();
 }
 
 void Susi::World::tearDown(){
 
-}
-
-void Susi::World::setupJSEngine(){
-	std::string file = "./controller.js";
-	try{
-		auto & app = Poco::Util::Application::instance();
-		auto & cfg = app.config();
-		file = cfg.getString("jsengine.source");
-	}catch(const std::exception & e){}
-	jsEngine = std::shared_ptr<Susi::JSEngine>(new Susi::JSEngine(file));
 }
 
 void Susi::World::setupEventManager(){
@@ -63,11 +51,6 @@ void Susi::World::setupEngineStarter(){
 
 	Susi::EngineStarter::EventInterface::init();
 }
-
-void Susi::World::setupEventSystem(){
-	eventSystem = std::shared_ptr<Susi::EventSystem>{new Susi::EventSystem()};
-}
-
 
 void Susi::World::setupLogger(){
 	unsigned char level = Susi::Logger::NOTHING;

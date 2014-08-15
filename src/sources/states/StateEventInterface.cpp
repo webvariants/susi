@@ -19,6 +19,7 @@ void Susi::States::EventInterface::init() {
 }
 
 void Susi::States::EventInterface::handleSetState(Susi::Events::EventPtr event) {
+	std::cout<<"got state event"<<std::endl;
 	try{
 		std::string stateID  = event->payload["stateID"];
 		Susi::Util::Any value = event->payload["value"];
@@ -42,6 +43,7 @@ void Susi::States::EventInterface::handleGetState(Susi::Events::EventPtr event) 
 }
 
 void Susi::States::EventInterface::handleSetPersistentState(Susi::Events::EventPtr event) {
+	std::cout<<"got persitent state event"<<std::endl;
 	try{
 		std::string stateID  = event->payload["stateID"];
 		Susi::Util::Any value = event->payload["value"];

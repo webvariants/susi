@@ -12,7 +12,7 @@ protected:
 	virtual void SetUp() override {
 		world.setupLogger();
 		world.setupEventManager();
-		world.setupHeartBeat();
+		//world.setupHeartBeat();
 		world.setupIOController();
 		controller = std::make_shared<Susi::States::StateController>(std::string("./states.json"));
 	}
