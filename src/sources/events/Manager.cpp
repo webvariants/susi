@@ -175,7 +175,7 @@ void Susi::Events::Manager::ack(EventPtr event){
 			}
 		}
 	};
-
+	if(event.get()==nullptr)return;
 	Work work{std::move(event),this};
 	pool.add(std::move(work),error);
 }
