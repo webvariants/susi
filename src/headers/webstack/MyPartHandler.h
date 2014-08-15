@@ -16,7 +16,6 @@
 #include "Poco/Net/MessageHeader.h"
 
 #include "Poco/CountingStream.h"
-//#include "Poco/NullStream.h"
 #include "Poco/StreamCopier.h"
 
 #include "Poco/FileStream.h"
@@ -51,30 +50,14 @@ namespace Susi {
 					Poco::StreamCopier::copyStream(istr, fos);					
 					fos.close();
 				}
-				//Poco::NullOutputStream ostr;
-				//Poco::StreamCopier::copyStream(istr, ostr);
 				_length = istr.chars();
 			}
 			
-			int length() const
-			{
-				return _length;
-			}
+			int length() const { return _length; }
 			
-			const std::string& name() const
-			{
-				return _name;
-			}
-
-			const std::string& fileName() const
-			{
-				return _fileName;
-			}
-			
-			const std::string& contentType() const
-			{
-				return _type;
-			}
+			const std::string& name() const { return _name; }
+			const std::string& fileName() const { return _fileName; }
+			const std::string& contentType() const { return _type; }
 			
 		private:
 			int _length;
