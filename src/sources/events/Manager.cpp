@@ -1,26 +1,26 @@
 #include "events/Manager.h"
 
 long Susi::Events::Manager::subscribe(std::string topic, Susi::Events::Processor processor){
-	long id = std::chrono::system_clock::now().time_since_epoch().count();
 	std::lock_guard<std::mutex> lock(mutex);
+	long id = std::chrono::system_clock::now().time_since_epoch().count();
 	processorsByTopic[topic].push_back(std::make_pair(id,processor));
 	return id;
 }
 long Susi::Events::Manager::subscribe(Susi::Events::Predicate pred, Susi::Events::Processor processor){
-	long id = std::chrono::system_clock::now().time_since_epoch().count();
 	std::lock_guard<std::mutex> lock(mutex);
+	long id = std::chrono::system_clock::now().time_since_epoch().count();
 	processorsByPred.push_back(std::make_tuple(id,pred,processor));
 	return id;
 }
 long Susi::Events::Manager::subscribe(std::string topic, Susi::Events::Consumer consumer){	
-	long id = std::chrono::system_clock::now().time_since_epoch().count();
 	std::lock_guard<std::mutex> lock(mutex);
+	long id = std::chrono::system_clock::now().time_since_epoch().count();
 	consumersByTopic[topic].push_back(std::make_pair(id,consumer));
 	return id;
 }
 long Susi::Events::Manager::subscribe(Susi::Events::Predicate pred, Susi::Events::Consumer consumer){
-	long id = std::chrono::system_clock::now().time_since_epoch().count();
 	std::lock_guard<std::mutex> lock(mutex);
+	long id = std::chrono::system_clock::now().time_since_epoch().count();
 	consumersByPred.push_back(std::make_tuple(id,pred,consumer));
 	return id;
 }
@@ -63,9 +63,9 @@ bool Susi::Events::Manager::unsubscribe(long id){
 
 // public publish api function
 void Susi::Events::Manager::publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback){
+	if(event.get()==nullptr)return;
 
 	{
-		if(event.get()==nullptr)return;
 		std::lock_guard<std::mutex> lock(mutex);	
 		auto process = std::make_shared<PublishProcess>();
 		for(auto & kv : processorsByTopic){
@@ -103,7 +103,10 @@ void Susi::Events::Manager::publish(Susi::Events::EventPtr event, Susi::Events::
 
 // pass event back to system
 void Susi::Events::Manager::ack(EventPtr event){
-
+	if(event.get()==nullptr){
+		event.release();
+		return;
+	}
 	struct Work {
 		EventPtr event;
 		Manager *manager;
@@ -175,7 +178,6 @@ void Susi::Events::Manager::ack(EventPtr event){
 			}
 		}
 	};
-	if(event.get()==nullptr)return;
 	Work work{std::move(event),this};
 	pool.add(std::move(work),error);
 }
@@ -190,9 +192,9 @@ Susi::Events::EventPtr Susi::Events::Manager::createEvent(std::string topic){
 void Susi::Events::Manager::deleter(Event *event){
 	//std::cout<<"calling deleter of "<<event<<std::endl;
 	if(event!=nullptr){
-			Susi::Events::EventPtr ptr(event,[this](Event *event){
-				deleter(event);
-			});
+		Susi::Events::EventPtr ptr(event,[this](Event *event){
+			deleter(event);
+		});
 		try{
 			ack(std::move(ptr));
 		}catch(const std::exception & e){

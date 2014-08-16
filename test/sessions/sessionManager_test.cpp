@@ -7,16 +7,19 @@ using namespace Susi::Sessions;
 
 class SessionManagerTest : public ::testing::Test {
 protected:
-	Susi::Sessions::SessionManager sessionManager;
-	void SetUp(){
+	virtual void SetUp() override {
 		world.setupEventManager();
-		world.setupHeartBeat();
-		sessionManager.init(std::chrono::milliseconds(250),std::chrono::milliseconds(250));
+		//world.setupHeartBeat();
+	}
+	virtual void TearDown() override {
+		world.tearDown();
 	}
 };
 
 
 TEST_F(SessionManagerTest, Init) {
+	Susi::Sessions::SessionManager sessionManager;
+	sessionManager.init(std::chrono::milliseconds(250),std::chrono::milliseconds(250));
 	EXPECT_FALSE(sessionManager.checkSession("s1"));
 	sessionManager.updateSession("s1");
 	EXPECT_TRUE(sessionManager.checkSession("s1"));
@@ -27,6 +30,8 @@ TEST_F(SessionManagerTest, Init) {
 
 
 TEST_F(SessionManagerTest, SetGetAttribute){
+	Susi::Sessions::SessionManager sessionManager;
+	sessionManager.init(std::chrono::milliseconds(250),std::chrono::milliseconds(250));
 	sessionManager.updateSession("s1", std::chrono::milliseconds(20000));
 	EXPECT_TRUE(sessionManager.setSessionAttribute("s1", "real", "superb"));
 	auto res1 = sessionManager.getSessionAttribute("s1", "real");
@@ -38,17 +43,23 @@ TEST_F(SessionManagerTest, SetGetAttribute){
 }
 
 TEST_F(SessionManagerTest, GetNonExistentAttribute){
+	Susi::Sessions::SessionManager sessionManager;
+	sessionManager.init(std::chrono::milliseconds(250),std::chrono::milliseconds(250));
 	sessionManager.updateSession("s1", std::chrono::milliseconds(20000));
 	auto res1 = sessionManager.getSessionAttribute("s1", "real");
 	EXPECT_TRUE(res1.isNull());
 }
 
 TEST_F(SessionManagerTest, GetAttributeFromNonExistentSession){
+	Susi::Sessions::SessionManager sessionManager;
+	sessionManager.init(std::chrono::milliseconds(250),std::chrono::milliseconds(250));
 	auto res1 = sessionManager.getSessionAttribute("s1", "real");
 	EXPECT_TRUE(res1.isNull());
 }
 
 TEST_F(SessionManagerTest, PushGetAttribute){
+	Susi::Sessions::SessionManager sessionManager;
+	sessionManager.init(std::chrono::milliseconds(250),std::chrono::milliseconds(250));
 	sessionManager.updateSession("s1", std::chrono::milliseconds(20000));
 	EXPECT_TRUE(sessionManager.pushSessionAttribute("s1", "real", "superb"));
 	auto res2 = sessionManager.getSessionAttribute("s1", "real");
@@ -62,6 +73,8 @@ TEST_F(SessionManagerTest, PushGetAttribute){
 }
 
 TEST_F(SessionManagerTest, SetPushGetAttribute){
+	Susi::Sessions::SessionManager sessionManager;
+	sessionManager.init(std::chrono::milliseconds(250),std::chrono::milliseconds(250));
 	sessionManager.updateSession("s1", std::chrono::milliseconds(20000));
 	EXPECT_TRUE(sessionManager.setSessionAttribute("s1", "real", "superb_0"));
 	EXPECT_TRUE(sessionManager.pushSessionAttribute("s1", "real", "superb_1"));

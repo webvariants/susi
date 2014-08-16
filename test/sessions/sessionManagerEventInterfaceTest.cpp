@@ -37,6 +37,9 @@ class SessionManagerEventInterfaceTest : public ::testing::Test {
 			world.setupHeartBeat();
 			world.setupSessionManager();
 		}
+		void TearDown(){
+			world.tearDown();
+		}
 };
 
 

@@ -26,6 +26,10 @@ namespace Susi {
 
 	public:
 		Session() : Session(std::chrono::milliseconds(10000)) {}
+		Session(const Session & other) : 
+			deadline{other.deadline}, 
+			attributes{other.attributes},
+			multiAttributes{other.multiAttributes} {}
 		Session(std::chrono::milliseconds milliseconds);
 		bool isDead();
 		void addTime(std::chrono::milliseconds milliseconds);

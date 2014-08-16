@@ -14,15 +14,15 @@
 
 #include "events/global.h"
 #include <thread>
+#include <atomic>
 
 namespace Susi {
 	class HeartBeat {
 	protected:
+		std::atomic<bool> stop;
 		std::thread t;
-		bool _stop = false;
 	public:
-		HeartBeat() {
-			t = std::move(std::thread{[this](){
+		HeartBeat() : stop{false}, t{[this](){
 				int count = 0;
 				std::chrono::seconds interval(1);
 				auto event_one = Susi::Events::createEvent("heartbeat::one");
@@ -30,8 +30,7 @@ namespace Susi {
 				auto event_ten = Susi::Events::createEvent("heartbeat::ten");
 				auto event_minute = Susi::Events::createEvent("heartbeat::minute");
 				auto event_five_minute = Susi::Events::createEvent("heartbeat::fiveMinute");
-				while(!this->_stop){
-					std::cout<<"no stop!"<<std::endl;
+				while(!this->stop.load()){
 					++count %= 300;
 					Susi::Events::publish(std::move(event_one));
 					if(count % 5 == 0){
@@ -48,11 +47,11 @@ namespace Susi {
 					}
 					std::this_thread::sleep_for(interval);
 				}
-			}});
-		}
+			}
+		} {}
+		
 		virtual ~HeartBeat(){
-			std::cout<<"set stop true"<<std::endl;
-			_stop = true;
+			stop.store(true);
 			t.join();
 		}
 	};

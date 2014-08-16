@@ -14,6 +14,7 @@
 using namespace Susi::Sessions;
 
 bool SessionManager::init(std::chrono::milliseconds stdSessionLifetime, std::chrono::milliseconds checkInterval) {
+	std::lock_guard<std::mutex> lock(mutex);
 	// Causes problem in tests, since we have a world object which does all the init stuff
 	// Second init fails...
 	if(initialized) {		
@@ -34,7 +35,8 @@ bool SessionManager::init(std::chrono::milliseconds stdSessionLifetime, std::chr
 }
 
 
-SessionManager::~SessionManager(){	
+SessionManager::~SessionManager(){
+	std::lock_guard<std::mutex> lock(mutex);
 	Susi::Events::unsubscribe(subId);
 }
 
@@ -44,7 +46,7 @@ int SessionManager::checkSessions(){
 	int deleted = 0;
 	for(auto & kv : sessions){
 		if(!kv.second.isDead()){
-			newSessions[kv.first] = kv.second;
+			newSessions.emplace(kv.first,kv.second);
 		}else{
 			/*std::string topic = "session::die::";
 			topic += kv.first;
@@ -142,6 +144,7 @@ void SessionManager::updateSession(std::string id, std::chrono::milliseconds lif
 }
 
 bool SessionManager::killSession(std::string id) {
+	std::lock_guard<std::mutex> lock(mutex);
 	if(sessions.count(id) > 0) {
 		return sessions[id].die();
 	}
