@@ -34,8 +34,6 @@ private:
 	static void Publish(const v8::FunctionCallbackInfo<v8::Value>& args);
 	static void RegisterConsumer(const v8::FunctionCallbackInfo<v8::Value>& args);
 	static void RegisterProcessor(const v8::FunctionCallbackInfo<v8::Value>& args);
-	static void UnregisterConsumer(const v8::FunctionCallbackInfo<v8::Value>& args);
-	static void UnregisterProcessor(const v8::FunctionCallbackInfo<v8::Value>& args);
 	static void Acknowledge(const v8::FunctionCallbackInfo<v8::Value>& args);
 protected:
 	Isolate* isolate;
@@ -59,10 +57,6 @@ public:
               v8::FunctionTemplate::New(isolate, Susi::JSEngine::RegisterConsumer)->GetFunction());
 	  	context->Global()->Set(v8::String::NewFromUtf8(isolate, "registerProcessor"),
               v8::FunctionTemplate::New(isolate, Susi::JSEngine::RegisterProcessor)->GetFunction());
-	  	context->Global()->Set(v8::String::NewFromUtf8(isolate, "unregisterConsumer"),
-              v8::FunctionTemplate::New(isolate, Susi::JSEngine::UnregisterConsumer)->GetFunction());
-	  	context->Global()->Set(v8::String::NewFromUtf8(isolate, "unregisterProcessor"),
-              v8::FunctionTemplate::New(isolate, Susi::JSEngine::UnregisterProcessor)->GetFunction());
 	  	context->Global()->Set(v8::String::NewFromUtf8(isolate, "acknowledge"),
               v8::FunctionTemplate::New(isolate, Susi::JSEngine::Acknowledge)->GetFunction());
 	  	runFile(file);
