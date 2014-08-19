@@ -27,7 +27,9 @@ void Susi::Api::ApiClient::onProcessorEvent(Susi::Events::Event & event){
 	auto evt = createEvent(event.getTopic());
 	*evt = event;
 	Susi::Events::Manager::publish(std::move(evt),[this](Susi::Events::SharedEventPtr event){
+		std::cout<<"finished in client, acking to susi!"<<std::endl;
 		sendAck(*event);
+		std::cout<<"sended ack"<<std::endl;
 	});
 }
 

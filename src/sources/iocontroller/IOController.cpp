@@ -78,7 +78,7 @@ std::string Susi::IOController::readFile(std::string filename) {
 
 	    result += std::string(buffer,length);
 
-	    delete[] buffer;
+	    if(buffer)delete[] buffer;
 
 	    return result;
 	} else {

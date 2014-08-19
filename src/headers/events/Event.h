@@ -67,17 +67,25 @@ public:
 		}
 	}
 	Susi::Util::Any toAny(){
-		auto obj = Susi::Util::Any::Object{
+		std::cout<<"toAny()"<<std::endl;
+		Susi::Util::Any obj = Susi::Util::Any::Object{
 			{"id",id},
 			{"sessionid",sessionID},
 			{"topic",topic},
 			{"payload",payload}
 		};
-		for(size_t i=0; i<headers.size();++i) {
-			obj["headers"].push_back(Susi::Util::Any::Object{
+		std::cout<<"builded main object"<<std::endl;
+		std::cout<<"headersize: "<<headers.size()<<std::endl;
+		for(size_t i=0; i<headers.size(); ++i) {
+			std::cout<<"add header "<<std::endl;
+			Susi::Util::Any::Object header{
 				{headers[i].first,headers[i].second}
-			});
+			};
+			std::cout<<"constructed header"<<std::endl;//@TODO Fix this!!!!!
+			//obj["headers"].push_back(Susi::Util::Any{header});
+			std::cout<<"added header"<<std::endl;
 		}
+		std::cout<<"got object: "<<obj.toString()<<std::endl;
 		return obj;
 	}
 

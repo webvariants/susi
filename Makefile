@@ -12,9 +12,13 @@
 
 CC=g++-4.8
 
-MAINFILE=$(shell find ./src/sources -name "main.cc")
-MAIN_INTERMEDIATE=$(subst ./src/sources,./src/objects,$(MAINFILE))
-MAIN=$(subst .cc,.o,$(MAIN_INTERMEDIATE))
+SERVERMAINFILE=$(shell find ./src/sources -name "main.cc")
+SERVERMAIN_INTERMEDIATE=$(subst ./src/sources,./src/objects,$(SERVERMAINFILE))
+SERVERMAIN=$(subst .cc,.o,$(SERVERMAIN_INTERMEDIATE))
+
+CLIENTMAINFILE=$(shell find ./src/sources -name "client.cc")
+CLIENTMAIN_INTERMEDIATE=$(subst ./src/sources,./src/objects,$(CLIENTMAINFILE))
+CLIENTMAIN=$(subst .cc,.o,$(CLIENTMAIN_INTERMEDIATE))
 
 CPPFILES=$(shell find ./src/sources -name "*.cpp")
 HEADERFILES=$(shell find ./src/headers -name "*.h")
@@ -28,7 +32,7 @@ TESTS=$(subst .cpp,.o,$(TESTS_INTERMEDIATE))
 TEST_MAIN=$(shell find ./test/gtest*/lib -name "*.a")
 
 DEBUG=-g -Wall
-CCFLAGS=$(DEBUG) -I src/headers -I /opt/v8/include -I /usr/local/include/soci --std=c++11 -c
+CCFLAGS=$(DEBUG) -O3 -I src/headers -I /opt/v8/include -I /usr/local/include/soci --std=c++11 -c
 LDFLAGS=$(DEBUG) --std=c++11 -L /usr/local/lib64 -L /opt/v8/out/x64.release/lib.target
 LIBS=-l PocoFoundation \
 		-l PocoUtil \
@@ -45,11 +49,16 @@ LIBS=-l PocoFoundation \
 
 susi: ./bin/susi
 
+client: ./bin/client
+
 test: ./bin/test
 	LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:./test/gtest-1.7.0/lib/.libs:/opt/v8/out/x64.release/lib.target ./bin/test
 
-./bin/susi: $(OBJECTS) $(MAIN)
-	$(CC) $(LDFLAGS) -o ./bin/susi $(OBJECTS) $(MAIN) $(LIBS)
+./bin/susi: $(OBJECTS) $(SERVERMAIN)
+	$(CC) $(DEBUG) $(LDFLAGS) -o ./bin/susi $(OBJECTS) $(SERVERMAIN) $(LIBS)
+
+./bin/client: $(OBJECTS) $(CLIENTMAIN)
+	$(CC) $(DEBUG) $(LDFLAGS) -o ./bin/client $(OBJECTS) $(CLIENTMAIN) $(LIBS)	
 
 ./bin/test: $(OBJECTS) $(TESTS)
 	$(CC) $(LDFLAGS) -L ./test/gtest-1.7.0/lib/.libs -o ./bin/test $(OBJECTS) $(TESTS) $(LIBS) -lgtest -lgtest_main

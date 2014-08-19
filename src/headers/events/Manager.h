@@ -43,8 +43,8 @@ protected:
 	std::mutex mutex;
 
 	struct PublishProcess {
-		std::vector<Processor>   processors;
-		std::vector<Consumer>    consumers;
+		std::vector<std::pair<long,Processor>>   processors;
+		std::vector<std::pair<long,Consumer>>    consumers;
 		std::vector<std::string> errors;
 		std::mutex				 mutex;
 		size_t current = 0;

@@ -36,6 +36,7 @@ public:
 	
 	Channel(size_t cap) : capacity(cap) {}
 	Channel() : capacity(1) {}
+	~Channel() {close();}
 
 	void put(T data){
 		std::unique_lock<std::mutex> lock(mutex);

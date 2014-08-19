@@ -21,7 +21,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
- 
+#include <cstring>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -102,7 +102,7 @@ namespace Susi {
 			Any(const long long & value);
 			Any(const double & value);
 			Any(const std::string & value);
-			Any(const char* value) : Any(std::string{value}) {}
+			Any(const char* value) : Any(std::string{value,strlen(value)}) {}
 			Any(const std::deque<Any> & value);
 			Any(const std::map<std::string,Any> & value);
 
@@ -172,10 +172,8 @@ namespace Susi {
 			bool isObject();
 
 			// deque operators
-			void push_back(Any & value);
-			void push_front(Any & value);
-			void push_back(Any && value);
-			void push_front(Any && value);
+			void push_back(Any value);
+			void push_front(Any value);
 			void pop_back();
 			void pop_front();
 			size_t size() const;

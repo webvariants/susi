@@ -86,8 +86,7 @@ Any::Any(const Any & value) {
 
 // move ctor's
 Any::Any(Any && value) {
-	*this = value;
-	value.type = UNDEFINED;
+	*this = std::move(value);
 }
 
 Any::Any(bool && value) {
@@ -345,15 +344,15 @@ int Any::getType(){
 }
 
 // deque operators
-void Any::push_back(Any & value) {
+void Any::push_back(Any value) {
 	if(type != ARRAY) {
 		throw WrongTypeException(ARRAY, type);
 	}
-
+	std::cout<<"pushed!"<<std::endl;
 	this->arrayValue.push_back(value);
 }
 
-void Any::push_front(Any & value) {
+void Any::push_front(Any value) {
 	if(type != ARRAY) {
 		throw WrongTypeException(ARRAY, type);
 	}
@@ -361,13 +360,13 @@ void Any::push_front(Any & value) {
 	this->arrayValue.push_front(value);
 }
 
-
-void Any::push_back(Any && value){
+/*
+void Any::push_back(Any value){
 	push_back(value);
 }
-void Any::push_front(Any && value){
+void Any::push_front(Any value){
 	push_front(value);
-}
+}*/
 
 void Any::pop_back() {
 	if(type != ARRAY) {

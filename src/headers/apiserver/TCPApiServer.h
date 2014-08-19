@@ -89,6 +89,7 @@ public:
 			params->setMaxQueued(backlog);
 			params->setThreadIdleTime(100);
 			tcpServer.start();
+			std::cout<<"started TCP Api Server on "<<addr<<std::endl;
 			std::this_thread::sleep_for(std::chrono::milliseconds{250});
 	}
 	~TCPApiServer(){
