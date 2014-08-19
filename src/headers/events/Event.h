@@ -77,15 +77,11 @@ public:
 		std::cout<<"builded main object"<<std::endl;
 		std::cout<<"headersize: "<<headers.size()<<std::endl;
 		for(size_t i=0; i<headers.size(); ++i) {
-			std::cout<<"add header "<<std::endl;
 			Susi::Util::Any::Object header{
 				{headers[i].first,headers[i].second}
 			};
-			std::cout<<"constructed header"<<std::endl;//@TODO Fix this!!!!!
-			//obj["headers"].push_back(Susi::Util::Any{header});
-			std::cout<<"added header"<<std::endl;
+			obj["headers"].push_back(Susi::Util::Any{header});
 		}
-		std::cout<<"got object: "<<obj.toString()<<std::endl;
 		return obj;
 	}
 

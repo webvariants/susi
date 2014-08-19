@@ -33,6 +33,9 @@ public:
 	void ack(Susi::Events::EventPtr event){
 		Susi::Events::Manager::ack(std::move(event));
 	};
+	Susi::Events::EventPtr createEvent(std::string topic){
+		return Susi::Events::Manager::createEvent(topic);
+	}
 protected:
 	virtual void onConsumerEvent(Susi::Events::Event & event) override;
 	virtual void onProcessorEvent(Susi::Events::Event & event) override;

@@ -345,18 +345,22 @@ int Any::getType(){
 
 // deque operators
 void Any::push_back(Any value) {
-	if(type != ARRAY) {
+	if(type != ARRAY && type != UNDEFINED) {
 		throw WrongTypeException(ARRAY, type);
 	}
-	std::cout<<"pushed!"<<std::endl;
+	if(type == UNDEFINED) {
+		type = ARRAY;
+	}
 	this->arrayValue.push_back(value);
 }
 
 void Any::push_front(Any value) {
-	if(type != ARRAY) {
+	if(type != ARRAY && type != UNDEFINED) {
 		throw WrongTypeException(ARRAY, type);
 	}
-
+	if(type == UNDEFINED) {
+		type = ARRAY;
+	}
 	this->arrayValue.push_front(value);
 }
 
