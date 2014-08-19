@@ -47,11 +47,44 @@
 		function($event) use($susi,$container) {
 			echo "PHP PROCESSOR CALLBACK";
 
+			print_r($event);
+
+
 			$data = $event["data"];			
 
 			if(isset($data["payload"])) {
+
+				if(isset($data["payload"]["controller"]) && isset($data["payload"]["action"])) {
+
+					$className = "Controller".ucfirst($data["payload"]["controller"]);
+					$actionName = $data["payload"]["action"]."Action";
+
+					if(isset($event["payload"]) && isset($event["payload"]["device"])) {
+						$className = "Device".ucfirst($event["payload"]["device"])."_".$className;
+					}
+
+					try{
+						$controller = new $className($container);
+						
+						if(method_exists($controller,$actionName)){
+							//$req = new Request($event);
+							//$container->initForRequest($req);
+							//$res = $controller->$actionName(new Request(array("env"=>array("body"=>$event))));							
+							
+							//$susi->publish($data["topic"], $res->getContent());							
+							$susi->publish($data["topic"], array("Fake" => "ok"));							
+						}else{
+							$susi->publish($data["topic"], array("Error" => "no such action"));
+						}
+					}catch(Exception $e){
+						$susi->publish($data["topic"], array("Error" => $e->getMessage()));
+					}
+
+				}
 				$data["payload"]["processor"] = "ok";				
-			}			
+			} else {
+				$data["payload"]["error"] = "controller or action missing!";
+			}
 
 			// processor has to acknolage event back to eventManager
 			$susi->ack($data);

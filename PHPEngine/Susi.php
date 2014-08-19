@@ -164,6 +164,14 @@ class Susi {
 			fwrite($this->socket,json_encode($msg));
 		}		
 
+		$pub_test = array (
+			"pub_controller" => "lala",			
+		);
+
+		$this->publish("php_controller", $pub_test);
+
+		//{"type" : "publish" , "data" : { "topic" : "php_controller" , "payload" : { "controller" : "foo" , "action" : "bar" } } }
+
 		return true;
 	}
 }
