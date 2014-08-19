@@ -25,6 +25,7 @@ void Susi::Api::ApiServer::onClose(std::string & id) {
 	
 void Susi::Api::ApiServer::onMessage(std::string & id, Susi::Util::Any & packet) {
 	try{
+		std::cout<<"onMessage:"<<packet.toString()<<std::endl;
 		auto & type = packet["type"];
 		if(type.isString()){
 			if(type=="registerConsumer"){
@@ -54,6 +55,8 @@ void Susi::Api::ApiServer::onMessage(std::string & id, Susi::Util::Any & packet)
 
 void Susi::Api::ApiServer::handleRegisterConsumer(std::string & id, Susi::Util::Any & packet){
 	auto & data = packet["data"];
+
+	std::cout<<"handleRegisterConsumer:"<<data.toString()<<std::endl;
 	if(data.isString()){
 		std::string topic = data;
 		auto & subs = consumerSubscriptions[id];
@@ -83,6 +86,7 @@ void Susi::Api::ApiServer::handleRegisterConsumer(std::string & id, Susi::Util::
 		subs[topic] = subid;
 		sendOk(id);
 	}else{
+		std::cout<<"handleRegisterConsumer-> data is not a string:"<<std::endl;
 		sendFail(id,"data is not a string");
 	}
 }
@@ -198,6 +202,9 @@ void Susi::Api::ApiServer::handlePublish(std::string & id, Susi::Util::Any & pac
 }
 
 void Susi::Api::ApiServer::handleAck(std::string & id, Susi::Util::Any & packet){
+
+	std::cout<<"handleAck:"<<packet.toString()<<std::endl;
+	
 	auto & eventData = packet["data"];
 	if(!eventData.isObject() || !eventData["topic"].isString()){
 		sendFail(id,"data is not an object or topic is not set correctly");
