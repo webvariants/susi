@@ -11,16 +11,16 @@ void Susi::Api::BasicApiClient::sendPublish(Susi::Events::Event & event){
 }
 
 void Susi::Api::BasicApiClient::sendAck(Susi::Events::Event & event){
-	std::cout<<"send ack"<<std::endl;
+	//std::cout<<"send ack"<<std::endl;
 	Susi::Util::Any packedEvent = event.toAny();
-	std::cout<<"event transformed to any"<<std::endl;
+	//std::cout<<"event transformed to any"<<std::endl;
 	Susi::Util::Any packet = Susi::Util::Any::Object{
 		{"type","ack"},
 		{"data",packedEvent}
 	};
-	std::cout<<"packet ready"<<std::endl;
+	//std::cout<<"packet ready"<<std::endl;
 	JSONTCPClient::send(packet);
-	std::cout<<"sended ack"<<std::endl;
+	//std::cout<<"sended ack"<<std::endl;
 }
 
 void Susi::Api::BasicApiClient::sendRegisterConsumer(std::string topic){
