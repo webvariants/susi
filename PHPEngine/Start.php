@@ -27,6 +27,40 @@
 
 	$container = new IONContainer($CONFIG);
 
+	$susi->registerProcessor("test_controller",
+
+		// callback
+		function(&$event) use($susi,$container) {
+
+			if(isset($event["data"]["payload"])) {
+				$event["data"]["payload"]["test1"] = "ok";
+			}
+
+		}
+	);
+
+	$susi->registerProcessor("test_controller",
+
+		// callback
+		function(&$event) use($susi,$container) {
+
+			if(isset($event["data"]["payload"])) {
+				$event["data"]["payload"]["test2"] = "ok";
+			}
+
+
+			$susi->publish("lala", array("PUP" => "FROM P2"), 
+				// finish callback
+				function($event) use($susi,$container) {
+					echo "finished \n";
+				}
+			);
+
+		}
+	);
+
+	/*
+
 	$susi->registerConsumer("php_controller",
 
 		// callback
@@ -40,6 +74,7 @@
 			}			
 		}
 	);
+
 
 	$susi->registerProcessor("php_controller",
 
@@ -90,5 +125,7 @@
 			$susi->ack($data);
 		}
 	);
+
+	*/
 
 	$susi->run();

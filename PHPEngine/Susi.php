@@ -8,6 +8,8 @@ class Susi {
 	private $resisters = array();
 	private $consumer_handlers  = array();
 	private $processor_handlers = array();
+	private $finish_handlers    = array();
+
 	private $globs     = array();
 	
 	public function __construct($address, $port) {
@@ -29,7 +31,8 @@ class Susi {
 			"data" => $topic
 		);
 
-		$this->resisters[] = $msg;	
+		// will be used on connect, only uniq topics will be registered
+		$this->resisters[$topic] = $msg;
 
 		if($type == "registerConsumer") {
 			if(array_key_exists($topic,$this->consumer_handlers)){
@@ -47,9 +50,6 @@ class Susi {
 	}
 
 	public function ack($data = null) {
-		echo "PHPSusi ack: \n";
-		//print_r($data);
-
 		$msg = array(
 			"type" => "ack",
 			"data" => $data
@@ -58,15 +58,25 @@ class Susi {
 		fwrite($this->socket,json_encode($msg));
 	}
 
-	public function publish($topic, $payload = null) {
+	public function publish($topic, $payload = null, $finish_handler = null) {		
+		
+		// id must be an long
+		$str_id = base_convert(uniqid(), 11, 10);		
+		$int_id = intval($str_id);
+
+		if($finish_handler !== null) {
+			$this->finish_handlers[$str_id] = $finish_handler;
+		}
+
 		$msg = array(
 			"type" => "publish",
 			"data" => array(
 				"topic" => $topic,
-				"payload" => $payload
+				"payload" => $payload,
+				"id" => $int_id
 			)
 		);		
-	
+
 		fwrite($this->socket,json_encode($msg));
 	}
 
@@ -77,17 +87,13 @@ class Susi {
 		$msg = json_decode($data,true);
 
 		if($msg["type"] === "consumerEvent"){
-			echo "PHPSusi handleIncome consumerEvent: \n";
-
-			print_r($msg);
 
 			$topic = $msg["data"]["topic"];
 
 			if(array_key_exists($topic, $this->consumer_handlers)){
 				$consumer_handlers = $this->consumer_handlers[$topic];
 				foreach ($consumer_handlers as $handler) {
-					try{
-						echo "handler found!!!";
+					try{						
 						$handler($msg);
 					}catch(Exception $e){
 						print($e);
@@ -97,10 +103,7 @@ class Susi {
 			
 		}
 
-		if($msg["type"] === "processorEvent"){
-			echo "PHPSusi handleIncome processorEvent: \n";
-
-			print_r($msg);
+		if($msg["type"] === "processorEvent"){		
 
 			$topic = $msg["data"]["topic"];
 
@@ -108,12 +111,35 @@ class Susi {
 				$processor_handlers = $this->processor_handlers[$topic];
 				foreach ($processor_handlers as $handler) {
 					try{
-						echo "handler found!!!";
-						$handler($msg);
+						$handler($msg);						
 					}catch(Exception $e){
 						print($e);
 					}
 				}
+				$this->ack($msg["data"]);
+			}
+		}
+
+		if($msg["type"] === "ack"){
+			// convert to string
+			$id = "" + $msg["data"]["id"];
+
+			if(array_key_exists($id, $this->finish_handlers)){
+				$finish_handler = $this->finish_handlers[$id];
+				try{				
+					$finish_handler($msg);
+					// delete callback from memory
+					unset($this->finish_handlers[$id]);					
+				}catch(Exception $e){
+					print($e);
+				}
+			}
+		}
+
+		if($msg["type"] === "status"){
+			if($msg["error"] == true) {
+				$error_msg = $msg["data"];
+				echo "server error:".$error_msg."\n";
 			}
 		}
 	}
@@ -132,7 +158,6 @@ class Susi {
 	
 			while(($buff = fgets($this->socket,1024))){				
 				$data .= $buff;
-				echo "RUN:".$data ."\n";
 				TAG:
 				for($i=0;$i<strlen($data);$i++){
 					if ($data[$i]=="{") $openingBraces++;
@@ -168,7 +193,7 @@ class Susi {
 			"pub_controller" => "lala",			
 		);
 
-		$this->publish("php_controller", $pub_test);
+		$this->publish("test_controller", $pub_test);
 
 		//{"type" : "publish" , "data" : { "topic" : "php_controller" , "payload" : { "controller" : "foo" , "action" : "bar" } } }
 
