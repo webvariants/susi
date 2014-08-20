@@ -1,53 +1,118 @@
 <?php
+/*
+ * Copyright (c) 2014, webvariants GmbH, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ * 
+ * @author: Thomas Krause (thomas.krause@webvariants.de)
+ */
 
-class Susi {	
+class Susi {
+	private $debug = false;
+
 	private $address = "localhost";
 	private $port    = "4000";
 	private $socket  = null;
 
-	private $resisters = array();
-	private $consumer_handlers  = array();
-	private $processor_handlers = array();
-	private $finish_handlers    = array();
+	private $resisters    = array();
+	private $resisters_it = 0;
 
-	private $globs     = array();
+	private $consumer_callbacks  = array();
+	private $processor_callbacks = array();
+	private $finish_handlers    = array();
 	
-	public function __construct($address, $port) {
+	public function __construct($address, $port, $debug = false) {
 		$this->address = $address;
 		$this->port    = $port;
+		$this->debug   = $debug;
+	}
+
+	public function debug($msg) {
+		if($this->debug) {
+			echo $msg . "\n";
+		}
 	}
 
 	public function registerConsumer($topic, $handler) {
-		$this->register("registerConsumer", $topic, $handler);
+		return $this->register("registerConsumer", $topic, $handler);
 	}
 
 	public function registerProcessor($topic, $handler) {
-		$this->register("registerProcessor", $topic, $handler);		
+		return $this->register("registerProcessor", $topic, $handler);		
 	}
 
-	public function register($type, $topic, $handler) {
+	protected function register($type, $topic, $handler) {
 		$msg = array (
 			"type" => $type,
 			"data" => $topic
 		);
 
+		$register_id = $this->resisters_it++;
+
 		// will be used on connect, only uniq topics will be registered
 		$this->resisters[$topic] = $msg;
+		
+		$callback = array (
+			"id" => $register_id,
+			"handler" => $handler
+		);
 
 		if($type == "registerConsumer") {
-			if(array_key_exists($topic,$this->consumer_handlers)){
-				$this->consumer_handlers[$topic][] = $handler;
+			if(array_key_exists($topic,$this->consumer_callbacks)){
+				$this->consumer_callbacks[$topic][] = $callback;
 			}else{
-				$this->consumer_handlers[$topic] = array($handler);
+				$this->consumer_callbacks[$topic] = array($callback);
 			}
 		} else {
-			if(array_key_exists($topic,$this->processor_handlers)){
-				$this->processor_handlers[$topic][] = $handler;
+			if(array_key_exists($topic,$this->processor_callbacks)){
+				$this->processor_callbacks[$topic][] = $callback;
 			}else{
-				$this->processor_handlers[$topic] = array($handler);
+				$this->processor_callbacks[$topic] = array($callback);
 			}
-		}		
+		}
+
+		return $register_id;
 	}
+
+	public function unregisterConsumer($register_id) {
+		return $this->unregister("registerConsumer", $register_id);
+	}
+
+	public function unregisterProcessor($register_id) {
+		return $this->unregister("registerProcessor", $register_id);	
+	}
+
+	protected function unregister($type, $register_id) {
+		$found = false;
+
+		if($type == "registerConsumer") {			
+			foreach ($this->consumer_callbacks as $tkey => $topics) {
+				foreach ($topics as $ckey => $callback) {
+					if($callback["id"] == $register_id) {
+						unset($this->consumer_callbacks[$tkey][$ckey]);
+						$found = true;
+						break;
+					}
+				}
+			}	
+		} else {			
+			foreach ($this->processor_callbacks as $tkey => $topics) {
+				foreach ($topics as $ckey => $callback) {
+					if($callback["id"] == $register_id) {
+						unset($this->processor_callbacks[$tkey][$ckey]);
+						$found = true;
+						break;
+					}
+				}
+			}	
+		}
+
+		return $found;
+	}
+
 
 	public function ack($data = null) {
 		$msg = array(
@@ -82,7 +147,7 @@ class Susi {
 
 
 	protected function handleIncome($data){
-		echo "PHPSusi handleIncome:" . $data . "\n";
+		$this->debug("PHPSusi handleIncome:" . $data);
 
 		$msg = json_decode($data,true);
 
@@ -90,11 +155,11 @@ class Susi {
 
 			$topic = $msg["data"]["topic"];
 
-			if(array_key_exists($topic, $this->consumer_handlers)){
-				$consumer_handlers = $this->consumer_handlers[$topic];
-				foreach ($consumer_handlers as $handler) {
+			if(array_key_exists($topic, $this->consumer_callbacks)){
+				$consumer_callbacks = $this->consumer_callbacks[$topic];
+				foreach ($consumer_callbacks as $callback) {
 					try{						
-						$handler($msg);
+						$callback["handler"]($msg);
 					}catch(Exception $e){
 						print($e);
 					}
@@ -107,11 +172,11 @@ class Susi {
 
 			$topic = $msg["data"]["topic"];
 
-			if(array_key_exists($topic, $this->processor_handlers)){
-				$processor_handlers = $this->processor_handlers[$topic];
-				foreach ($processor_handlers as $handler) {
+			if(array_key_exists($topic, $this->processor_callbacks)){
+				$processor_callbacks = $this->processor_callbacks[$topic];
+				foreach ($processor_callbacks as $callback) {
 					try{
-						$handler($msg);						
+						$callback["handler"]($msg);						
 					}catch(Exception $e){
 						print($e);
 					}
