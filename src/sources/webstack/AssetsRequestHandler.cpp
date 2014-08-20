@@ -23,7 +23,11 @@ void Susi::AssetsRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& req
 		Poco::File::FileSize length = f.getSize();
 		response.set("Last-Modified", Poco::DateTimeFormatter::format(dateTime, Poco::DateTimeFormat::HTTP_FORMAT));
 		response.setContentLength(static_cast<int>(length));
-		//response.setContentType(mediaType);
+		
+		if(fileLocation.find(".svg") == fileLocation.size()-4){
+			response.setContentType("image/svg+xml");
+		}
+		
 		response.setChunkedTransferEncoding(false);
 
 		Poco::FileInputStream istr(fileLocation);
