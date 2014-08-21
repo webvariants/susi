@@ -24,10 +24,20 @@
 #include "apiserver/ApiClient.h"
 
 namespace Susi {
+namespace JS {
 
 using namespace v8;
 
-class JSEngine{
+std::shared_ptr<Susi::Api::ApiClient> api_client{nullptr};
+std::shared_ptr<Susi::Api::ApiClient> getApiClient() {
+	if(api_client==nullptr) {
+		api_client = std::shared_ptr<Susi::Api::ApiClient>{new Susi::Api::ApiClient("localhost:4000")};
+	}
+	return api_client;
+}
+
+
+class Engine{
 private:
 
 	static void Log(const v8::FunctionCallbackInfo<v8::Value>& args);
@@ -39,10 +49,6 @@ private:
 	static Susi::Util::Any convertFromJS(Handle<Value> jsVal);
 	static Handle<Value> convertFromCPP(Susi::Util::Any cppVal);
 	static Handle<Value> convertFromCPP(std::string cppVal);
-    // static Susi::Api::ApiClient api_client{"localhost:4000"};
-public:
-	static std::shared_ptr<Susi::Api::ApiClient> api_client;
-
 
 protected:
 	Isolate* isolate;
@@ -52,22 +58,22 @@ protected:
     Context::Scope context_scope;
 
 public:
-	JSEngine(std::string file="")
+	Engine(std::string file="")
 	: isolate{Isolate::New()},
 	  isolate_scope{isolate},
 	  handle_scope{isolate},
 	  context{Context::New(isolate)},
 	  context_scope{context}{
 	  	context->Global()->Set(v8::String::NewFromUtf8(isolate, "log"),
-              v8::FunctionTemplate::New(isolate, Susi::JSEngine::Log)->GetFunction());
+              v8::FunctionTemplate::New(isolate, Susi::JS::Engine::Log)->GetFunction());
 	  	context->Global()->Set(v8::String::NewFromUtf8(isolate, "publish"),
-              v8::FunctionTemplate::New(isolate, Susi::JSEngine::Publish)->GetFunction());
+              v8::FunctionTemplate::New(isolate, Susi::JS::Engine::Publish)->GetFunction());
 	  	context->Global()->Set(v8::String::NewFromUtf8(isolate, "registerConsumer"),
-              v8::FunctionTemplate::New(isolate, Susi::JSEngine::RegisterConsumer)->GetFunction());
+              v8::FunctionTemplate::New(isolate, Susi::JS::Engine::RegisterConsumer)->GetFunction());
 	  	context->Global()->Set(v8::String::NewFromUtf8(isolate, "registerProcessor"),
-              v8::FunctionTemplate::New(isolate, Susi::JSEngine::RegisterProcessor)->GetFunction());
+              v8::FunctionTemplate::New(isolate, Susi::JS::Engine::RegisterProcessor)->GetFunction());
 	  	context->Global()->Set(v8::String::NewFromUtf8(isolate, "acknowledge"),
-              v8::FunctionTemplate::New(isolate, Susi::JSEngine::Acknowledge)->GetFunction());
+              v8::FunctionTemplate::New(isolate, Susi::JS::Engine::Acknowledge)->GetFunction());
 	  	runFile(file);
 	}
 
@@ -76,6 +82,7 @@ public:
 	Local<Value> run(std::string code);
 };
 
+}
 }
 
 #endif // __JSENGINE__

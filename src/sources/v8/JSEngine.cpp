@@ -2,7 +2,7 @@
 
 using namespace v8;
 
-Handle<Value> Susi::JSEngine::convertFromCPP(std::string cppVal){
+Handle<Value> Susi::JS::Engine::convertFromCPP(std::string cppVal){
 	auto isolate = Isolate::GetCurrent();
 	Handle<Context> context = isolate->GetCurrentContext();
     Handle<Object> global = context->Global();
@@ -13,7 +13,7 @@ Handle<Value> Susi::JSEngine::convertFromCPP(std::string cppVal){
 	return JSON_parse->Call(JSON, 1, arguments);
 }
 
-Handle<Value> Susi::JSEngine::convertFromCPP(Susi::Util::Any cppVal){
+Handle<Value> Susi::JS::Engine::convertFromCPP(Susi::Util::Any cppVal){
 	if(cppVal.isNull()){
 		return Handle<Value>{};
 	}
@@ -27,7 +27,7 @@ Handle<Value> Susi::JSEngine::convertFromCPP(Susi::Util::Any cppVal){
 	return JSON_parse->Call(JSON, 1, arguments);
 }
 
-Susi::Util::Any Susi::JSEngine::convertFromJS(Handle<Value> jsVal){
+Susi::Util::Any Susi::JS::Engine::convertFromJS(Handle<Value> jsVal){
 	if(jsVal->IsArray()){
 		Susi::Util::Any::Array result;
 		auto obj = jsVal->ToObject();
@@ -36,7 +36,7 @@ Susi::Util::Any Susi::JSEngine::convertFromJS(Handle<Value> jsVal){
 		for (uint32_t i=0 ; i<length ; ++i){
 			const Local<Value> key = props->Get(i);
 			const Local<Value> value = obj->Get(key);
-			result.push_back(Susi::JSEngine::convertFromJS(value));
+			result.push_back(Susi::JS::Engine::convertFromJS(value));
 		}
 		return result;
 	}
@@ -49,7 +49,7 @@ Susi::Util::Any Susi::JSEngine::convertFromJS(Handle<Value> jsVal){
 			const Local<Value> key = props->Get(i);
 			const Local<Value> value = obj->Get(key);
 			String::Utf8Value keyStr(key);
-			result[std::string(*keyStr)] = Susi::JSEngine::convertFromJS(value);
+			result[std::string(*keyStr)] = Susi::JS::Engine::convertFromJS(value);
 		}
 		return result;
 	}
@@ -79,7 +79,7 @@ Susi::Util::Any Susi::JSEngine::convertFromJS(Handle<Value> jsVal){
 }
 
 
-Local<Value> Susi::JSEngine::run(std::string code){
+Local<Value> Susi::JS::Engine::run(std::string code){
 	Isolate* _isolate = Isolate::GetCurrent();
 	EscapableHandleScope scope(_isolate);
 	Local<String> _source = String::NewFromUtf8(_isolate, code.c_str());
@@ -89,7 +89,7 @@ Local<Value> Susi::JSEngine::run(std::string code){
 }
 
 
-Local<Value> Susi::JSEngine::runFile(std::string filename){
+Local<Value> Susi::JS::Engine::runFile(std::string filename){
 	if(filename!=""){
   		std::ifstream t(filename);
 		std::string str((std::istreambuf_iterator<char>(t)),
@@ -104,46 +104,46 @@ Local<Value> Susi::JSEngine::runFile(std::string filename){
 }
 
 
-void Susi::JSEngine::Log(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void Susi::JS::Engine::Log(const v8::FunctionCallbackInfo<v8::Value>& args) {
 	if (args.Length() < 1) return;
 	HandleScope scope(args.GetIsolate());
 	Handle<Value> arg = args[0];
-	auto convertRes = Susi::JSEngine::convertFromJS(arg);
+	auto convertRes = Susi::JS::Engine::convertFromJS(arg);
 	std::string str{convertRes.toString()};
 	log(str);
 	args.GetReturnValue().Set(arg);
 	return;
 }
 
-void Susi::JSEngine::Publish(const v8::FunctionCallbackInfo<v8::Value>& args) {
-	log("JSEngine: in publish!");
+void Susi::JS::Engine::Publish(const v8::FunctionCallbackInfo<v8::Value>& args) {
+	log("JS::Engine: in publish!");
 	if (args.Length() < 1) return;
 	HandleScope scope(args.GetIsolate());
 	Handle<Value> topicValue = args[0];
-	std::string topic{Susi::JSEngine::convertFromJS(topicValue).toString()};
+	std::string topic{Susi::JS::Engine::convertFromJS(topicValue).toString()};
 
-	auto event = api_client->createEvent(topic);
+	auto event = Susi::JS::getApiClient()->createEvent(topic);
 	if (args.Length() >= 2) {
 		Handle<Value> payloadValue = args[1];
-		auto payload = Susi::JSEngine::convertFromJS(payloadValue);
+		auto payload = Susi::JS::Engine::convertFromJS(payloadValue);
 		event->payload = payload;
 	}
-	api_client->publish(std::move(event));
+	Susi::JS::getApiClient()->publish(std::move(event));
 	args.GetReturnValue().Set(true);
 	return;
 }
 
-void Susi::JSEngine::RegisterConsumer(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void Susi::JS::Engine::RegisterConsumer(const v8::FunctionCallbackInfo<v8::Value>& args) {
 	if (args.Length() < 2) return;
 	Handle<Value> callbackValue = args[1];
 	if(callbackValue->IsFunction()){
 		Handle<Value> topicValue = args[0];
-		std::string topic{Susi::JSEngine::convertFromJS(topicValue).toString()};
+		std::string topic{Susi::JS::Engine::convertFromJS(topicValue).toString()};
 		std::shared_ptr<Persistent<Function>> jsCallback{new Persistent<Function>(Isolate::GetCurrent(),Handle<Function>::Cast(callbackValue))};
 		Susi::Events::Consumer callback = [jsCallback](Susi::Events::SharedEventPtr event){
 			Local<Function> func = Local<Function>::New(Isolate::GetCurrent(),*jsCallback);
 			Handle<Value> callbackArguments[1];
-			callbackArguments[0] = Susi::JSEngine::convertFromCPP(event->toAny());
+			callbackArguments[0] = Susi::JS::Engine::convertFromCPP(event->toAny());
 			TryCatch trycatch;
 			auto res = func->Call(func,1,callbackArguments);
 			if (res.IsEmpty()) {
@@ -152,24 +152,24 @@ void Susi::JSEngine::RegisterConsumer(const v8::FunctionCallbackInfo<v8::Value>&
 				std::cout<<*exception_str<<std::endl;
 			}
 		};
-		long id = api_client->subscribe(topic,callback);
+		long id = Susi::JS::getApiClient()->subscribe(topic,callback);
 		args.GetReturnValue().Set((double)id);
 	}else{
 		args.GetReturnValue().Set(false);
 	}
 }
 
-void Susi::JSEngine::RegisterProcessor(const v8::FunctionCallbackInfo<v8::Value>& args) {
+void Susi::JS::Engine::RegisterProcessor(const v8::FunctionCallbackInfo<v8::Value>& args) {
 	if (args.Length() < 2) return;
 	Handle<Value> callbackValue = args[1];
 	if(callbackValue->IsFunction()){
 		Handle<Value> topicValue = args[0];
-		std::string topic{Susi::JSEngine::convertFromJS(topicValue).toString()};
+		std::string topic{Susi::JS::Engine::convertFromJS(topicValue).toString()};
 		std::shared_ptr<Persistent<Function>> jsCallback{new Persistent<Function>(Isolate::GetCurrent(),Handle<Function>::Cast(callbackValue))};
 		Susi::Events::Processor callback = [jsCallback](Susi::Events::SharedEventPtr event){
 			Local<Function> func = Local<Function>::New(Isolate::GetCurrent(),*jsCallback);
 			Handle<Value> callbackArguments[1];
-			callbackArguments[0] = Susi::JSEngine::convertFromCPP(event->toAny());
+			callbackArguments[0] = Susi::JS::Engine::convertFromCPP(event->toAny());
 			TryCatch trycatch;
 			auto res = func->Call(func,1,callbackArguments);
 			if (res.IsEmpty()) {
@@ -178,7 +178,7 @@ void Susi::JSEngine::RegisterProcessor(const v8::FunctionCallbackInfo<v8::Value>
 				std::cout<<*exception_str<<std::endl;
 			}
 		};
-		long id = api_client->subscribe(topic,callback);
+		long id = Susi::JS::getApiClient()->subscribe(topic,callback);
 		args.GetReturnValue().Set((double)id);
 	}else{
 		args.GetReturnValue().Set(false);
