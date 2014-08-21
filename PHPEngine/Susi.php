@@ -11,18 +11,18 @@
  */
 
 class Susi {
-	private $debug = false;
 
-	private $address = "localhost";
-	private $port    = "4000";
-	private $socket  = null;
+	// flags
+	protected $debug     = false;
+	protected $connected = false;
 
-	private $resisters    = array();
-	private $resisters_it = 0;
+	protected $address = "localhost";
+	protected $port    = "4000";
+	protected $socket  = null;
 
-	private $consumer_callbacks  = array();
-	private $processor_callbacks = array();
-	private $finish_handlers    = array();
+	protected $consumer_callbacks  = array();
+	protected $processor_callbacks = array();
+	protected $finish_handlers     = array();
 	
 	public function __construct($address, $port, $debug = false) {
 		$this->address = $address;
@@ -45,15 +45,8 @@ class Susi {
 	}
 
 	protected function register($type, $topic, $handler) {
-		$msg = array (
-			"type" => $type,
-			"data" => $topic
-		);
-
-		$register_id = $this->resisters_it++;
-
-		// will be used on connect, only uniq topics will be registered
-		$this->resisters[$topic] = $msg;
+		
+		$register_id = intval(base_convert(uniqid(), 11, 10));		
 		
 		$callback = array (
 			"id" => $register_id,
@@ -86,7 +79,8 @@ class Susi {
 	}
 
 	protected function unregister($type, $register_id) {
-		$found = false;
+		$found      = false;
+		$tkey_found = null;
 
 		if($type == "registerConsumer") {			
 			foreach ($this->consumer_callbacks as $tkey => $topics) {
@@ -94,33 +88,41 @@ class Susi {
 					if($callback["id"] == $register_id) {
 						unset($this->consumer_callbacks[$tkey][$ckey]);
 						$found = true;
+						$tkey_found = $tkey;
 						break;
 					}
 				}
 			}	
+
+			if($found === true && count($this->consumer_callbacks[$tkey_found]) == 0) {				
+				$this->debug("unregisterConsumer: ".$tkey_found);
+				if($this->connected) 
+					fwrite($this->socket,json_encode(array("type" => "unregisterConsumer", "data" => $tkey_found)));
+			}
 		} else {			
 			foreach ($this->processor_callbacks as $tkey => $topics) {
 				foreach ($topics as $ckey => $callback) {
 					if($callback["id"] == $register_id) {
 						unset($this->processor_callbacks[$tkey][$ckey]);
 						$found = true;
+						$tkey_found = $tkey;
 						break;
 					}
 				}
-			}	
+			}
+
+			if($found === true && count($this->processor_callbacks[$tkey_found]) == 0) {
+				$this->debug("unregisterProcessor: ".$tkey_found);
+				if($this->connected)
+					fwrite($this->socket,json_encode(array("type" => "unregisterProcessor", "data" => $tkey_found)));
+			}
 		}
 
 		return $found;
 	}
 
-
 	public function ack($data = null) {
-		$msg = array(
-			"type" => "ack",
-			"data" => $data
-		);
-
-		fwrite($this->socket,json_encode($msg));
+		fwrite($this->socket,json_encode(array("type" => "ack", "data" => $data)));
 	}
 
 	public function publish($topic, $payload = null, $finish_handler = null) {		
@@ -240,19 +242,27 @@ class Susi {
 		}
 	}
 
-	private function connect(){
+	protected function connect(){
 		$this->socket = fsockopen($this->address, $this->port, $errno, $errstr, 5);
 
 		if(!$this->socket) {
 			echo "$errstr ($errno)<br />\n";
+			$this->connected = false;
 			return false;
 		}
 
+		$this->connected = true;
 
-		foreach ($this->resisters as $msg) {
-			echo "register:". json_encode($msg) . "\n";
-			fwrite($this->socket,json_encode($msg));
-		}		
+
+		// register consumers
+		foreach ($this->consumer_callbacks as $topic => $callbacks) {
+			fwrite($this->socket,json_encode(array("type" => "registerConsumer", "data" => $topic)));			
+		}
+
+		// register processors
+		foreach ($this->processor_callbacks as $topic => $callbacks) {
+			fwrite($this->socket,json_encode(array("type" => "registerProcessor", "data" => $topic)));			
+		}	
 
 		$pub_test = array (
 			"pub_controller" => "lala",			
