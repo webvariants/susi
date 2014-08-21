@@ -128,7 +128,7 @@ void Susi::JSEngine::Publish(const v8::FunctionCallbackInfo<v8::Value>& args) {
 		auto payload = Susi::JSEngine::convertFromJS(payloadValue);
 		event->payload = payload;
 	}
-	api_client->publish(event);
+	api_client->publish(std::move(event));
 	args.GetReturnValue().Set(true);
 	return;
 }
@@ -139,19 +139,17 @@ void Susi::JSEngine::RegisterConsumer(const v8::FunctionCallbackInfo<v8::Value>&
 	if(callbackValue->IsFunction()){
 		Handle<Value> topicValue = args[0];
 		std::string topic{Susi::JSEngine::convertFromJS(topicValue).toString()};
-		std::shared_ptr<Persistent<Function>> jsCallback{
-			new Persistent<Function>(Isolate::GetCurrent(),Handle<Function>::Cast(callbackValue))
-		};
-		auto callback = [jsCallback](Susi::Event & event){
+		std::shared_ptr<Persistent<Function>> jsCallback{new Persistent<Function>(Isolate::GetCurrent(),Handle<Function>::Cast(callbackValue))};
+		auto callback = [jsCallback](Susi::Events::SharedEventPtr event){
 			Local<Function> func = Local<Function>::New(Isolate::GetCurrent(),*jsCallback);
 			Handle<Value> callbackArguments[1];
-			callbackArguments[0] = Susi::JSEngine::convertFromCPP(event.toString());
+			callbackArguments[0] = Susi::JSEngine::convertFromCPP(event->toAny());
 			TryCatch trycatch;
 			auto res = func->Call(func,1,callbackArguments);
 			if (res.IsEmpty()) {
 				Handle<Value> exception = trycatch.Exception();
 				String::Utf8Value exception_str(exception);
-				error("Exception: " + exception_str);
+				error(exception_str);
 			}
 		};
 		long id = api_client->subscribe(topic,callback);
@@ -167,19 +165,17 @@ void Susi::JSEngine::RegisterProcessor(const v8::FunctionCallbackInfo<v8::Value>
 	if(callbackValue->IsFunction()){
 		Handle<Value> topicValue = args[0];
 		std::string topic{Susi::JSEngine::convertFromJS(topicValue).toString()};
-		std::shared_ptr<Persistent<Function>> jsCallback{
-			new Persistent<Function>(Isolate::GetCurrent(),Handle<Function>::Cast(callbackValue))
-		};
-		Processor callback = [jsCallback](Susi::Event & event){
+		std::shared_ptr<Persistent<Function>> jsCallback{new Persistent<Function>(Isolate::GetCurrent(),Handle<Function>::Cast(callbackValue))};
+		Processor callback = [jsCallback](Susi::Events::SharedEventPtr event){
 			Local<Function> func = Local<Function>::New(Isolate::GetCurrent(),*jsCallback);
 			Handle<Value> callbackArguments[1];
-			callbackArguments[0] = Susi::JSEngine::convertFromCPP(event.toString());
+			callbackArguments[0] = Susi::JSEngine::convertFromCPP(event->toAny());
 			TryCatch trycatch;
 			auto res = func->Call(func,1,callbackArguments);
 			if (res.IsEmpty()) {
 				Handle<Value> exception = trycatch.Exception();
 				String::Utf8Value exception_str(exception);
-				error("Exception: " + exception_str);
+				error(exception_str);
 			}
 		};
 		long id = api_client->subscribe(topic,callback);
