@@ -19,8 +19,8 @@
 #include <fstream>
 #include <streambuf>
 
-#include "events/EventSystem.h"
 #include "logger/Logger.h"
+#include "util/Any.h"
 #include "apiserver/ApiClient.h"
 
 namespace Susi {
@@ -35,13 +35,22 @@ private:
 	static void RegisterConsumer(const v8::FunctionCallbackInfo<v8::Value>& args);
 	static void RegisterProcessor(const v8::FunctionCallbackInfo<v8::Value>& args);
 	static void Acknowledge(const v8::FunctionCallbackInfo<v8::Value>& args);
+
+	static Susi::Util::Any convertFromJS(Handle<Value> jsVal);
+	static Handle<Value> convertFromCPP(Susi::Util::Any cppVal);
+	static Handle<Value> convertFromCPP(std::string cppVal);
+    // static Susi::Api::ApiClient api_client{"localhost:4000"};
+public:
+	static std::shared_ptr<Susi::Api::ApiClient> api_client;
+
+
 protected:
 	Isolate* isolate;
 	Isolate::Scope isolate_scope;
     HandleScope handle_scope;
     Handle<Context> context;
     Context::Scope context_scope;
-    Susi::Api::ApiClient api_client;
+
 public:
 	JSEngine(std::string file="")
 	: isolate{Isolate::New()},
@@ -62,13 +71,9 @@ public:
 	  	runFile(file);
 	}
 
-	Handle<Value> runFile(std::string filename);
+	Local<Value> runFile(std::string filename);
 
-	Handle<Value> run(std::string code);
-
-	Poco::Dynamic::Var convertFromJS(Handle<Value> jsVal);
-	Handle<Value> convertFromCPP(Poco::Dynamic::Var cppVal);
-	Handle<Value> convertFromCPP(std::string cppVal);
+	Local<Value> run(std::string code);
 };
 
 }
