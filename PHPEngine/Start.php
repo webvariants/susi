@@ -23,11 +23,11 @@
 	}
 
 	require $config;
-	$susi = new Susi($CONFIG["SUSI_ADDR"], $CONFIG["SUSI_PORT"]);
+	$susi = new Susi($CONFIG["SUSI_ADDR"], $CONFIG["SUSI_PORT"], true);
 
 	$container = new IONContainer($CONFIG);
 
-	$susi->registerProcessor("test_controller",
+	$reg_1_id = $susi->registerProcessor("test_controller",
 
 		// callback
 		function(&$event) use($susi,$container) {
@@ -39,7 +39,7 @@
 		}
 	);
 
-	$susi->registerProcessor("test_controller",
+	$reg_2_id = $susi->registerProcessor("test_controller",
 
 		// callback
 		function(&$event) use($susi,$container) {
@@ -58,6 +58,15 @@
 
 		}
 	);
+
+
+	echo "unregister ".$reg_1_id. " ";
+	echo $susi->unregisterProcessor($reg_1_id);
+
+	// should fail
+	echo "unregister ".$reg_1_id. " ";
+	echo $susi->unregisterConsumer($reg_1_id);
+
 
 	/*
 
