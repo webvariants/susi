@@ -32,8 +32,8 @@ TESTS=$(subst .cpp,.o,$(TESTS_INTERMEDIATE))
 TEST_MAIN=$(shell find ./test/gtest*/lib -name "*.a")
 
 DEBUG=-g -Wall
-CCFLAGS=$(DEBUG) -O3 -I src/headers -I /opt/v8/include -I /usr/local/include/soci --std=c++11 -c
-LDFLAGS=$(DEBUG) --std=c++11 -L /usr/local/lib64 -L /opt/v8/out/x64.release/lib.target
+CCFLAGS=$(DEBUG) -O3 -I src/headers -I /usr/local/include/soci --std=c++11 -c
+LDFLAGS=$(DEBUG) --std=c++11 -L /usr/local/lib64
 LIBS=-l PocoFoundation \
 		-l PocoUtil \
 		-l PocoJSON \
@@ -41,9 +41,6 @@ LIBS=-l PocoFoundation \
 		-l soci_core \
 		-l soci_sqlite3 \
 		-l soci_firebird \
-		-l v8 \
-		-l icuuc \
-		-l icui18n \
 		-l event \
 		-l event_pthreads
 
@@ -59,13 +56,13 @@ bin/libsusi.a: $(OBJECTS)
 
 
 test: ./bin/test
-	LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:./test/gtest-1.7.0/lib/.libs:/opt/v8/out/x64.release/lib.target ./bin/test
+	LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:./test/gtest-1.7.0/lib/ ./bin/test
 
 ./bin/susi: $(OBJECTS) $(SERVERMAIN)
 	$(CC) $(DEBUG) $(LDFLAGS) -o ./bin/susi $(OBJECTS) $(SERVERMAIN) $(LIBS)
 
 ./bin/client: $(OBJECTS) $(CLIENTMAIN)
-	$(CC) $(DEBUG) $(LDFLAGS) -o ./bin/client $(OBJECTS) $(CLIENTMAIN) $(LIBS)	
+	$(CC) $(DEBUG) $(LDFLAGS) -o ./bin/client $(OBJECTS) $(CLIENTMAIN) $(LIBS)
 
 ./bin/test: $(OBJECTS) $(TESTS)
 	$(CC) $(LDFLAGS) -L ./test/gtest-1.7.0/lib/.libs -o ./bin/test $(OBJECTS) $(TESTS) $(LIBS) -lgtest -lgtest_main
@@ -92,7 +89,7 @@ run: susi
 
 cppcheck_output.txt: $(CPPFILES) $(HEADERFILES)
 	cppcheck -I src/headers -I /usr/local/include --enable=all src -q  2>cppcheck_output.txt
-	
+
 check: cppcheck_output.txt
 	@echo "$(shell echo "Errors      :" $(shell cat cppcheck_output.txt|grep '(error)'|wc -l))"
 	@echo "$(shell echo "Warnings    :" $(shell cat cppcheck_output.txt|grep '(warning)'|wc -l))"
@@ -105,5 +102,5 @@ push: check
 	$(MAKE) clean
 	git checkout .
 	$(MAKE) bin/test
-	LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:./test/gtest-1.7.0/lib/.libs:/opt/v8/out/x64.release/lib.target ./bin/test
+	LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:./test/gtest-1.7.0/lib/ ./bin/test
 	git push
