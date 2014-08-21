@@ -62,10 +62,11 @@
 
 	echo "unregister ".$reg_1_id. " ";
 	echo $susi->unregisterProcessor($reg_1_id);
+	echo $susi->unregisterProcessor($reg_2_id);
 
 	// should fail
-	echo "unregister ".$reg_1_id. " ";
-	echo $susi->unregisterConsumer($reg_1_id);
+	//echo "unregister ".$reg_1_id. " ";
+	//echo $susi->unregisterConsumer($reg_1_id);
 
 
 	/*

@@ -149,7 +149,7 @@ class Susi {
 
 
 	protected function handleIncome($data){
-		$this->debug("PHPSusi handleIncome:" . $data);
+		$this->debug("PHPSusi handleIncome:\n" . $data);
 
 		$msg = json_decode($data,true);
 
@@ -246,7 +246,7 @@ class Susi {
 		$this->socket = fsockopen($this->address, $this->port, $errno, $errstr, 5);
 
 		if(!$this->socket) {
-			echo "$errstr ($errno)<br />\n";
+			echo "$errstr ($errno) \n";
 			$this->connected = false;
 			return false;
 		}
