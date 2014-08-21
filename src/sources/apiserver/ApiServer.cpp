@@ -56,7 +56,6 @@ void Susi::Api::ApiServer::onMessage(std::string & id, Susi::Util::Any & packet)
 void Susi::Api::ApiServer::handleRegisterConsumer(std::string & id, Susi::Util::Any & packet){
 	auto & data = packet["data"];
 
-	std::cout<<"handleRegisterConsumer:"<<data.toString()<<std::endl;
 	if(data.isString()){
 		std::string topic = data;
 		auto & subs = consumerSubscriptions[id];
@@ -157,7 +156,6 @@ void Susi::Api::ApiServer::handleUnregisterProcessor(std::string & id, Susi::Uti
 	}
 }
 void Susi::Api::ApiServer::handlePublish(std::string & id, Susi::Util::Any & packet){
-	std::cout<<"got publish!"<<std::endl;
 	auto & eventData = packet["data"];
 	if(!eventData.isObject() || !eventData["topic"].isString()){
 		sendFail(id,"data is not an object or topic is not set correctly");
@@ -166,10 +164,12 @@ void Susi::Api::ApiServer::handlePublish(std::string & id, Susi::Util::Any & pac
 	auto event = Susi::Events::createEvent(eventData["topic"]);
 	event->sessionID = id;
 	auto eventID = eventData["id"];
-	if(eventID.isNull()){
+	if(eventID.isNull()){				
 		eventID = std::chrono::system_clock::now().time_since_epoch().count();
 	}
+	
 	event->id = eventID;
+	
 	if(eventData["headers"].isArray()){
 		Susi::Util::Any::Array arr = eventData["headers"];
 		for(Susi::Util::Any::Object & val : arr){
@@ -181,6 +181,7 @@ void Susi::Api::ApiServer::handlePublish(std::string & id, Susi::Util::Any & pac
 	if(!eventData["payload"].isNull()){
 		event->payload = eventData["payload"];
 	}
+
 	Susi::Events::publish(std::move(event),[this,id](Susi::Events::SharedEventPtr event){
 		Susi::Util::Any::Array headers;
 		for(auto & kv : event->headers){
@@ -198,13 +199,11 @@ void Susi::Api::ApiServer::handlePublish(std::string & id, Susi::Util::Any & pac
 		std::string _id = id;
 		send(_id,packet);
 	});
+
 	sendOk(id);
 }
 
-void Susi::Api::ApiServer::handleAck(std::string & id, Susi::Util::Any & packet){
-
-	std::cout<<"handleAck:"<<packet.toString()<<std::endl;
-	
+void Susi::Api::ApiServer::handleAck(std::string & id, Susi::Util::Any & packet){	
 	auto & eventData = packet["data"];
 	if(!eventData.isObject() || !eventData["topic"].isString()){
 		sendFail(id,"data is not an object or topic is not set correctly");

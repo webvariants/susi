@@ -21,24 +21,22 @@ void Susi::World::setup(){
 void Susi::World::tearDown(){
 	tcpServer.reset();
 	httpServer.reset();
-	sessionManager.reset();
 	engineStarter.reset();
 	authController.reset();
 	ioController.reset();
 	dbManager.reset();
 	stateController.reset();
 	heartBeat.reset();
+	sessionManager.reset();
 	eventManager.reset();
 	logger.reset();
 }
 
 void Susi::World::setupEventManager(){
-	eventManager.reset();
 	eventManager = std::shared_ptr<Susi::Events::Manager>(new Susi::Events::Manager{});
 }
 
 void Susi::World::setupStateController(){
-	stateController.reset();
 	std::string file = "./states.json";
 	try{
 		auto & app = Poco::Util::Application::instance();
@@ -53,7 +51,6 @@ void Susi::World::setupStateController(){
 }
 
 void Susi::World::setupEngineStarter(){
-	engineStarter.reset();
 	std::string base = "./controller/";
 	try{
 		auto & app = Poco::Util::Application::instance();
@@ -66,7 +63,6 @@ void Susi::World::setupEngineStarter(){
 }
 
 void Susi::World::setupLogger(){
-	logger.reset();
 	unsigned char level = Susi::Logger::NOTHING;
 	try{
 		auto & app = Poco::Util::Application::instance();
@@ -77,7 +73,6 @@ void Susi::World::setupLogger(){
 }
 
 void Susi::World::setupTCPServer(){
-	tcpServer.reset();
 	std::string addr = "[::1]:4000";
 	try{
 		auto & app = Poco::Util::Application::instance();
@@ -88,7 +83,6 @@ void Susi::World::setupTCPServer(){
 }
 
 void Susi::World::setupHttpServer(){
-	httpServer.reset();
 	std::string addr = "[::1]:8080";
 	std::string assets = "./assets/";
 	try{
@@ -103,7 +97,6 @@ void Susi::World::setupHttpServer(){
 }
 
 void Susi::World::setupSessionManager(){
-	sessionManager.reset();
 	int lifetime = 20;
 	int interval = 5;
 	try{
@@ -118,18 +111,15 @@ void Susi::World::setupSessionManager(){
 }
 
 void Susi::World::setupIOController() {
-	ioController.reset();
 	ioController = std::shared_ptr<Susi::IOController>{new Susi::IOController()};
 	Susi::IOEventInterface::initEventInterface();
 }
 
 void Susi::World::setupHeartBeat() {
-	heartBeat.reset();
 	heartBeat = std::shared_ptr<Susi::HeartBeat>{new Susi::HeartBeat()};
 }
 
 void Susi::World::setupDBManager(){
-	dbManager.reset();
 	std::vector<std::tuple<std::string,std::string,std::string>> dbs;
 	std::string dbConfigPath = "./dbs.conf";
 	try{
@@ -166,7 +156,6 @@ void Susi::World::setupDBManager(){
 }
 
 void Susi::World::setupAuthController() {
-	authController.reset();
 	std::string dbIdentifier = "auth";
 	try{
 		auto & app = Poco::Util::Application::instance();
@@ -179,7 +168,6 @@ void Susi::World::setupAuthController() {
 }
 
 void Susi::World::setupSysCallController() {
-	syscallController.reset();
 	std::string configPath = "./test_config/unified.cfg";
 	try{
 		auto & app = Poco::Util::Application::instance();

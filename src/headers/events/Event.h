@@ -67,16 +67,20 @@ public:
 		}
 	}
 	Susi::Util::Any toAny(){
-		auto obj = Susi::Util::Any::Object{
+		std::cout<<"toAny()"<<std::endl;
+		Susi::Util::Any obj = Susi::Util::Any::Object{
 			{"id",id},
 			{"sessionid",sessionID},
 			{"topic",topic},
 			{"payload",payload}
 		};
-		for(size_t i=0; i<headers.size();++i) {
-			obj["headers"].push_back(Susi::Util::Any::Object{
+		std::cout<<"builded main object"<<std::endl;
+		std::cout<<"headersize: "<<headers.size()<<std::endl;
+		for(size_t i=0; i<headers.size(); ++i) {
+			Susi::Util::Any::Object header{
 				{headers[i].first,headers[i].second}
-			});
+			};
+			obj["headers"].push_back(Susi::Util::Any{header});
 		}
 		return obj;
 	}

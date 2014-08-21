@@ -12,7 +12,7 @@ void Susi::DB::handleQuery(Susi::Events::EventPtr  event){
 		
 		auto db = world.dbManager->getDatabase(identifier);
 		if(db==nullptr){
-			event->payload["error"] = true;			
+			throw std::runtime_error{"cant find db"};
 		}else{
 			auto res = db->query(query);
 			event->payload["result"] = res;			

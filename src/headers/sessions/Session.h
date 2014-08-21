@@ -26,11 +26,29 @@ namespace Susi {
 
 	public:
 		Session() : Session(std::chrono::milliseconds(10000)) {}
+		Session(std::chrono::milliseconds milliseconds);
 		Session(const Session & other) : 
 			deadline{other.deadline}, 
 			attributes{other.attributes},
 			multiAttributes{other.multiAttributes} {}
-		Session(std::chrono::milliseconds milliseconds);
+		Session(Session && other){
+			*this = std::move(other);
+		}
+		Susi::Session& operator=(const Susi::Session & other){
+			deadline = other.deadline;
+			attributes = other.attributes;
+			multiAttributes = other.multiAttributes;
+			return *this;
+		}
+
+		Susi::Session& operator=(Susi::Session && other){
+			std::swap(deadline,other.deadline);
+			std::swap(attributes,other.attributes);
+			std::swap(multiAttributes,other.multiAttributes);
+			other.attributes.clear();
+			other.multiAttributes.clear();
+			return *this;
+		}
 		bool isDead();
 		void addTime(std::chrono::milliseconds milliseconds);
 		bool setAttribute(std::string key, Susi::Util::Any value);

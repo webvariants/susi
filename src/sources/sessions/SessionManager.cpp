@@ -27,41 +27,53 @@ bool SessionManager::init(std::chrono::milliseconds stdSessionLifetime, std::chr
 	}
 	this->stdLifetime = stdSessionLifetime;
 
-	subId = Susi::Events::subscribe("heartbeat::one",[this](Susi::Events::EventPtr event){
+	Susi::Events::Consumer handler{[this](Susi::Events::SharedEventPtr event){
 		this->checkSessions();
-	});	
+	}};
+
+	subId = Susi::Events::subscribe("heartbeat::one",handler);	
 	
 	return true;
 }
 
 
 SessionManager::~SessionManager(){
-	std::lock_guard<std::mutex> lock(mutex);
+	std::unique_lock<std::mutex> lock(mutex);
 	Susi::Events::unsubscribe(subId);
 }
 
 int SessionManager::checkSessions(){
+	//std::cout<<"aquiere sessions mutex"<<std::endl;
 	std::lock_guard<std::mutex> lock(mutex);
-	std::map<std::string, Session> newSessions;
+	//std::cout<<"got sessions mutex"<<std::endl;
+	int deleted = 0;	
+	for(auto it = std::begin(sessions); it!=std::end(sessions); ){
+		if(it->second.isDead()){
+			sessions.erase(it++);
+			deleted++;
+		}else{
+			++it;
+		}
+	}
+
+	//std::cout<<"release sessions mutex"<<std::endl;
+
+
+	/*std::map<std::string, Session> newSessions;
 	int deleted = 0;
 	for(auto & kv : sessions){
 		if(!kv.second.isDead()){
-			newSessions.emplace(kv.first,kv.second);
+			newSessions.emplace(kv.first,std::move(kv.second));
 		}else{
-			/*std::string topic = "session::die::";
-			topic += kv.first;
-			Susi::Event event(topic);
-			Susi::publish(event);*/
 			deleted++;
 		}
 	}
-	sessions = newSessions;
+	sessions = std::move(newSessions);*/
 	return deleted;
 }
 
 bool SessionManager::checkSession(std::string id){
 	std::lock_guard<std::mutex> lock(mutex);
-
 	try{
 		return !sessions.at(id).isDead();
 	}catch(const std::exception & e){

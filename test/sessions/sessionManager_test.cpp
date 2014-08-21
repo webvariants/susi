@@ -7,34 +7,37 @@ using namespace Susi::Sessions;
 
 class SessionManagerTest : public ::testing::Test {
 protected:
+	std::string sessionID{"s1"};
+	Susi::Sessions::SessionManager sessionManager;
 	virtual void SetUp() override {
+		std::cout<<"setup!"<<std::endl;
 		world.setupEventManager();
-		//world.setupHeartBeat();
+		world.setupHeartBeat();
+		sessionManager.init(std::chrono::milliseconds(250),std::chrono::milliseconds(250));
+		std::cout<<"setup finished!"<<std::endl;
 	}
 	virtual void TearDown() override {
+		std::cout<<"teardown"<<std::endl;
 		world.tearDown();
+		std::cout<<"teardown finished!"<<std::endl;
 	}
 };
 
 
 TEST_F(SessionManagerTest, Init) {
-	Susi::Sessions::SessionManager sessionManager;
-	sessionManager.init(std::chrono::milliseconds(250),std::chrono::milliseconds(250));
-	EXPECT_FALSE(sessionManager.checkSession("s1"));
-	sessionManager.updateSession("s1");
-	EXPECT_TRUE(sessionManager.checkSession("s1"));
+	EXPECT_FALSE(sessionManager.checkSession(sessionID));
+	sessionManager.updateSession(sessionID);
+	EXPECT_TRUE(sessionManager.checkSession(sessionID));
 	auto duration = std::chrono::milliseconds(250);
 	std::this_thread::sleep_for(duration);
-	EXPECT_FALSE(sessionManager.checkSession("s1"));
+	EXPECT_FALSE(sessionManager.checkSession(sessionID));
 }
 
 
 TEST_F(SessionManagerTest, SetGetAttribute){
-	Susi::Sessions::SessionManager sessionManager;
-	sessionManager.init(std::chrono::milliseconds(250),std::chrono::milliseconds(250));
-	sessionManager.updateSession("s1", std::chrono::milliseconds(20000));
-	EXPECT_TRUE(sessionManager.setSessionAttribute("s1", "real", "superb"));
-	auto res1 = sessionManager.getSessionAttribute("s1", "real");
+	sessionManager.updateSession(sessionID, std::chrono::milliseconds(20000));
+	EXPECT_TRUE(sessionManager.setSessionAttribute(sessionID, "real", "superb"));
+	auto res1 = sessionManager.getSessionAttribute(sessionID, "real");
 	EXPECT_FALSE(res1.isNull());
 	if(!res1.isNull()) {
 		std::string str = res1;
@@ -43,26 +46,20 @@ TEST_F(SessionManagerTest, SetGetAttribute){
 }
 
 TEST_F(SessionManagerTest, GetNonExistentAttribute){
-	Susi::Sessions::SessionManager sessionManager;
-	sessionManager.init(std::chrono::milliseconds(250),std::chrono::milliseconds(250));
-	sessionManager.updateSession("s1", std::chrono::milliseconds(20000));
-	auto res1 = sessionManager.getSessionAttribute("s1", "real");
+	sessionManager.updateSession(sessionID, std::chrono::milliseconds(20000));
+	auto res1 = sessionManager.getSessionAttribute(sessionID, "real");
 	EXPECT_TRUE(res1.isNull());
 }
 
 TEST_F(SessionManagerTest, GetAttributeFromNonExistentSession){
-	Susi::Sessions::SessionManager sessionManager;
-	sessionManager.init(std::chrono::milliseconds(250),std::chrono::milliseconds(250));
-	auto res1 = sessionManager.getSessionAttribute("s1", "real");
+	auto res1 = sessionManager.getSessionAttribute(sessionID, "real");
 	EXPECT_TRUE(res1.isNull());
 }
 
 TEST_F(SessionManagerTest, PushGetAttribute){
-	Susi::Sessions::SessionManager sessionManager;
-	sessionManager.init(std::chrono::milliseconds(250),std::chrono::milliseconds(250));
-	sessionManager.updateSession("s1", std::chrono::milliseconds(20000));
-	EXPECT_TRUE(sessionManager.pushSessionAttribute("s1", "real", "superb"));
-	auto res2 = sessionManager.getSessionAttribute("s1", "real");
+	sessionManager.updateSession(sessionID, std::chrono::milliseconds(20000));
+	EXPECT_TRUE(sessionManager.pushSessionAttribute(sessionID, "real", "superb"));
+	auto res2 = sessionManager.getSessionAttribute(sessionID, "real");
 	EXPECT_FALSE(res2.isNull());
 	if(!res2.isNull()) {
 		EXPECT_NO_THROW({
@@ -73,17 +70,15 @@ TEST_F(SessionManagerTest, PushGetAttribute){
 }
 
 TEST_F(SessionManagerTest, SetPushGetAttribute){
-	Susi::Sessions::SessionManager sessionManager;
-	sessionManager.init(std::chrono::milliseconds(250),std::chrono::milliseconds(250));
-	sessionManager.updateSession("s1", std::chrono::milliseconds(20000));
-	EXPECT_TRUE(sessionManager.setSessionAttribute("s1", "real", "superb_0"));
-	EXPECT_TRUE(sessionManager.pushSessionAttribute("s1", "real", "superb_1"));
-	auto res2 = sessionManager.getSessionAttribute("s1", "real");
+	sessionManager.updateSession(sessionID, std::chrono::milliseconds(20000));
+	EXPECT_TRUE(sessionManager.setSessionAttribute(sessionID, "real", "superb_0"));
+	EXPECT_TRUE(sessionManager.pushSessionAttribute(sessionID, "real", "superb_1"));
+	auto res2 = sessionManager.getSessionAttribute(sessionID, "real");
 	EXPECT_FALSE(res2.isNull());
 	if(!res2.isNull()) {
 		EXPECT_NO_THROW({
-			std::string str0 = sessionManager.getSessionAttribute("s1", "real")[0];
-			std::string str1 = sessionManager.getSessionAttribute("s1", "real")[1];
+			std::string str0 = sessionManager.getSessionAttribute(sessionID, "real")[0];
+			std::string str1 = sessionManager.getSessionAttribute(sessionID, "real")[1];
 
 			EXPECT_EQ("superb_0", str0);
 			EXPECT_EQ("superb_1", str1);

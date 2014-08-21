@@ -58,44 +58,61 @@ bool Susi::Events::Manager::unsubscribe(long id){
 			return true;
 		}
 	}
+	for(auto & kv : publishProcesses){
+		for(auto & processorPair : kv.second->processors){
+			if(processorPair.first == id){
+				processorPair.second = Processor{};
+				break;		
+			}
+		}
+		for(auto & consumerPair : kv.second->consumers){
+			if(consumerPair.first == id){
+				consumerPair.second = Consumer{};
+				break;		
+			}
+		}
+	}
 	return false;
 }
 
 // public publish api function
 void Susi::Events::Manager::publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback){
-	if(event.get()==nullptr)return;
-
+	if(event.get()==nullptr){
+		//std::cout<<"event is nullptr"<<std::endl;
+		event.release();
+		return;
+	}
 	{
 		std::lock_guard<std::mutex> lock(mutex);	
 		auto process = std::make_shared<PublishProcess>();
 		for(auto & kv : processorsByTopic){
 			if(kv.first == event->topic){
 				for(auto & pair : kv.second){
-					process->processors.push_back(pair.second);
+					process->processors.push_back(pair);
 				}
 				break;
 			}
 		}
 		for(auto & tuple : processorsByPred){
 			if((std::get<1>(tuple))(*event)){
-				process->processors.push_back(std::get<2>(tuple));
+				process->processors.push_back(std::make_pair(std::get<0>(tuple),std::get<2>(tuple)));
 			}
 		}
 
 		for(auto & kv : consumersByTopic){
 			if(kv.first == event->topic){
 				for(auto & pair : kv.second){
-					process->consumers.push_back(pair.second);
+					process->consumers.push_back(pair);
 				}
 				break;
 			}
 		}
 		for(auto & tuple : consumersByPred){
 			if((std::get<1>(tuple))(*event)){
-				process->consumers.push_back(std::get<2>(tuple));
+				process->consumers.push_back(std::make_pair(std::get<0>(tuple),std::get<2>(tuple)));
 			}
 		}
-		process->consumers.push_back(finishCallback);
+		process->consumers.push_back(std::pair<long,Consumer>{0,finishCallback});
 		publishProcesses[event->id] = process;
 	} // release lock
 	ack(std::move(event));
@@ -126,12 +143,13 @@ void Susi::Events::Manager::ack(EventPtr event){
 				}
 			}
 			if(process.get()==nullptr){
-				//std::cout<<"cant find process, this should not happen"<<std::endl;
-				//std::cout<<event->topic<<std::endl;
+				std::cout<<"cant find process, this should not happen"<<std::endl;
+				std::cout<<event->topic<<std::endl;
 				delete event.release();
 				return;
 			}
-	
+			//std::cout<<"ack event "<<event->topic<<std::endl;
+				
 			std::unique_lock<std::mutex> lock(process->mutex);
 			while(process->errors.size() > 0){				
 				event->headers.push_back(std::make_pair("error",process->errors.back()));
@@ -139,13 +157,17 @@ void Susi::Events::Manager::ack(EventPtr event){
 			}
 			if(process->current < process->processors.size()){
 				try{
-					process->processors[process->current++](std::move(event));
+					auto nextProcessor = process->processors[process->current++].second;
+					if(nextProcessor){
+						nextProcessor(std::move(event));
+					}
 				}catch(const std::exception & e){
 					process->errors.push_back(e.what());
 				}
 			}else{
 				std::shared_ptr<Event> sharedEvent{event.release()};
-				for(auto & consumer : process->consumers){
+				for(auto & consumerPair : process->consumers){
+					auto consumer = consumerPair.second;
 					if(consumer) manager->pool.add([consumer,sharedEvent](){
 						consumer(sharedEvent);
 					});
@@ -164,18 +186,16 @@ void Susi::Events::Manager::ack(EventPtr event){
 	};
 
 	long id = event->id;
-	auto error = [id,this](std::string msg){
-		{
-			std::unique_lock<std::mutex> lock(mutex);
-			std::shared_ptr<PublishProcess> process;
-			for(auto & kv : publishProcesses){
-				if(kv.first == id){
-					process = kv.second;
-				}
+	auto error = [id,this](std::string msg){		
+		std::unique_lock<std::mutex> lock(mutex);
+		std::shared_ptr<PublishProcess> process;
+		for(auto & kv : publishProcesses){
+			if(kv.first == id){
+				process = kv.second;
 			}
-			if(process.get()!=nullptr){
-				process->errors.push_back(msg);
-			}
+		}
+		if(process.get()!=nullptr){
+			process->errors.push_back(msg);
 		}
 	};
 	Work work{std::move(event),this};

@@ -35,9 +35,9 @@ namespace Api {
 				int bs;
 				while(!isClosed){
 					try{
-						std::cout<<"wait for bytes"<<std::endl;
+						//std::cout<<"wait for bytes"<<std::endl;
 						bs = sock.receiveBytes(buff,1024);
-						std::cout<<"got "<<bs<<std::endl;
+						//std::cout<<"got "<<bs<<std::endl;
 						if(bs<=0){
 							onClose();
 							break;
@@ -45,7 +45,7 @@ namespace Api {
 						std::string data{buff,static_cast<size_t>(bs)};
 						onData(data);
 					}catch(const Poco::TimeoutException & e){
-						std::cout<<"timeout!"<<std::endl;
+						//std::cout<<"timeout!"<<std::endl;
 						if(isClosed)break;
 					}catch(const std::exception & e){
 						std::cout<<"Exception: "<<e.what()<<std::endl;

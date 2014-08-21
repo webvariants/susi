@@ -23,9 +23,52 @@
 	}
 
 	require $config;
-	$susi = new Susi($CONFIG["SUSI_ADDR"], $CONFIG["SUSI_PORT"]);
+	$susi = new Susi($CONFIG["SUSI_ADDR"], $CONFIG["SUSI_PORT"], true);
 
 	$container = new IONContainer($CONFIG);
+
+	$reg_1_id = $susi->registerProcessor("test_controller",
+
+		// callback
+		function(&$event) use($susi,$container) {
+
+			if(isset($event["data"]["payload"])) {
+				$event["data"]["payload"]["test1"] = "ok";
+			}
+
+		}
+	);
+
+	$reg_2_id = $susi->registerProcessor("test_controller",
+
+		// callback
+		function(&$event) use($susi,$container) {
+
+			if(isset($event["data"]["payload"])) {
+				$event["data"]["payload"]["test2"] = "ok";
+			}
+
+
+			$susi->publish("lala", array("PUP" => "FROM P2"), 
+				// finish callback
+				function($event) use($susi,$container) {
+					echo "finished \n";
+				}
+			);
+
+		}
+	);
+
+
+	echo "unregister ".$reg_1_id. " ";
+	echo $susi->unregisterProcessor($reg_1_id);
+
+	// should fail
+	echo "unregister ".$reg_1_id. " ";
+	echo $susi->unregisterConsumer($reg_1_id);
+
+
+	/*
 
 	$susi->registerConsumer("php_controller",
 
@@ -40,6 +83,7 @@
 			}			
 		}
 	);
+
 
 	$susi->registerProcessor("php_controller",
 
@@ -90,5 +134,7 @@
 			$susi->ack($data);
 		}
 	);
+
+	*/
 
 	$susi->run();

@@ -33,9 +33,9 @@ class SessionManagerEventInterfaceTest : public ::testing::Test {
 		std::condition_variable condFour;
 		
 		void SetUp(){
-			world.setupEventManager();
+			world.setup/*EventManager();
 			world.setupHeartBeat();
-			world.setupSessionManager();
+			world.setupSessionManager*/();
 		}
 		void TearDown(){
 			world.tearDown();

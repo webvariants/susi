@@ -18,6 +18,7 @@
 #include "Poco/Net/Socket.h" 
 #include "apiserver/ApiServer.h"
 #include "apiserver/JSONStreamCollector.h"
+#include "logger/Logger.h"
 
 namespace Susi {
 namespace Api {
@@ -60,7 +61,7 @@ protected:
 					break;
 				}
 				std::string s{buff,static_cast<size_t>(bs)};
-				std::cout<<"got data in server: "<<s<<std::endl;
+				//std::cout<<"got data in server: "<<s<<std::endl;
 				collector.collect(s);
 			}
 		}
@@ -69,7 +70,7 @@ protected:
 	class ConnectionFactory : public Poco::Net::TCPServerConnectionFactory {
 	public:
 		virtual Poco::Net::TCPServerConnection * createConnection(const Poco::Net::StreamSocket& s){
-			std::cout<<"create connection!"<<std::endl;
+			//std::cout<<"create connection!"<<std::endl;
 			return new Connection{s};
 		}
 	};
@@ -89,6 +90,9 @@ public:
 			params->setMaxQueued(backlog);
 			params->setThreadIdleTime(100);
 			tcpServer.start();
+			std::string msg{"started TCP Api Server on "};
+			msg += addr;
+			Susi::info(msg);
 			std::this_thread::sleep_for(std::chrono::milliseconds{250});
 	}
 	~TCPApiServer(){

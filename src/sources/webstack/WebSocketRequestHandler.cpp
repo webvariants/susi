@@ -21,9 +21,10 @@ void Susi::WebSocketRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& 
 	Poco::Net::NameValueCollection cookies;
 	request.getCookies(cookies);
 	std::string id = cookies["susisession"];
-    
+    Susi::debug("register sender in ws");
     apiServer->registerSender(id,[&socket](Susi::Util::Any & arg){
     	std::string msg = arg.toString();
+    	Susi::debug("send frame to websocket");
     	socket.sendFrame(msg.data(), msg.length(), Poco::Net::WebSocket::FRAME_TEXT);        
     });
     
@@ -33,16 +34,17 @@ void Susi::WebSocketRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& 
 	int flags;
 	size_t n;
 
-	do {
+	while (true) {
 		n = socket.receiveFrame(buffer, sizeof(buffer), flags);
-
-		if(n > 0) {			
-			std::string str(buffer, n);
-			Susi::Util::Any packet = Susi::Util::Any::fromString(str);
-			apiServer->onMessage(id,packet);   			
+    	Susi::debug("got frame");
+    	Susi::debug(std::to_string(n));
+		if(n==0 || (flags & Poco::Net::WebSocket::FRAME_OP_BITMASK) == Poco::Net::WebSocket::FRAME_OP_CLOSE){
+			break;
 		}
+		std::string str(buffer, n);
+		Susi::Util::Any packet = Susi::Util::Any::fromString(str);
+		apiServer->onMessage(id,packet);   			
 	}
-	while (n > 0 || (flags & Poco::Net::WebSocket::FRAME_OP_BITMASK) != Poco::Net::WebSocket::FRAME_OP_CLOSE);
-
+	Susi::debug("closing websocket");
 	apiServer->onClose(id);
 }
