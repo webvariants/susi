@@ -1,0 +1,43 @@
+{
+	"session" : {
+		"lifetime" : 1200,
+		"interval" : 10
+	},
+
+	"logger" : {
+		"level" : 7		
+	},
+
+	"webstack" : {
+		"addr"   : "[::1]:8080",
+		"assets" : "./assets/"
+	},
+
+	"tcpserver" : {
+		"addr" : "[::1]:4000",		
+	}, 
+
+	"jsengine" : {
+		"source" : "./controller.js"
+	},
+
+	"enginestarter" : {
+		"root" : "./controller/"
+	},
+
+	"db" : {
+		"config" : "./dbs.conf"
+	},
+
+	"states" : {
+		"file" : "./states.json"
+	},
+
+	"authentification" : {
+		"db" : "auth"
+	},
+
+	"syscall" : {
+		"cfg" : "./test_config/unified.cfg"
+	}
+}
