@@ -33,53 +33,106 @@ class SusiTest extends Susi {
 		}	
 
 		
-		echo "----------------------\n";
-
-		$pub_test = array (
-			"testdata" => "foo",			
-		);
-
-		$this->publish("test_controller", $pub_test);		
+		echo "----------------------\n";	
+		$this->publish("test_start", array());				
 
 		return true;
 	}
 }
 
-$susi      = new SusiTest($CONFIG["SUSI_ADDR"], $CONFIG["SUSI_PORT"], true);
+$susi      = new SusiTest($CONFIG["SUSI_ADDR"], $CONFIG["SUSI_PORT"], false);
 $container = new IONContainer($CONFIG);
 
 echo "Run Test: \n";
 
-$reg_1_id = $susi->registerProcessor("test_controller",
+// INFO 
+// pass $event in processor and consumer handler as reference !!!
+
+// Register Processor & Consumer
+$susi->registerProcessor("test_start",
 
 	// callback
 	function(&$event) use($susi,$container) {
+		echo "Test: \n";
 
-		if(isset($event["data"]["payload"])) {
-			$event["data"]["payload"]["test1"] = "ok";
-		}
+		echo "Test Register: \n";
+		$p_id_1 = $susi->registerProcessor("test",
+			function(&$event) use($susi,$container) {
+				echo "Test Processor1 Callback \n";
+				$event["data"]["payload"]["processor1"] = "ok";
+				$event["data"]["headers"][] = array("foo" => "bar");
+			}
+		);
+		$p_id_2 = $susi->registerProcessor("test",
+			function(&$event) use($susi,$container) {
+				echo "Test Processor2 Callback \n";
+				$event["data"]["payload"]["processor2"] = "ok";
+				$event["data"]["headers"][] = array("john" => "doe");
+			}
+		);
+		$c_id = $susi->registerConsumer("test",
+			function(&$event) use($susi,$container) {
+				echo "Test Consumer Callback >>> ";
 
-	}
-);
+				if(
+	 					$event["data"]["payload"]["processor1"] == "ok" && 
+	 					$event["data"]["payload"]["processor2"] == "ok" &&
+	 					count($event["data"]["headers"]) == 2
+	 			) { 
+	 				echo "OK \n";
+	 			} else {
+	 				echo "FAILED \n";
+	 			}	 			
+			}
+		);		
 
-$reg_2_id = $susi->registerProcessor("test_controller",
+		echo "Test Publish: \n";
 
-	// callback
-	function(&$event) use($susi,$container) {
-		
-		if(isset($event["data"]["payload"])) {
-			$event["data"]["payload"]["test2"] = "ok";
-		}
+		$susi->publish("test", array("TEST first run" => "start"), 
+			// finish callback
+			function($event) use($susi,$container,$p_id_1, $p_id_2, $c_id) {
+				echo "Test RUN1 Finish Callback >>> ";
 
-	}
-);
+				//print_r($event);				
+				if(
+	 					$event["data"]["payload"]["processor1"] == "ok" && 
+	 					$event["data"]["payload"]["processor2"] == "ok" && 
+	 					count($event["data"]["headers"]) == 2
+	 			) {
+	 				echo "OK \n";
+	 			} else {
+	 				echo "FAILED \n";
+	 			}
 
-$reg_3_id = $susi->registerConsumer("test_controller",
+	 			// remove events and run secound time
+	 			$susi->unregisterProcessor($p_id_1);
+	 			$susi->unregisterConsumer($c_id);
 
-	// callback
-	function(&$event) use($susi,$container) {
-		
-		print_r($event);
+
+	 			$susi->publish("test", array("TEST secound run" => "start"), 
+	 				// finish callback
+					function($event) use($susi,$container,$p_id_2) {
+
+						echo "Test RUN2 Finish Callback >>> ";
+						
+						if(
+			 					!isset($event["data"]["payload"]["processor1"]) && 
+			 					$event["data"]["payload"]["processor2"] == "ok" && 
+	 							count($event["data"]["headers"]) == 1
+			 			) {
+			 				echo "OK \n";
+			 			} else {
+			 				echo "FAILED \n";
+			 			}
+
+
+						echo "Cleanup:\n";
+			 			$susi->unregisterProcessor($p_id_2);
+			 			echo "TEST END:\n";
+					}
+				);	 			
+			}
+		);
 	}
 );
 

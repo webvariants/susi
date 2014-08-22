@@ -58,12 +58,22 @@ class Susi {
 				$this->consumer_callbacks[$topic][] = $callback;
 			}else{
 				$this->consumer_callbacks[$topic] = array($callback);
+
+				// if susi is running, register first consumer with this topic
+				if($this->connected) {
+					fwrite($this->socket,json_encode(array("type" => "registerConsumer", "data" => $topic)));				
+				}
 			}
 		} else {
 			if(array_key_exists($topic,$this->processor_callbacks)){
 				$this->processor_callbacks[$topic][] = $callback;
 			}else{
 				$this->processor_callbacks[$topic] = array($callback);
+			
+				// if susi is running, register first processor with this topic
+				if($this->connected) {
+					fwrite($this->socket,json_encode(array("type" => "registerProcessor", "data" => $topic)));				
+				}
 			}
 		}
 
@@ -263,14 +273,6 @@ class Susi {
 		foreach ($this->processor_callbacks as $topic => $callbacks) {
 			fwrite($this->socket,json_encode(array("type" => "registerProcessor", "data" => $topic)));			
 		}	
-
-		$pub_test = array (
-			"pub_controller" => "lala",			
-		);
-
-		$this->publish("test_controller", $pub_test);
-
-		//{"type" : "publish" , "data" : { "topic" : "php_controller" , "payload" : { "controller" : "foo" , "action" : "bar" } } }
 
 		return true;
 	}
