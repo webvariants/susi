@@ -32,7 +32,7 @@ TESTS=$(subst .cpp,.o,$(TESTS_INTERMEDIATE))
 TEST_MAIN=$(shell find ./test/gtest*/lib -name "*.a")
 
 DEBUG=-g -Wall
-CCFLAGS=$(DEBUG) -O3 -I src/headers -I /usr/local/include/soci --std=c++11 -c
+CCFLAGS=$(DEBUG) -fPIC -O3 -I src/headers -I /usr/local/include/soci --std=c++11 -c
 LDFLAGS=$(DEBUG) --std=c++11 -L /usr/local/lib64
 LIBS=-l PocoFoundation \
 		-l PocoUtil \
@@ -48,12 +48,15 @@ susi: ./bin/susi
 
 client: ./bin/client
 
-lib: bin/libsusi.a
+static_lib: bin/libsusi.a
+
+shared_lib: bin/libsusi.so
 
 bin/libsusi.a: $(OBJECTS)
 	ar rvs bin/libsusi.a $(OBJECTS)
 
-
+bin/libsusi.so: $(OBJECTS)
+	g++ --shared -fPIC -o bin/libsusi.so $(OBJECTS)
 
 test: ./bin/test
 	LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:./test/gtest-1.7.0/lib/ ./bin/test
