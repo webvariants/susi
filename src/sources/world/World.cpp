@@ -3,7 +3,12 @@
  
 Susi::World world;
 
+void Susi::World::setConfig(Susi::Config *_cfg) {
+	cfg = _cfg;
+}
+
 void Susi::World::setup(){
+	std::cout<<"WORLD setup:"<<std::endl;
 	setupLogger();
 	setupEventManager();
 	setupTCPServer();

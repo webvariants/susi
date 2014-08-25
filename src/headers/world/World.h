@@ -15,6 +15,8 @@
 #include <memory>
 #include <Poco/Util/Application.h>
 
+#include "config/Config.h"
+
 #include "events/Manager.h"
 #include "apiserver/TCPApiServer.h"
 #include "webstack/HttpServer.h"
@@ -41,6 +43,8 @@ namespace Susi{
 	class World {
 	protected:		
 	public:
+		Susi::Config *cfg;
+
 		void setupEventManager();
 		void setupTCPServer();
 		void setupHttpServer();
@@ -68,7 +72,7 @@ namespace Susi{
 		std::shared_ptr<Susi::Api::TCPApiServer>		tcpServer{nullptr};
 
 
-
+		void setConfig(Susi::Config *_cfg);
 		void setup();
 		void tearDown();
 		~World(){

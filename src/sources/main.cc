@@ -16,6 +16,7 @@
 #include "sessions/SessionManagerEventInterface.h"
 #include "tiny-js/JSEngine.h"
 
+#include "config/Config.h"
 #include "world/World.h"
 
 #include <Poco/Net/HTTPServerParams.h>
@@ -35,6 +36,8 @@ using Poco::Util::AbstractConfiguration;
 using Poco::Util::OptionCallback;
 
 class SusiApp : public Poco::Util::ServerApplication {
+public:
+	Susi::Config cfg{"config.json"}
 protected:
 	bool _helpRequested = false;
 

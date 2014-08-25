@@ -53,6 +53,7 @@ TEST_F(ConfigTest, Contruct) {
 TEST_F(ConfigTest, Get){
 	using Susi::Util::Any;
 	Any cfg = Any::Object{{"foo",Any::Object{{"bar", Any::Object{{"baz",123}}}}}};
+	std::cout<<"CO:"<<cfg.toString()<<std::endl;
 	io.writeFile("./configtest/config.cfg",cfg.toString());
 	EXPECT_NO_THROW({
 		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
@@ -103,4 +104,9 @@ TEST_F(ConfigTest,CommandLine){
 		EXPECT_EQ(Any{"this is it"}.toString(),config->get("foo.bar.baz").toString());
 		
 	});
+
+
+	Susi::Config c = Susi::Config{"config.json"};
+
+	std::cout<<c.get("").toString()<<std::endl;
 }
