@@ -52,7 +52,7 @@ namespace Api {
 						break;
 					}
 				}
-				std::cout<<"runloop end"<<std::endl;
+				//std::cout<<"runloop end"<<std::endl;
 			}});
 		}
 		
@@ -62,7 +62,7 @@ namespace Api {
 					sock.shutdown();
 					sock.close();
 					isClosed = true;
-					std::cout<<"isClosed = true" <<std::endl;
+					//std::cout<<"isClosed = true" <<std::endl;
 					runloop.join();
 					onClose();
 				}catch(const std::exception & e){
@@ -72,8 +72,11 @@ namespace Api {
 			}
 		}
 		void send(std::string msg){
-			auto bs = sock.sendBytes(msg.c_str(),msg.size());
-			std::cout<<"sended "<<bs<<"/"<<msg.size()<<" bytes"<<std::endl;
+			/*auto bs = */sock.sendBytes(msg.c_str(),msg.size());
+			//std::cout<<"sended "<<bs<<"/"<<msg.size()<<" bytes"<<std::endl;
+		}
+		void join(){
+			runloop.join();
 		}
 		virtual ~TCPClient(){
 			close();

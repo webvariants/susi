@@ -62,25 +62,25 @@ std::string Susi::IOController::readFile(std::string filename) {
 		    s.seekg (0, s.beg);
 
 	    	buffer = new char [length];
+			// read data as a block:
+		    s.read(buffer,length); 
+
+		    if (!s) {
+		    	std::string msg = "error: only ";
+				msg += std::to_string(s.gcount());
+				msg += " could be read";
+				Susi::error(msg);	    	
+		    }
+		    
+		    s.close();
+
+		    result += std::string(buffer,length);
+
+		    if(buffer)delete[] buffer;
+
+		    return result;
 		}
-
-		// read data as a block:
-	    s.read(buffer,length); 
-
-	    if (!s) {
-	    	std::string msg = "error: only ";
-			msg += std::to_string(s.gcount());
-			msg += " could be read";
-			Susi::error(msg);	    	
-	    }
-	    
-	    s.close();
-
-	    result += std::string(buffer,length);
-
-	    if(buffer)delete[] buffer;
-
-	    return result;
+		throw std::runtime_error{"ReadFile: can't read file!"};
 	} else {
 		std::string msg = "ReadFile: ";
 		msg += filename;
