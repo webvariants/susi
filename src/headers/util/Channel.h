@@ -66,6 +66,7 @@ public:
 	}
 
 	void close(){
+		std::unique_lock<std::mutex> lock(mutex);
 		closed = true;
 		not_empty.notify_all();
 		not_full.notify_all();
