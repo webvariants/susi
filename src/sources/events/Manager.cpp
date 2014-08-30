@@ -82,6 +82,12 @@ void Susi::Events::Manager::publish(Susi::Events::EventPtr event, Susi::Events::
 		event.release();
 		return;
 	}
+	if(stopped){
+		std::shared_ptr<Event> sharedEvent{event.release()};
+		sharedEvent->headers.push_back(std::make_pair("error","event system stopped"));
+		finishCallback(sharedEvent);
+		return;
+	}
 	{
 		std::lock_guard<std::mutex> lock(mutex);	
 		auto process = std::make_shared<PublishProcess>();
@@ -221,4 +227,8 @@ void Susi::Events::Manager::deleter(Event *event){
 			std::cout<<"error in deleter:"<<e.what()<<std::endl;
 		}
 	}
+}
+
+void Susi::Events::Manager::stop(){
+	stopped.store(true);
 }

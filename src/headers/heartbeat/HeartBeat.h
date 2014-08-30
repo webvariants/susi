@@ -48,6 +48,7 @@ namespace Susi {
 		virtual ~HeartBeat(){
 			stop.store(true);
 			t.join();
+			std::cout<<"stopped"<<std::endl;
 		}
 	};
 }

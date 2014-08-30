@@ -14,10 +14,12 @@ bool Susi::System::ComponentManager::loadComponent(std::string name){
 	if(components.find(name) == components.end() && registerFunctions[name]){
 		ComponentData data;
 		if(config[name].isNull())return false;
-		data.component = registerFunctions[name](config[name]);
+		data.component = registerFunctions[name](this,config[name]);
 		components[name] = data;
+		std::cout<<"loaded "<<name<<std::endl;
 		return true;
 	}
+	std::cout<<"cant find register function"<<std::endl;
 	return false;
 }
 
@@ -27,11 +29,15 @@ bool Susi::System::ComponentManager::unloadComponent(std::string name){
 	}
 	components[name].component->stop();
 	components.erase(name);
+
+	std::cout<<"unloaded "<<name<<std::endl;
 	return true;
 }
 
 bool Susi::System::ComponentManager::startComponent(std::string name){
+	std::cout<<"starting "<<name<<"..."<<std::endl;
 	if(components.find(name) == components.end() && !loadComponent(name)){
+		std::cout<<"can not load component "<<name<<std::endl;
 		return false;
 	}
 	auto & data = components[name];
@@ -46,7 +52,7 @@ bool Susi::System::ComponentManager::startComponent(std::string name){
 	}
 	data.component->start();
 	data.running = true;
-
+	std::cout<<"started "<<name<<std::endl;
 	return true;
 }
 
@@ -60,5 +66,23 @@ bool Susi::System::ComponentManager::stopComponent(std::string name){
 	components[name].component->stop();
 	components[name].running = false;
 
+	std::cout<<"stopped "<<name<<std::endl;
 	return true;
+}
+
+
+void Susi::System::ComponentManager::startAll(){
+	for(auto & kv : config){
+		startComponent(kv.first);
+	}
+}
+
+void Susi::System::ComponentManager::stopAll(){
+	for(auto & kv : config){
+		stopComponent(kv.first);
+	}
+}
+
+Susi::System::ComponentManager::~ComponentManager(){
+	stopAll();
 }

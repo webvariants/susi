@@ -4,6 +4,8 @@
 #include <functional>
 #include <mutex>
 #include <chrono>
+#include <atomic>
+
 #include "util/ThreadPool.h"
 #include "util/Any.h"
 #include "events/Event.h"
@@ -36,11 +38,14 @@ public:
 	// pass event back to system
 	void ack(EventPtr event);
 
+	void stop();
+
 	EventPtr createEvent(std::string topic);
 
 protected:
 	Susi::Util::ThreadPool pool;
 	std::mutex mutex;
+	std::atomic<bool> stopped{false};
 
 	struct PublishProcess {
 		std::vector<std::pair<long,Processor>>   processors;

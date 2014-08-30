@@ -22,7 +22,7 @@ namespace System {
 
 	class ComponentManager {
 	protected:
-		typedef std::function<std::shared_ptr<Component>(Susi::Util::Any & config)> RegisterFunction;
+		typedef std::function<std::shared_ptr<Component>(ComponentManager * manager, Susi::Util::Any & config)> RegisterFunction;
 		struct ComponentData {
 			std::shared_ptr<Component> component{nullptr};
 			bool running = false;
@@ -42,6 +42,20 @@ namespace System {
 		bool unloadComponent(std::string name);
 		bool startComponent(std::string name);
 		bool stopComponent(std::string name);
+
+		template<class T = Component>
+		std::shared_ptr<T> getComponent(std::string name){
+			if(components.find(name) == components.end() && !loadComponent(name)){
+				return std::shared_ptr<T>{};
+			}
+			return std::dynamic_pointer_cast<T>(components[name].component);
+		}
+
+		void startAll();
+		void stopAll();
+
+		~ComponentManager();
+
 	};
 }
 
