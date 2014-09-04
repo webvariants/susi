@@ -25,6 +25,10 @@ namespace Susi {
 					_checkInterval      = checkInterval;
 				}
 
+			~SessionManagerComponent() {
+				stop();
+			}
+
 			virtual void start() override {
 				init(_stdSessionLifetime, _checkInterval);	
 				

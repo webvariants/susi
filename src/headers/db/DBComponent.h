@@ -29,6 +29,9 @@ namespace DB {
 		virtual void stop() override {
 			unsubscribeAll();
 		}
+		~DBComponent() {
+			stop();
+		}
 	protected:
 		void handleQuery(Susi::Events::EventPtr  event){
 			try{

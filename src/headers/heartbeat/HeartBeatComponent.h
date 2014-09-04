@@ -27,6 +27,10 @@ namespace Susi {
 			Susi::System::BaseComponent{mgr},
 			stop{false} {}
 
+		~HeartBeatComponent() {
+			stop();
+		}
+
 		virtual start() override {
 			t = std::move(std::thread{
 				[this](){
