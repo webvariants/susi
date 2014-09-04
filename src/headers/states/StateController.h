@@ -33,8 +33,7 @@ namespace Susi {
 			std::map<std::string, Susi::Util::Any> persistentStates;
 
 			std::mutex mutex;
-			std::string fileLocation;
-			long subId;
+			std::string fileLocation;			
 			bool persistentChanged = false;
 		public:
 			StateController(std::string file);		
