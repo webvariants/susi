@@ -19,10 +19,15 @@ namespace Susi {
 	namespace Sessions {
 		class SessionManagerComponent : Susi::System::BaseComponent ,  SessionManager {
 		public:
-			SessionManagerComponent (Susi::System::ComponentManager * mgr) : 
-				Susi::System::BaseComponent{mgr}, SessionManager{} {}
+			SessionManagerComponent (Susi::System::ComponentManager * mgr, std::chrono::milliseconds stdSessionLifetime, std::chrono::milliseconds checkInterval) : 
+				Susi::System::BaseComponent{mgr}, SessionManager{} {
+					_stdSessionLifetime = stdSessionLifetime;
+					_checkInterval      = checkInterval;
+				}
 
 			virtual void start() override {
+				init(_stdSessionLifetime, _checkInterval);
+				
 				subscribe("session::setAttribute", handleSetAttribute);
 				subscribe("session::getAttribute", handleGetAttribute);
 				subscribe("session::pushAttribute", handlePushAttribute);
@@ -35,6 +40,9 @@ namespace Susi {
 				unsubscribeAll();
 			}
 		protected:
+			std::chrono::milliseconds _stdSessionLifetime;
+			std::chrono::milliseconds _checkInterval;
+
 			void handleGetAttribute(Susi::Events::EventPtr event) {
 				try{
 					std::string sessionID = event->payload["id"];
