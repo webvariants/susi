@@ -34,7 +34,39 @@ namespace Susi {
 
 				virtual void stop() override {
 					unsubscribeAll();
-				}			
+				}
+			protected:
+				void handleStart(Susi::Events::EventPtr event) {
+					try{		
+						execute();
+					}catch(const std::exception & e){
+						std::string msg = "Error in handleStart(): ";
+						msg += e.what();
+						throw std::runtime_error(msg);
+					}
+				}
+
+				void handleRestart(Susi::Events::EventPtr event) {
+					try{		
+						killall();
+						execute();
+					}catch(const std::exception & e){
+						std::string msg = "Error in handleRestart(): ";
+						msg += e.what();
+						throw std::runtime_error(msg);
+					}
+				}
+
+				void handleStop(Susi::Events::EventPtr event) {
+					try{		
+						execute();
+					}catch(const std::exception & e){
+						std::string msg = "Error in handleStop(): ";
+						msg += e.what();
+						throw std::runtime_error(msg);
+					}
+				}
+
 		};
 	}
 
