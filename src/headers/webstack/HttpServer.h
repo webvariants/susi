@@ -47,15 +47,15 @@ public:
 			_addr = addr;						
 		}
 	~HttpServer(){
-		stopServer();
+		httpServerStop();
 	}
 
-	startServer() {
+	void httpServerStart() {
 		server.start();
 		Susi::info("started HTTP server on addr "+_addr);		
 	}
 
-	stopServer() {
+	void httpServerStop() {
 		server.stop();		
 	}
 };

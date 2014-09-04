@@ -22,11 +22,11 @@ namespace Susi {
 				Susi::System::BaseComponent{mgr}, HttpServer{addr, assetRoot} {}
 
 			virtual void start() override {
-				startServer();
+				httpServerStart();
 			}
 
 			virtual void stop() override {
-				stopServer();
+				httpServerStop();
 			}
 			~HttpServerComponent() {
 				stop();
