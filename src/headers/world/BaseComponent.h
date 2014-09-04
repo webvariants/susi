@@ -12,6 +12,8 @@
 #ifndef __BASECOMPONENT__
 #define __BASECOMPONENT__
 
+#include <vector>
+
 #include "world/Component.h"
 #include "world/ComponentManager.h"
 #include "events/Manager.h"
@@ -23,25 +25,53 @@ class BaseComponent : public Component {
 protected:
 	ComponentManager * componentManager;
 	std::shared_ptr<Susi::Events::Manager> eventManager;
+	std::vector<long> evtIdPool;
+
 public:
 	BaseComponent(ComponentManager * manager) : componentManager{manager} {
 		eventManager = componentManager->getComponent<Susi::Events::Manager>("eventmanager");
 	}
 	long subscribe(std::string topic, Susi::Events::Processor processor){
-		return eventManager->subscribe(topic,std::move(processor));
+		long id = eventManager->subscribe(topic,std::move(processor));
+		evtIdPool.push_back(id);
+		return id;
 	}
 	long subscribe(Susi::Events::Predicate pred, Susi::Events::Processor processor){
-		return eventManager->subscribe(pred,std::move(processor));
+		long id = eventManager->subscribe(pred,std::move(processor));
+		evtIdPool.push_back(id);
+		return id;
 	}
 	long subscribe(std::string topic, Susi::Events::Consumer consumer){
-		return eventManager->subscribe(topic,std::move(consumer));
+		long id = eventManager->subscribe(topic,std::move(consumer));
+		evtIdPool.push_back(id);
+		return id;
 	}
 	long subscribe(Susi::Events::Predicate pred, Susi::Events::Consumer consumer){
-		return eventManager->subscribe(pred,std::move(consumer));
+		long id = eventManager->subscribe(pred,std::move(consumer));
+		evtIdPool.push_back(id);
+		return id;
 	}
 	bool unsubscribe(long id){
 		return eventManager->unsubscribe(id);
 	}
+
+
+	bool unsubscribeAll(){
+  		
+  		bool result = true;
+
+  		for (std::vector<long>::iterator it = evtIdPool.begin(); it != evtIdPool.end(); ++it)
+  		{
+			if(eventManager->unsubscribe(*it) == false) {
+				result = false;    	    				
+			}
+		}
+
+		evtIdPool.clear();
+
+		return result;
+	}
+
 	void publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer{}){
 		eventManager->publish(std::move(event),finishCallback);
 	}
