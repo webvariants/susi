@@ -21,6 +21,10 @@ namespace Susi {
 			IOControllerComponent (Susi::System::ComponentManager * mgr, std::string base_path) : 
 				Susi::System::BaseComponent{mgr}, IOController{base_path} {}
 
+			~IOControllerComponent() {
+				stop();
+			}
+
 			virtual void start() override {
 				subscribe("io::writeFile", handleWriteFile);	
 				subscribe("io::readFile", handleReadFile);

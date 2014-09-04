@@ -35,6 +35,10 @@ namespace Susi {
 				virtual void stop() override {
 					unsubscribeAll();
 				}
+
+				~StarterComponent() {
+					stop();
+				}
 			protected:
 				void handleStart(Susi::Events::EventPtr event) {
 					try{		
