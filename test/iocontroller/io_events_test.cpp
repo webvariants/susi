@@ -69,7 +69,7 @@ TEST_F(IOEventInterfaceTest, WriteFileInvalidDirectory) {
 	};
 
 	publish(std::move(event),[this](SharedEventPtr event){
-		EXPECT_EQ(1,event->headers.size());
+		EXPECT_EQ(size_t{1},event->headers.size());
 		EXPECT_EQ("error", event->headers[0].first);
 		EXPECT_EQ("Error in handleWriteFile(): WriteFile: Dir don't exists!./IO_EVENT_TESTS/BLAA/write.txt", event->headers[0].second);
 		

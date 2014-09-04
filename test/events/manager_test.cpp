@@ -129,7 +129,7 @@ TEST_F(EventManagerTest,SubscribeMultipleAndFinish){
 	auto event = createEvent("test");
 	publish(std::move(event),[this](SharedEventPtr  event){
 		// the event should contain three foo headers with values 1, 2, 3.
-		EXPECT_EQ(3,event->headers.size());
+		EXPECT_EQ(size_t{3},event->headers.size());
 		EXPECT_EQ("foo",event->headers[0].first);
 		EXPECT_EQ("foo",event->headers[1].first);
 		EXPECT_EQ("foo",event->headers[2].first);
@@ -324,7 +324,7 @@ TEST_F(EventManagerTest,ErrorHandling){
 	auto event = createEvent("test");
 	publish(std::move(event),[this](SharedEventPtr event){
 		// there should be one header...
-		EXPECT_EQ(1,event->headers.size());
+		EXPECT_EQ(size_t{1},event->headers.size());
 		if(event->headers.size()>0){
 			// of type error...
 			EXPECT_EQ("error",event->headers[0].first);
