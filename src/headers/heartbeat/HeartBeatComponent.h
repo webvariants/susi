@@ -17,25 +17,25 @@
 #include "world/BaseComponent.h"
 
 namespace Susi {
-	class HeartBeatComponent : public Susi::System::BaseComponent {
+	class HeartBeatComponent : public System::BaseComponent {
 	protected:
-		std::atomic<bool> stop;
+		std::atomic<bool> stopVar;
 		std::thread t;
 	public:
-		HeartBeatComponent(Susi::System::ComponentManager * mgr) :
-			Susi::System::BaseComponent{mgr},
-			stop{false} {}
+		HeartBeatComponent(System::ComponentManager * mgr) :
+			System::BaseComponent{mgr},
+			stopVar{false} {}
 
 		~HeartBeatComponent() {
 			stop();
 		}
 
-		virtual start() override {
+		virtual void start() override {
 			t = std::move(std::thread{
 				[this](){
 					int count = 0;
 					std::chrono::seconds interval(1);
-					while(!this->stop.load()){
+					while(!this->stopVar.load()){
 						++count %= 300;
 						publish(createEvent("heartbeat::one"));
 						if(count % 5 == 0){
@@ -56,13 +56,9 @@ namespace Susi {
 			});
 		}
 
-		virtual stop() override {
-			stop.store(true);
+		virtual void stop() override {
+			stopVar.store(true);
 			if(t.joinable())t.join();
-		}
-
-		virtual ~HeartBeat(){
-			stop();
 		}
 	};
 }

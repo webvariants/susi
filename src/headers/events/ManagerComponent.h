@@ -20,7 +20,7 @@
 namespace Susi {
 namespace Events {
 
-class ManagerComponent : Manager, Susi::System::Component
+class ManagerComponent : public Manager, public Susi::System::Component
 {
 protected:
 	std::atomic<bool> noPublish;
