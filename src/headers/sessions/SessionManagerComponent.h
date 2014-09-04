@@ -26,7 +26,7 @@ namespace Susi {
 				}
 
 			virtual void start() override {
-				init(_stdSessionLifetime, _checkInterval);
+				init(_stdSessionLifetime, _checkInterval);	
 				
 				subscribe("session::setAttribute", handleSetAttribute);
 				subscribe("session::getAttribute", handleGetAttribute);
@@ -37,11 +37,13 @@ namespace Susi {
 			}
 
 			virtual void stop() override {
+				stop();
+
 				unsubscribeAll();
 			}
 		protected:
 			std::chrono::milliseconds _stdSessionLifetime;
-			std::chrono::milliseconds _checkInterval;
+			std::chrono::milliseconds _checkInterval;			
 
 			void handleGetAttribute(Susi::Events::EventPtr event) {
 				try{

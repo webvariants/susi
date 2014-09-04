@@ -780,7 +780,7 @@ TEST(Any,ArrayHelper){
 		a.push_back(1);
 		a.push_back(2);
 	});
-	EXPECT_EQ(3,a.size());
+	EXPECT_EQ(size_t{3},a.size());
 	EXPECT_EQ(Any{0},a[0]);
 	EXPECT_EQ(Any{1},a[1]);
 	EXPECT_EQ(Any{2},a[2]);
@@ -788,7 +788,7 @@ TEST(Any,ArrayHelper){
 		a.pop_front();
 		a.pop_back();
 	});
-	EXPECT_EQ(1,a.size());
+	EXPECT_EQ(size_t{1},a.size());
 	EXPECT_EQ(Any{1},a[0]);
 }
 /*
