@@ -13,21 +13,11 @@
 using namespace Susi::States;
 
 StateController::StateController(std::string file) {
-	
-	subId = Susi::Events::subscribe("heartbeat::fiveMinute",[this](Susi::Events::EventPtr event){
-		if(this->persistentChanged) {
-			this->savePersistent();
-			this->persistentChanged = false;
-		}
-	});
-
 	// Todo: set fileLocation to a value
 	this->fileLocation = file;
 }
 
-StateController::~StateController() {
-	Susi::Events::unsubscribe(subId);
-}
+StateController::~StateController() {}
 
 void StateController::savePersistent() {
 	Susi::Util::Any obj = persistentStates;
