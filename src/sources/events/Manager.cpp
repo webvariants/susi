@@ -12,7 +12,7 @@ long Susi::Events::Manager::subscribe(Susi::Events::Predicate pred, Susi::Events
 	processorsByPred.push_back(std::make_tuple(id,pred,processor));
 	return id;
 }
-long Susi::Events::Manager::subscribe(std::string topic, Susi::Events::Consumer consumer){	
+long Susi::Events::Manager::subscribe(std::string topic, Susi::Events::Consumer consumer){
 	std::lock_guard<std::mutex> lock(mutex);
 	long id = std::chrono::system_clock::now().time_since_epoch().count();
 	consumersByTopic[topic].push_back(std::make_pair(id,consumer));
@@ -62,13 +62,13 @@ bool Susi::Events::Manager::unsubscribe(long id){
 		for(auto & processorPair : kv.second->processors){
 			if(processorPair.first == id){
 				processorPair.second = Processor{};
-				break;		
+				break;
 			}
 		}
 		for(auto & consumerPair : kv.second->consumers){
 			if(consumerPair.first == id){
 				consumerPair.second = Consumer{};
-				break;		
+				break;
 			}
 		}
 	}
@@ -83,7 +83,7 @@ void Susi::Events::Manager::publish(Susi::Events::EventPtr event, Susi::Events::
 		return;
 	}
 	{
-		std::lock_guard<std::mutex> lock(mutex);	
+		std::lock_guard<std::mutex> lock(mutex);
 		auto process = std::make_shared<PublishProcess>();
 		for(auto & kv : processorsByTopic){
 			if(kv.first == event->topic){
@@ -149,9 +149,9 @@ void Susi::Events::Manager::ack(EventPtr event){
 				return;
 			}
 			//std::cout<<"ack event "<<event->topic<<std::endl;
-				
+
 			std::unique_lock<std::mutex> lock(process->mutex);
-			while(process->errors.size() > 0){				
+			while(process->errors.size() > 0){
 				event->headers.push_back(std::make_pair("error",process->errors.back()));
 				process->errors.pop_back();
 			}
@@ -181,12 +181,13 @@ void Susi::Events::Manager::ack(EventPtr event){
 						}
 					}
 				}
+				manager->publishFinished.notify_one();
 			}
 		}
 	};
 
 	long id = event->id;
-	auto error = [id,this](std::string msg){		
+	auto error = [id,this](std::string msg){
 		std::unique_lock<std::mutex> lock(mutex);
 		std::shared_ptr<PublishProcess> process;
 		for(auto & kv : publishProcesses){

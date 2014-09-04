@@ -24,12 +24,12 @@ namespace System {
 class BaseComponent : public Component {
 protected:
 	ComponentManager * componentManager;
-	std::shared_ptr<Susi::Events::Manager> eventManager;
+	std::shared_ptr<Susi::Events::ManagerComponent> eventManager;
 	std::vector<long> evtIdPool;
 
 public:
 	BaseComponent(ComponentManager * manager) : componentManager{manager} {
-		eventManager = componentManager->getComponent<Susi::Events::Manager>("eventmanager");
+		eventManager = componentManager->getComponent<Susi::Events::ManagerComponent>("eventmanager");
 	}
 	long subscribe(std::string topic, Susi::Events::Processor processor){
 		long id = eventManager->subscribe(topic,std::move(processor));

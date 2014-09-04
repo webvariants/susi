@@ -36,7 +36,7 @@ TEST_F(IOControllerTest,WriteFileInNoneExistentDirectory){
 TEST_F(IOControllerTest,WriteFile){
 	std::size_t bs = controller.writeFile("./IOTESTS/foobar_write.dat",data);
 
-	EXPECT_EQ(6,bs);
+	EXPECT_EQ(size_t{6},bs);
 
 	std::size_t w_size = 1024*1024*5;
 	data = Susi::Util::__createRandomString(w_size);
