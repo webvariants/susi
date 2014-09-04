@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
@@ -22,7 +22,7 @@ namespace System {
 
 	class ComponentManager {
 	protected:
-		typedef std::function<std::shared_ptr<Component>(Susi::Util::Any & config)> RegisterFunction;
+		typedef std::function<std::shared_ptr<Component>(ComponentManager * mgr, Susi::Util::Any & config)> RegisterFunction;
 		struct ComponentData {
 			std::shared_ptr<Component> component{nullptr};
 			bool running = false;
@@ -49,7 +49,7 @@ namespace System {
 				return std::shared_ptr<T>{};
 			}
 			return std::dynamic_pointer_cast<T>(components[name].component);
-		}	
+		}
 	};
 }
 

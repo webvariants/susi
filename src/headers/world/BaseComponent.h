@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
@@ -57,13 +57,13 @@ public:
 
 
 	bool unsubscribeAll(){
-  		
+
   		bool result = true;
 
-  		for (std::vector<long>::iterator it = evtIdPool.begin(); it != evtIdPool.end(); ++it)
+  		for (auto id : evtIdPool)
   		{
-			if(eventManager->unsubscribe(*it) == false) {
-				result = false;    	    				
+			if(eventManager->unsubscribe(id) == false) {
+				result = false;
 			}
 		}
 
