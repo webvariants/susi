@@ -13,6 +13,7 @@
 #ifndef __EVENTMANAGERCOMPONENT__
 #define __EVENTMANAGERCOMPONENT__
 
+#include <atomic>
 #include "events/Manager.h"
 #include "world/Component.h"
 
@@ -27,7 +28,7 @@ protected:
 public:
 	ManagerComponent(size_t workers = 4, size_t buffsize = 32):Manager{workers, buffsize},noPublish{false}{}
 
-	void publish(EventPtr event, Consumer finishCallback = Consumer{}) override {
+	void publish(EventPtr event, Consumer finishCallback = Consumer{}) {
 		if(noPublish.load()) {
 			std::shared_ptr<Event> sharedEvent{event.release()};
 			finishCallback(sharedEvent);
@@ -42,7 +43,7 @@ public:
 		if(!noPublish.load()) {
 			noPublish.store(true);
 			std::unique_lock<std::mutex> lk(mutex);
-			publishFinished.wait(lk,[this](){return manager->publishProcesses.size() == 0;});
+			publishFinished.wait(lk,[this](){return publishProcesses.size() == 0;});
 		}
 	}
 
