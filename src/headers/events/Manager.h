@@ -42,6 +42,8 @@ protected:
 	Susi::Util::ThreadPool pool;
 	std::mutex mutex;
 
+	std::condition_variable publishFinished;
+
 	struct PublishProcess {
 		std::vector<std::pair<long,Processor>>   processors;
 		std::vector<std::pair<long,Consumer>>    consumers;
