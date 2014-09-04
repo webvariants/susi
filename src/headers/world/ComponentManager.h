@@ -42,6 +42,14 @@ namespace System {
 		bool unloadComponent(std::string name);
 		bool startComponent(std::string name);
 		bool stopComponent(std::string name);
+
+		template<class T=Component>
+		std::shared_ptr<T> getComponent(std::string name){
+			if(components.find(name) == components.end() && !loadComponent(name)){
+				return std::shared_ptr<T>{};
+			}
+			return std::dynamic_pointer_cast<T>(components[name].component);
+		}	
 	};
 }
 
