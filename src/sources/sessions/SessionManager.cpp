@@ -36,10 +36,14 @@ bool SessionManager::init(std::chrono::milliseconds stdSessionLifetime, std::chr
 	return true;
 }
 
-
-SessionManager::~SessionManager(){
+bool SessionManager::stop() {
 	std::unique_lock<std::mutex> lock(mutex);
 	Susi::Events::unsubscribe(subId);
+}
+
+
+SessionManager::~SessionManager(){
+	this->stop();
 }
 
 int SessionManager::checkSessions(){
