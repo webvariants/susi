@@ -15,7 +15,6 @@
 #include <thread>
 #include <atomic>
 #include "world/BaseComponent.h"
-#include "world/ComponentManager.h"
 
 namespace Susi {
 	class HeartBeatComponent : public Susi::System::BaseComponent {
@@ -23,7 +22,7 @@ namespace Susi {
 		std::atomic<bool> stop;
 		std::thread t;
 	public:
-		HeartBeatComponent(Susi::System::ComponentManager * mgr) : 
+		HeartBeatComponent(Susi::System::ComponentManager * mgr) :
 			Susi::System::BaseComponent{mgr},
 			stop{false} {}
 
@@ -57,12 +56,12 @@ namespace Susi {
 			stop.store(true);
 			if(t.joinable())t.join();
 		}
-		
+
 		virtual ~HeartBeat(){
-			stop();	
+			stop();
 		}
 	};
 }
 
 #endif // __HEARTBEATCOMPONENT__
-		
+
