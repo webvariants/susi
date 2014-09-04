@@ -116,5 +116,20 @@ TEST_F(ComponentManagerTest,Stop) {
 	EXPECT_FALSE(manager.stopComponent("sample1"));
 }
 
+TEST_F(ComponentManagerTest,Get) {
+	using Susi::Util::Any;
+	using namespace Susi::System;
+	Any::Object config{{"sample1","foobar"}};
+	ComponentManager manager{config};
+	manager.registerComponent("sample1",[](Any config){
+		return std::shared_ptr<Component>{new SampleComponent{config}};
+	});
+	EXPECT_TRUE(manager.startComponent("sample1"));
+	EXPECT_TRUE(manager.getComponent("sample1").get() != nullptr);
+	EXPECT_TRUE(manager.getComponent<SampleComponent>("sample1").get() != nullptr);
+	class SpecialSampleComponent : public SampleComponent {};
+	EXPECT_TRUE(manager.getComponent<SpecialSampleComponent>("sample1").get() == nullptr);
+}
+
 
 	
