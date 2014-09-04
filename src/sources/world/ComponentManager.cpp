@@ -14,7 +14,7 @@ bool Susi::System::ComponentManager::loadComponent(std::string name){
 	if(components.find(name) == components.end() && registerFunctions[name]){
 		ComponentData data;
 		if(config[name].isNull())return false;
-		data.component = registerFunctions[name](config[name]);
+		data.component = registerFunctions[name](this,config[name]);
 		components[name] = data;
 		return true;
 	}

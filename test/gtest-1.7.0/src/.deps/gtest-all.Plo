@@ -15,7 +15,8 @@ src/gtest-all.lo: src/gtest-all.cc /usr/include/stdc-predef.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stddef.h \
- /usr/include/xlocale.h /usr/include/c++/4.8/exception \
+ /usr/include/xlocale.h /usr/include/x86_64-linux-gnu/bits/wchar2.h \
+ /usr/include/c++/4.8/exception \
  /usr/include/c++/4.8/bits/atomic_lockfree_defines.h \
  /usr/include/c++/4.8/bits/char_traits.h \
  /usr/include/c++/4.8/bits/stl_algobase.h \
@@ -86,12 +87,16 @@ src/gtest-all.lo: src/gtest-all.cc /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/sys/select.h \
  /usr/include/x86_64-linux-gnu/bits/select.h \
  /usr/include/x86_64-linux-gnu/bits/sigset.h \
+ /usr/include/x86_64-linux-gnu/bits/select2.h \
  /usr/include/x86_64-linux-gnu/sys/sysmacros.h /usr/include/alloca.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h \
- /usr/include/x86_64-linux-gnu/bits/stdlib-float.h /usr/include/libio.h \
+ /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
+ /usr/include/x86_64-linux-gnu/bits/stdlib.h /usr/include/libio.h \
  /usr/include/_G_config.h /usr/include/x86_64-linux-gnu/bits/stdio_lim.h \
  /usr/include/x86_64-linux-gnu/bits/sys_errlist.h \
- /usr/include/x86_64-linux-gnu/bits/stdio.h /usr/include/string.h \
+ /usr/include/x86_64-linux-gnu/bits/stdio.h \
+ /usr/include/x86_64-linux-gnu/bits/stdio2.h /usr/include/string.h \
+ /usr/include/x86_64-linux-gnu/bits/string3.h \
  /usr/include/x86_64-linux-gnu/sys/stat.h \
  /usr/include/x86_64-linux-gnu/bits/stat.h /usr/include/c++/4.8/iostream \
  /usr/include/c++/4.8/istream /usr/include/c++/4.8/bits/istream.tcc \
@@ -99,7 +104,8 @@ src/gtest-all.lo: src/gtest-all.cc /usr/include/stdc-predef.h \
  /usr/include/unistd.h /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
  /usr/include/x86_64-linux-gnu/bits/environments.h \
  /usr/include/x86_64-linux-gnu/bits/confname.h /usr/include/getopt.h \
- /usr/include/strings.h /usr/include/regex.h \
+ /usr/include/x86_64-linux-gnu/bits/unistd.h /usr/include/strings.h \
+ /usr/include/regex.h /usr/include/x86_64-linux-gnu/gnu/option-groups.h \
  /usr/include/c++/4.8/typeinfo /usr/include/c++/4.8/tr1/tuple \
  /usr/include/c++/4.8/utility /usr/include/c++/4.8/bits/stl_relops.h \
  /usr/include/x86_64-linux-gnu/sys/wait.h /usr/include/signal.h \
@@ -145,6 +151,7 @@ src/gtest-all.lo: src/gtest-all.cc /usr/include/stdc-predef.h \
  /usr/include/x86_64-linux-gnu/bits/fcntl.h \
  /usr/include/x86_64-linux-gnu/bits/fcntl-linux.h \
  /usr/include/x86_64-linux-gnu/bits/uio.h \
+ /usr/include/x86_64-linux-gnu/bits/fcntl2.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed/limits.h \
  /usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed/syslimits.h \
  /usr/include/limits.h /usr/include/x86_64-linux-gnu/bits/posix1_lim.h \
@@ -167,6 +174,7 @@ src/gtest-all.lo: src/gtest-all.cc /usr/include/stdc-predef.h \
  /usr/include/asm-generic/socket.h \
  /usr/include/x86_64-linux-gnu/asm/sockios.h \
  /usr/include/asm-generic/sockios.h \
+ /usr/include/x86_64-linux-gnu/bits/socket2.h \
  /usr/include/x86_64-linux-gnu/bits/in.h /usr/include/netdb.h \
  /usr/include/rpc/netdb.h /usr/include/x86_64-linux-gnu/bits/netdb.h \
  src/gtest-internal-inl.h /usr/include/errno.h \
@@ -224,6 +232,8 @@ include/gtest/gtest.h:
 /usr/lib/gcc/x86_64-linux-gnu/4.8/include/stddef.h:
 
 /usr/include/xlocale.h:
+
+/usr/include/x86_64-linux-gnu/bits/wchar2.h:
 
 /usr/include/c++/4.8/exception:
 
@@ -393,6 +403,8 @@ include/gtest/internal/gtest-port.h:
 
 /usr/include/x86_64-linux-gnu/bits/sigset.h:
 
+/usr/include/x86_64-linux-gnu/bits/select2.h:
+
 /usr/include/x86_64-linux-gnu/sys/sysmacros.h:
 
 /usr/include/alloca.h:
@@ -400,6 +412,8 @@ include/gtest/internal/gtest-port.h:
 /usr/include/x86_64-linux-gnu/bits/stdlib-bsearch.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdlib-float.h:
+
+/usr/include/x86_64-linux-gnu/bits/stdlib.h:
 
 /usr/include/libio.h:
 
@@ -411,7 +425,11 @@ include/gtest/internal/gtest-port.h:
 
 /usr/include/x86_64-linux-gnu/bits/stdio.h:
 
+/usr/include/x86_64-linux-gnu/bits/stdio2.h:
+
 /usr/include/string.h:
+
+/usr/include/x86_64-linux-gnu/bits/string3.h:
 
 /usr/include/x86_64-linux-gnu/sys/stat.h:
 
@@ -437,9 +455,13 @@ include/gtest/internal/gtest-port.h:
 
 /usr/include/getopt.h:
 
+/usr/include/x86_64-linux-gnu/bits/unistd.h:
+
 /usr/include/strings.h:
 
 /usr/include/regex.h:
+
+/usr/include/x86_64-linux-gnu/gnu/option-groups.h:
 
 /usr/include/c++/4.8/typeinfo:
 
@@ -563,6 +585,8 @@ include/gtest/gtest-spi.h:
 
 /usr/include/x86_64-linux-gnu/bits/uio.h:
 
+/usr/include/x86_64-linux-gnu/bits/fcntl2.h:
+
 /usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed/limits.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed/syslimits.h:
@@ -612,6 +636,8 @@ include/gtest/gtest-spi.h:
 /usr/include/x86_64-linux-gnu/asm/sockios.h:
 
 /usr/include/asm-generic/sockios.h:
+
+/usr/include/x86_64-linux-gnu/bits/socket2.h:
 
 /usr/include/x86_64-linux-gnu/bits/in.h:
 
