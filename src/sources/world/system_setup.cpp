@@ -5,13 +5,14 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
 #include "world/ComponentManager.h"
 #include "util/Any.h"
 #include "events/ManagerComponent.h"
+#include "heartbeat/HeartBeatComponent.h"
 
 std::shared_ptr<Susi::System::ComponentManager> createSusiComponentManager(Susi::Util::Any::Object config){
 	using Susi::System::ComponentManager;
@@ -19,7 +20,7 @@ std::shared_ptr<Susi::System::ComponentManager> createSusiComponentManager(Susi:
 	using Susi::Util::Any;
 
 	auto manager = std::make_shared<Susi::System::ComponentManager>(config);
-	
+
 	manager->registerComponent("event-system",[](ComponentManager * mgr, Any & config){
 		size_t threads = 4;
 		size_t queuelen = 32;
