@@ -29,14 +29,14 @@ protected:
 	Poco::Net::HTTPServer server;
 
 	Susi::Api::ApiServer apiServer;
+	std::string _addr;
 public:
 	HttpServer(std::string addr,std::string assetRoot) :
 		address(addr),
 		serverSocket(address), 
 		server(new RequestHandlerFactory(assetRoot, &apiServer),serverSocket,new Poco::Net::HTTPServerParams)
 		{
-			server.start();
-			Susi::info("started HTTP server on addr "+addr);
+			_addr = addr;			
 		}
 
 	HttpServer(std::string addr,std::string assetRoot,Poco::Net::HTTPServerParams *params) :
@@ -44,11 +44,19 @@ public:
 		serverSocket(address),
 		server(new RequestHandlerFactory(assetRoot, &apiServer),serverSocket,params)
 		{
-			server.start();
-			Susi::info("started HTTP server on addr "+addr);
+			_addr = addr;						
 		}
 	~HttpServer(){
-		server.stop();
+		stopServer();
+	}
+
+	startServer() {
+		server.start();
+		Susi::info("started HTTP server on addr "+_addr);		
+	}
+
+	stopServer() {
+		server.stop();		
 	}
 };
 
