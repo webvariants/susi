@@ -16,7 +16,7 @@
 #include <functional>
 #include <mutex>
 #include "apiserver/ApiServer.h"
-#include "events/ManagerComponent.h"
+#include "events/EventManagerComponent.h"
 
 namespace Susi {
 namespace Api {

@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
@@ -13,7 +13,7 @@
 #define __BASICAPICLIENT__
 
 #include "apiserver/JSONTCPClient.h"
-#include "events/Manager.h"
+#include "events/EventManager.h"
 #include "util/Any.h"
 
 namespace Susi {
@@ -21,7 +21,7 @@ namespace Api {
 
 	class BasicApiClient : protected JSONTCPClient {
 	protected:
-		
+
 		virtual void onMessage(Susi::Util::Any & message) override;
 
 	public:

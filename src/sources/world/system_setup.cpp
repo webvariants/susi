@@ -16,7 +16,7 @@
 #include "auth/AuthControllerComponent.h"
 #include "db/DBComponent.h"
 #include "enginestarter/EngineStarterComponent.h"
-#include "events/ManagerComponent.h"
+#include "events/EventManagerComponent.h"
 #include "heartbeat/HeartBeatComponent.h"
 #include "iocontroller/IOControllerComponent.h"
 #include "sessions/SessionManagerComponent.h"

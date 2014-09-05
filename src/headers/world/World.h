@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
@@ -17,7 +17,7 @@
 
 #include "config/Config.h"
 
-#include "events/Manager.h"
+#include "events/EventManager.h"
 #include "apiserver/TCPApiServer.h"
 #include "webstack/HttpServer.h"
 #include "sessions/SessionManager.h"
@@ -41,7 +41,7 @@
 namespace Susi{
 
 	class World {
-	protected:		
+	protected:
 	public:
 		Susi::Config *cfg;
 

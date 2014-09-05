@@ -1,4 +1,4 @@
-#include "events/Manager.h"
+#include "events/EventManager.h"
 
 long Susi::Events::Manager::subscribe(std::string topic, Susi::Events::Processor processor){
 	std::lock_guard<std::mutex> lock(mutex);

@@ -37,18 +37,18 @@ protected:
 		Connection(const Poco::Net::StreamSocket& s, std::shared_ptr<::Susi::Events::ManagerComponent> eventManager) :
 			Poco::Net::TCPServerConnection{s},
 			api{eventManager},
-				sessionID{std::to_string(std::chrono::system_clock::now().time_since_epoch().count())},
-				collector{[this](std::string & msg){
-					std::cout<<"got message in server! "<<msg<<std::endl;
-					std::string s = sessionID;
-					auto message = ::Susi::Util::Any::fromString(msg);
-					api.onMessage(s,message);
-				}} {
-			api.onConnect(sessionID);
-			api.registerSender(sessionID,[this](::Susi::Util::Any & msg){
-				if(this==nullptr)return;
-				std::string str = msg.toString()+"\n";
-				socket().sendBytes(str.c_str(),str.size());
+			sessionID{std::to_string(std::chrono::system_clock::now().time_since_epoch().count())},
+			collector{[this](std::string & msg){
+				std::cout<<"got message in server! "<<msg<<std::endl;
+				std::string s = sessionID;
+				auto message = ::Susi::Util::Any::fromString(msg);
+				api.onMessage(s,message);
+			}} {
+				api.onConnect(sessionID);
+				api.registerSender(sessionID,[this](::Susi::Util::Any & msg) {
+					if(this==nullptr) return;
+					std::string str = msg.toString()+"\n";
+					socket().sendBytes(str.c_str(),str.size());
 			});
 		}
 		~Connection(){

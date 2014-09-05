@@ -5,16 +5,16 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
 #ifndef __EVENTSGLOBAL__
 #define __EVENTSGLOBAL__
 
-#include "events/Manager.h"
+#include "events/EventManager.h"
 #include "events/Event.h"
- 
+
 namespace Susi {
 	namespace Events {
 		long subscribe(std::string topic, Processor handler);
@@ -30,7 +30,7 @@ namespace Susi {
 		/*EventPtr fromAny(Susi::Util::Any & val);
 		Susi::Util::Any toAny(EventPtr);*/
 
-	}	
+	}
 }
 
 

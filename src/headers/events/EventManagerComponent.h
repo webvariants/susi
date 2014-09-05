@@ -14,7 +14,7 @@
 #define __EVENTMANAGERCOMPONENT__
 
 #include <atomic>
-#include "events/Manager.h"
+#include "events/EventManager.h"
 #include "world/Component.h"
 
 namespace Susi {

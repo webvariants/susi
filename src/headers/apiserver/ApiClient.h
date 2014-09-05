@@ -13,7 +13,7 @@
 #define __APICLIENT__
 
 #include "apiserver/BasicApiClient.h"
-#include "events/Manager.h"
+#include "events/EventManager.h"
 
 namespace Susi {
 namespace Api {

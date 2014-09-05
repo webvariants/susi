@@ -23,7 +23,7 @@
 
 #include "util/Any.h"
 #include "events/global.h"
-#include "events/Manager.h"
+#include "events/EventManager.h"
 
 namespace Susi {
 	namespace States {
@@ -33,10 +33,10 @@ namespace Susi {
 			std::map<std::string, Susi::Util::Any> persistentStates;
 
 			std::mutex mutex;
-			std::string fileLocation;			
+			std::string fileLocation;
 			bool persistentChanged = false;
 		public:
-			StateController(std::string file);		
+			StateController(std::string file);
 			bool setState(std::string stateID, Susi::Util::Any value);
 			bool setPersistentState(std::string stateID, Susi::Util::Any value);
 			Susi::Util::Any getState(std::string stateID);
