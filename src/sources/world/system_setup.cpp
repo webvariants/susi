@@ -55,6 +55,8 @@ std::shared_ptr<Susi::System::ComponentManager> createSusiComponentManager(Susi:
 		return std::shared_ptr<Component>{new Susi::DB::DBComponent{mgr, config}};
 	});
 
+	manager->registerDependency("dbmanager","eventsystem");
+
 	manager->registerComponent("authcontroller", [](ComponentManager * mgr, Any & config) {
 		std::string db_identifier{""};
 		if(config["db_identifier"].isString()){
@@ -64,6 +66,7 @@ std::shared_ptr<Susi::System::ComponentManager> createSusiComponentManager(Susi:
 	});
 
 	manager->registerDependency("authcontroller","eventsystem");
+	manager->registerDependency("heartbeat","dbmanager");
 
 	manager->registerComponent("tcpapiserver", [](ComponentManager * mgr, Any & config) {
 		std::string address{""};
@@ -126,6 +129,7 @@ std::shared_ptr<Susi::System::ComponentManager> createSusiComponentManager(Susi:
 	});
 
 	manager->registerDependency("statecontroller","eventsystem");
+	manager->registerDependency("statecontroller","iocontroller");
 
 	manager->registerComponent("syscallcontroller", [](ComponentManager * mgr, Any & config) {
 		std::string config_path{""};
@@ -136,6 +140,7 @@ std::shared_ptr<Susi::System::ComponentManager> createSusiComponentManager(Susi:
 	});
 
 	manager->registerDependency("syscallcontroller","eventsystem");
+	manager->registerDependency("syscallcontroller","iocontroller");
 
 	manager->registerComponent("httpserver", [](ComponentManager * mgr, Any & config) {
 		std::string address{""};
@@ -150,6 +155,7 @@ std::shared_ptr<Susi::System::ComponentManager> createSusiComponentManager(Susi:
 	});
 
 	manager->registerDependency("httpserver","eventsystem");
+	manager->registerDependency("httpserver","tcpapiserver");
 
 	return manager;
 }
