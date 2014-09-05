@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
@@ -17,9 +17,9 @@
 
 namespace Susi {
 	namespace Sessions {
-		class SessionManagerComponent : Susi::System::BaseComponent ,  SessionManager {
+		class SessionManagerComponent : public Susi::System::BaseComponent , public SessionManager {
 		public:
-			SessionManagerComponent (Susi::System::ComponentManager * mgr, std::chrono::milliseconds stdSessionLifetime, std::chrono::milliseconds checkInterval) : 
+			SessionManagerComponent (Susi::System::ComponentManager * mgr, std::chrono::milliseconds stdSessionLifetime, std::chrono::milliseconds checkInterval) :
 				Susi::System::BaseComponent{mgr}, SessionManager{} {
 					_stdSessionLifetime = stdSessionLifetime;
 					_checkInterval      = checkInterval;
@@ -30,8 +30,8 @@ namespace Susi {
 			}
 
 			virtual void start() override {
-				init(_stdSessionLifetime, _checkInterval);	
-				
+				init(_stdSessionLifetime, _checkInterval);
+
 				subscribe("session::setAttribute", [this](::Susi::Events::EventPtr evt){handleSetAttribute(std::move(evt));});
 				subscribe("session::getAttribute", [this](::Susi::Events::EventPtr evt){handleGetAttribute(std::move(evt));});
 				subscribe("session::pushAttribute", [this](::Susi::Events::EventPtr evt){handlePushAttribute(std::move(evt));});
@@ -47,18 +47,18 @@ namespace Susi {
 			}
 		protected:
 			std::chrono::milliseconds _stdSessionLifetime;
-			std::chrono::milliseconds _checkInterval;			
+			std::chrono::milliseconds _checkInterval;
 
 			void handleGetAttribute(Susi::Events::EventPtr event) {
 				try{
 					std::string sessionID = event->payload["id"];
 					std::string key = event->payload["key"];
 
-					event->payload["value"] = getSessionAttribute(sessionID, key);		
+					event->payload["value"] = getSessionAttribute(sessionID, key);
 				}catch(const std::exception & e){
 					std::string msg = "Error in handleSessionGetAttribute(): ";
 					msg += e.what();
-					throw std::runtime_error(msg);		
+					throw std::runtime_error(msg);
 				}
 			}
 			void handleSetAttribute(Susi::Events::EventPtr event) {
@@ -124,7 +124,7 @@ namespace Susi {
 			void handleCheck(Susi::Events::EventPtr event) {
 				try{
 					std::string sessionID = event->payload["id"];
-					event->payload["success"] = checkSession(sessionID);		
+					event->payload["success"] = checkSession(sessionID);
 				}catch(const std::exception & e){
 					std::string msg = "Error in handleCheckSession(): ";
 					msg += e.what();

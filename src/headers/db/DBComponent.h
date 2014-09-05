@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
@@ -17,9 +17,9 @@
 
 namespace Susi {
 namespace DB {
-	class DBComponent : Susi::System::BaseComponent , Manager {
+	class DBComponent : public Susi::System::BaseComponent , public Manager {
 	public:
-		DBComponent (Susi::System::ComponentManager * mgr, Susi::Util::Any & config) : 
+		DBComponent (Susi::System::ComponentManager * mgr, Susi::Util::Any & config) :
 			Susi::System::BaseComponent{mgr}, Manager{config} {}
 
 		virtual void start() override {
@@ -37,13 +37,13 @@ namespace DB {
 			try{
 				std::string identifier = event->payload["identifier"];
 				std::string query = event->payload["query"];
-				
+
 				auto db = getDatabase(identifier);
 				if(db==nullptr){
 					throw std::runtime_error{"cant find db"};
 				}else{
 					auto res = db->query(query);
-					event->payload["result"] = res;			
+					event->payload["result"] = res;
 				}
 
 			}catch(const std::exception & e){
@@ -52,7 +52,7 @@ namespace DB {
 				throw std::runtime_error(msg);
 			}
 		}
-	};	
+	};
 }
 }
 

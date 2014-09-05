@@ -19,7 +19,7 @@
 namespace Susi {
 namespace Auth {
 
-class ControllerComponent : Controller, Susi::System::BaseComponent
+class ControllerComponent : public Controller, public Susi::System::BaseComponent
 {
 protected:
 	void handleLogin(Susi::Events::EventPtr event);

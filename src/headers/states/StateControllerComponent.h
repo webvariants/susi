@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
@@ -17,9 +17,9 @@
 
 namespace Susi {
 	namespace States {
-		class StateControllerComponent : Susi::System::BaseComponent ,  StateController {
+		class StateControllerComponent : public Susi::System::BaseComponent , public StateController {
 		public:
-			StateControllerComponent (Susi::System::ComponentManager * mgr, std::string file) : 
+			StateControllerComponent (Susi::System::ComponentManager * mgr, std::string file) :
 				Susi::System::BaseComponent{mgr}, StateController{file} {}
 
 			virtual void start() override {
@@ -39,7 +39,7 @@ namespace Susi {
 				if(persistentChanged) {
 					savePersistent();
 					persistentChanged = false;
-				}		
+				}
 			}
 
 			void handleSetState(Susi::Events::EventPtr event) {
@@ -57,7 +57,7 @@ namespace Susi {
 
 			void handleGetState(Susi::Events::EventPtr event) {
 				try{
-					std::string stateID  = event->payload["stateID"];		
+					std::string stateID  = event->payload["stateID"];
 					event->payload["value"] = getState(stateID);
 				}catch(const std::exception & e){
 					std::string msg = "Error in handleGetState(): ";
@@ -81,7 +81,7 @@ namespace Susi {
 
 			void handleGetPersistentState(Susi::Events::EventPtr event) {
 				try{
-					std::string stateID  = event->payload["stateID"];		
+					std::string stateID  = event->payload["stateID"];
 					event->payload["value"] = getPersistentState(stateID);
 				}catch(const std::exception & e){
 					std::string msg = "Error in handleGetPersistentState(): ";

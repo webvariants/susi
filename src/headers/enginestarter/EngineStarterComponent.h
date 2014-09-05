@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
@@ -17,12 +17,12 @@
 
 namespace Susi {
 	namespace EngineStarter {
-		class StarterComponent : Susi::System::BaseComponent , Starter {
+		class StarterComponent : public Susi::System::BaseComponent , public Starter {
 			public:
-				StarterComponent (Susi::System::ComponentManager * mgr, std::string path) : 
+				StarterComponent (Susi::System::ComponentManager * mgr, std::string path) :
 					Susi::System::BaseComponent{mgr}, Starter{path} {}
 
-				virtual void start() override {					
+				virtual void start() override {
 					subscribe("enginestarter::start", [this](Susi::Events::EventPtr evt){handleStart(std::move(evt));});
 					subscribe("enginestarter::restart", [this](Susi::Events::EventPtr evt){handleRestart(std::move(evt));});
 					subscribe("enginestarter::stop", [this](Susi::Events::EventPtr evt){handleStop(std::move(evt));});
@@ -41,7 +41,7 @@ namespace Susi {
 				}
 			protected:
 				void handleStart(Susi::Events::EventPtr event) {
-					try{		
+					try{
 						execute();
 					}catch(const std::exception & e){
 						std::string msg = "Error in handleStart(): ";
@@ -51,7 +51,7 @@ namespace Susi {
 				}
 
 				void handleRestart(Susi::Events::EventPtr event) {
-					try{		
+					try{
 						killall();
 						execute();
 					}catch(const std::exception & e){
@@ -62,7 +62,7 @@ namespace Susi {
 				}
 
 				void handleStop(Susi::Events::EventPtr event) {
-					try{		
+					try{
 						execute();
 					}catch(const std::exception & e){
 						std::string msg = "Error in handleStop(): ";
