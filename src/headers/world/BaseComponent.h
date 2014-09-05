@@ -16,7 +16,7 @@
 
 #include "world/Component.h"
 #include "world/ComponentManager.h"
-#include "events/EventManager.h"
+#include "events/EventManagerComponent.h"
 
 namespace Susi {
 namespace System {
