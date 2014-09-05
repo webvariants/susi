@@ -26,38 +26,23 @@ void Susi::Api::ApiServer::onClose(std::string & id) {
 void Susi::Api::ApiServer::onMessage(std::string & id, Susi::Util::Any & packet) {
 	try{
 		std::cout<<"onMessage:"<<packet.toString()<<std::endl;
-		auto & type = packet["type"];
-		if(type.isString()){
-			switch(type) {
-				case "registerConsumer" : {
-					handleRegisterConsumer(id,packet);
-					break;
-				}
-				case "registerProcessor" : {
-					handleRegisterProcessor(id,packet);
-					break;
-				}
-				case "unregisterConsumer" : {
-					handleUnregisterConsumer(id,packet);
-					break;
-				}
-				case "unregisterProcessor" : {
-					handleUnregisterProcessor(id,packet);
-					break;
-				}
-				case "publish" : {
-					handlePublish(id,packet);
-					break;
-				}
-				case "ack" : {
-					handleAck(id,packet);
-					break;
-				}
-				default : {
-					sendFail(id,"type not known");
-					break;
-				}
-			}
+		auto type = packet["type"];
+		if(type.isString()){			
+			if(type=="registerConsumer"){
+				handleRegisterConsumer(id,packet);
+			}else if(type=="registerProcessor"){
+				handleRegisterProcessor(id,packet);
+			}else if(type=="unregisterConsumer"){
+				handleUnregisterConsumer(id,packet);
+			}else if(type=="unregisterProcessor"){
+				handleUnregisterProcessor(id,packet);
+			}else if(type=="publish"){
+				handlePublish(id,packet);
+			}else if(type=="ack"){
+				handleAck(id,packet);
+			}else {
+				sendFail(id,"type not known");
+			}			
 		}else{
 			sendFail(id,"type is not a string");
 		}
