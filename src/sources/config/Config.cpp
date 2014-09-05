@@ -119,6 +119,10 @@ Susi::Util::Any Susi::Config::get(std::string key) {
 	}
 }
 
+Susi::Util::Any Susi::Config::getConfig() {
+	return _configVar;
+}
+
 // returns a help message which shows which options are available
 std::string Susi::Config::getHelp() {
 	std::string result;

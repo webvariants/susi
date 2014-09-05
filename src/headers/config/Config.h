@@ -58,6 +58,8 @@ public:
 	// should throw if key doesn't exist
 	Any get(std::string key);
 
+	Any getConfig();
+
 	// returns a help message which shows which options are available
 	std::string getHelp();
 };
