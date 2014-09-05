@@ -25,11 +25,11 @@ namespace Susi {
 
 class HttpServerComponent : public Susi::System::BaseComponent {
 protected:
+	Susi::Api::ApiServerForComponent apiServer;
 	Poco::Net::SocketAddress address;
 	Poco::Net::ServerSocket serverSocket;
 	Poco::Net::HTTPServer server;
 
-	Susi::Api::ApiServerForComponent apiServer;
 	std::string _addr;
 public:
 	HttpServerComponent (Susi::System::ComponentManager * mgr, std::string addr,std::string assetRoot) :
