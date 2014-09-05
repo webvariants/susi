@@ -9,18 +9,19 @@
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
-#ifndef __APISERVER__
-#define __APISERVER__
+#ifndef __APISERVERFORCOMPONENT__
+#define __APISERVERFORCOMPONENT__
 
 #include <memory>
-#include "events/global.h"
 #include <functional>
 #include <mutex>
+#include "apiserver/ApiServer.h"
+#include "events/ManagerComponent.h"
 
 namespace Susi {
 namespace Api {
 
-class ApiServerForComponent : ApiServer {
+class ApiServerForComponent : public ApiServer {
 protected:
 	std::shared_ptr<Susi::Events::ManagerComponent> eventManager;
 	void handleRegisterConsumer(std::string & id, Susi::Util::Any & packet);
@@ -40,4 +41,4 @@ public:
 }
 }
 
-#endif // __APISERVER__
+#endif // __APISERVERFORCOMPONENT__
