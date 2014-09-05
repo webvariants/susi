@@ -13,7 +13,7 @@
 #define __ENGINE_STARTER_COMPONENT__
 
 #include "world/BaseComponent.h"
-#include "enginestarter/enginestarter.h"
+#include "enginestarter/EngineStarter.h"
 
 namespace Susi {
 	namespace EngineStarter {

@@ -13,7 +13,7 @@
 #define __STATE_CONTROLLER_COMPONENT__
 
 #include "world/BaseComponent.h"
-#include "state/StateController.h"
+#include "states/StateController.h"
 
 namespace Susi {
 	namespace States {
