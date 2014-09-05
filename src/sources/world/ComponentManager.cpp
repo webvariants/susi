@@ -62,3 +62,20 @@ bool Susi::System::ComponentManager::stopComponent(std::string name){
 
 	return true;
 }
+
+
+bool Susi::System::ComponentManager::startAll() {
+	bool result = true;
+	for(auto kv: config) {
+		result = result && startComponent(kv.first);
+	}
+	return result;
+}
+
+bool Susi::System::ComponentManager::stopAll() {
+	bool result = true;
+	for(auto kv: config) {
+		result = result && stopComponent(kv.first);
+	}
+	return result;
+}

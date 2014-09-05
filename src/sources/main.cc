@@ -37,8 +37,8 @@ void signalHandler( int signum )
     std::cout << "Interrupt signal (" << signum << ") received.\n";
    // cleanup and close up stuff here  
    // terminate program  
-   //componentManager->stopAll();
-   exit(signum);  
+   componentManager->stopAll();
+   exit(0);  
 
 }
 
@@ -58,10 +58,14 @@ int main(int argc, char** argv){
 	cfg.parseCommandLine(argv_vec);
 
 	componentManager = std::make_shared<Susi::System::ComponentManager>(cfg.getConfig());
-	//componentManager->startAll();
+	componentManager->startAll();
 
 	// register signal SIGINT and signal handler  
     signal(SIGINT, signalHandler); 
 
 	waitForEver();
+
+	componentManager->stopAll();
+
+	exit(0);
 }
