@@ -9,24 +9,9 @@
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
-#include "util/Any.h"
-#include "world/ComponentManager.h"
+#include "world/system_setup.h"
 
-#include "apiserver/TCPApiServerComponent.h"
-#include "auth/AuthControllerComponent.h"
-#include "db/DBComponent.h"
-#include "enginestarter/EngineStarterComponent.h"
-#include "events/EventManagerComponent.h"
-#include "heartbeat/HeartBeatComponent.h"
-#include "iocontroller/IOControllerComponent.h"
-#include "sessions/SessionManagerComponent.h"
-#include "states/StateControllerComponent.h"
-#include "syscall/SysCallControllerComponent.h"
-#include "webstack/HttpServerComponent.h"
-
-
-
-std::shared_ptr<Susi::System::ComponentManager> createSusiComponentManager(Susi::Util::Any::Object config){
+std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponentManager(Susi::Util::Any::Object config){
 	using Susi::System::ComponentManager;
 	using Susi::System::Component;
 	using Susi::Util::Any;
