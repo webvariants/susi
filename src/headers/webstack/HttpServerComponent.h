@@ -12,26 +12,49 @@
 #ifndef __HTTP_SERVER_COMPONENT__
 #define __HTTP_SERVER_COMPONENT__
 
+#include "Poco/Net/HTTPServer.h"
+#include "Poco/Net/HTTPRequestHandler.h"
+#include <iostream>
+
+#include "apiserver/ApiServerForComponent.h"
+#include "webstack/RequestHandlerFactory.h"
+#include "logger/Logger.h"
 #include "world/BaseComponent.h"
-#include "webstack/HttpServer.h"
 
 namespace Susi {
-	class HttpServerComponent : public Susi::System::BaseComponent , public HttpServer {
-		public:
-			HttpServerComponent (Susi::System::ComponentManager * mgr, std::string addr,std::string assetRoot) :
-				Susi::System::BaseComponent{mgr}, HttpServer{addr, assetRoot} {}
 
-			virtual void start() override {
-				httpServerStart();
-			}
+class HttpServerComponent : public Susi::System::BaseComponent {
+protected:
+	Poco::Net::SocketAddress address;
+	Poco::Net::ServerSocket serverSocket;
+	Poco::Net::HTTPServer server;
 
-			virtual void stop() override {
-				httpServerStop();
-			}
-			~HttpServerComponent() {
-				stop();
-			}
-	};
+	Susi::Api::ApiServerForComponent apiServer;
+	std::string _addr;
+public:
+	HttpServerComponent (Susi::System::ComponentManager * mgr, std::string addr,std::string assetRoot) :
+		Susi::System::BaseComponent{mgr},
+		apiServer{eventManager},
+		address(addr),
+		serverSocket(address),
+		server(new RequestHandlerFactory(assetRoot, &apiServer),serverSocket,new Poco::Net::HTTPServerParams)
+		{
+			_addr = addr;
+	}
+
+	virtual void start() override {
+		server.start();
+		Susi::info("started HTTP server on addr "+_addr);
+	}
+
+	virtual void stop() override {
+		server.stop();
+	}
+	~HttpServerComponent() {
+		stop();
+	}
+};
+
 }
 
 #endif // __HTTP_SERVER_COMPONENT__
