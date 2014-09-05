@@ -34,10 +34,10 @@ public:
 		{}
 
 	virtual void start() override {
-		subscribe("auth::login", handleLogin);
-		subscribe("auth::logout", handleLogout);
-		subscribe("auth::isLoggedIn", handleIsLoggedIn);
-		subscribe("auth::getUsername", handleGetUsername);
+		subscribe("auth::login", [this](::Susi::Events::EventPtr evt){handleLogin(std::move(evt));});
+		subscribe("auth::logout", [this](::Susi::Events::EventPtr evt){handleLogout(std::move(evt));});
+		subscribe("auth::isLoggedIn", [this](::Susi::Events::EventPtr evt){handleIsLoggedIn(std::move(evt));});
+		subscribe("auth::getUsername", [this](::Susi::Events::EventPtr evt){handleGetUsername(std::move(evt));});
 	}
 
 	virtual void stop() override {

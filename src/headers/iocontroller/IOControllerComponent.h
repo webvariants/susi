@@ -26,14 +26,14 @@ namespace Susi {
 			}
 
 			virtual void start() override {
-				subscribe("io::writeFile", handleWriteFile);	
-				subscribe("io::readFile", handleReadFile);
-				subscribe("io::deletePath", handleDeletePath);
-				subscribe("io::movePath", handleMovePath);
-				subscribe("io::copyPath", handleCopyPath);
-				subscribe("io::makeDir", handleMakeDir);
-				subscribe("io::setExecutable", handleSetExecutable);
-				subscribe("io::getExecutable", handleGetExecutable);					
+				subscribe("io::writeFile", [this](::Susi::Events::EventPtr evt){handleWriteFile(std::move(evt));});
+				subscribe("io::readFile", [this](::Susi::Events::EventPtr evt){handleReadFile(std::move(evt));});
+				subscribe("io::deletePath",[this](::Susi::Events::EventPtr evt){handleDeletePath(std::move(evt));});
+				subscribe("io::movePath", [this](::Susi::Events::EventPtr evt){handleMovePath(std::move(evt));});
+				subscribe("io::copyPath", [this](::Susi::Events::EventPtr evt){handleCopyPath(std::move(evt));});
+				subscribe("io::makeDir", [this](::Susi::Events::EventPtr evt){handleMakeDir(std::move(evt));});
+				subscribe("io::setExecutable", [this](::Susi::Events::EventPtr evt){handleSetExecutable(std::move(evt));});
+				subscribe("io::getExecutable", [this](::Susi::Events::EventPtr evt){handleGetExecutable(std::move(evt));});					
 			}
 
 			virtual void stop() override {
