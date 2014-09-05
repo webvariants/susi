@@ -19,6 +19,7 @@
 
 #include "config/Config.h"
 #include "world/ComponentManager.h"
+#include "world/system_setup.h"
 
 std::condition_variable waitCond;
 
@@ -57,7 +58,8 @@ int main(int argc, char** argv){
 	Susi::Config cfg{"config.json"};
 	cfg.parseCommandLine(argv_vec);
 
-	componentManager = std::make_shared<Susi::System::ComponentManager>(cfg.getConfig());
+	componentManager = Susi::System::createSusiComponentManager(cfg.getConfig());
+	//componentManager = std::make_shared<Susi::System::ComponentManager>(cfg.getConfig());
 	componentManager->startAll();
 
 	// register signal SIGINT and signal handler  
