@@ -26,26 +26,26 @@ namespace Api {
 
 
 
-class TCPApiServerComponent : public ::Susi::System::BaseComponent {
+class TCPApiServerComponent : public Susi::System::BaseComponent {
 protected:
 	class Connection : public Poco::Net::TCPServerConnection {
 	protected:
-		::Susi::Api::ApiServerForComponent api;
+		Susi::Api::ApiServerForComponent api;
 		std::string sessionID = "";
-		::Susi::Api::JSONStreamCollector collector;
+		Susi::Api::JSONStreamCollector collector;
 	public:
-		Connection(const Poco::Net::StreamSocket& s, std::shared_ptr<::Susi::Events::ManagerComponent> eventManager) :
+		Connection(const Poco::Net::StreamSocket& s, std::shared_ptr<Susi::Events::ManagerComponent> eventManager) :
 			Poco::Net::TCPServerConnection{s},
 			api{eventManager},
 			sessionID{std::to_string(std::chrono::system_clock::now().time_since_epoch().count())},
 			collector{[this](std::string & msg){
 				std::cout<<"got message in server! "<<msg<<std::endl;
 				std::string s = sessionID;
-				auto message = ::Susi::Util::Any::fromString(msg);
+				auto message = Susi::Util::Any::fromString(msg);
 				api.onMessage(s,message);
 			}} {
 				api.onConnect(sessionID);
-				api.registerSender(sessionID,[this](::Susi::Util::Any & msg) {
+				api.registerSender(sessionID,[this](Susi::Util::Any & msg) {
 					if(this==nullptr) return;
 					std::string str = msg.toString()+"\n";
 					socket().sendBytes(str.c_str(),str.size());
@@ -71,8 +71,8 @@ protected:
 
 	class ConnectionFactory : public Poco::Net::TCPServerConnectionFactory {
 	public:
-		std::shared_ptr<::Susi::Events::ManagerComponent> eventManager;
-		ConnectionFactory(std::shared_ptr<::Susi::Events::ManagerComponent> _eventManager) {
+		std::shared_ptr<Susi::Events::ManagerComponent> eventManager;
+		ConnectionFactory(std::shared_ptr<Susi::Events::ManagerComponent> _eventManager) {
 			eventManager = _eventManager;
 		}
 		virtual Poco::Net::TCPServerConnection * createConnection(const Poco::Net::StreamSocket& s){
@@ -87,8 +87,8 @@ protected:
 	Poco::Net::TCPServer tcpServer;
 
 public:
-	TCPApiServerComponent(::Susi::System::ComponentManager * mgr, std::string addr, size_t threads = 4, size_t backlog = 16) :
-		::Susi::System::BaseComponent{mgr},
+	TCPApiServerComponent(Susi::System::ComponentManager * mgr, std::string addr, size_t threads = 4, size_t backlog = 16) :
+		Susi::System::BaseComponent{mgr},
 		address{addr},
 		serverSocket{address},
 		params{new Poco::Net::TCPServerParams},
@@ -101,7 +101,7 @@ public:
 		tcpServer.start();
 		std::string msg{"started TCP Api Server on "};
 		msg += address.toString();
-		::Susi::info(msg);
+		Susi::info(msg);
 		std::this_thread::sleep_for(std::chrono::milliseconds{250});
 	}
 	virtual void stop() override {

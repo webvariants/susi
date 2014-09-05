@@ -11,7 +11,7 @@ Susi::Util::Any Susi::DB::Database::query(std::string query){
 			std::string name = props.get_name();
 			Susi::Util::Any value;
 			switch(props.get_data_type()){
-				case soci::dt_string:					
+				case soci::dt_string:
 					value = row.get<std::string>(i);
 					break;
 				case soci::dt_double:
