@@ -49,6 +49,8 @@ std::shared_ptr<Susi::System::ComponentManager> createSusiComponentManager(Susi:
 		return std::shared_ptr<Component>{new Susi::HeartBeatComponent{mgr}};
 	});
 
+	manager->registerDependency("heartbeat","eventsystem");
+
 	manager->registerComponent("dbmanager", [](ComponentManager * mgr, Any & config) {
 		return std::shared_ptr<Component>{new Susi::DB::DBComponent{mgr, config}};
 	});
@@ -56,17 +58,19 @@ std::shared_ptr<Susi::System::ComponentManager> createSusiComponentManager(Susi:
 	manager->registerComponent("authcontroller", [](ComponentManager * mgr, Any & config) {
 		std::string db_identifier{""};
 		if(config["db_identifier"].isString()){
-			db_identifier = config["db_identifier"];
+			db_identifier = static_cast<std::string>(config["db_identifier"]);
 		}
 		return std::shared_ptr<Component>{new Susi::Auth::ControllerComponent{mgr, db_identifier}};
 	});
 
-	manager->registerComponent("apiserver", [](ComponentManager * mgr, Any & config) {
+	manager->registerDependency("authcontroller","eventsystem");
+
+	manager->registerComponent("tcpapiserver", [](ComponentManager * mgr, Any & config) {
 		std::string address{""};
 		size_t threads{4};
 		size_t backlog{16};
 		if(config["address"].isString()){
-			address = config["address"];
+			address = static_cast<std::string>(config["address"]);
 		}
 		if(config["threads"].isInteger()){
 			threads =  static_cast<long>(config["threads"]);
@@ -77,62 +81,75 @@ std::shared_ptr<Susi::System::ComponentManager> createSusiComponentManager(Susi:
 		return std::shared_ptr<Component>{new Susi::Api::TCPApiServerComponent{mgr, address, threads, backlog}};
 	});
 
+	manager->registerDependency("tcpapiserver","eventsystem");
+
 	manager->registerComponent("enginestarter", [](ComponentManager * mgr, Any & config) {
 		std::string path{""};
 		if(config["path"].isString()){
-			path = config["path"];
+			path = static_cast<std::string>(config["path"]);
 		}
 		return std::shared_ptr<Component>{new Susi::EngineStarter::StarterComponent{mgr, path}};
 	});
 
+	manager->registerDependency("enginestarter","eventsystem");
+
 	manager->registerComponent("iocontroller", [](ComponentManager * mgr, Any & config) {
-		std::string base_path{"";}
+		std::string base_path{""};
 		if(config["base_path"].isString()){
-			base_path = config["base_path"];
+			base_path = static_cast<std::string>(config["base_path"]);
 		}
 		return std::shared_ptr<Component>{new Susi::IOControllerComponent{mgr, base_path}};
 	});
+
+	manager->registerDependency("iocontroller","eventsystem");
+
 	manager->registerComponent("sessionmanager", [](ComponentManager * mgr, Any & config) {
 		std::chrono::milliseconds stdSessionLifetime{10000};
 		std::chrono::milliseconds checkInterval{1000};
 		if(config["stdSessionLifetime"].isInteger()){
-			stdSessionLifetime =  std::chrono::milliseconds{config["stdSessionLifetime"]};
+			stdSessionLifetime =  std::chrono::milliseconds{static_cast<int>(config["stdSessionLifetime"])};
 		}
 		if(config["checkInterval"].isInteger()){
-			checkInterval =  std::chrono::milliseconds{config["checkInterval"]};
+			checkInterval =  std::chrono::milliseconds{static_cast<int>(config["checkInterval"])};
 		}
 		return std::shared_ptr<Component>{new Susi::Sessions::SessionManagerComponent{mgr, stdSessionLifetime, checkInterval}};
 	});
 
+	manager->registerDependency("sessionmanager","eventsystem");
+
 	manager->registerComponent("statecontroller", [](ComponentManager * mgr, Any & config) {
 		std::string file{""};
 		if(config["file"].isString()){
-			file = config["file"];
+			file = static_cast<std::string>(config["file"]);
 		}
 		return std::shared_ptr<Component>{new Susi::States::StateControllerComponent{mgr, file}};
 	});
 
+	manager->registerDependency("statecontroller","eventsystem");
+
 	manager->registerComponent("syscallcontroller", [](ComponentManager * mgr, Any & config) {
 		std::string config_path{""};
 		if(config["config_path"].isString()){
-			config_path = config["config_path"];
+			config_path = static_cast<std::string>(config["config_path"]);
 		}
 		return std::shared_ptr<Component>{new Susi::Syscall::SyscallControllerComponent{mgr, config_path}};
 	});
 
+	manager->registerDependency("syscallcontroller","eventsystem");
+
 	manager->registerComponent("httpserver", [](ComponentManager * mgr, Any & config) {
 		std::string address{""};
 		if(config["address"].isString()){
-			address = config["address"];
+			address = static_cast<std::string>(config["address"]);
 		}
 		std::string assetRoot{""};
 		if(config["assetRoot"].isString()){
-			assetRoot = config["assetRoot"];
+			assetRoot = static_cast<std::string>(config["assetRoot"]);
 		}
 		return std::shared_ptr<Component>{new Susi::HttpServerComponent{mgr, address, assetRoot}};
 	});
 
-	manager->registerDependency("heartbeat","eventsystem");
+	manager->registerDependency("httpserver","eventsystem");
 
 	return manager;
 }

@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
@@ -16,9 +16,9 @@
 #include "iocontroller/IOController.h"
 
 namespace Susi {
-	class IOControllerComponent : Susi::System::BaseComponent ,  IOController {
+	class IOControllerComponent : public Susi::System::BaseComponent , public IOController {
 		public:
-			IOControllerComponent (Susi::System::ComponentManager * mgr, std::string base_path) : 
+			IOControllerComponent (Susi::System::ComponentManager * mgr, std::string base_path) :
 				Susi::System::BaseComponent{mgr}, IOController{base_path} {}
 
 			~IOControllerComponent() {
@@ -33,7 +33,7 @@ namespace Susi {
 				subscribe("io::copyPath", [this](::Susi::Events::EventPtr evt){handleCopyPath(std::move(evt));});
 				subscribe("io::makeDir", [this](::Susi::Events::EventPtr evt){handleMakeDir(std::move(evt));});
 				subscribe("io::setExecutable", [this](::Susi::Events::EventPtr evt){handleSetExecutable(std::move(evt));});
-				subscribe("io::getExecutable", [this](::Susi::Events::EventPtr evt){handleGetExecutable(std::move(evt));});					
+				subscribe("io::getExecutable", [this](::Susi::Events::EventPtr evt){handleGetExecutable(std::move(evt));});
 			}
 
 			virtual void stop() override {
@@ -67,7 +67,7 @@ namespace Susi {
 			void handleDeletePath(Susi::Events::EventPtr event) {
 				try{
 					std::string path = event->payload["path"];
-					event->payload["success"] = deletePath(path);		
+					event->payload["success"] = deletePath(path);
 				}catch(const std::exception & e){
 					std::string msg = "Error in handleDeleteFile(): ";
 					msg += e.what();
@@ -79,7 +79,7 @@ namespace Susi {
 				try{
 					std::string source_path = event->payload["source_path"];
 					std::string dest_path = event->payload["dest_path"];
-					event->payload["success"] = copyPath(source_path, dest_path);		
+					event->payload["success"] = copyPath(source_path, dest_path);
 				}catch(const std::exception & e){
 					std::string msg = "Error in handleCopyPath(): ";
 					msg += e.what();
@@ -137,4 +137,4 @@ namespace Susi {
 }
 
 #endif // __IO_CONTROLLER_COMPONENT__
-	
+

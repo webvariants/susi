@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
@@ -16,9 +16,9 @@
 #include "webstack/HttpServer.h"
 
 namespace Susi {
-	class HttpServerComponent : Susi::System::BaseComponent ,  HttpServer {
+	class HttpServerComponent : public Susi::System::BaseComponent , public HttpServer {
 		public:
-			HttpServerComponent (Susi::System::ComponentManager * mgr, std::string addr,std::string assetRoot) : 
+			HttpServerComponent (Susi::System::ComponentManager * mgr, std::string addr,std::string assetRoot) :
 				Susi::System::BaseComponent{mgr}, HttpServer{addr, assetRoot} {}
 
 			virtual void start() override {

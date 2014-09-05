@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
@@ -17,9 +17,9 @@
 
 namespace Susi {
 	namespace Syscall {
-		class SyscallControllerComponent : Susi::System::BaseComponent ,  Controller {
+		class SyscallControllerComponent : public Susi::System::BaseComponent , public Controller {
 		public:
-			SyscallControllerComponent (Susi::System::ComponentManager * mgr, std::string config_path) : 
+			SyscallControllerComponent (Susi::System::ComponentManager * mgr, std::string config_path) :
 				Susi::System::BaseComponent{mgr}, Controller{config_path} {}
 
 			virtual void start() override {
@@ -30,11 +30,11 @@ namespace Susi {
 			}
 		protected:
 			void handleStartProcess(Susi::Events::EventPtr event) {
-				try{		
+				try{
 					std::string process_type = event->payload["process_type"];
 					std::map<std::string, std::string> argsReplace = event->payload["argsReplace"];
 
-					event->payload["success"] = startProcess(process_type, argsReplace);				
+					event->payload["success"] = startProcess(process_type, argsReplace);
 				}catch(const std::exception & e){
 					std::string msg = "Error in handleStartProcess(): ";
 					msg += e.what();
