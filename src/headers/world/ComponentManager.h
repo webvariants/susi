@@ -43,6 +43,10 @@ namespace System {
 		bool startComponent(std::string name);
 		bool stopComponent(std::string name);
 
+
+		bool startAll();
+		bool stopAll();
+
 		template<class T=Component>
 		std::shared_ptr<T> getComponent(std::string name){
 			if(components.find(name) == components.end() && !loadComponent(name)){
