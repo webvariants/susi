@@ -23,13 +23,13 @@ namespace Susi {
 					Susi::System::BaseComponent{mgr}, Starter{path} {}
 
 				virtual void start() override {					
-					subscribe("enginestarter::start", handleStart);
-					subscribe("enginestarter::restart", handleRestart);
-					subscribe("enginestarter::stop", handleStop);
+					subscribe("enginestarter::start", [this](Susi::Events::EventPtr evt){handleStart(std::move(evt));});
+					subscribe("enginestarter::restart", [this](Susi::Events::EventPtr evt){handleRestart(std::move(evt));});
+					subscribe("enginestarter::stop", [this](Susi::Events::EventPtr evt){handleStop(std::move(evt));});
 
-					subscribe("global::start", handleStart);
-					subscribe("global::restart", handleRestart);
-					subscribe("global::stop", handleStop);
+					subscribe("global::start", [this](Susi::Events::EventPtr evt){handleStart(std::move(evt));});
+					subscribe("global::restart", [this](Susi::Events::EventPtr evt){handleRestart(std::move(evt));});
+					subscribe("global::stop", [this](Susi::Events::EventPtr evt){handleStop(std::move(evt));});
 				}
 
 				virtual void stop() override {

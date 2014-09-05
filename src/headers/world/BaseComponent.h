@@ -81,5 +81,6 @@ public:
 };
 
 }
+}
 
 #endif // __BASECOMPONENT__

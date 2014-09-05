@@ -19,13 +19,12 @@ namespace Susi {
 	namespace Syscall {
 		class SyscallControllerComponent : Susi::System::BaseComponent ,  Controller {
 		public:
-			SessionManagerComponent (Susi::System::ComponentManager * mgr, std::string config_path) : 
+			SyscallControllerComponent (Susi::System::ComponentManager * mgr, std::string config_path) : 
 				Susi::System::BaseComponent{mgr}, Controller{config_path} {}
 
 			virtual void start() override {
-				subscribe("syscall::startProcess", handleStartProcess);
+				subscribe("syscall::startProcess", [this](::Susi::Events::EventPtr evt){handleStartProcess(std::move(evt));});
 			}
-
 			virtual void stop() override {
 				unsubscribeAll();
 			}

@@ -32,12 +32,12 @@ namespace Susi {
 			virtual void start() override {
 				init(_stdSessionLifetime, _checkInterval);	
 				
-				subscribe("session::setAttribute", handleSetAttribute);
-				subscribe("session::getAttribute", handleGetAttribute);
-				subscribe("session::pushAttribute", handlePushAttribute);
-				subscribe("session::removeAttribute", handleRemoveAttribute);
-				subscribe("session::update", handleUpdate);
-				subscribe("session::check", handleCheck);
+				subscribe("session::setAttribute", [this](::Susi::Events::EventPtr evt){handleSetAttribute(std::move(evt));});
+				subscribe("session::getAttribute", [this](::Susi::Events::EventPtr evt){handleGetAttribute(std::move(evt));});
+				subscribe("session::pushAttribute", [this](::Susi::Events::EventPtr evt){handlePushAttribute(std::move(evt));});
+				subscribe("session::removeAttribute", [this](::Susi::Events::EventPtr evt){handleRemoveAttribute(std::move(evt));});
+				subscribe("session::update", [this](::Susi::Events::EventPtr evt){handleUpdate(std::move(evt));});
+				subscribe("session::check", [this](::Susi::Events::EventPtr evt){handleCheck(std::move(evt));});
 			}
 
 			virtual void stop() override {

@@ -23,7 +23,7 @@ namespace DB {
 			Susi::System::BaseComponent{mgr}, Manager{config} {}
 
 		virtual void start() override {
-			subscribe("db::query",handleQuery);
+			subscribe("db::query",[this](::Susi::Events::EventPtr evt){handleQuery(std::move(evt));});
 		}
 
 		virtual void stop() override {
@@ -38,7 +38,7 @@ namespace DB {
 				std::string identifier = event->payload["identifier"];
 				std::string query = event->payload["query"];
 				
-				auto db = world.dbManager->getDatabase(identifier);
+				auto db = getDatabase(identifier);
 				if(db==nullptr){
 					throw std::runtime_error{"cant find db"};
 				}else{

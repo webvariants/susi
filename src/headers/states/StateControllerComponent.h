@@ -19,16 +19,16 @@ namespace Susi {
 	namespace States {
 		class StateControllerComponent : Susi::System::BaseComponent ,  StateController {
 		public:
-			SessionManagerComponent (Susi::System::ComponentManager * mgr, std::string file) : 
+			StateControllerComponent (Susi::System::ComponentManager * mgr, std::string file) : 
 				Susi::System::BaseComponent{mgr}, StateController{file} {}
 
 			virtual void start() override {
-				subscribe("heartbeat::fiveMinute",handleSave);
+				subscribe("heartbeat::fiveMinute",[this](::Susi::Events::EventPtr evt){handleSave(std::move(evt));});
 
-				subscribe("state::setState", handleSetState);
-				subscribe("state::getState", handleGetState);
-				subscribe("state::setPersistentState", handleSetPersistentState);
-				subscribe("state::getPersistentState", handleGetPersistentState);
+				subscribe("state::setState", [this](::Susi::Events::EventPtr evt){handleSetState(std::move(evt));});
+				subscribe("state::getState", [this](::Susi::Events::EventPtr evt){handleGetState(std::move(evt));});
+				subscribe("state::setPersistentState", [this](::Susi::Events::EventPtr evt){handleSetPersistentState(std::move(evt));});
+				subscribe("state::getPersistentState", [this](::Susi::Events::EventPtr evt){handleGetPersistentState(std::move(evt));});
 			}
 
 			virtual void stop() override {
