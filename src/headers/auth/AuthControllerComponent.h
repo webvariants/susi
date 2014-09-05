@@ -13,7 +13,7 @@
 #ifndef __AUTH_CONTROLLERCOMPONENT__
 #define __AUTH_CONTROLLERCOMPONENT__
 
-#include "AuthController.h"
+#include "auth/AuthController.h"
 #include "world/BaseComponent.h"
 
 namespace Susi {
@@ -34,10 +34,10 @@ public:
 		{}
 
 	virtual void start() override {
-		subscribe("auth::login", [this](::Susi::Events::EventPtr evt){handleLogin(std::move(evt));});
-		subscribe("auth::logout", [this](::Susi::Events::EventPtr evt){handleLogout(std::move(evt));});
-		subscribe("auth::isLoggedIn", [this](::Susi::Events::EventPtr evt){handleIsLoggedIn(std::move(evt));});
-		subscribe("auth::getUsername", [this](::Susi::Events::EventPtr evt){handleGetUsername(std::move(evt));});
+		subscribe("auth::login", [this](Susi::Events::EventPtr evt){handleLogin(std::move(evt));});
+		subscribe("auth::logout", [this](Susi::Events::EventPtr evt){handleLogout(std::move(evt));});
+		subscribe("auth::isLoggedIn", [this](Susi::Events::EventPtr evt){handleIsLoggedIn(std::move(evt));});
+		subscribe("auth::getUsername", [this](Susi::Events::EventPtr evt){handleGetUsername(std::move(evt));});
 	}
 
 	virtual void stop() override {
