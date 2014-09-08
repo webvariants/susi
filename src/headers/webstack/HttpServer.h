@@ -52,7 +52,7 @@ public:
 
 	void httpServerStart() {
 		server.start();
-		Susi::info("started HTTP server on addr "+_addr);		
+		Susi::Logger::info("started HTTP server on addr "+_addr);		
 	}
 
 	void httpServerStop() {

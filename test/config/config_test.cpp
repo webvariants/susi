@@ -110,3 +110,72 @@ TEST_F(ConfigTest,CommandLine){
 
 	std::cout<<c.get("").toString()<<std::endl;
 }
+
+TEST_F(ConfigTest,CommandLineOneDashNoArg){
+	Susi::Config cfg;
+	std::vector<std::string> cmdline = {"prognameIsAllwaysFirstParam","-foo"};
+	config->parseCommandLine(cmdline);
+	EXPECT_TRUE(config.get("foo").isObject());		
+}
+
+TEST_F(ConfigTest,CommandLineOneDashOneArg){
+	Susi::Config cfg;
+	std::vector<std::string> cmdline = {"prognameIsAllwaysFirstParam","-foo","bla"};
+	config->parseCommandLine(cmdline);
+	EXPECT_TRUE(config.get("foo").isString());
+	EXPECT_EQ("\"bla\"",config.get("foo").toString());		
+}
+
+TEST_F(ConfigTest,CommandLineOneDashOneArg2){
+	Susi::Config cfg;
+	std::vector<std::string> cmdline = {"prognameIsAllwaysFirstParam","-foo=bla"};
+	config->parseCommandLine(cmdline);
+	EXPECT_TRUE(config.get("foo").isString());
+	EXPECT_EQ("\"bla\"",config.get("foo").toString());		
+}
+
+TEST_F(ConfigTest,CommandLineTwoDashNoArg){
+	Susi::Config cfg;
+	std::vector<std::string> cmdline = {"prognameIsAllwaysFirstParam","--foo"};
+	config->parseCommandLine(cmdline);
+	EXPECT_TRUE(config.get("foo").isObject());		
+}
+
+TEST_F(ConfigTest,CommandLineTwoDashOneArg){
+	Susi::Config cfg;
+	std::vector<std::string> cmdline = {"prognameIsAllwaysFirstParam","--foo","bla"};
+	config->parseCommandLine(cmdline);
+	EXPECT_TRUE(config.get("foo").isString());
+	EXPECT_EQ("\"bla\"",config.get("foo").toString());		
+}
+
+TEST_F(ConfigTest,CommandLineTwoDashOneArg2){
+	Susi::Config cfg;
+	std::vector<std::string> cmdline = {"prognameIsAllwaysFirstParam","--foo=bla"};
+	config->parseCommandLine(cmdline);
+	EXPECT_TRUE(config.get("foo").isString());
+	EXPECT_EQ("\"bla\"",config.get("foo").toString());		
+}
+
+TEST_F(ConfigTest,MultipleArguments){
+	Susi::Config cfg;
+	std::vector<std::string> cmdline = {
+		"prognameIsAllwaysFirstParam",
+		"--foo=bla",
+		"-bar","bla",
+		"-bla",
+		"--baz","bla"};
+	config->parseCommandLine(cmdline);
+	EXPECT_EQ("\"bla\"",config.get("foo").toString());
+	EXPECT_EQ("\"bla\"",config.get("bar").toString());
+	EXPECT_TRUE(config.get("bla").isObject());		
+	EXPECT_EQ("\"bla\"",config.get("baz").toString());	
+}
+
+TEST_F(ConfigTest,MultiLevelArguments){
+	Susi::Config cfg;
+	std::vector<std::string> cmdline = {"prognameIsAllwaysFirstParam","--foo.bar.baz=bla"};
+	config->parseCommandLine(cmdline);
+	EXPECT_TRUE(config.get("foo.bar.baz").isString());
+	EXPECT_EQ("\"bla\"",config.get("foo.bar.baz").toString());			
+}

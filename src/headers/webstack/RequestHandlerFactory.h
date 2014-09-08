@@ -35,7 +35,7 @@ protected:
 public:
     RequestHandlerFactory(std::string assetRoot, Susi::Api::ApiServer *apiServer) : _assetRoot{assetRoot} , _apiServer(apiServer) {}
     Poco::Net::HTTPRequestHandler* createRequestHandler(const Poco::Net::HTTPServerRequest& request){
-        Susi::debug("got request with URI: "+request.getURI());
+        Susi::Logger::debug("got request with URI: "+request.getURI());
         try{
             if(request.getURI().find("/assets/")==0){
             	return new SessionRequestHandler(new AssetsRequestHandler(_assetRoot));
@@ -50,7 +50,7 @@ public:
             }
             return new SessionRequestHandler(new NotFoundRequestHandler());
         }catch(const std::exception & e){
-            Susi::error(std::string("error in request handler factory: ")+e.what());
+            Susi::Logger::error(std::string("error in request handler factory: ")+e.what());
             return nullptr;
         }
     }

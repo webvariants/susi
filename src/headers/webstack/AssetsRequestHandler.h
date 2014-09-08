@@ -32,7 +32,7 @@ private:
 public:
 	AssetsRequestHandler(std::string rootDirectory) :
 	  _rootDirectory(rootDirectory) {
-		Susi::debug("init assets handler");
+		Susi::Logger::debug("init assets handler");
 	}
     virtual void handleRequest(Poco::Net::HTTPServerRequest& request,
                        Poco::Net::HTTPServerResponse& response) override;

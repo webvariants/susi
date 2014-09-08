@@ -109,7 +109,7 @@ protected:
 	}
 
 	void handleConfig(const std::string& name, const std::string& value){
-		Susi::debug("load config "+value);
+		Susi::Logger::debug("load config "+value);
 		loadConfiguration(value);
 	}
 

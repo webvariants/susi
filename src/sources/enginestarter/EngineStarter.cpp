@@ -12,7 +12,7 @@ void Susi::EngineStarter::Starter::killall() {
 	}catch(const std::exception & e){
 		std::string msg = "Error in EngineStarter::killall : ";
 		msg += e.what();
-		Susi::error(msg);
+		Susi::Logger::error(msg);
 	}
 
 }
@@ -23,7 +23,7 @@ void Susi::EngineStarter::Starter::execute() {
 	}catch(const std::exception & e){
 		std::string msg = "Error in EngineStarter::execute : ";
 		msg += e.what();
-		Susi::error(msg);
+		Susi::Logger::error(msg);
 	}
 }
 

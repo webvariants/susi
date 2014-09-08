@@ -2,21 +2,25 @@
 
 Susi::Syscall::Controller::Controller(std::string configPath) {
 	IOController io;
-	std::string configData = io.readFile(configPath);
+	try{
+		std::string configData = io.readFile(configPath);
 
-	if(configData != ""){
+		if(configData != ""){
 
-		std::map<std::string,Susi::Util::Any> data = Susi::Util::Any::fromString(configData);		
+			std::map<std::string,Susi::Util::Any> data = Susi::Util::Any::fromString(configData);		
 
-		for (std::map<std::string,Susi::Util::Any>::iterator it=data.begin(); it!=data.end(); ++it) {
-			//std::cout << it->first << " => " << it->second.toString() <<std::endl;
+			for (std::map<std::string,Susi::Util::Any>::iterator it=data.begin(); it!=data.end(); ++it) {
+				//std::cout << it->first << " => " << it->second.toString() <<std::endl;
 
-			std::string cmd  = it->second["cmd"];
-			std::string args = it->second["args"];
-			bool background  = it->second["background"];
+				std::string cmd  = it->second["cmd"];
+				std::string args = it->second["args"];
+				bool background  = it->second["background"];
 
-			this->processMap[it->first] = Susi::Syscall::ProcessItem{cmd,args,background}; 
+				this->processMap[it->first] = Susi::Syscall::ProcessItem{cmd,args,background}; 
+			}
 		}
+	}catch(...){
+		Susi::Logger::error("config is malformed");
 	}
 }
 

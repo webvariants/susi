@@ -67,15 +67,14 @@ public:
 		}
 	}
 	Susi::Util::Any toAny(){
-		std::cout<<"toAny()"<<std::endl;
 		Susi::Util::Any obj = Susi::Util::Any::Object{
 			{"id",id},
 			{"sessionid",sessionID},
-			{"topic",topic},
-			{"payload",payload}
+			{"topic",topic}
 		};
-		std::cout<<"builded main object"<<std::endl;
-		std::cout<<"headersize: "<<headers.size()<<std::endl;
+		if(!payload.isNull()){
+			obj["payload"] = payload;
+		}
 		for(size_t i=0; i<headers.size(); ++i) {
 			Susi::Util::Any::Object header{
 				{headers[i].first,headers[i].second}
@@ -115,6 +114,10 @@ public:
 	}
 	inline void setPayload(Susi::Util::Any _payload){
 		payload = _payload;
+	}
+
+	std::string toString(){
+		return toAny().toString();
 	}
 
 	Event& operator=(Event & other){

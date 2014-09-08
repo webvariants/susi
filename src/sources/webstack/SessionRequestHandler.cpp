@@ -33,6 +33,6 @@ void Susi::SessionRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& re
 	}catch(const std::exception & e){
 		std::string msg = "error in http handler: ";
 		msg += e.what();
-		Susi::error(msg);
+		Susi::Logger::error(msg);
 	}
 }

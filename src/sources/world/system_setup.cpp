@@ -43,15 +43,15 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 	manager->registerDependency("dbmanager","eventsystem");
 
 	manager->registerComponent("authcontroller", [](ComponentManager * mgr, Any & config) {
-		std::string db_identifier{""};
-		if(config["db_identifier"].isString()){
-			db_identifier = static_cast<std::string>(config["db_identifier"]);
+		std::string db_identifier{"authdb"};
+		if(config["db"].isString()){
+			db_identifier = static_cast<std::string>(config["db"]);
 		}
 		return std::shared_ptr<Component>{new Susi::Auth::ControllerComponent{mgr, db_identifier}};
 	});
 
 	manager->registerDependency("authcontroller","eventsystem");
-	manager->registerDependency("heartbeat","dbmanager");
+	//manager->registerDependency("heartbeat","dbmanager"); // @FIXME why this?
 
 	manager->registerComponent("tcpapiserver", [](ComponentManager * mgr, Any & config) {
 		std::string address{""};
@@ -82,25 +82,25 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 	manager->registerDependency("enginestarter","eventsystem");
 
 	manager->registerComponent("iocontroller", [](ComponentManager * mgr, Any & config) {
-		std::string base_path{""};
-		if(config["base_path"].isString()){
-			base_path = static_cast<std::string>(config["base_path"]);
+		std::string base{""};
+		if(config["base"].isString()){
+			base = static_cast<std::string>(config["base"]);
 		}
-		return std::shared_ptr<Component>{new Susi::IOControllerComponent{mgr, base_path}};
+		return std::shared_ptr<Component>{new Susi::IOControllerComponent{mgr, base}};
 	});
 
 	manager->registerDependency("iocontroller","eventsystem");
 
 	manager->registerComponent("sessionmanager", [](ComponentManager * mgr, Any & config) {
-		std::chrono::milliseconds stdSessionLifetime{10000};
+		std::chrono::milliseconds lifetime{10000};
 		std::chrono::milliseconds checkInterval{1000};
-		if(config["stdSessionLifetime"].isInteger()){
-			stdSessionLifetime =  std::chrono::milliseconds{static_cast<int>(config["stdSessionLifetime"])};
+		if(config["lifetime"].isInteger()){
+			lifetime =  std::chrono::milliseconds{static_cast<int>(config["lifetime"])};
 		}
 		if(config["checkInterval"].isInteger()){
 			checkInterval =  std::chrono::milliseconds{static_cast<int>(config["checkInterval"])};
 		}
-		return std::shared_ptr<Component>{new Susi::Sessions::SessionManagerComponent{mgr, stdSessionLifetime, checkInterval}};
+		return std::shared_ptr<Component>{new Susi::Sessions::SessionManagerComponent{mgr, lifetime, checkInterval}};
 	});
 
 	manager->registerDependency("sessionmanager","eventsystem");
@@ -116,12 +116,12 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 	manager->registerDependency("statecontroller","eventsystem");
 	manager->registerDependency("statecontroller","iocontroller");
 
-	manager->registerComponent("syscallcontroller", [](ComponentManager * mgr, Any & config) {
-		std::string config_path{""};
-		if(config["config_path"].isString()){
-			config_path = static_cast<std::string>(config["config_path"]);
+	manager->registerComponent("syscallcontroller", [](ComponentManager * mgr, Any & cfg) {
+		std::string config{""};
+		if(cfg["config"].isString()){
+			config = static_cast<std::string>(cfg["config"]);
 		}
-		return std::shared_ptr<Component>{new Susi::Syscall::SyscallControllerComponent{mgr, config_path}};
+		return std::shared_ptr<Component>{new Susi::Syscall::SyscallControllerComponent{mgr, config}};
 	});
 
 	manager->registerDependency("syscallcontroller","eventsystem");
@@ -133,8 +133,8 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 			address = static_cast<std::string>(config["address"]);
 		}
 		std::string assetRoot{""};
-		if(config["assetRoot"].isString()){
-			assetRoot = static_cast<std::string>(config["assetRoot"]);
+		if(config["assets"].isString()){
+			assetRoot = static_cast<std::string>(config["assets"]);
 		}
 		return std::shared_ptr<Component>{new Susi::HttpServerComponent{mgr, address, assetRoot}};
 	});

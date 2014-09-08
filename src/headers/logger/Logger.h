@@ -19,11 +19,12 @@
 
 namespace Susi {
 
+static unsigned char logLevel{255};
+
 class Logger {
 protected:
-	unsigned char _level;
-	void log(std::string message,unsigned char level){
-		if(level & _level){
+	static void log(std::string message,unsigned char level){
+		if(level & logLevel){
 			Poco::LocalDateTime now;
 			std::string prefix = "";
 			if(level & INFO) prefix = "INFO";
@@ -42,36 +43,26 @@ public:
 	static const unsigned char DEBUG = 8;
 	static const unsigned char ALL = INFO | WARN | ERROR | DEBUG;
 
-	Logger(unsigned char level){
-		setLevel(level);
-	}
-	void log(std::string msg){
+	static void log(std::string msg){
 		info(msg);
 	}
-	void info(std::string msg){
+	static void info(std::string msg){
 		log(msg,INFO);
 	}
-	void warn(std::string msg){
+	static void warn(std::string msg){
 		log(msg,WARN);
 	}
-	void debug(std::string msg){
+	static void debug(std::string msg){
 		log(msg,DEBUG);
 	}
-	void error(std::string msg){
+	static void error(std::string msg){
 		log(msg,ERROR);
 	}
-	void setLevel(unsigned char level){
-		_level = level;
+	static void setLevel(unsigned char level){
+		logLevel = level;
 	}
 };
 
-void log(std::string msg);
-void info(std::string msg);
-void warn(std::string msg);
-void debug(std::string msg);
-void error(std::string msg);
-
-void setLogLevel(unsigned char level);
 
 }
 

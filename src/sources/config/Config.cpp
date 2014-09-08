@@ -39,6 +39,7 @@
 
 // used to set a value in the config object (should be used by parseCommandLine())
 void Susi::Config::set(std::string key, Any value) {
+	Susi::Logger::debug("set "+key+" to "+value.toString());
 	std::vector<std::string> elems;
 	Susi::Util::Helpers::split(key, '.', elems);	
 	auto * current = &_configVar;
@@ -65,29 +66,29 @@ void Susi::Config::parseCommandLine(std::vector<std::string> argv) {
 	std::map<std::string,std::string>::iterator it;
 
 	int argc = argv.size();
-
-	if(argc < 3) {
-		std::cout<<"not enough args!"<<std::endl;
-	} else {
-		for (int i = 1; i < argc; ++i) {
-			std::string option = argv[i];
-			if(option[0] == '-') {				
-				it = _knownCommandLineOptions.find(option.substr(1));
-				if(it != _knownCommandLineOptions.end()) {
-					std::string key = it->second;
-					if(i < (argc-1)) {
-						std::string value = argv[(i+1)];						
-						Susi::Util::Any v = Susi::Util::Any::fromString(value);								
-						this->set(key, v);		
-						Susi::Util::Any t = this->get(key);
-					}
-					
-				} else {
-					std::cout<<"command NOT found"<<std::endl;	
-				}
+	
+	for (int i = 1; i < argc; ++i) {
+		std::string option = argv[i];
+		if(option[0] == '-') {
+			if(option[1] == '-')option = option.substr(2);
+			else option = option.substr(1);				
+			std::string key = option;
+			it = _knownCommandLineOptions.find(option);
+			if(it != _knownCommandLineOptions.end()) {
+				std::string key = it->second;
 			}
+			Susi::Util::Any v;
+			if(i < (argc-1) && argv[i+1][0]!='-') {
+				std::string value = argv[(i+1)];						
+				Susi::Util::Any v = Susi::Util::Any::fromString(value);
+				i++;
+			}else{
+				v = Susi::Util::Any::Object{};
+			}
+			set(key,v);
 		}
 	}
+
 }
 
 // get a config variable.

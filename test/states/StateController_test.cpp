@@ -10,7 +10,6 @@ class StateControllerTest : public ::testing::Test {
 protected:
 	std::shared_ptr<Susi::States::StateController> controller{nullptr};
 	virtual void SetUp() override {
-		world.setupLogger();
 		world.setupEventManager();
 		//world.setupHeartBeat();
 		world.setupIOController();

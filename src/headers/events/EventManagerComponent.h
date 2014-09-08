@@ -26,7 +26,7 @@ protected:
 	std::atomic<bool> noPublish;
 	std::mutex mutex;
 public:
-	ManagerComponent(size_t workers = 4, size_t buffsize = 32):Manager{workers, buffsize},noPublish{false}{}
+	ManagerComponent(size_t workers = 4, size_t buffsize = 32) : Manager{workers, buffsize} , noPublish{true}{}
 
 	void publish(EventPtr event, Consumer finishCallback = Consumer{}) {
 		if(noPublish.load()) {
@@ -34,20 +34,24 @@ public:
 			finishCallback(sharedEvent);
 			return;
 		}
-		Manager::publish(std::move(event), finishCallback);
+		Manager::publish(std::move(event), std::move(finishCallback));
 	}
 
-	virtual void start() override {}
+	virtual void start() override {
+		noPublish.store(false);
+	}
 
 	virtual void stop() override {
 		if(!noPublish.load()) {
 			noPublish.store(true);
 			std::unique_lock<std::mutex> lk(mutex);
-			publishFinished.wait(lk,[this](){return publishProcesses.size() == 0;});
+			if(publishProcesses.size()>0){
+				publishFinished.wait(lk,[this](){return publishProcesses.size() == 0;});
+			}
 		}
 	}
 
-	~ManagerComponent() {stop();}
+	virtual ~ManagerComponent() {stop();}
 };
 
 }

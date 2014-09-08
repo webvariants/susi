@@ -41,10 +41,10 @@ namespace Susi {
 			}
 
 			virtual void stop() override {
-				stop();
-
+				SessionManager::stop();
 				unsubscribeAll();
 			}
+
 		protected:
 			std::chrono::milliseconds _stdSessionLifetime;
 			std::chrono::milliseconds _checkInterval;

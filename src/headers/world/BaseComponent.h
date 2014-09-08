@@ -29,7 +29,7 @@ protected:
 
 public:
 	BaseComponent(ComponentManager * manager) : componentManager{manager} {
-		eventManager = componentManager->getComponent<Susi::Events::ManagerComponent>("eventmanager");
+		eventManager = componentManager->getComponent<Susi::Events::ManagerComponent>("eventsystem");
 	}
 	long subscribe(std::string topic, Susi::Events::Processor processor){
 		long id = eventManager->subscribe(topic,std::move(processor));

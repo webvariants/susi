@@ -92,7 +92,7 @@ public:
 			tcpServer.start();
 			std::string msg{"started TCP Api Server on "};
 			msg += addr;
-			Susi::info(msg);
+			Susi::Logger::info(msg);
 			std::this_thread::sleep_for(std::chrono::milliseconds{250});
 	}
 	~TCPApiServer(){

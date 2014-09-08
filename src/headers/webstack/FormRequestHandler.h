@@ -30,7 +30,7 @@ namespace Susi {
 		public:
 			FormRequestHandler(std::string uploadDirectory) :
 				_uploadDirectory(uploadDirectory) {
-				Susi::debug("init form handler");
+				Susi::Logger::debug("init form handler");
 			}			
 			
 			virtual void handleRequest(Poco::Net::HTTPServerRequest& request,

@@ -18,6 +18,7 @@
 #include "util/Any.h"
 #include "util/Helpers.h"
 #include "iocontroller/IOController.h"
+#include "logger/Logger.h"
 
 namespace Susi{
 
@@ -35,6 +36,7 @@ protected:
 	void set(std::string key, Any value);
 
 public:
+	Config(){};
 	// constructs new config object
 	// reads filename and parses into _configVar
 	// should throw an error if

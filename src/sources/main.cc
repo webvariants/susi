@@ -25,24 +25,26 @@ std::condition_variable waitCond;
 
 std::shared_ptr<Susi::System::ComponentManager> componentManager;
 
-void waitForEver()
-{
+void waitForEver(){
 	std::mutex mutex;
 	std::unique_lock<std::mutex> lk(mutex);
 	waitCond.wait(lk,[](){return false;});
 }
 
 
-void signalHandler( int signum )
-{
-    std::cout << "Interrupt signal (" << signum << ") received.\n";
-   // cleanup and close up stuff here  
-   // terminate program  
-   componentManager->stopAll();
-   exit(0);  
-
+void signalHandler (int signum) {
+	std::cout << "Interrupt signal (" << signum << ") received.\n";
+	componentManager->stopAll();
+	exit(0);
 }
 
+void setupLogger(std::shared_ptr<Susi::System::ComponentManager> componentManager,std::string topic){
+	Susi::Events::Consumer heartbeatPrinter = [](Susi::Events::SharedEventPtr event){
+		Susi::Logger::info(event->toString());
+	};
+	auto eventsystem = componentManager->getComponent<Susi::Events::ManagerComponent>("eventsystem");
+	eventsystem->subscribe(topic,heartbeatPrinter);
+}
 
 int main(int argc, char** argv){
 
@@ -50,17 +52,18 @@ int main(int argc, char** argv){
 	std::vector<std::string> argv_vec;
 
 	for (int i=0; i<argc; i++) {
-		argv_vec[i] = argv[i];
+		argv_vec.push_back(argv[i]);
 	}
-
-
 
 	Susi::Config cfg{"config.json"};
 	cfg.parseCommandLine(argv_vec);
 
 	componentManager = Susi::System::createSusiComponentManager(cfg.getConfig());
 	//componentManager = std::make_shared<Susi::System::ComponentManager>(cfg.getConfig());
+	//componentManager->startComponent("eventsystem");
+	//componentManager->startComponent("heartbeat");
 	componentManager->startAll();
+	
 
 	// register signal SIGINT and signal handler  
     signal(SIGINT, signalHandler); 

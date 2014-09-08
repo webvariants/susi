@@ -9,7 +9,6 @@ void Susi::World::setConfig(Susi::Config *_cfg) {
 
 void Susi::World::setup(){
 	std::cout<<"WORLD setup:"<<std::endl;
-	setupLogger();
 	setupEventManager();
 	setupTCPServer();
 	setupHttpServer();
@@ -67,15 +66,6 @@ void Susi::World::setupEngineStarter(){
 	Susi::EngineStarter::EventInterface::init();
 }
 
-void Susi::World::setupLogger(){
-	unsigned char level = Susi::Logger::NOTHING;
-	try{
-		auto & app = Poco::Util::Application::instance();
-		auto & cfg = app.config();
-		level = cfg.getInt("logger.level");
-	}catch(const std::exception & e){}
-	logger = std::shared_ptr<Susi::Logger>{new Susi::Logger( level )};
-}
 
 void Susi::World::setupTCPServer(){
 	std::string addr = "[::1]:4000";
@@ -153,7 +143,7 @@ void Susi::World::setupDBManager(){
 	}catch(const std::exception & e){
 		std::string msg = "Execption while setup DBManager: ";
 		msg += e.what();
-		Susi::warn(msg);
+		Susi::Logger::warn(msg);
 		dbs.push_back(std::make_tuple("auth","sqlite3","./auth.db"));
 	}
 	dbManager = std::shared_ptr<Susi::DB::Manager>{new Susi::DB::Manager(dbs)};

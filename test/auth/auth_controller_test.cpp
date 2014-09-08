@@ -16,7 +16,7 @@ protected:
 		world.setupDBManager();
 		world.setupAuthController();
 		
-		Susi::setLogLevel(Susi::Logger::NOTHING);
+		Susi::Logger::setLevel(Susi::Logger::NOTHING);
 
 		auto db = world.dbManager->getDatabase("auth");
 	

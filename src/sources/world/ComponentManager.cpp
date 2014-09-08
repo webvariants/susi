@@ -13,11 +13,18 @@ void Susi::System::ComponentManager::registerDependency(std::string subject, std
 bool Susi::System::ComponentManager::loadComponent(std::string name){
 	if(components.find(name) == components.end() && registerFunctions[name]){
 		ComponentData data;
-		if(config[name].isNull())return false;
+		if(config[name].isNull()){
+			Susi::Logger::debug("cant find config for component "+name);
+			return false;
+		}
 		data.component = registerFunctions[name](this,config[name]);
 		components[name] = data;
+		Susi::Logger::debug("loaded component "+name+"!");
 		return true;
+	}else{
+		//Susi::Logger::debug("cant find register-function for component "+name);
 	}
+
 	return false;
 }
 
@@ -31,22 +38,28 @@ bool Susi::System::ComponentManager::unloadComponent(std::string name){
 }
 
 bool Susi::System::ComponentManager::startComponent(std::string name){
+
+	Susi::Logger::debug("starting component "+name+"...");
 	if(components.find(name) == components.end() && !loadComponent(name)){
+		Susi::Logger::debug("can't start component "+name+", component is not loadable.");
 		return false;
 	}
 	auto & data = components[name];
 	if(data.running){
+		Susi::Logger::debug("can't start component "+name+", component is allready ruuning.");
 		return false;
 	}
 	for(std::string & dep : dependencies[name]){
+		Susi::Logger::debug("need dependency "+dep);
 		startComponent(dep);
 		if(components.find(dep) == components.end() || !components[dep].running){
+			Susi::Logger::debug("can't start component "+name+", dependency "+dep+" is not startable.");
 			return false;
 		}
 	}
 	data.component->start();
 	data.running = true;
-
+	Susi::Logger::debug("started component "+name+"!");
 	return true;
 }
 
@@ -67,8 +80,15 @@ bool Susi::System::ComponentManager::stopComponent(std::string name){
 bool Susi::System::ComponentManager::startAll() {
 	bool result = true;
 	for(auto kv: config) {
-		result = result && startComponent(kv.first);
+		result = result & startComponent(kv.first);
 	}
+	std::string runningComponents = "";
+	for(auto kv : components){
+		if(kv.second.running){
+			runningComponents+=kv.first+" ";
+		}
+	}
+	Susi::Logger::info("successfully started these components: "+runningComponents);
 	return result;
 }
 
