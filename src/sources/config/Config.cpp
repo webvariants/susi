@@ -14,6 +14,8 @@
 void Susi::Config::loadConfig(std::string filename){
 	Susi::IOController io;
  	std::string content = "";
+ 	Susi::Util::Any configVar;
+
 
 	try {
  		content = io.readFile(filename);
@@ -24,16 +26,42 @@ void Susi::Config::loadConfig(std::string filename){
 	}
 
 	try {
-		_configVar = Susi::Util::Any::fromString(content);
+		configVar = Susi::Util::Any::fromString(content);
 	} catch(const std::exception & e){
 		std::string msg = "file cant be parsed as json!";
 		msg += e.what();
 		throw std::runtime_error(msg);
 	}
 
-	if(_configVar.getType() != Susi::Util::Any::OBJECT) {
+	if(configVar.getType() != Susi::Util::Any::OBJECT) {
 		throw std::runtime_error("file doesn't contain a (json) object");	
-	}	
+	}
+
+	if(_configVar.isNull()) {
+		// first load or empty
+		_configVar = configVar;		
+	} else {
+		//merge vars
+		mergeOptions("", configVar);		
+	}
+}
+
+void Susi::Config::mergeOptions(std::string key, Susi::Util::Any configVar) {
+	if(configVar.isObject()) {
+		std::map<std::string,Susi::Util::Any> config_map = configVar;
+		for (std::map<std::string,Susi::Util::Any>::iterator it=config_map.begin(); it!=config_map.end(); ++it) {
+			std::string _key = key;
+			if(key.length() == 0)  {
+				_key.append(it->first);				
+				this->mergeOptions(_key, it->second);
+			} else {
+				_key.append(".").append(it->first);				
+				this->mergeOptions(_key, it->second);
+			}
+		}	
+	} else {		
+		_configVar.set(key, configVar);
+	}
 }
 
 // used to set a value in the config object (should be used by parseCommandLine())

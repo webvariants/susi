@@ -194,14 +194,21 @@ TEST_F(ConfigTest,MultiConfigSupport){
 
 	cfg.loadConfig("./configtest/config_1.cfg");
 	cfg.loadConfig("./configtest/config_2.cfg");
+
+
+	Susi::Util::Any conf = cfg.getConfig();
+
+	std::cout<<"RESULT: "<<conf.toString()<<std::endl;
+	
 	
 	EXPECT_TRUE(cfg.get("foo").isString());
 	EXPECT_EQ("\"bar\"",cfg.get("foo").toString());
 
 	EXPECT_TRUE(cfg.get("john").isString());
-	EXPECT_EQ("\"doe\"",cfg.get("doe").toString());
+	EXPECT_EQ("\"doe\"",cfg.get("john").toString());
 
 	// test override
 	EXPECT_TRUE(cfg.get("data").isString());
-	EXPECT_EQ("\"data\"",cfg.get("test2").toString());
+	EXPECT_EQ("\"test2\"",cfg.get("data").toString());
+	
 }

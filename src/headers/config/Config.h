@@ -48,6 +48,7 @@ public:
 	}
 
 	void loadConfig(std::string filename);
+	void mergeOptions(std::string key, Any configVar);
 
 	// register a commandline option which will be recognized while parsing
 	void registerCommandLineOption(std::string name, std::string key);
