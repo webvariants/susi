@@ -172,3 +172,36 @@ TEST_F(ConfigTest,MultiLevelArguments){
 	EXPECT_TRUE(cfg.get("foo.bar.baz").isString());
 	EXPECT_EQ("\"bla\"",cfg.get("foo.bar.baz").toString());			
 }
+
+TEST_F(ConfigTest,MultiConfigSupport){
+
+	Susi::Util::Any cfg_1 = Susi::Util::Any::Object{
+		{"foo","bar"},
+		{"data", "test1"}
+	};
+
+	// Test valid json
+	io.writeFile("./configtest/config_1.cfg",cfg_1.toString());	
+
+	Susi::Util::Any cfg_2 = Susi::Util::Any::Object{
+		{"john","doe"},
+		{"data", "test2"}
+	};
+
+	io.writeFile("./configtest/config_2.cfg",cfg_2.toString());
+	
+	Susi::Config cfg;
+
+	cfg.loadConfig("./configtest/config_1.cfg");
+	cfg.loadConfig("./configtest/config_2.cfg");
+	
+	EXPECT_TRUE(cfg.get("foo").isString());
+	EXPECT_EQ("\"bar\"",cfg.get("foo").toString());
+
+	EXPECT_TRUE(cfg.get("john").isString());
+	EXPECT_EQ("\"doe\"",cfg.get("doe").toString());
+
+	// test override
+	EXPECT_TRUE(cfg.get("data").isString());
+	EXPECT_EQ("\"data\"",cfg.get("test2").toString());
+}
