@@ -405,6 +405,60 @@ size_t Any::size() const {
 	return 0;
 }
 
+void Any::set(std::string key, Any value) {
+	if(type == UNDEFINED) {
+		type = OBJECT;
+		this->objectValue = std::map<std::string,Any>{};
+	}
+	if(type == OBJECT) {
+		std::vector<std::string> elems;
+		Susi::Util::Helpers::split(key, '.', elems);	
+		auto * current = this;
+
+		for(size_t e=0; e<elems.size()-1; e++){
+			current = &(*current)[elems[e]];	
+			if((*current).isNull()){
+				*current = Susi::Util::Any::Object{};
+			}
+		}
+		(*current)[elems.back()] = value;
+	} else {
+		throw WrongTypeException(OBJECT, type);
+	}
+}
+
+Any Any::get(std::string key) {
+
+	if(type == OBJECT) {
+		std::vector<std::string> elems;
+
+		if(key.length() == 0) {
+			return this;
+		} else {
+			Susi::Util::Helpers::split(key, '.', elems);
+
+			Any found = this->objectValue;
+			Any next  = this->objectValue;
+			for(size_t e=0; e<elems.size(); e++)
+			{				
+				std::string elem = elems[e];
+				found = next[elem];
+				next = found;				
+				if(found.getType() == Susi::Util::Any::UNDEFINED) {					
+					throw std::runtime_error("key doesn't exist!"+key);
+				} else if(e == (elems.size()-2) && found.getType() != Susi::Util::Any::OBJECT) {
+					throw WrongTypeException(OBJECT, type);
+				}
+				
+			}
+			return found;
+		}
+	} else {
+		throw WrongTypeException(OBJECT, type);
+	}
+}
+
+
 // index operators 
 Any& Any::operator[](const int pos) {
 	if(type == UNDEFINED){
