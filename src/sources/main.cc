@@ -55,8 +55,17 @@ int main(int argc, char** argv){
 		argv_vec.push_back(argv[i]);
 	}
 
-	Susi::Config cfg{"config.json"};
+	Susi::Config cfg{};
 	cfg.parseCommandLine(argv_vec);
+
+	try {
+
+		std::string config_file = cfg.get("config");
+		cfg.loadConfig(config_file);   		
+   	} catch(const std::exception & e){
+   		// default fallback
+   		cfg.loadConfig("config.json");
+   	}
 
 	componentManager = Susi::System::createSusiComponentManager(cfg.getConfig());
 	//componentManager = std::make_shared<Susi::System::ComponentManager>(cfg.getConfig());
