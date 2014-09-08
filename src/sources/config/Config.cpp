@@ -71,20 +71,44 @@ void Susi::Config::parseCommandLine(std::vector<std::string> argv) {
 		if(option[0] == '-') {
 			if(option[1] == '-')option = option.substr(2);
 			else option = option.substr(1);				
-			std::string key = option;
-			it = _knownCommandLineOptions.find(option);
-			if(it != _knownCommandLineOptions.end()) {
-				std::string key = it->second;
-			}
+			
 			Susi::Util::Any v;
-			if(i < (argc-1) && argv[i+1][0]!='-') {
-				std::string value = argv[(i+1)];						
-				Susi::Util::Any v = Susi::Util::Any::fromString(value);
-				i++;
-			}else{
-				v = Susi::Util::Any::Object{};
+			std::string key = option;
+
+			// find '='
+			std::vector<std::string> elems;
+			Susi::Util::Helpers::split(key, '=', elems);
+			if(elems.size() == 2) {
+				key = elems[0];
+				v   = Susi::Util::Any::fromString(elems[1]);
+				set(key,v);
+			} else {
+				it = _knownCommandLineOptions.find(key);		
+				// key found
+				if(it != _knownCommandLineOptions.end()) {
+					std::string key = it->second;
+					
+					if(i < (argc-1) && argv[i+1][0]!='-') {
+						std::string value = argv[(i+1)];						
+						v = Susi::Util::Any::fromString(value);
+						i++;
+					}else{
+						v = Susi::Util::Any::Object{};
+					}
+					set(key,v);
+				} 
+				// key not found
+				else {
+					if(i < (argc-1) && argv[i+1][0]!='-') {
+						std::string value = argv[(i+1)];						
+						v = Susi::Util::Any::fromString(value);
+						i++;
+					}else{
+						v = Susi::Util::Any::Object{};
+					}
+					set(key,v);
+				}
 			}
-			set(key,v);
 		}
 	}
 
