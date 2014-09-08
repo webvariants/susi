@@ -11,12 +11,11 @@
 
  #include "config/Config.h"
 
- Susi::Config::Config(std::string filename) {
- 	Susi::IOController io;
-
+void Susi::Config::loadConfig(std::string filename){
+	Susi::IOController io;
  	std::string content = "";
 
- 	try {
+	try {
  		content = io.readFile(filename);
  	} catch(const std::exception & e){
 		std::string msg = "Error reading Config File: " + filename;
@@ -34,8 +33,8 @@
 
 	if(_configVar.getType() != Susi::Util::Any::OBJECT) {
 		throw std::runtime_error("file doesn't contain a (json) object");	
-	}
- }
+	}	
+}
 
 // used to set a value in the config object (should be used by parseCommandLine())
 void Susi::Config::set(std::string key, Any value) {

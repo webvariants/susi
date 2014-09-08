@@ -43,7 +43,11 @@ public:
 	//     - filename does not exist
 	//     - file cant be parsed as json
 	//     - file doesn't contain a (json) object
-	Config(std::string filename);
+	Config(std::string filename){
+		loadConfig(filename);
+	}
+
+	void loadConfig(std::string filename);
 
 	// register a commandline option which will be recognized while parsing
 	void registerCommandLineOption(std::string name, std::string key);
