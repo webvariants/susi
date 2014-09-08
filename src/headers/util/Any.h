@@ -178,6 +178,15 @@ namespace Susi {
 			void pop_front();
 			size_t size() const;
 
+
+			// used to set a value in the object
+			void set(std::string key, Any value);
+			// get a variable.
+			// keys are in this format: "foo.bar.baz"
+			// -> if we have {foo:{bar:{baz:123}}} get("foo.bar.baz") should return Any{123};
+			// should throw if key doesn't exist
+			Any get(std::string key);
+
 			// json de/encoder; 
 			std::string toString();
 			static Any fromString(std::string str);

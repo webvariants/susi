@@ -922,3 +922,31 @@ TEST (Any, MapStringStringConversion) {
 		fkt2();
 	},Any::WrongTypeException);
 }
+
+
+TEST (Any, SetGet) {
+
+	Any a{Any::Object{}};
+
+	a.set("foo.bar", Any::Object{{"baz","bla"}});
+
+	Any b = a.get("foo.bar");
+
+	EXPECT_TRUE(a.get("foo.bar").isObject());
+	EXPECT_TRUE(a.get("foo.bar.baz").isString());
+	EXPECT_EQ("\"bla\"",a.get("foo.bar.baz").toString());
+
+		
+	EXPECT_THROW({
+		Any c = "bla";
+		c.set("foo.bar", Any::Object{{"baz","bla"}});
+	},Any::WrongTypeException);
+
+	Any::Array tArray{"Bar", "Baz"};
+
+	Any d = Any::Object{{"foo", tArray}};
+
+	EXPECT_THROW({
+		Any e = d.get("foo.bar");
+	},Any::WrongTypeException);		
+}
