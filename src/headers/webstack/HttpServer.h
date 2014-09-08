@@ -19,6 +19,7 @@
 #include "apiserver/ApiServer.h"
 #include "webstack/RequestHandlerFactory.h"
 #include "logger/Logger.h"
+#include "sessions/SessionManagerComponent.h"
 
 namespace Susi {
 
@@ -26,26 +27,34 @@ class HttpServer {
 protected:
 	Poco::Net::SocketAddress address;
 	Poco::Net::ServerSocket serverSocket;
-	Poco::Net::HTTPServer server;
 
-	Susi::Api::ApiServer apiServer;
+	std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager;
+	std::shared_ptr<Susi::Events::ManagerComponent> _eventManager;
+	Susi::Api::ApiServerForComponent _apiServer;
+	Poco::Net::HTTPServer server;
 	std::string _addr;
 public:
-	HttpServer(std::string addr,std::string assetRoot) :
+	HttpServer(std::string addr,
+			   std::string assetRoot,
+			   std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager,	
+			   std::shared_ptr<Susi::Events::ManagerComponent> eventManager) :
 		address(addr),
-		serverSocket(address), 
-		server(new RequestHandlerFactory(assetRoot, &apiServer),serverSocket,new Poco::Net::HTTPServerParams)
+		serverSocket(address),
+		_sessionManager{sessionManager},
+		_eventManager{eventManager},
+		_apiServer{_eventManager,_sessionManager},
+		server(new RequestHandlerFactory(assetRoot, &_apiServer,_sessionManager),serverSocket,new Poco::Net::HTTPServerParams)
 		{
 			_addr = addr;			
 		}
-
+/*
 	HttpServer(std::string addr,std::string assetRoot,Poco::Net::HTTPServerParams *params) :
 		address(addr),
 		serverSocket(address),
 		server(new RequestHandlerFactory(assetRoot, &apiServer),serverSocket,params)
 		{
 			_addr = addr;						
-		}
+		}*/
 	~HttpServer(){
 		httpServerStop();
 	}

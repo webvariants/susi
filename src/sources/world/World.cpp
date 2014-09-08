@@ -11,7 +11,6 @@ void Susi::World::setup(){
 	std::cout<<"WORLD setup:"<<std::endl;
 	setupEventManager();
 	setupTCPServer();
-	setupHttpServer();
 	setupHeartBeat();
 	setupSessionManager();
 	setupDBManager();
@@ -75,20 +74,6 @@ void Susi::World::setupTCPServer(){
 		addr = cfg.getString("tcpserver.addr");
 	}catch(const std::exception & e){}
 	tcpServer = std::make_shared<Susi::Api::TCPApiServer>(addr);
-}
-
-void Susi::World::setupHttpServer(){
-	std::string addr = "[::1]:8080";
-	std::string assets = "./assets/";
-	try{
-		auto & app = Poco::Util::Application::instance();
-		auto & cfg = app.config();
-		addr = cfg.getString("webstack.addr");
-		assets = cfg.getString("webstack.assets");
-	}catch(const std::exception & e){}
-	auto httpParams = new Poco::Net::HTTPServerParams();
-	httpParams->setMaxQueued(250);
-	httpServer = std::shared_ptr<Susi::HttpServer>{new Susi::HttpServer(addr,assets,httpParams)};
 }
 
 void Susi::World::setupSessionManager(){

@@ -11,7 +11,7 @@
 
 #include "webstack/WebSocketRequestHandler.h"
 
-Susi::WebSocketRequestHandler::WebSocketRequestHandler(Susi::Api::ApiServer* server) {
+Susi::WebSocketRequestHandler::WebSocketRequestHandler(Susi::Api::ApiServerForComponent* server) {
 	apiServer = server;
 }
 

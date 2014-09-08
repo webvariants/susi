@@ -3,26 +3,27 @@
 
 void Susi::SessionRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request,
                        Poco::Net::HTTPServerResponse& response){
-	Poco::Util::Application& app = Poco::Util::Application::instance();
 	std::string id = "";
+	Susi::Logger::debug("starting SessionRequestHandler");
 	try{
 		Poco::Net::NameValueCollection cookies;
 		request.getCookies(cookies);
 		id = cookies["susisession"];
-		if(!world.sessionManager->checkSession(id)){
-			app.logger().debug("No valid session");
+		if(!_sessionManager->checkSession(id)){
+			Susi::Logger::info("No valid session");
 			Poco::Timestamp now;
 			id = std::to_string(now.epochMicroseconds());
-			world.sessionManager->updateSession(id);
+			_sessionManager->updateSession(id);
 			response.addCookie(Poco::Net::HTTPCookie{"susisession",id});
 			request.add("susisession",id);
 		}else{
 			request.add("susisession",id);
 		}
 	}catch(const std::exception & e){
+		Susi::Logger::error("failed in session-request-handler");
 		Poco::Timestamp now;
 		id = std::to_string(now.epochMicroseconds());
-		world.sessionManager->updateSession(id);
+		_sessionManager->updateSession(id);
 		auto cookie = Poco::Net::HTTPCookie{"susisession",id};
 		cookie.setPath("/");
 		response.addCookie(cookie);
@@ -35,4 +36,5 @@ void Susi::SessionRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& re
 		msg += e.what();
 		Susi::Logger::error(msg);
 	}
+	Susi::Logger::debug("finished in SessionRequestHandler");
 }

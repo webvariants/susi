@@ -34,11 +34,11 @@ protected:
 public:
 	HttpServerComponent (Susi::System::ComponentManager * mgr, std::string addr,std::string assetRoot) :
 		Susi::System::BaseComponent{mgr},
-		apiServer{eventManager},
+		apiServer{eventManager,mgr->getComponent<Susi::Sessions::SessionManagerComponent>("sessionmanager")},
 		address(addr),
 		serverSocket(address),
-		server(new RequestHandlerFactory(assetRoot, &apiServer),serverSocket,new Poco::Net::HTTPServerParams)
-		{
+		server(new RequestHandlerFactory(assetRoot, &apiServer,mgr->getComponent<Susi::Sessions::SessionManagerComponent>("sessionmanager")),serverSocket,new Poco::Net::HTTPServerParams)
+	{
 			_addr = addr;
 	}
 
