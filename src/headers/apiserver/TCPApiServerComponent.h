@@ -34,9 +34,11 @@ protected:
 		std::string sessionID = "";
 		Susi::Api::JSONStreamCollector collector;
 	public:
-		Connection(const Poco::Net::StreamSocket& s, std::shared_ptr<Susi::Events::ManagerComponent> eventManager) :
+		Connection(const Poco::Net::StreamSocket& s, 
+				   std::shared_ptr<Susi::Events::ManagerComponent> eventManager,
+				   std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager) :
 			Poco::Net::TCPServerConnection{s},
-			api{eventManager},
+			api{eventManager,sessionManager},
 			sessionID{std::to_string(std::chrono::system_clock::now().time_since_epoch().count())},
 			collector{[this](std::string & msg){
 				std::cout<<"got message in server! "<<msg<<std::endl;
@@ -72,12 +74,15 @@ protected:
 	class ConnectionFactory : public Poco::Net::TCPServerConnectionFactory {
 	public:
 		std::shared_ptr<Susi::Events::ManagerComponent> eventManager;
-		ConnectionFactory(std::shared_ptr<Susi::Events::ManagerComponent> _eventManager) {
+		std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager;
+		ConnectionFactory(std::shared_ptr<Susi::Events::ManagerComponent> _eventManager,
+						  std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager) {
 			eventManager = _eventManager;
+			sessionManager = _sessionManager;
 		}
 		virtual Poco::Net::TCPServerConnection * createConnection(const Poco::Net::StreamSocket& s){
 			//std::cout<<"create connection!"<<std::endl;
-			return new Connection{s, eventManager};
+			return new Connection{s, eventManager, sessionManager};
 		}
 	};
 
@@ -87,12 +92,18 @@ protected:
 	Poco::Net::TCPServer tcpServer;
 
 public:
-	TCPApiServerComponent(Susi::System::ComponentManager * mgr, std::string addr, size_t threads = 4, size_t backlog = 16) :
+	TCPApiServerComponent(Susi::System::ComponentManager * mgr,
+						  std::string addr, 
+						  size_t threads = 4, 
+						  size_t backlog = 16) :
 		Susi::System::BaseComponent{mgr},
 		address{addr},
 		serverSocket{address},
 		params{new Poco::Net::TCPServerParams},
-		tcpServer{new ConnectionFactory{eventManager},serverSocket,params} {
+		tcpServer{new ConnectionFactory{eventManager,
+										componentManager->getComponent<Susi::Sessions::SessionManagerComponent>("sessionmanager")},
+		serverSocket,
+		params} {
 			params->setMaxThreads(threads);
 			params->setMaxQueued(backlog);
 			params->setThreadIdleTime(100);

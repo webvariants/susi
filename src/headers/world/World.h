@@ -47,7 +47,6 @@ namespace Susi{
 
 		void setupEventManager();
 		void setupTCPServer();
-		void setupHttpServer();
 		void setupSessionManager();
 		void setupIOController();
 		void setupHeartBeat();

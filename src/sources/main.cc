@@ -63,6 +63,8 @@ int main(int argc, char** argv){
 	//componentManager->startComponent("eventsystem");
 	//componentManager->startComponent("heartbeat");
 	componentManager->startAll();
+
+	//setupLogger(componentManager,"heartbeat::one");
 	
 
 	// register signal SIGINT and signal handler  

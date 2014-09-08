@@ -17,6 +17,7 @@
 #include <mutex>
 #include "apiserver/ApiServer.h"
 #include "events/EventManagerComponent.h"
+#include "sessions/SessionManagerComponent.h"
 
 namespace Susi {
 namespace Api {
@@ -24,6 +25,8 @@ namespace Api {
 class ApiServerForComponent : public ApiServer {
 protected:
 	std::shared_ptr<Susi::Events::ManagerComponent> eventManager;
+	std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager;
+	
 	void handleRegisterConsumer(std::string & id, Susi::Util::Any & packet);
 	void handleRegisterProcessor(std::string & id, Susi::Util::Any & packet);
 	void handleUnregisterConsumer(std::string & id, Susi::Util::Any & packet);
@@ -32,10 +35,17 @@ protected:
 	void handleAck(std::string & id, Susi::Util::Any & packet);
 
 public:
-	ApiServerForComponent(std::shared_ptr<Susi::Events::ManagerComponent> _eventManager) {
+	
+	ApiServerForComponent(std::shared_ptr<Susi::Events::ManagerComponent> _eventManager,
+						  std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager) {
 		eventManager = _eventManager;
+		sessionManager = _sessionManager;
 	}
+
+	void onConnect(std::string & id);
+	void onMessage(std::string & id, Susi::Util::Any & packet);
 	void onClose(std::string & id);
+
 };
 
 }

@@ -19,7 +19,7 @@
 #include "Poco/Net/HTTPRequestHandler.h"
 #include "Poco/Util/Application.h"
 
-#include "sessions/SessionManager.h"
+#include "sessions/SessionManagerComponent.h"
 
 namespace Susi {
 
@@ -27,8 +27,11 @@ namespace Susi {
 class SessionRequestHandler: public Poco::Net::HTTPRequestHandler {
 protected:
 	Poco::Net::HTTPRequestHandler *defaultHandler;
+	std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager;
 public:
-    SessionRequestHandler(Poco::Net::HTTPRequestHandler *defaultHandler) : defaultHandler{defaultHandler} {}
+    SessionRequestHandler(Poco::Net::HTTPRequestHandler *defaultHandler, 
+    					  std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager) : 
+    						defaultHandler{defaultHandler}, _sessionManager{sessionManager} {}
     ~SessionRequestHandler(){delete defaultHandler;}
     void handleRequest(Poco::Net::HTTPServerRequest& request,Poco::Net::HTTPServerResponse& response);
 };

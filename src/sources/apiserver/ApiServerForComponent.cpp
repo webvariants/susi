@@ -1,9 +1,14 @@
 #include "apiserver/ApiServerForComponent.h"
 #include "world/World.h"
 
+void Susi::Api::ApiServerForComponent::onConnect(std::string & id){
+	Susi::Logger::info("got new connection!");
+	sessionManager->updateSession(id);
+}
+
 void Susi::Api::ApiServerForComponent::onClose(std::string & id) {
-	std::cout<<"lost connection..."<<std::endl;
-	world.sessionManager->killSession(id);
+	Susi::Logger::info("lost connection...");
+	sessionManager->killSession(id);
 	senders.erase(id);
 	eventsToAck.erase(id);
 
@@ -17,6 +22,36 @@ void Susi::Api::ApiServerForComponent::onClose(std::string & id) {
 		eventManager->unsubscribe(kv.second);
 	}
 	processorSubscriptions.erase(id);
+}
+
+void Susi::Api::ApiServerForComponent::onMessage(std::string & id, Susi::Util::Any & packet) {
+	try{
+		std::cout<<"onMessage:"<<packet.toString()<<std::endl;
+		auto type = packet["type"];
+		if(type.isString()){			
+			if(type=="registerConsumer"){
+				handleRegisterConsumer(id,packet);
+			}else if(type=="registerProcessor"){
+				handleRegisterProcessor(id,packet);
+			}else if(type=="unregisterConsumer"){
+				handleUnregisterConsumer(id,packet);
+			}else if(type=="unregisterProcessor"){
+				handleUnregisterProcessor(id,packet);
+			}else if(type=="publish"){
+				handlePublish(id,packet);
+			}else if(type=="ack"){
+				handleAck(id,packet);
+			}else {
+				sendFail(id,"type not known");
+			}			
+		}else{
+			sendFail(id,"type is not a string");
+		}
+	}catch(const std::exception & e){
+		std::string msg = "exception while processing: ";
+		msg += e.what();
+		sendFail(id,msg);
+	}
 }
 
 void Susi::Api::ApiServerForComponent::handleRegisterConsumer(std::string & id, Susi::Util::Any & packet){
