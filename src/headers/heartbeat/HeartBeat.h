@@ -32,7 +32,7 @@ namespace Susi {
 						Susi::Events::publish(Susi::Events::createEvent("heartbeat::five"));
 					}
 					if(count % 10 == 0){
-						Susi::Events::publish(Susi::Events::createEvent("heartbeat::tem"));
+						Susi::Events::publish(Susi::Events::createEvent("heartbeat::ten"));
 					}
 					if(count % 60 == 0){
 						Susi::Events::publish(Susi::Events::createEvent("heartbeat::minute"));

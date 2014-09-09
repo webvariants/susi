@@ -42,7 +42,7 @@ namespace Susi {
 							publish(createEvent("heartbeat::five"));
 						}
 						if(count % 10 == 0){
-							publish(createEvent("heartbeat::tem"));
+							publish(createEvent("heartbeat::ten"));
 						}
 						if(count % 60 == 0){
 							publish(createEvent("heartbeat::minute"));
