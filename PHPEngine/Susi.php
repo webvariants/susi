@@ -9,6 +9,8 @@
  * 
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
+require 'Event.php';
+
 
 class Susi {
 
@@ -135,28 +137,24 @@ class Susi {
 		fwrite($this->socket,json_encode(array("type" => "ack", "data" => $data)));
 	}
 
-	public function publish($topic, $payload = null, $finish_handler = null) {		
-		
-		// id must be an long
-		$str_id = base_convert(uniqid(), 11, 10);		
-		$int_id = intval($str_id);
+	public function publish($event, $finish_handler = null) {
 
 		if($finish_handler !== null) {
-			$this->finish_handlers[$str_id] = $finish_handler;
+			$this->finish_handlers[$event->getStr_ID()] = $finish_handler;
 		}
 
 		$msg = array(
 			"type" => "publish",
 			"data" => array(
-				"topic" => $topic,
-				"payload" => $payload,
-				"id" => $int_id
+				"topic" => $event->getTopic(),
+				"payload" => $event->getPayload(),
+				"id" => $event->getID(),
+				"headers" => $event->getHeaders()
 			)
 		);		
 
 		fwrite($this->socket,json_encode($msg));
 	}
-
 
 	protected function handleIncome($data){
 		$this->debug("PHPSusi handleIncome:\n" . $data);
