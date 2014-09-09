@@ -10,6 +10,17 @@
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
+ // Event structur	
+ //  [data] => Array
+ //        (
+ //            [headers] => Array()        // Array of Arrays, used for dynamic 
+ //            [id] => xxxxxxxxxxxxxxxxxx  // unique id
+ //            [payload] =>                // payload 
+ //            [sessionid] =>              // sessionID
+ //            [topic] => heartbeat::five  // Topic 
+ //        )
+ //  [type] => processorEvent            // Eventtype ("consumerEvent", "processorEvent", "ack", "status")
+
 class Event {
 
 	protected $id        = 0;
@@ -19,9 +30,13 @@ class Event {
 	protected $payload   = array();
 	protected $headers   = array();	
 	protected $sessionID = "";
+	protected $type      = "";
+
+	protected $error     = false;
+	protected $errMsg    = "";
 
 
-	public function __construct($topic, $payload, $headers = array()) {
+	public function __construct($topic = "", $payload = array(), $headers = array()) {
 
 		$this->str_id    = base_convert(uniqid(), 11, 10);
 		$this->id        = intval($this->str_id);
@@ -57,6 +72,18 @@ class Event {
 		return $this->sessionID;
 	}
 
+	public function getType() {
+		return $this->type;
+	}
+
+	public function getError() {
+		return $this->error;
+	}
+
+	public function getErrorMsg() {
+		return $this->errMsg;
+	}
+
 	// setter
 	public function setTopic($topic = "") {
 		$this->topic = $topic;
@@ -76,5 +103,57 @@ class Event {
 
 	public function setSessionID($sessionID = "") {
 		$this->sessionID = $sessionID;
+	}
+
+	public function setType($type = "") {
+		$this->type = $type;
+	}
+
+	public function fromString($msg) {
+		$msg = json_decode($msg, true);
+
+		$this->type      = $msg["type"];
+
+		if(array_key_exists('data', $msg)) {
+
+			$data = $msg['data'];
+
+			$this->str_id    = array_key_exists('id', $data)        ? "" + $data["id"]   : "";
+			$this->topic     = array_key_exists('topic', $data)     ? $data["topic"]     : "";
+			$this->headers   = array_key_exists('headers', $data)   ? $data["headers"]   : array();
+			$this->payload   = array_key_exists('payload', $data)   ? $data["payload"]   : array();
+			$this->sessionID = array_key_exists('sessionid', $data) ? $data["sessionid"] : "";
+
+		} else {
+			$this->str_id = "";
+		}
+
+		$this->id    = intval($this->str_id);
+		$this->error = array_key_exists("error", $msg) ? $msg["error"] : false;
+
+		if($this->error === true && array_key_exists("data", $msg)) {
+			$this->errMsg = $msg["data"];
+		} else {
+			$this->errMsg = "";
+		}
+	}
+
+	public function toString() {
+		$msg = array(
+			"type" => $this->type,
+			"data" => $this->getData()
+		);
+
+		return json_encode($msg);
+	}
+
+	public function getData() {
+		return $data = array(
+			"topic"     => $this->topic,
+			"payload"   => $this->payload,
+			"id"        => $this->id,
+			"sessionid" => $this->sessionID,
+			"headers"   => $this->headers			
+		);				
 	}
 }

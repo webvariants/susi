@@ -143,33 +143,26 @@ class Susi {
 			$this->finish_handlers[$event->getStr_ID()] = $finish_handler;
 		}
 
-		$msg = array(
-			"type" => "publish",
-			"data" => array(
-				"topic" => $event->getTopic(),
-				"payload" => $event->getPayload(),
-				"id" => $event->getID(),
-				"headers" => $event->getHeaders()
-			)
-		);		
-
-		fwrite($this->socket,json_encode($msg));
+		$event->setType("publish");
+		
+		fwrite($this->socket,$event->toString());
 	}
 
 	protected function handleIncome($data){
 		$this->debug("PHPSusi handleIncome:\n" . $data);
 
-		$msg = json_decode($data,true);
+		$evt = new Event();
+		$evt->fromString($data);
+		
+		if($evt->getType() === "consumerEvent"){
 
-		if($msg["type"] === "consumerEvent"){
-
-			$topic = $msg["data"]["topic"];
+			$topic = $evt->getTopic();
 
 			if(array_key_exists($topic, $this->consumer_callbacks)){
 				$consumer_callbacks = $this->consumer_callbacks[$topic];
 				foreach ($consumer_callbacks as $callback) {
 					try{						
-						$callback["handler"]($msg);
+						$callback["handler"]($evt);
 					}catch(Exception $e){
 						print($e);
 					}
@@ -178,31 +171,31 @@ class Susi {
 			
 		}
 
-		if($msg["type"] === "processorEvent"){		
+		if($evt->getType() === "processorEvent"){		
 
-			$topic = $msg["data"]["topic"];
-
+			$topic = $evt->getTopic();
+			
 			if(array_key_exists($topic, $this->processor_callbacks)){
 				$processor_callbacks = $this->processor_callbacks[$topic];
 				foreach ($processor_callbacks as $callback) {
 					try{
-						$callback["handler"]($msg);						
+						$callback["handler"]($evt);						
 					}catch(Exception $e){
 						print($e);
 					}
 				}
-				$this->ack($msg["data"]);
+				$this->ack($evt->getData());
 			}
 		}
 
-		if($msg["type"] === "ack"){
-			// convert to string
-			$id = "" + $msg["data"]["id"];
+		if($evt->getType() === "ack"){
+			// ID as string
+		 	$id = $evt->getStr_ID();
 
 			if(array_key_exists($id, $this->finish_handlers)){
 				$finish_handler = $this->finish_handlers[$id];
 				try{				
-					$finish_handler($msg);
+					$finish_handler($evt);
 					// delete callback from memory
 					unset($this->finish_handlers[$id]);					
 				}catch(Exception $e){
@@ -211,9 +204,9 @@ class Susi {
 			}
 		}
 
-		if($msg["type"] === "status"){
-			if($msg["error"] == true) {
-				$error_msg = $msg["data"];
+		if($evt->getType() === "status"){
+			if($evt->getError() == true) {
+				$error_msg = $evt->getErrorMsg();
 				echo "server error:".$error_msg."\n";
 			}
 		}
@@ -251,7 +244,7 @@ class Susi {
 	}
 
 	protected function connect(){
-		$this->socket = fsockopen($this->address, $this->port, $errno, $errstr, 5);
+		$this->socket = fsockopen($this->address, $this->port, $errno, $errstr, 5000);
 
 		if(!$this->socket) {
 			echo "$errstr ($errno) \n";

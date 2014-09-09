@@ -13,17 +13,7 @@
 
  // INFO 
  // pass $event in processor and consumer handler as reference !!!
- // Event structur	
- //  [data] => Array
- //        (
- //            [headers] => Array()        // used for dynamic 
- //            [id] => xxxxxxxxxxxxxxxxxx  // unique id
- //            [payload] =>                // payload 
- //            [sessionid] =>              // sessionID
- //            [topic] => heartbeat::five  // Eventname
- //        )
- //    [type] => processorEvent            // Eventtype 
-
+ 
 
 define("_DIR", dirname(__FILE__));
 
@@ -33,7 +23,7 @@ require _DIR.'/../config.php';
 /*
  * create Susi Instance
  */
-$susi = new Susi($CONFIG["SUSI_ADDR"], $CONFIG["SUSI_PORT"], true);
+$susi = new Susi($CONFIG["SUSI_ADDR"], $CONFIG["SUSI_PORT"], false);
 
 
 /*
@@ -44,37 +34,68 @@ $susi = new Susi($CONFIG["SUSI_ADDR"], $CONFIG["SUSI_PORT"], true);
  *
  * @return interger        unique EventID, can be used for unregister 
  */
-$p1 = $susi->registerProcessor("heartbeat::five",
+$p1 = $susi->registerProcessor("test_event",
 
 		// handler
 		function(&$event) use($susi) {
+
+			echo "processor 1 handler called ";
+
+			$data = $event->getData();
+
+			// test event data from publish
+			if(
+ 				isset($data["payload"]["number"]) && 
+ 				$data["payload"]["number"] == 1 && 
+				count($data["headers"]) == 1
+ 			) {
+ 				echo "OK \n";
+ 			} else {
+ 				echo "FAILED \n";
+ 			}
 
 			// add some header infos
-			$event["data"]["headers"][] = array("foo" => "bar");
+			$event->setHeader(array("added Header" => "by processor 1"));
 
-			echo "processor 1 called \n";
-			//print_r($event);
-		}
-	);
+			// get payload
+			$payload = $event->getPayload();
+			// add payload
+			$payload["add_one"] = $payload["number"] + 1;
+			$payload["test_payload"] = "ok1";
+			$event->setPayload($payload);
 
-$p2 = $susi->registerProcessor("heartbeat::five",
-
-		// handler
-		function(&$event) use($susi) {
-			echo "processor 2 called \n";
-			//print_r($event);
-		}
-	);
-
-$p3 = $susi->registerProcessor("Test_finished",
-
-		// handler
-		function(&$event) use($susi) {
-			echo "processor 3 called \n";
-			print_r($event);
 			
-			// stop test
-			exit(0);
+		}
+	);
+
+$p2 = $susi->registerProcessor("test_event",
+
+		// handler
+		function(&$event) use($susi) {
+			echo "processor 2 handler called ";
+
+			$data = $event->getData();
+
+			// test event data from processor 1
+			if(
+ 				isset($data["payload"]["test_payload"]) && 
+ 				$data["payload"]["test_payload"] == "ok1" && 
+				count($data["headers"]) == 2
+ 			) {
+ 				echo "OK \n";
+ 			} else {
+ 				echo "FAILED \n";
+ 			}
+
+
+			// add some header infos
+			$event->setHeader(array("added Header" => "by processor 2"));
+
+			// change payload
+			$payload = $event->getPayload();
+			$payload["mult_five"] = $payload["add_one"] * 5;
+			$payload["test_payload"] .= "_ok2";
+			$event->setPayload($payload);
 		}
 	);
 
@@ -86,36 +107,58 @@ $p3 = $susi->registerProcessor("Test_finished",
  *
  * @return interger        unique EventID, can be used for unregister 
  */
-$c1 = $susi->registerProcessor("heartbeat::five",
+$c1 = $susi->registerConsumer("test_event",
 
 		// handler
 		function(&$event) use($susi) {
-			echo "test_consumer called \n";
-			
-			// Publish Event
+			echo "consumer handler called ";
 
-			$evt = new Event("Test_finished", 
-				array("TEST secound run" => "start"),
-				array(array("foo" => "started"))
+			$data = $event->getData();
+			
+			// test event data
+			if(
+ 				isset($data["payload"]["test_payload"]) && 
+ 				$data["payload"]["test_payload"] == "ok1_ok2" && 
+				count($data["headers"]) == 3
+ 			) {
+ 				echo "OK \n";
+ 			} else {
+ 				echo "FAILED \n";
+ 			}
+		}
+	);
+
+
+$GLOBALS['test_starter_id'] = $susi->registerProcessor("heartbeat::five",
+
+		// handler
+		function(&$event) use($susi, $p1, $p2, $c1) {
+			echo "Start Test \n";
+
+			// Publish Event
+			$evt = new Event("test_event", 
+				array("number" => 1),
+				array(array("header_info" => "en_en"))
 			);
 
 			$susi->publish($evt, 
  				// finish callback
-				function($event) use($susi) {
+				function($event) use($susi, $p1, $p2, $c1) {
+					echo "Test Finished Callback called >>> ";	
+					print_r($event->getData());									
 
-					echo "Test RUN2 Finish Callback >>> ";
-					
-					if(
-		 					!isset($event["data"]["payload"]["processor1"]) && 
-		 					$event["data"]["payload"]["processor2"] == "ok" && 
- 							count($event["data"]["headers"]) == 1
-		 			) {
-		 				echo "OK \n";
-		 			} else {
-		 				echo "FAILED \n";
-		 			}					
+					// remove events
+	 				$susi->unregisterProcessor($p1);
+	 				$susi->unregisterProcessor($p2);
+	 				$susi->unregisterConsumer($c1);
+
+	 				// use this
+	 				$susi->unregisterProcessor($GLOBALS['test_starter_id']);	 				
+	 				// or stop test with 
+	 				// exit(0);
 				}
 			);	 
+					
 		}
 	);
 
