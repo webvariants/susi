@@ -6,7 +6,7 @@
 
 TEST(DBManager, Contruct) {
 
-    Susi::DB::Manager dbm_1();
+    Susi::DB::Manager dbm_1;
     //--------------------------------
 
     std::vector<std::tuple<std::string,std::string,std::string>> dbs;

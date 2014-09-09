@@ -19,7 +19,7 @@
 
 namespace Susi {
 
-static unsigned char logLevel{255};
+extern unsigned char logLevel;
 
 class Logger {
 protected:
