@@ -71,6 +71,7 @@ namespace Susi {
 					WrongTypeException(Type expected, Type actual) 
 						: _expected{expected},
 						  _actual{actual} {}
+					using std::exception::what;
 					virtual const char* what() noexcept {
 						msg = "wrong type. expected: ";
 						msg += typeToString(_expected);
