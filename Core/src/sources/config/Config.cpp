@@ -44,6 +44,7 @@ void Susi::Config::loadConfig(std::string filename){
 		//merge vars
 		mergeOptions("", configVar);		
 	}
+	std::cout<<_configVar.toString()<<std::endl;
 }
 
 void Susi::Config::mergeOptions(std::string key, Susi::Util::Any configVar) {

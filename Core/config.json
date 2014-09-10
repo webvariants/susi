@@ -4,7 +4,10 @@
 		"queuelen": 32
 	},
 
-	"heartbeat": {},
+	"heartbeat": {
+		"fix":"me"
+	},
+
 
 	"dbmanager": [
 		{
