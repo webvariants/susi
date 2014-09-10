@@ -1,4 +1,6 @@
 #include "gtest/gtest.h"
+#include "world/ComponentManager.h"
+#include "world/system_setup.h"
 #include "config/Config.h"
 #include "iocontroller/IOController.h"
 
@@ -211,4 +213,18 @@ TEST_F(ConfigTest,MultiConfigSupport){
 	EXPECT_TRUE(cfg.get("data").isString());
 	EXPECT_EQ("\"test2\"",cfg.get("data").toString());
 	
+}
+
+TEST_F(ConfigTest, LoadAllStartStop){
+
+	Susi::Config cfg{};
+	cfg.loadConfig("config.json");
+
+	std::shared_ptr<Susi::System::ComponentManager> componentManager = Susi::System::createSusiComponentManager(cfg.getConfig());
+
+	bool start = componentManager->startAll();
+	bool stop  = componentManager->stopAll();
+
+	EXPECT_TRUE(start);
+	EXPECT_TRUE(stop);	
 }
