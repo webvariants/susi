@@ -19,7 +19,7 @@ set( CMAKE_COLOR_MAKEFILE ON)
 
 set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g -Wall --std=c++11 -fPIC -O3" )
 
-include_directories( ${CMAKE_SOURCE_DIR}/../susi/src/headers )
+include_directories( ${CMAKE_SOURCE_DIR}/../Core/src/headers )
 include_directories( /usr/local/include/soci )
 include_directories( /usr/local/include/Poco )
 include_directories( /usr/local/include )
@@ -28,7 +28,7 @@ include_directories( /opt/v8/include )
 file( GLOB SRCFILES ${CMAKE_SOURCE_DIR}/*.cpp )
 
 add_executable( susi-jsengine ${SRCFILES} )
-target_link_libraries(susi-jsengine ${CMAKE_SOURCE_DIR}/../susi/build/libsusi.so)
+target_link_libraries(susi-jsengine ${CMAKE_SOURCE_DIR}/../Core/build/libsusi.so)
 target_link_libraries(susi-jsengine PocoFoundation)
 target_link_libraries(susi-jsengine PocoUtil)
 target_link_libraries(susi-jsengine PocoJSON)
