@@ -3,3 +3,4 @@ Core/src/objects/
 Core/build/
 bin/
 cppcheck_output.txt
+/.project
