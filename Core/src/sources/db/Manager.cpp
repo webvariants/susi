@@ -26,10 +26,10 @@ void Susi::DB::Manager::init(Susi::Util::Any config) {
 		for(std::size_t i=0; i<config.size(); ++i){
 			try{
 				Susi::Util::Any entry = config[i];
-				std::cout<<"INIT:"<<entry.toString()<<std::endl;
-				std::string identifier = entry[0]; // id
-				std::string dbtype     = entry[1]; // type
-				std::string connectURI = entry[2]; // uri
+				std::cout<<"INIT:"<<entry.toString()<<" TYPE:"<<entry.isObject()<<std::endl;
+				std::string identifier = entry["id"]; // id
+				std::string dbtype     = entry["type"]; // type
+				std::string connectURI = entry["uri"]; // uri
 				addDatabase(identifier, dbtype, connectURI);
 			}catch(const std::exception & e){
 				Susi::Logger::error("malformed config file");

@@ -18,8 +18,8 @@ TEST(DBManager, Contruct) {
 
     //-----------------------------    
     Susi::Util::Any config{Susi::Util::Any::Array{
-        Susi::Util::Any::Array{"test_sqlite_db_3", "sqlite3", "./test_sqlite_db_3"},
-        Susi::Util::Any::Array{"test_sqlite_db_4", "sqlite3", "./test_sqlite_db_4"}
+        Susi::Util::Any::Object{{"id","test_sqlite_db_3"}, {"type" , "sqlite3" },{"uri","./test_sqlite_db_3"}},
+        Susi::Util::Any::Object{{"id","test_sqlite_db_4"}, {"type" , "sqlite3" },{"uri","./test_sqlite_db_4"}},        
     }};
 
     Susi::DB::Manager dbm_3(config);    
