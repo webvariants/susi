@@ -1,4 +1,5 @@
 Core/test/gtest-1.7.0/
 Core/src/objects/
+Core/build/
 bin/
 cppcheck_output.txt
