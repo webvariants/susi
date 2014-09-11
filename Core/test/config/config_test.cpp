@@ -24,31 +24,30 @@ TEST_F(ConfigTest, Contruct) {
 	EXPECT_NO_THROW({
 		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
 	});
+}
 
-	
-
-	// Test invalid json
-	//io.writeFile("./configtest/config.cfg",cfg.toString()+"wrongformat");
+TEST_F(ConfigTest, ContructInvalidJson) {
 	io.writeFile("./configtest/config.cfg","{\"foo\",\"bar\", 22");
 	EXPECT_THROW({
 		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
 	},std::runtime_error);
+}
 
-	
+
+TEST_F(ConfigTest, ContructWrongFormatJson) {
 	// Test valid json which is no object;
 	io.writeFile("./configtest/config.cfg","\"wrongformat\"");
 	EXPECT_THROW({
 		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
 	},std::runtime_error);
+}
 
-
+TEST_F(ConfigTest, ContructConfigMissing) {
 	// Test nonexistent file;
 	EXPECT_THROW({
 		auto config = std::make_shared<Susi::Config>("./configtest/wrongname.cfg");
 	},std::runtime_error);
-
 }
-
 
 
 TEST_F(ConfigTest, Get){
