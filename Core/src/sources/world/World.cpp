@@ -16,7 +16,6 @@ void Susi::World::setup(){
 	setupDBManager();
 	setupIOController();
 	setupEngineStarter();
-	setupAuthController();
 	setupStateController();
 	//setupSysCallController();
 }
@@ -131,18 +130,6 @@ void Susi::World::setupDBManager(){
 	}
 	dbManager = std::shared_ptr<Susi::DB::Manager>{new Susi::DB::Manager(dbs)};
 	Susi::DB::init();
-}
-
-void Susi::World::setupAuthController() {
-	std::string dbIdentifier = "auth";
-	try{
-		auto & app = Poco::Util::Application::instance();
-		auto & cfg = app.config();
-		dbIdentifier = cfg.getString("authentification.db");
-	}catch(const std::exception & e){}
-	authController = std::shared_ptr<Susi::Auth::Controller>{new Susi::Auth::Controller(dbIdentifier)};
-
-	Susi::Auth::EventInterface::init();
 }
 
 void Susi::World::setupSysCallController() {
