@@ -76,16 +76,14 @@ void Susi::World::setupTCPServer(){
 }
 
 void Susi::World::setupSessionManager(){
-	int lifetime = 20;
-	int interval = 5;
+	int lifetime = 20;	
 	try{
 		auto & app = Poco::Util::Application::instance();
 		auto & cfg = app.config();
 		lifetime = cfg.getInt("session.lifetime");
-		interval = cfg.getInt("session.interval");
 	}catch(const std::exception & e){}
 	sessionManager = std::shared_ptr<Susi::Sessions::SessionManager>{new Susi::Sessions::SessionManager()};
-	sessionManager->init(std::chrono::milliseconds(lifetime*1000),std::chrono::milliseconds(interval*1000));
+	sessionManager->init(std::chrono::milliseconds(lifetime*1000));
 	Susi::Sessions::initEventInterface();
 }
 
