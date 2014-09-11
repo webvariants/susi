@@ -27,7 +27,7 @@ void Susi::DB::Manager::init(Susi::Util::Any config) {
 			try{
 				Susi::Util::Any entry = config[i];
 				std::cout<<"INIT:"<<entry.toString()<<" TYPE:"<<entry.isObject()<<std::endl;
-				std::string identifier = entry["id"]; 
+				std::string identifier = entry["identifier"]; 
 				std::string dbtype     = entry["type"];
 				std::string connectURI = entry["uri"];
 				addDatabase(identifier, dbtype, connectURI);
