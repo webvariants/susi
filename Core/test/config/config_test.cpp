@@ -24,37 +24,36 @@ TEST_F(ConfigTest, Contruct) {
 	EXPECT_NO_THROW({
 		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
 	});
+}
 
-	
-
-	// Test invalid json
-	//io.writeFile("./configtest/config.cfg",cfg.toString()+"wrongformat");
+TEST_F(ConfigTest, ContructInvalidJson) {
 	io.writeFile("./configtest/config.cfg","{\"foo\",\"bar\", 22");
 	EXPECT_THROW({
 		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
 	},std::runtime_error);
+}
 
-	
+
+TEST_F(ConfigTest, ContructWrongFormatJson) {
 	// Test valid json which is no object;
 	io.writeFile("./configtest/config.cfg","\"wrongformat\"");
 	EXPECT_THROW({
 		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
 	},std::runtime_error);
+}
 
-
+TEST_F(ConfigTest, ContructConfigMissing) {
 	// Test nonexistent file;
 	EXPECT_THROW({
 		auto config = std::make_shared<Susi::Config>("./configtest/wrongname.cfg");
 	},std::runtime_error);
-
 }
-
 
 
 TEST_F(ConfigTest, Get){
 	using Susi::Util::Any;
 	Any cfg = Any::Object{{"foo",Any::Object{{"bar", Any::Object{{"baz",123}}}}}};
-	std::cout<<"CO:"<<cfg.toString()<<std::endl;
+	
 	io.writeFile("./configtest/config.cfg",cfg.toString());
 	EXPECT_NO_THROW({
 		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
@@ -199,9 +198,6 @@ TEST_F(ConfigTest,MultiConfigSupport){
 
 
 	Susi::Util::Any conf = cfg.getConfig();
-
-	std::cout<<"RESULT: "<<conf.toString()<<std::endl;
-	
 	
 	EXPECT_TRUE(cfg.get("foo").isString());
 	EXPECT_EQ("\"bar\"",cfg.get("foo").toString());
@@ -216,6 +212,21 @@ TEST_F(ConfigTest,MultiConfigSupport){
 }
 
 TEST_F(ConfigTest, LoadAllStartStop){
+	// make test independed from config file
+	/*
+	class C1 : public Component {};
+	class C2 : public Component {};
+	class C3 : public Component {};
+
+	mgr->registerComponent("c1",[](){return std::make_shared<C1>();});
+	mgr->registerComponent("c2",[](){return std::make_shared<C2>();});
+	mgr->registerComponent("c3",[](){return std::make_shared<C3>();});
+
+
+	cfg {"c1",{}}{"c2",{}}
+
+    */
+
 
 	Susi::Config cfg{};
 	cfg.loadConfig("config.json");

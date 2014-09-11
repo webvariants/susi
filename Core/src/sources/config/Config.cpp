@@ -20,20 +20,28 @@ void Susi::Config::loadConfig(std::string filename){
 	try {
  		content = io.readFile(filename);
  	} catch(const std::exception & e){
-		std::string msg = "Error reading Config File: " + filename;
+ 		std::string msg = "Susi::Config::loadConfig "; 		
+		msg += "Error reading Config File: " + filename;
 		msg += e.what();
+		Susi::Logger::error(msg);		
 		throw std::runtime_error(msg);
 	}
 
 	try {
 		configVar = Susi::Util::Any::fromString(content);
-	} catch(const std::exception & e){
-		std::string msg = "file cant be parsed as json!";
+	} catch(const std::exception & e){		
+		std::string msg = "Susi::Config::loadConfig ";
+		msg += ("File: " + filename + " file cant be parsed as json!");
 		msg += e.what();
+		Susi::Logger::error(msg);
+
 		throw std::runtime_error(msg);
 	}
 
 	if(configVar.getType() != Susi::Util::Any::OBJECT) {
+		std::string msg = "Susi::Config::loadConfig ";
+		msg += ("File: " + filename + " file doesn't contain a (json) object");
+		Susi::Logger::error(msg);
 		throw std::runtime_error("file doesn't contain a (json) object");	
 	}
 
@@ -44,7 +52,10 @@ void Susi::Config::loadConfig(std::string filename){
 		//merge vars
 		mergeOptions("", configVar);		
 	}
-	std::cout<<_configVar.toString()<<std::endl;
+
+	std::string msg = "Susi::Config::loadConfig ";
+	msg += ("File: " + filename);
+	Susi::Logger::info(msg);
 }
 
 void Susi::Config::mergeOptions(std::string key, Susi::Util::Any configVar) {
