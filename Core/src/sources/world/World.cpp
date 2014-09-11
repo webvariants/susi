@@ -16,7 +16,6 @@ void Susi::World::setup(){
 	setupDBManager();
 	setupIOController();
 	setupEngineStarter();
-	setupAuthController();
 	setupStateController();
 	//setupSysCallController();
 }
@@ -77,16 +76,14 @@ void Susi::World::setupTCPServer(){
 }
 
 void Susi::World::setupSessionManager(){
-	int lifetime = 20;
-	int interval = 5;
+	int lifetime = 20;	
 	try{
 		auto & app = Poco::Util::Application::instance();
 		auto & cfg = app.config();
 		lifetime = cfg.getInt("session.lifetime");
-		interval = cfg.getInt("session.interval");
 	}catch(const std::exception & e){}
 	sessionManager = std::shared_ptr<Susi::Sessions::SessionManager>{new Susi::Sessions::SessionManager()};
-	sessionManager->init(std::chrono::milliseconds(lifetime*1000),std::chrono::milliseconds(interval*1000));
+	sessionManager->init(std::chrono::milliseconds(lifetime*1000));
 	Susi::Sessions::initEventInterface();
 }
 
@@ -133,18 +130,6 @@ void Susi::World::setupDBManager(){
 	}
 	dbManager = std::shared_ptr<Susi::DB::Manager>{new Susi::DB::Manager(dbs)};
 	Susi::DB::init();
-}
-
-void Susi::World::setupAuthController() {
-	std::string dbIdentifier = "auth";
-	try{
-		auto & app = Poco::Util::Application::instance();
-		auto & cfg = app.config();
-		dbIdentifier = cfg.getString("authentification.db");
-	}catch(const std::exception & e){}
-	authController = std::shared_ptr<Susi::Auth::Controller>{new Susi::Auth::Controller(dbIdentifier)};
-
-	Susi::Auth::EventInterface::init();
 }
 
 void Susi::World::setupSysCallController() {

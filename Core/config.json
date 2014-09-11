@@ -36,9 +36,7 @@
 	},
 
 	"sessionmanager": {
-		"lifetime": 600000,
-		"checkInterval": 1000
-
+		"lifetime": 600000
 	},
 
 	"statecontroller": {

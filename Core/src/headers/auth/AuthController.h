@@ -19,17 +19,24 @@
 #include <tuple>
 #include <memory>
 
-#include <db/Database.h>
+#include <db/DBComponent.h>
+#include <sessions/SessionManagerComponent.h>
 
 #include "util/Any.h"
 
 namespace Susi {
 	namespace Auth {
 		class Controller{
-				std::string db_identifier;
+				std::string _dbIdentifier;
+				std::shared_ptr<Susi::DB::DBComponent> _dbManager;
+				std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager;
 			public:
-				Controller(std::string db_identifier);				
-
+				Controller(std::shared_ptr<Susi::DB::DBComponent> dbManager, 
+					std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager,
+					std::string db_identifier) :
+				  _dbIdentifier{db_identifier},
+				  _dbManager{dbManager},
+				  _sessionManager{sessionManager} {}				
 				bool login(std::string sessionID, std::string username, std::string password); // return true on success
 				void logout(std::string sessionID);
 				bool isLoggedIn(std::string sessionID); 
