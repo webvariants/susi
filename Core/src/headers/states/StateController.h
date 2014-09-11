@@ -15,15 +15,10 @@
 #include <map>
 #include <mutex>
 #include <sstream>
-#include <Poco/Dynamic/Var.h>
-#include <Poco/JSON/Parser.h>
 
 #include "iocontroller/IOController.h"
 #include "logger/Logger.h"
-
 #include "util/Any.h"
-#include "events/global.h"
-#include "events/EventManager.h"
 
 namespace Susi {
 	namespace States {
