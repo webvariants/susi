@@ -110,15 +110,11 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 	 * Declare sessionmanager
 	 */
 	manager->registerComponent("sessionmanager", [](ComponentManager * mgr, Any & config) {
-		std::chrono::milliseconds lifetime{10000};
-		std::chrono::milliseconds checkInterval{1000};
+		std::chrono::milliseconds lifetime{10000};		
 		if(config["lifetime"].isInteger()){
 			lifetime =  std::chrono::milliseconds{static_cast<int>(config["lifetime"])};
 		}
-		if(config["checkInterval"].isInteger()){
-			checkInterval =  std::chrono::milliseconds{static_cast<int>(config["checkInterval"])};
-		}
-		return std::shared_ptr<Component>{new Susi::Sessions::SessionManagerComponent{mgr, lifetime, checkInterval}};
+		return std::shared_ptr<Component>{new Susi::Sessions::SessionManagerComponent{mgr, lifetime}};
 	});
 	manager->registerDependency("sessionmanager","eventsystem");
 

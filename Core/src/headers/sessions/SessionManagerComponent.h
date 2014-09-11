@@ -19,10 +19,9 @@ namespace Susi {
 	namespace Sessions {
 		class SessionManagerComponent : public Susi::System::BaseComponent , public SessionManager {
 		public:
-			SessionManagerComponent (Susi::System::ComponentManager * mgr, std::chrono::milliseconds stdSessionLifetime, std::chrono::milliseconds checkInterval) :
+			SessionManagerComponent (Susi::System::ComponentManager * mgr, std::chrono::milliseconds stdSessionLifetime) :
 				Susi::System::BaseComponent{mgr}, SessionManager{} {
-					_stdSessionLifetime = stdSessionLifetime;
-					_checkInterval      = checkInterval;
+					_stdSessionLifetime = stdSessionLifetime;					
 				}
 
 			~SessionManagerComponent() {
@@ -30,8 +29,13 @@ namespace Susi {
 			}
 
 			virtual void start() override {
-				init(_stdSessionLifetime, _checkInterval);
+				init(_stdSessionLifetime);
 
+				// Consumer
+				Susi::Events::Consumer handler = [this](::Susi::Events::SharedEventPtr evt){handleCheckSessions(std::move(evt));};
+				subscribe("heartbeat::one", handler);
+
+				// Processor
 				subscribe("session::setAttribute", [this](::Susi::Events::EventPtr evt){handleSetAttribute(std::move(evt));});
 				subscribe("session::getAttribute", [this](::Susi::Events::EventPtr evt){handleGetAttribute(std::move(evt));});
 				subscribe("session::pushAttribute", [this](::Susi::Events::EventPtr evt){handlePushAttribute(std::move(evt));});
@@ -41,13 +45,15 @@ namespace Susi {
 			}
 
 			virtual void stop() override {
-				SessionManager::stop();
 				unsubscribeAll();
 			}
 
 		protected:
-			std::chrono::milliseconds _stdSessionLifetime;
-			std::chrono::milliseconds _checkInterval;
+			std::chrono::milliseconds _stdSessionLifetime;			
+
+			void handleCheckSessions(Susi::Events::SharedEventPtr event) {
+				checkSessions();
+			}
 
 			void handleGetAttribute(Susi::Events::EventPtr event) {
 				try{
