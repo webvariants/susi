@@ -46,11 +46,33 @@ static Susi::Util::Any fromJS(Handle<Value> value) {
     return Susi::Util::Any{};
 }
 
+static Handle<Value> fromCPP(Susi::Util::Any value) {
+	HandleScope scope;
+
+	Handle<Context> context = Context::GetCurrent();
+    Handle<Object> global = context->Global();
+
+	Handle<Object> JSON = global->Get(String::New("JSON"))->ToObject();
+    Handle<Function> JSON_parse = Handle<Function>::Cast(JSON->Get(String::New("parse")));
+
+    Handle<Value> valueHandle{String::New(value.toString().c_str())};
+
+    return scope.Close(JSON_parse->Call(JSON, 1, &valueHandle));
+}
+
 static Handle<Value> Log(const Arguments& args) {
-	Susi::Logger::log(fromJS(args[0]).toString());
+	Susi::Util::Any cppvalue = fromJS(args[0]);
+	Handle<Value> jsvalue = fromCPP(cppvalue);
+	String::Utf8Value str(jsvalue);
+	Susi::Util::Any cppvalue_2 = fromJS(jsvalue);
+	Susi::Logger::log("From JS to CPP: "+cppvalue.toString());
+	Susi::Logger::log("Back to JS: "+ std::string(*str));
+	Susi::Logger::log("From JS to CPP again: "+cppvalue_2.toString());
+	Susi::Logger::log("ALL IN ONE: "+fromJS(fromCPP(fromJS(args[0]))).toString());
 
 	return Undefined();
 }
+
 protected:
 	 // Executes a string within the current v8 context.
 	bool run(Handle<String> source) {
@@ -93,13 +115,14 @@ protected:
 	}
 
 public:
-	Engine()
-	{}
+	Engine(){}
 
 	bool run(std::string source) {
 		HandleScope handle_scope;
 		return this->run(String::New(source.c_str()));
 	}
+
+	~Engine() {}
 };
 
 
