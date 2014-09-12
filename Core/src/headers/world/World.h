@@ -35,8 +35,6 @@
 #include "auth/AuthEventInterface.h"
 #include "states/StateController.h"
 #include "states/StateEventInterface.h"
-#include "syscall/SysCallEventInterface.h"
-#include "syscall/SysCallController.h"
 
 namespace Susi{
 
@@ -54,7 +52,6 @@ namespace Susi{
 		void setupLogger();
 		void setupEngineStarter();
 		void setupAuthController();
-		void setupSysCallController();
 		void setupStateController();
 
 		std::shared_ptr<Susi::Events::Manager> 			eventManager{nullptr};
@@ -67,7 +64,6 @@ namespace Susi{
 		std::shared_ptr<Susi::EngineStarter::Starter>	engineStarter{nullptr};
 		std::shared_ptr<Susi::Auth::Controller>			authController{nullptr};
 		std::shared_ptr<Susi::States::StateController>	stateController{nullptr};
-		std::shared_ptr<Susi::Syscall::Controller>		syscallController{nullptr};
 		std::shared_ptr<Susi::Api::TCPApiServer>		tcpServer{nullptr};
 
 

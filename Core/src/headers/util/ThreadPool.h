@@ -35,6 +35,7 @@ protected:
 	void startThread();
 
 public:
+	ThreadPool() : ThreadPool{4,16} {};
 	ThreadPool(size_t workers, size_t buffsize);
 	void add(std::function<void()> work, 
 			 std::function<void(std::string)> error = std::function<void(std::string)>{});

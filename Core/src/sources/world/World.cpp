@@ -17,7 +17,6 @@ void Susi::World::setup(){
 	setupIOController();
 	setupEngineStarter();
 	setupStateController();
-	//setupSysCallController();
 }
 
 void Susi::World::tearDown(){
@@ -132,14 +131,3 @@ void Susi::World::setupDBManager(){
 	Susi::DB::init();
 }
 
-void Susi::World::setupSysCallController() {
-	std::string configPath = "./test_config/unified.cfg";
-	try{
-		auto & app = Poco::Util::Application::instance();
-		auto & cfg = app.config();
-		configPath = cfg.getString("syscall.cfg");
-	}catch(const std::exception & e){}
-	syscallController = std::shared_ptr<Susi::Syscall::Controller>{new Susi::Syscall::Controller(configPath)};
-
-	Susi::Syscall::EventInterface::init();
-}
