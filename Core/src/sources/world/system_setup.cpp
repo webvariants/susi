@@ -110,15 +110,11 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 	 * Declare sessionmanager
 	 */
 	manager->registerComponent("sessionmanager", [](ComponentManager * mgr, Any & config) {
-		std::chrono::milliseconds lifetime{10000};
-		std::chrono::milliseconds checkInterval{1000};
+		std::chrono::milliseconds lifetime{10000};		
 		if(config["lifetime"].isInteger()){
 			lifetime =  std::chrono::milliseconds{static_cast<int>(config["lifetime"])};
 		}
-		if(config["checkInterval"].isInteger()){
-			checkInterval =  std::chrono::milliseconds{static_cast<int>(config["checkInterval"])};
-		}
-		return std::shared_ptr<Component>{new Susi::Sessions::SessionManagerComponent{mgr, lifetime, checkInterval}};
+		return std::shared_ptr<Component>{new Susi::Sessions::SessionManagerComponent{mgr, lifetime}};
 	});
 	manager->registerDependency("sessionmanager","eventsystem");
 
@@ -139,11 +135,18 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 	 * Declare syscallcontroller
 	 */
 	manager->registerComponent("syscallcontroller", [](ComponentManager * mgr, Any & cfg) {
-		std::string config{""};
-		if(cfg["config"].isString()){
-			config = static_cast<std::string>(cfg["config"]);
+		size_t threads = 4;
+		size_t queuelen = 16;
+		Any::Object commands = cfg["commands"];
+		Any threadsVal = cfg["threads"];
+		if(!threadsVal.isNull()){
+			threads = (size_t)static_cast<long>(threadsVal);
 		}
-		return std::shared_ptr<Component>{new Susi::Syscall::SyscallControllerComponent{mgr, config}};
+		Any queuelenVal = cfg["queuelen"];
+		if(!queuelenVal.isNull()){
+			queuelen = (size_t)static_cast<long>(queuelenVal);
+		}
+		return std::shared_ptr<Component>{new Susi::Syscall::SyscallComponent{mgr, commands, threads, queuelen}};
 	});
 	manager->registerDependency("syscallcontroller","eventsystem");
 	manager->registerDependency("syscallcontroller","iocontroller");

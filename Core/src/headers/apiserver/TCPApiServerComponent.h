@@ -41,11 +41,12 @@ protected:
 			api{eventManager,sessionManager},
 			sessionID{std::to_string(std::chrono::system_clock::now().time_since_epoch().count())},
 			collector{[this](std::string & msg){
-				std::cout<<"got message in server! "<<msg<<std::endl;
+				Susi::Logger::debug("got message in collector!");
 				std::string s = sessionID;
 				auto message = Susi::Util::Any::fromString(msg);
 				api.onMessage(s,message);
 			}} {
+				Susi::Logger::debug("Connection constructor");
 				api.onConnect(sessionID);
 				api.registerSender(sessionID,[this](Susi::Util::Any & msg) {
 					if(this==nullptr) return;
@@ -55,12 +56,14 @@ protected:
 		}
 		~Connection(){
 			api.onClose(sessionID);
+			Susi::Logger::debug("deleting tcp connection");
 		}
 		void run(){
 			char buff[1024];
 			while(true){
 				int bs = socket().receiveBytes(buff,sizeof(buff));
 				if(bs<=0){
+					Susi::Logger::debug("tcp connection failed while receive.");
 					socket().shutdown();
 					break;
 				}
@@ -82,6 +85,7 @@ protected:
 		}
 		virtual Poco::Net::TCPServerConnection * createConnection(const Poco::Net::StreamSocket& s){
 			//std::cout<<"create connection!"<<std::endl;
+			Susi::Logger::debug("creating new tcp connection");
 			return new Connection{s, eventManager, sessionManager};
 		}
 	};
@@ -117,6 +121,7 @@ public:
 	}
 	virtual void stop() override {
 		tcpServer.stop();
+		Susi::Logger::info("stopped TCP Api Server");
 	}
 	~TCPApiServerComponent(){
 		stop();

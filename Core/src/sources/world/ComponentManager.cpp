@@ -79,9 +79,11 @@ bool Susi::System::ComponentManager::stopComponent(std::string name){
 
 bool Susi::System::ComponentManager::startAll() {
 	bool result = true;
+
 	for(auto kv: config) {
-		result = result & startComponent(kv.first);
+		startComponent(kv.first);
 	}
+
 	std::string runningComponents = "";
 	for(auto kv : components){
 		if(kv.second.running){
@@ -89,13 +91,25 @@ bool Susi::System::ComponentManager::startAll() {
 		}
 	}
 	Susi::Logger::info("successfully started these components: "+runningComponents);
+
+	// test all started
+	for(auto kv: config) {
+		auto & data = components[kv.first];
+		result = result & data.running;
+	}
 	return result;
 }
 
 bool Susi::System::ComponentManager::stopAll() {
 	bool result = true;
 	for(auto kv: config) {
-		result = result && stopComponent(kv.first);
+		stopComponent(kv.first);
+	}
+
+	// test all stopped
+	for(auto kv: config) {
+		auto & data = components[kv.first];
+		result = result & !data.running;
 	}
 	return result;
 }

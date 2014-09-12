@@ -1,4 +1,6 @@
 #include "gtest/gtest.h"
+#include "world/ComponentManager.h"
+#include "world/system_setup.h"
 #include "config/Config.h"
 #include "iocontroller/IOController.h"
 
@@ -18,44 +20,43 @@ TEST_F(ConfigTest, Contruct) {
 		{"foo","bar"}
 	};
 	// Test valid json
-	io.writeFile("./configtest/config.cfg",cfg.toString());
+	io.writeFile("./configtest/config.json",cfg.toString());
 	EXPECT_NO_THROW({
-		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
+		auto config = std::make_shared<Susi::Config>("./configtest/config.json");
 	});
-
-	
-
-	// Test invalid json
-	//io.writeFile("./configtest/config.cfg",cfg.toString()+"wrongformat");
-	io.writeFile("./configtest/config.cfg","{\"foo\",\"bar\", 22");
-	EXPECT_THROW({
-		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
-	},std::runtime_error);
-
-	
-	// Test valid json which is no object;
-	io.writeFile("./configtest/config.cfg","\"wrongformat\"");
-	EXPECT_THROW({
-		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
-	},std::runtime_error);
-
-
-	// Test nonexistent file;
-	EXPECT_THROW({
-		auto config = std::make_shared<Susi::Config>("./configtest/wrongname.cfg");
-	},std::runtime_error);
-
 }
 
+TEST_F(ConfigTest, ContructInvalidJson) {
+	io.writeFile("./configtest/config.json","{\"foo\",\"bar\", 22");
+	EXPECT_THROW({
+		auto config = std::make_shared<Susi::Config>("./configtest/config.json");
+	},std::runtime_error);
+}
+
+
+TEST_F(ConfigTest, ContructWrongFormatJson) {
+	// Test valid json which is no object;
+	io.writeFile("./configtest/config.json","\"wrongformat\"");
+	EXPECT_THROW({
+		auto config = std::make_shared<Susi::Config>("./configtest/config.json");
+	},std::runtime_error);
+}
+
+TEST_F(ConfigTest, ContructConfigMissing) {
+	// Test nonexistent file;
+	EXPECT_THROW({
+		auto config = std::make_shared<Susi::Config>("./configtest/wrongname.json");
+	},std::runtime_error);
+}
 
 
 TEST_F(ConfigTest, Get){
 	using Susi::Util::Any;
 	Any cfg = Any::Object{{"foo",Any::Object{{"bar", Any::Object{{"baz",123}}}}}};
-	std::cout<<"CO:"<<cfg.toString()<<std::endl;
-	io.writeFile("./configtest/config.cfg",cfg.toString());
+	
+	io.writeFile("./configtest/config.json",cfg.toString());
 	EXPECT_NO_THROW({
-		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
+		auto config = std::make_shared<Susi::Config>("./configtest/config.json");
 		Any value1 = config->get("");
 		EXPECT_EQ(cfg,value1);
 		Any value2 = config->get("foo");		
@@ -67,12 +68,12 @@ TEST_F(ConfigTest, Get){
 	});
 	
 	EXPECT_THROW({
-		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
+		auto config = std::make_shared<Susi::Config>("./configtest/config.json");
 		config->get("bla");
 	},std::runtime_error);
 
 	EXPECT_THROW({
-		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
+		auto config = std::make_shared<Susi::Config>("./configtest/config.json");
 		config->get("bla.blub");
 	},std::runtime_error);
 
@@ -81,14 +82,14 @@ TEST_F(ConfigTest, Get){
 TEST_F(ConfigTest,CommandLine){
 	using Susi::Util::Any;
 	Any cfg = Any::Object{{"foo",Any::Object{{"bar", Any::Object{{"baz",123}}}}}};
-	io.writeFile("./configtest/config.cfg",cfg.toString());
+	io.writeFile("./configtest/config.json",cfg.toString());
 
 	std::vector<std::string> cmdLine_1 = {"prognameIsAllwaysFirstParam","-baz","321"};
 	std::vector<std::string> cmdLine_2 = {"prognameIsAllwaysFirstParam","-baz","321.123"};
 	std::vector<std::string> cmdLine_3 = {"prognameIsAllwaysFirstParam","-baz","this is it"};
 
 	EXPECT_NO_THROW({
-		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
+		auto config = std::make_shared<Susi::Config>("./configtest/config.json");
 		config->registerCommandLineOption("baz","foo.bar.baz");		
 		config->parseCommandLine(cmdLine_1);		
 		EXPECT_EQ(Any{321}.toString(),config->get("foo.bar.baz").toString());
@@ -181,25 +182,22 @@ TEST_F(ConfigTest,MultiConfigSupport){
 	};
 
 	// Test valid json
-	io.writeFile("./configtest/config_1.cfg",cfg_1.toString());	
+	io.writeFile("./configtest/config_1.json",cfg_1.toString());	
 
 	Susi::Util::Any cfg_2 = Susi::Util::Any::Object{
 		{"john","doe"},
 		{"data", "test2"}
 	};
 
-	io.writeFile("./configtest/config_2.cfg",cfg_2.toString());
+	io.writeFile("./configtest/config_2.json",cfg_2.toString());
 	
 	Susi::Config cfg;
 
-	cfg.loadConfig("./configtest/config_1.cfg");
-	cfg.loadConfig("./configtest/config_2.cfg");
+	cfg.loadConfig("./configtest/config_1.json");
+	cfg.loadConfig("./configtest/config_2.json");
 
 
 	Susi::Util::Any conf = cfg.getConfig();
-
-	std::cout<<"RESULT: "<<conf.toString()<<std::endl;
-	
 	
 	EXPECT_TRUE(cfg.get("foo").isString());
 	EXPECT_EQ("\"bar\"",cfg.get("foo").toString());
@@ -211,4 +209,71 @@ TEST_F(ConfigTest,MultiConfigSupport){
 	EXPECT_TRUE(cfg.get("data").isString());
 	EXPECT_EQ("\"test2\"",cfg.get("data").toString());
 	
+}
+
+TEST_F(ConfigTest, LoadAllStartStop){
+	// make test independed from config file
+	
+	class C1 : public Susi::System::Component {
+		public:
+			virtual void start() override {}
+			virtual void stop() override {}
+	};
+	class C2 : public C1 {};
+	class C3 : public C1 {};    
+
+    std::string test_config = "{"
+		"		\"c1\" : {},"
+		"		\"c2\" : {},"
+		"		\"c3\" : {}"		
+		"	}";
+
+	Susi::Util::Any::Object config = Susi::Util::Any::fromString(test_config);
+
+	auto manager = std::make_shared<Susi::System::ComponentManager>(config);
+
+	manager->registerComponent("c1",[](Susi::System::ComponentManager * mgr, Susi::Util::Any & config){ return std::shared_ptr<Susi::System::Component>{new C1{}};});
+	manager->registerComponent("c2",[](Susi::System::ComponentManager * mgr, Susi::Util::Any & config){ return std::shared_ptr<Susi::System::Component>{new C2{}};});
+	manager->registerComponent("c3",[](Susi::System::ComponentManager * mgr, Susi::Util::Any & config){ return std::shared_ptr<Susi::System::Component>{new C3{}};});
+
+
+	bool start = manager->startAll();
+	bool stop  = manager->stopAll();
+
+	EXPECT_TRUE(start);
+	EXPECT_TRUE(stop);
+	/*
+	Susi::Config cfg{};
+	cfg.loadConfig("config.json");
+
+	std::shared_ptr<Susi::System::ComponentManager> componentManager = Susi::System::createSusiComponentManager(cfg.getConfig());
+
+	bool start = componentManager->startAll();
+	bool stop  = componentManager->stopAll();
+
+	EXPECT_TRUE(start);
+	EXPECT_TRUE(stop);	
+	*/
+}
+
+TEST_F(ConfigTest, LoadConfigsFromDir){ 
+	Susi::Config cfg;
+
+	Susi::Util::Any cfg_content = Susi::Util::Any::Object{
+		{"foo","bar"}
+	};
+
+	io.makeDir("./configtest/sub");
+	io.makeDir("./configtest/sub/sub");
+	// Test valid json
+	io.writeFile("./configtest/config.json",cfg_content.toString());
+	io.writeFile("./configtest/config2.json",cfg_content.toString());
+	io.writeFile("./configtest/sub/config3.json",cfg_content.toString());
+	io.writeFile("./configtest/sub/sub/config4.json",cfg_content.toString());
+
+
+	cfg.setLoadCount(0);
+	cfg.loadConfig("./configtest");
+
+	EXPECT_EQ(4,cfg.getLoadCount());
 }
