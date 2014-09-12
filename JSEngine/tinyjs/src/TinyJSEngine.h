@@ -12,7 +12,11 @@
 #ifndef __TINYJS_ENGINE__
 #define __TINYJS_ENGINE__
 
+#include "tiny-js-read-only/TinyJS.h"
+
 #include <iostream>
+#include "logger/Logger.h"
+#include "util/Any.h"
 
 namespace Susi {
 	namespace JS {
