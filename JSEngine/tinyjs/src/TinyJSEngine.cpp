@@ -10,3 +10,31 @@
  */
 
 #include "TinyJSEngine.h"
+
+//Constructor
+//Susi::JS::Tiny::Engine::Engine(std::string addr) : susi_client{addr} {}
+Susi::JS::Tiny::Engine::Engine(std::string addr){}
+
+void Susi::JS::Tiny::Engine::run(std::string code) {
+	CTinyJS tiny;
+  	registerFunctions(&tiny);
+  	registerMathFunctions(&tiny);
+
+  	const char * buffer = code.c_str();
+  	
+  	//tiny.setVariable("XXX", "45");
+  	tiny.root->addChild("result", new CScriptVar("0",SCRIPTVAR_INTEGER));
+  
+  	try {
+    	tiny.execute(buffer);
+  	} catch (CScriptException *e) {
+    	printf("ERROR: %s\n", e->text.c_str());
+  	}
+
+  	bool pass = tiny.root->getParameter("result")->getBool();
+  	if(pass) {
+  		std::cout<<"Passed"<<std::endl;
+  	} else {
+  		std::cout<<"Failed"<<std::endl;
+  	}
+}
