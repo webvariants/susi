@@ -11,7 +11,7 @@
 
 	"dbmanager": [
 		{
-			"id"  : "auth",
+			"identifier" : "auth",
 			"type": "sqlite3",
 			"uri" : "./auth.sqlite3"
 		}
@@ -36,9 +36,7 @@
 	},
 
 	"sessionmanager": {
-		"lifetime": 600000,
-		"checkInterval": 1000
-
+		"lifetime": 600000
 	},
 
 	"statecontroller": {
@@ -46,7 +44,12 @@
 	},
 
 	"syscallcontroller": {
-		"config": "./syscall.conf"
+		"threads": 4,
+		"queuelen": 16,
+		"commands": {
+			"ECHO" : "echo $arg",
+			"PWD"  : "pwd"
+		}
 	},
 
 	"httpserver": {

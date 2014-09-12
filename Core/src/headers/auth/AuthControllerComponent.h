@@ -29,9 +29,12 @@ protected:
 
 public:
 	ControllerComponent(Susi::System::ComponentManager * mgr, std::string db_identifier) :
-		Controller{db_identifier},
-		Susi::System::BaseComponent{mgr}
-		{}
+		Controller{
+			mgr->getComponent<Susi::DB::DBComponent>("dbmanager"),
+			mgr->getComponent<Susi::Sessions::SessionManagerComponent>("sessionmanager"),
+			db_identifier
+		},
+		Susi::System::BaseComponent{mgr} {}
 
 	virtual void start() override {
 		subscribe("auth::login", [this](Susi::Events::EventPtr evt){handleLogin(std::move(evt));});

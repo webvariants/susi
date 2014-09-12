@@ -25,7 +25,7 @@
 #include "iocontroller/IOControllerComponent.h"
 #include "sessions/SessionManagerComponent.h"
 #include "states/StateControllerComponent.h"
-#include "syscall/SysCallControllerComponent.h"
+#include "syscall/SyscallComponent.h"
 #include "webstack/HttpServerComponent.h"
 
 namespace Susi {

@@ -34,6 +34,7 @@ namespace Susi {
 
 				virtual void stop() override {
 					unsubscribeAll();
+					killall();
 				}
 
 				~StarterComponent() {
@@ -63,7 +64,7 @@ namespace Susi {
 
 				void handleStop(Susi::Events::EventPtr event) {
 					try{
-						execute();
+						killall();
 					}catch(const std::exception & e){
 						std::string msg = "Error in handleStop(): ";
 						msg += e.what();
