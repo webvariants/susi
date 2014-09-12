@@ -62,6 +62,7 @@ void Susi::Config::loadConfig(std::string path){
 		std::string msg = "Susi::Config::loadConfig ";
 		msg += ("File: " + path);
 		Susi::Logger::info(msg);
+		load_count++;
 
 	} else if(io.checkDir(path)) {
 		rec_dir(path);
@@ -82,6 +83,14 @@ void Susi::Config::rec_dir(const std::string & path)
 
 void Susi::Config::setFileExtension(std::string _file_extension) {
 	file_extension = _file_extension;
+}
+
+int Susi::Config::getLoadCount() {
+	return load_count;
+}
+
+void Susi::Config::setLoadCount(int _load_count) {
+	load_count = _load_count;
 }
 
 void Susi::Config::mergeOptions(std::string key, Susi::Util::Any configVar) {

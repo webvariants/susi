@@ -272,5 +272,8 @@ TEST_F(ConfigTest, LoadConfigsFromDir){
 	io.writeFile("./configtest/sub/sub/config4.json",cfg_content.toString());
 
 
+	cfg.setLoadCount(0);
 	cfg.loadConfig("./configtest");
+
+	EXPECT_EQ(4,cfg.getLoadCount());
 }

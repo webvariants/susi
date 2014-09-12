@@ -30,6 +30,7 @@ protected:
 
 	// file extension
 	std::string file_extension = "json";
+	int load_count = 0;
 
 	// holds the config
 	Any _configVar;	
@@ -82,6 +83,9 @@ public:
 	std::string getHelp();
 
 	void setFileExtension(std::string _file_extension);
+	
+	int getLoadCount();
+	void setLoadCount(int _load_count);
 };
 
 }
