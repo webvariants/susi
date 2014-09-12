@@ -232,3 +232,14 @@ bool Susi::IOController::checkFile(Poco::Path dir) {
 		return false;
 	}	
 }
+
+bool Susi::IOController::checkFileExtension(std::string path, std::string file_extension) {
+
+	if(path.length() >= file_extension.length() + 1) {
+		std::string sub_str = path.substr(path.length() - file_extension.length() - 1);
+
+		return (sub_str == ("." + file_extension));
+	}
+
+	return false;
+}
