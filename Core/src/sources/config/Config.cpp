@@ -11,51 +11,86 @@
 
  #include "config/Config.h"
 
-void Susi::Config::loadConfig(std::string filename){
-	Susi::IOController io;
+void Susi::Config::loadConfig(std::string path){	
  	std::string content = "";
  	Susi::Util::Any configVar;
 
-
-	try {
- 		content = io.readFile(filename);
- 	} catch(const std::exception & e){
- 		std::string msg = "Susi::Config::loadConfig "; 		
-		msg += "Error reading Config File: " + filename;
-		msg += e.what();
-		Susi::Logger::error(msg);		
-		throw std::runtime_error(msg);
-	}
-
-	try {
-		configVar = Susi::Util::Any::fromString(content);
-	} catch(const std::exception & e){		
-		std::string msg = "Susi::Config::loadConfig ";
-		msg += ("File: " + filename + " file cant be parsed as json!");
-		msg += e.what();
+ 	if(!io.checkDir(path) && !io.checkFile(path)) {
+ 		std::string msg = "Susi::Config::loadConfig ";
+		msg += ("File: " + path + " file doesn't exist!");
 		Susi::Logger::error(msg);
+		throw std::runtime_error("file doesn't exist!");
+ 	}
 
-		throw std::runtime_error(msg);
-	}
+ 	if(io.checkFile(path) && io.checkFileExtension(path, file_extension)) { 		
+		try {
+	 		content = io.readFile(path);
+	 	} catch(const std::exception & e){
+	 		std::string msg = "Susi::Config::loadConfig "; 		
+			msg += "Error reading Config File: " + path;
+			msg += e.what();
+			Susi::Logger::error(msg);		
+			throw std::runtime_error(msg);
+		}
 
-	if(configVar.getType() != Susi::Util::Any::OBJECT) {
+		try {
+			configVar = Susi::Util::Any::fromString(content);
+		} catch(const std::exception & e){		
+			std::string msg = "Susi::Config::loadConfig ";
+			msg += ("File: " + path + " file cant be parsed as json!");
+			msg += e.what();
+			Susi::Logger::error(msg);
+
+			throw std::runtime_error(msg);
+		}
+
+		if(configVar.getType() != Susi::Util::Any::OBJECT) {
+			std::string msg = "Susi::Config::loadConfig ";
+			msg += ("File: " + path + " file doesn't contain a (json) object");
+			Susi::Logger::error(msg);
+			throw std::runtime_error("file doesn't contain a (json) object");	
+		}
+
+		if(_configVar.isNull()) {
+			// first load or empty
+			_configVar = configVar;		
+		} else {
+			//merge vars
+			mergeOptions("", configVar);		
+		}
+
 		std::string msg = "Susi::Config::loadConfig ";
-		msg += ("File: " + filename + " file doesn't contain a (json) object");
-		Susi::Logger::error(msg);
-		throw std::runtime_error("file doesn't contain a (json) object");	
-	}
+		msg += ("File: " + path);
+		Susi::Logger::info(msg);
+		load_count++;
 
-	if(_configVar.isNull()) {
-		// first load or empty
-		_configVar = configVar;		
-	} else {
-		//merge vars
-		mergeOptions("", configVar);		
+	} else if(io.checkDir(path)) {
+		rec_dir(path);
 	}
+}
 
-	std::string msg = "Susi::Config::loadConfig ";
-	msg += ("File: " + filename);
-	Susi::Logger::info(msg);
+void Susi::Config::rec_dir(const std::string & path)
+{
+  Poco::DirectoryIterator end;
+  for (Poco::DirectoryIterator it(path); it != end; ++it) {
+  	if(!it->isDirectory()) {
+  		loadConfig(it->path());  		
+	}else if (it->isDirectory()) {
+		rec_dir(it->path());
+	}
+  }
+}
+
+void Susi::Config::setFileExtension(std::string _file_extension) {
+	file_extension = _file_extension;
+}
+
+int Susi::Config::getLoadCount() {
+	return load_count;
+}
+
+void Susi::Config::setLoadCount(int _load_count) {
+	load_count = _load_count;
 }
 
 void Susi::Config::mergeOptions(std::string key, Susi::Util::Any configVar) {
