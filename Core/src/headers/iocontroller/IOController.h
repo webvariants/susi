@@ -12,6 +12,7 @@
 #ifndef __IO_CONTROLLER__
 #define __IO_CONTROLLER__
 
+#include <Poco/DirectoryIterator.h>
 #include <Poco/Path.h>
 #include <Poco/File.h>
 
@@ -49,6 +50,8 @@ namespace Susi {
 		Poco::Path getAbsDirFromString(std::string path);
 		bool checkDir(Poco::Path dir); // returns true if dir exists or false if dir not exists or is a file
 		bool checkFile(Poco::Path dir); // returns true if file exists or false if file not exists
+
+		bool checkFileExtension(std::string path, std::string file_extension);
 	};
 }
 

@@ -26,8 +26,13 @@ using Susi::Util::Any;
 
 class Config {
 protected:
+	Susi::IOController io;
+
+	// file extension
+	std::string file_extension = "json";
+
 	// holds the config
-	Any _configVar;
+	Any _configVar;	
 
 	// holds infos to all possible commandline options
 	std::map<std::string,std::string> _knownCommandLineOptions;
@@ -35,6 +40,8 @@ protected:
 	// used to set a value in the config object (should be used by parseCommandLine())
 	void set(std::string key, Any value);
 
+	// recursive config loading, in alphabetical order
+	void rec_dir(const std::string & path);
 public:
 	Config(){};
 	// constructs new config object
@@ -51,7 +58,7 @@ public:
 
 	Config(Susi::Util::Any cfg) { _configVar = cfg; }
 
-	void loadConfig(std::string filename);
+	void loadConfig(std::string path);
 	void mergeOptions(std::string key, Any configVar);
 
 	// register a commandline option which will be recognized while parsing
@@ -73,6 +80,8 @@ public:
 
 	// returns a help message which shows which options are available
 	std::string getHelp();
+
+	void setFileExtension(std::string _file_extension);
 };
 
 }
