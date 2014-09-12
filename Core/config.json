@@ -44,7 +44,12 @@
 	},
 
 	"syscallcontroller": {
-		"config": "./syscall.conf"
+		"threads": 4,
+		"queuelen": 16,
+		"commands": {
+			"ECHO" : "echo $arg",
+			"PWD"  : "pwd"
+		}
 	},
 
 	"httpserver": {

@@ -213,21 +213,36 @@ TEST_F(ConfigTest,MultiConfigSupport){
 
 TEST_F(ConfigTest, LoadAllStartStop){
 	// make test independed from config file
+	
+	class C1 : public Susi::System::Component {
+		public:
+			virtual void start() override {}
+			virtual void stop() override {}
+	};
+	class C2 : public C1 {};
+	class C3 : public C1 {};    
+
+    std::string test_config = "{"
+		"		\"c1\" : {},"
+		"		\"c2\" : {},"
+		"		\"c3\" : {}"		
+		"	}";
+
+	Susi::Util::Any::Object config = Susi::Util::Any::fromString(test_config);
+
+	auto manager = std::make_shared<Susi::System::ComponentManager>(config);
+
+	manager->registerComponent("c1",[](Susi::System::ComponentManager * mgr, Susi::Util::Any & config){ return std::shared_ptr<Susi::System::Component>{new C1{}};});
+	manager->registerComponent("c2",[](Susi::System::ComponentManager * mgr, Susi::Util::Any & config){ return std::shared_ptr<Susi::System::Component>{new C2{}};});
+	manager->registerComponent("c3",[](Susi::System::ComponentManager * mgr, Susi::Util::Any & config){ return std::shared_ptr<Susi::System::Component>{new C3{}};});
+
+
+	bool start = manager->startAll();
+	bool stop  = manager->stopAll();
+
+	EXPECT_TRUE(start);
+	EXPECT_TRUE(stop);
 	/*
-	class C1 : public Component {};
-	class C2 : public Component {};
-	class C3 : public Component {};
-
-	mgr->registerComponent("c1",[](){return std::make_shared<C1>();});
-	mgr->registerComponent("c2",[](){return std::make_shared<C2>();});
-	mgr->registerComponent("c3",[](){return std::make_shared<C3>();});
-
-
-	cfg {"c1",{}}{"c2",{}}
-
-    */
-
-
 	Susi::Config cfg{};
 	cfg.loadConfig("config.json");
 
@@ -238,4 +253,5 @@ TEST_F(ConfigTest, LoadAllStartStop){
 
 	EXPECT_TRUE(start);
 	EXPECT_TRUE(stop);	
+	*/
 }

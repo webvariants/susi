@@ -73,7 +73,7 @@ int main(int argc, char** argv){
 	//componentManager->startComponent("heartbeat");
 	componentManager->startAll();
 
-	setupLogger(componentManager,"heartbeat::one");
+	//setupLogger(componentManager,"syscall::exec");
 	
 
 	// register signal SIGINT and signal handler  
