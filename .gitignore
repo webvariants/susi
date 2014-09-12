@@ -4,3 +4,4 @@ Core/build/
 bin/
 cppcheck_output.txt
 /.project
+/susi_package.deb
