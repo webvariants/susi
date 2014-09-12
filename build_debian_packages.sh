@@ -37,6 +37,7 @@ cp /usr/local/lib/libPocoUtil.so.23 susi_package/usr/lib/
 cp /usr/local/lib/libPocoJSON.so.23 susi_package/usr/lib/
 cp /usr/local/lib/libPocoNet.so.23 susi_package/usr/lib/
 cp /usr/local/lib/libPocoXML.so.23 susi_package/usr/lib/
+cp /usr/local/lib64/libsoci_core.so.3.2 susi_package/usr/lib/
 
 dpkg -b susi_package
 
