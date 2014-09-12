@@ -34,7 +34,6 @@ namespace Susi{
 			std::mutex mutex;
 			std::chrono::milliseconds stdLifetime;
 			bool initialized = false;
-			long subId;
 			int checkSessions();
 		public:
 			bool checkSession(std::string id);
@@ -43,8 +42,7 @@ namespace Susi{
 			bool killSession(std::string id);
 			bool setSessionAttribute(std::string sessionID, std::string key, Susi::Util::Any value);
 			Susi::Util::Any getSessionAttribute(std::string sessionID, std::string key);
-			bool init(std::chrono::milliseconds stdSessionLifetime, std::chrono::milliseconds checkInterval);
-			void stop();
+			bool init(std::chrono::milliseconds stdSessionLifetime);
 			bool pushSessionAttribute(std::string sessionID, std::string key, Susi::Util::Any value);
 			bool removeSessionAttribute(std::string sessionID, std::string key);
 

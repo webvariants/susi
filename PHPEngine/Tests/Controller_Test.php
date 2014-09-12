@@ -144,8 +144,8 @@ $GLOBALS['test_starter_id'] = $susi->registerProcessor("heartbeat::five",
 			$susi->publish($evt, 
  				// finish callback
 				function($event) use($susi, $p1, $p2, $c1) {
-					echo "Test Finished Callback called >>> ";	
-					print_r($event->getData());									
+					echo "<<< Test Finished Callback called >>> \n";	
+					//print_r($event->getData());									
 
 					// remove events
 	 				$susi->unregisterProcessor($p1);
@@ -155,7 +155,7 @@ $GLOBALS['test_starter_id'] = $susi->registerProcessor("heartbeat::five",
 	 				// use this
 	 				$susi->unregisterProcessor($GLOBALS['test_starter_id']);	 				
 	 				// or stop test with 
-	 				// exit(0);
+	 				exit(0);
 				}
 			);	 
 					

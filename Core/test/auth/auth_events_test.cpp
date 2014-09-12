@@ -17,7 +17,7 @@
 #include "events/global.h"
 //#include "logger/Logger.h"
 
-class AuthEventInterfaceTest : public ::testing::Test {
+/*class AuthEventInterfaceTest : public ::testing::Test {
 	protected:
 		std::mutex mutex;
 		bool callbackCalledOne = false;
@@ -206,4 +206,4 @@ TEST_F(AuthEventInterfaceTest, GetUsername) {
 		condTwo.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledTwo;});
 		EXPECT_TRUE(callbackCalledTwo);
 	}
-}
+}*/

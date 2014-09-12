@@ -47,6 +47,10 @@ public:
 		loadConfig(filename);
 	}
 
+	Config(const char *filename) : Config{std::string{filename}} {}
+
+	Config(Susi::Util::Any cfg) { _configVar = cfg; }
+
 	void loadConfig(std::string filename);
 	void mergeOptions(std::string key, Any configVar);
 

@@ -13,7 +13,7 @@
 
 using namespace Susi::Sessions;
 
-bool SessionManager::init(std::chrono::milliseconds stdSessionLifetime, std::chrono::milliseconds checkInterval) {
+bool SessionManager::init(std::chrono::milliseconds stdSessionLifetime) {
 	std::lock_guard<std::mutex> lock(mutex);
 	// Causes problem in tests, since we have a world object which does all the init stuff
 	// Second init fails...
@@ -24,27 +24,14 @@ bool SessionManager::init(std::chrono::milliseconds stdSessionLifetime, std::chr
 	initialized = true;
 	if(stdLifetime.count() <= 0) {
 		stdLifetime = std::chrono::milliseconds(1000);
+	} else {
+		this->stdLifetime = stdSessionLifetime;
 	}
-	this->stdLifetime = stdSessionLifetime;
-
-	Susi::Events::Consumer handler{[this](Susi::Events::SharedEventPtr event){
-		this->checkSessions();
-	}};
-
-	subId = Susi::Events::subscribe("heartbeat::one",handler);	
 	
 	return true;
 }
 
-void SessionManager::stop() {
-	std::unique_lock<std::mutex> lock(mutex);
-	Susi::Events::unsubscribe(subId);
-}
-
-
-SessionManager::~SessionManager(){
-	this->stop();
-}
+SessionManager::~SessionManager(){}
 
 int SessionManager::checkSessions(){
 	//std::cout<<"aquiere sessions mutex"<<std::endl;

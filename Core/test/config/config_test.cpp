@@ -1,4 +1,6 @@
 #include "gtest/gtest.h"
+#include "world/ComponentManager.h"
+#include "world/system_setup.h"
 #include "config/Config.h"
 #include "iocontroller/IOController.h"
 
@@ -22,37 +24,36 @@ TEST_F(ConfigTest, Contruct) {
 	EXPECT_NO_THROW({
 		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
 	});
+}
 
-	
-
-	// Test invalid json
-	//io.writeFile("./configtest/config.cfg",cfg.toString()+"wrongformat");
+TEST_F(ConfigTest, ContructInvalidJson) {
 	io.writeFile("./configtest/config.cfg","{\"foo\",\"bar\", 22");
 	EXPECT_THROW({
 		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
 	},std::runtime_error);
+}
 
-	
+
+TEST_F(ConfigTest, ContructWrongFormatJson) {
 	// Test valid json which is no object;
 	io.writeFile("./configtest/config.cfg","\"wrongformat\"");
 	EXPECT_THROW({
 		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
 	},std::runtime_error);
+}
 
-
+TEST_F(ConfigTest, ContructConfigMissing) {
 	// Test nonexistent file;
 	EXPECT_THROW({
 		auto config = std::make_shared<Susi::Config>("./configtest/wrongname.cfg");
 	},std::runtime_error);
-
 }
-
 
 
 TEST_F(ConfigTest, Get){
 	using Susi::Util::Any;
 	Any cfg = Any::Object{{"foo",Any::Object{{"bar", Any::Object{{"baz",123}}}}}};
-	std::cout<<"CO:"<<cfg.toString()<<std::endl;
+	
 	io.writeFile("./configtest/config.cfg",cfg.toString());
 	EXPECT_NO_THROW({
 		auto config = std::make_shared<Susi::Config>("./configtest/config.cfg");
@@ -197,9 +198,6 @@ TEST_F(ConfigTest,MultiConfigSupport){
 
 
 	Susi::Util::Any conf = cfg.getConfig();
-
-	std::cout<<"RESULT: "<<conf.toString()<<std::endl;
-	
 	
 	EXPECT_TRUE(cfg.get("foo").isString());
 	EXPECT_EQ("\"bar\"",cfg.get("foo").toString());
@@ -211,4 +209,49 @@ TEST_F(ConfigTest,MultiConfigSupport){
 	EXPECT_TRUE(cfg.get("data").isString());
 	EXPECT_EQ("\"test2\"",cfg.get("data").toString());
 	
+}
+
+TEST_F(ConfigTest, LoadAllStartStop){
+	// make test independed from config file
+	
+	class C1 : public Susi::System::Component {
+		public:
+			virtual void start() override {}
+			virtual void stop() override {}
+	};
+	class C2 : public C1 {};
+	class C3 : public C1 {};    
+
+    std::string test_config = "{"
+		"		\"c1\" : {},"
+		"		\"c2\" : {},"
+		"		\"c3\" : {}"		
+		"	}";
+
+	Susi::Util::Any::Object config = Susi::Util::Any::fromString(test_config);
+
+	auto manager = std::make_shared<Susi::System::ComponentManager>(config);
+
+	manager->registerComponent("c1",[](Susi::System::ComponentManager * mgr, Susi::Util::Any & config){ return std::shared_ptr<Susi::System::Component>{new C1{}};});
+	manager->registerComponent("c2",[](Susi::System::ComponentManager * mgr, Susi::Util::Any & config){ return std::shared_ptr<Susi::System::Component>{new C2{}};});
+	manager->registerComponent("c3",[](Susi::System::ComponentManager * mgr, Susi::Util::Any & config){ return std::shared_ptr<Susi::System::Component>{new C3{}};});
+
+
+	bool start = manager->startAll();
+	bool stop  = manager->stopAll();
+
+	EXPECT_TRUE(start);
+	EXPECT_TRUE(stop);
+	/*
+	Susi::Config cfg{};
+	cfg.loadConfig("config.json");
+
+	std::shared_ptr<Susi::System::ComponentManager> componentManager = Susi::System::createSusiComponentManager(cfg.getConfig());
+
+	bool start = componentManager->startAll();
+	bool stop  = componentManager->stopAll();
+
+	EXPECT_TRUE(start);
+	EXPECT_TRUE(stop);	
+	*/
 }
