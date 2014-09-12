@@ -37,10 +37,6 @@ target_link_libraries(susi-tinyjsengine soci_sqlite3)
 target_link_libraries(susi-tinyjsengine soci_firebird)
 target_link_libraries(susi-tinyjsengine pthread)
 
-target_link_libraries(susi-tinyjsengine icuuc)
-target_link_libraries(susi-tinyjsengine icui18n)
-
-
 file( GLOB TESTFILES ${CMAKE_SOURCE_DIR}/test/*.cpp )
 
 add_executable( susi-tinyjsengine-tests ${SRCFILES} ${TESTFILES} )
@@ -53,9 +49,6 @@ target_link_libraries(susi-tinyjsengine-tests soci_core)
 target_link_libraries(susi-tinyjsengine-tests soci_sqlite3)
 target_link_libraries(susi-tinyjsengine-tests soci_firebird)
 target_link_libraries(susi-tinyjsengine-tests pthread)
-
-target_link_libraries(susi-tinyjsengine-tests icuuc)
-target_link_libraries(susi-tinyjsengine-tests icui18n)
 
 target_link_libraries(susi-tinyjsengine-tests ${CMAKE_SOURCE_DIR}/test/gtest-1.7.0/lib/.libs/libgtest.so.0)
 target_link_libraries(susi-tinyjsengine-tests ${CMAKE_SOURCE_DIR}/test/gtest-1.7.0/lib/.libs/libgtest_main.so.0)
