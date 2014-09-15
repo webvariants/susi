@@ -1,6 +1,10 @@
 #include "util/ComponentTest.h"
 
 class AuthControllerComponentTest : public ComponentTest {
+
+public:
+	//on live system, sessionID will be set by handlePublish from ApiServerForComponent
+	std::string sessionID = "abc";
 protected:
 	
 	virtual void SetUp() override {
@@ -31,17 +35,56 @@ protected:
 		auto evt = createEvent("auth::login");
 		evt->payload["username"] = "John";
 		evt->payload["password"] = "Doe";
+		evt->sessionID = sessionID;
 		//fire event
 		auto result = publish_sync(std::move(evt));
 		//check event
-		EXPECT_EQ(true, static_cast<bool>(result->payload["success"]));
+		EXPECT_TRUE(static_cast<bool>(result->payload["success"]));
+
+		auto evt2 = createEvent("auth::isLoggedIn");
+		evt2->sessionID = sessionID;
+		auto result2 = publish_sync(std::move(evt2));
+		EXPECT_TRUE(static_cast<bool>(result2->payload["success"]));
+
+		auto evt3 = createEvent("auth::getUsername");
+		evt3->sessionID = sessionID;
+		auto result3 = publish_sync(std::move(evt3));
+		EXPECT_EQ("John", static_cast<std::string>(result3->payload["username"]));
+				
+		auto evt4 = createEvent("auth::logout");		
+		evt4->sessionID = sessionID;
+		auto result4 = publish_sync(std::move(evt4));
+
+		auto evt5 = createEvent("auth::isLoggedIn");
+		evt5->sessionID = sessionID;
+		auto result5 = publish_sync(std::move(evt5));
+		EXPECT_FALSE(static_cast<bool>(result5->payload["success"]));
+		
 	}
 
 	virtual void BadCases() override {
-
+		//create event
+		auto evt = createEvent("auth::login");
+		evt->payload["username"] = "foo";
+		evt->payload["password"] = "bar";
+		evt->sessionID = sessionID;
+		//fire event
+		auto result = publish_sync(std::move(evt));
+		//check event
+		EXPECT_EQ(false, static_cast<bool>(result->payload["success"]));
 	}
 
 	virtual void EdgeCases() override {
+		// missing param
+		auto evt = createEvent("auth::login");
+		evt->payload["username"] = "foo";
+		evt->sessionID = sessionID;				
+		auto result = publish_sync(std::move(evt));		
+
+
+		EXPECT_THROW ({
+			EXPECT_EQ(false, static_cast<bool>(result->payload["success"]));
+		},std::exception);
 
 	}
 
