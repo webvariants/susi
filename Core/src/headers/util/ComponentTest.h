@@ -23,11 +23,8 @@ class ComponentTest : public ::testing::Test {
 public:
 	ComponentTest(){
 		Susi::Logger::setLevel(0);
-		Susi::IOController io;
-		io.writeFile("/tmp/config.json",configString);
-		Susi::Config cfg{"/tmp/config.json"};
-		io.deletePath("/tmp/config.json");
-		componentManager = Susi::System::createSusiComponentManager(cfg.getConfig());
+		Susi::Util::Any::Object cfg = Susi::Util::Any::fromString(configString);
+		componentManager = Susi::System::createSusiComponentManager(cfg);
 		eventManager = componentManager->getComponent<Susi::Events::ManagerComponent>("eventsystem");
 	}
 protected:
@@ -106,10 +103,13 @@ protected:
 	bool unsubscribe(long id){
 		return eventManager->unsubscribe(id);
 	}
+	void publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer{}){
+		eventManager->publish(std::move(event),finishCallback);
+	}
 	Susi::Events::EventPtr createEvent(std::string topic){
 		return eventManager->createEvent(topic);
 	}
-
+	
 	Susi::Events::SharedEventPtr waitForConsumerEvent(std::string topic,std::chrono::milliseconds timeout){
 		callbackCalled = false;
 		sharedEvent.reset();

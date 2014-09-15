@@ -17,12 +17,9 @@ protected:
 		virtual void onNewHost(std::string & addr) override {
 			std::lock_guard<std::mutex> lock{_test->mutex};
 			_test->list.push_back(std::pair<std::string,std::string>{_ownAddr,addr});
-			std::cout<<_ownAddr<<": "<<addr<<" appears online!"<<std::endl;
 		}
 	};
 
-	virtual void SetUp() override {
-	}
 	virtual void TearDown() override {
 		list.clear();
 	}
@@ -30,7 +27,6 @@ protected:
 };
 
 TEST_F(AutoDiscoveryManagerTest, Basic) {
-
 	TestManager manager1{"239.255.255.250:12345","Host1", this};
 	TestManager manager2{"239.255.255.250:12345","Host2", this};
 	TestManager manager3{"239.255.255.250:12345","Host3", this};
