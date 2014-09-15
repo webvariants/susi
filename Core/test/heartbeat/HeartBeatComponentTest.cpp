@@ -12,8 +12,8 @@ protected:
 	}
 
 	virtual void GoodCases() override {
-		auto sharedEvent = waitForConsumerEvent("heartbeat::one",std::chrono::milliseconds{1100});
-		EXPECT_TRUE(sharedEvent.get()!=nullptr);
+		auto event = waitForConsumerEvent("heartbeat::one",std::chrono::milliseconds{1100});
+		EXPECT_TRUE(event.get()!=nullptr);
 	}
 
 	virtual void BadCases() override {
