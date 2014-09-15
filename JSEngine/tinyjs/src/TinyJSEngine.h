@@ -13,18 +13,26 @@
 #define __TINYJS_ENGINE__
 
 #include "tiny-js-read-only/TinyJS.h"
+#include "tiny-js-read-only/TinyJS_Functions.h"
+#include "tiny-js-read-only/TinyJS_MathFunctions.h"
 
 #include <iostream>
 #include "logger/Logger.h"
 #include "util/Any.h"
+#include "apiserver/ApiClient.h"
 
 namespace Susi {
 	namespace JS {
 		namespace Tiny {
-			class Engine {
-				public:
-					Engine(std::string addr, std::string file="") {}
+			class Engine {				
+				protected:
+					//Susi::Api::ApiClient susi_client;
 
+				public:
+					Engine(std::string addr);
+
+					void runFile(std::string filename);
+					void run(std::string code);		
 			};
 		}
 	}	
