@@ -54,6 +54,12 @@ public:
 	bool unsubscribe(long id){
 		return eventManager->unsubscribe(id);
 	}
+	void publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer{}){
+		eventManager->publish(std::move(event),finishCallback);
+	}
+	Susi::Events::EventPtr createEvent(std::string topic){
+		return eventManager->createEvent(topic);
+	}
 
 
 	bool unsubscribeAll(){
@@ -72,12 +78,6 @@ public:
 		return result;
 	}
 
-	void publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer{}){
-		eventManager->publish(std::move(event),finishCallback);
-	}
-	Susi::Events::EventPtr createEvent(std::string topic){
-		return eventManager->createEvent(topic);
-	}
 };
 
 }
