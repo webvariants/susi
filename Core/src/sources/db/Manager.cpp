@@ -26,7 +26,9 @@ void Susi::DB::Manager::init(Susi::Util::Any config) {
 		for(std::size_t i=0; i<config.size(); ++i){
 			try{
 				Susi::Util::Any entry = config[i];
-				std::cout<<"INIT:"<<entry.toString()<<" TYPE:"<<entry.isObject()<<std::endl;
+
+				Susi::Logger::info("INIT:" + entry.toString() +" TYPE:" + (entry.isObject() ? "Object" : "Wrong Type"));
+
 				std::string identifier = entry["identifier"]; 
 				std::string dbtype     = entry["type"];
 				std::string connectURI = entry["uri"];

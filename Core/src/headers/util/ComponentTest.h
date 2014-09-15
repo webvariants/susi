@@ -26,10 +26,19 @@ public:
 		Susi::Util::Any::Object cfg = Susi::Util::Any::fromString(configString);
 		componentManager = Susi::System::createSusiComponentManager(cfg);
 		eventManager = componentManager->getComponent<Susi::Events::ManagerComponent>("eventsystem");
+
+		io.makeDir("./component_test");
 	}
+
+	~ComponentTest(){
+		io.deletePath("./component_test");	
+	}
+
 protected:
 	std::shared_ptr<Susi::System::ComponentManager> componentManager;
 	std::shared_ptr<Susi::Events::ManagerComponent> eventManager;
+
+	Susi::IOController io;
 
 	virtual void GoodCases() = 0;
 	virtual void BadCases() = 0;
@@ -48,7 +57,7 @@ protected:
 									"{"
 									"\"identifier\" : \"auth\","
 									"\"type\": \"sqlite3\","
-									"\"uri\" : \"./auth.sqlite3\""
+									"\"uri\" : \"./component_test/auth.sqlite3\""
 									"}"
 								"],"
 								"\"authcontroller\": {"
@@ -139,6 +148,23 @@ protected:
 		}
 		unsubscribe(id);
 		return std::move(event);
+	}
+
+	Susi::Events::SharedEventPtr publish_sync(Susi::Events::EventPtr event){
+		Susi::Events::SharedEventPtr result;
+		std::condition_variable cv;
+		bool called = false;
+		std::mutex mutex;
+		publish(std::move(event),[&cv, &called, &result](Susi::Events::SharedEventPtr evt){
+			result = evt;
+			called = true;
+			cv.notify_one();
+		});
+		{
+			std::unique_lock<std::mutex> lock{mutex};
+			cv.wait(lock,[&called](){return called;});
+		}
+		return result;
 	}
 
 private:

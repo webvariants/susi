@@ -60,6 +60,7 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 		return std::shared_ptr<Component>{new Susi::Auth::ControllerComponent{mgr, db_identifier}};
 	});
 	manager->registerDependency("authcontroller","eventsystem");
+	manager->registerDependency("authcontroller","dbmanager");
 
 	/**
 	 * TCP Api Server
