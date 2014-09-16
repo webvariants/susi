@@ -39,7 +39,13 @@ void Susi::States::StateControllerComponent::handleSetState(Susi::Events::EventP
 	try{
 		std::string stateID  = event->payload["stateID"];
 		Susi::Util::Any value = event->payload["value"];
-		event->payload["success"] = setState(stateID, value);
+
+		if(value.isNull()) {
+			event->payload["success"] = false;
+		} else {
+			event->payload["success"] = setState(stateID, value);
+		}
+		
 	}catch(const std::exception & e){
 		event->payload["success"] = false;
 		std::string msg = "Error in handleSetState(): ";
@@ -51,8 +57,13 @@ void Susi::States::StateControllerComponent::handleSetState(Susi::Events::EventP
 void Susi::States::StateControllerComponent::handleGetState(Susi::Events::EventPtr event) {
 	try{
 		std::string stateID  = event->payload["stateID"];
-		event->payload["value"] = getState(stateID);
-		event->payload["success"] = true;
+		Susi::Util::Any value = getState(stateID);
+		event->payload["value"] = value;
+		if(value.isNull()) {
+			event->payload["success"] = false;
+		} else {
+			event->payload["success"] = true;
+		}	
 	}catch(const std::exception & e){
 		event->payload["success"] = false;
 		std::string msg = "Error in handleGetState(): ";
@@ -66,7 +77,12 @@ void Susi::States::StateControllerComponent::handleSetPersistentState(Susi::Even
 	try{
 		std::string stateID  = event->payload["stateID"];
 		Susi::Util::Any value = event->payload["value"];
-		event->payload["success"] = setPersistentState(stateID, value);
+
+		if(value.isNull()) {
+			event->payload["success"] = false;
+		} else {
+			event->payload["success"] = setPersistentState(stateID, value);
+		}
 	}catch(const std::exception & e){
 		event->payload["success"] = false;
 		std::string msg = "Error in handleSetPersistentState(): ";
@@ -78,8 +94,13 @@ void Susi::States::StateControllerComponent::handleSetPersistentState(Susi::Even
 void Susi::States::StateControllerComponent::handleGetPersistentState(Susi::Events::EventPtr event) {
 	try{
 		std::string stateID  = event->payload["stateID"];
-		event->payload["value"] = getPersistentState(stateID);
-		event->payload["success"] = true;
+		Susi::Util::Any value = getPersistentState(stateID);
+		event->payload["value"] = value;
+		if(value.isNull()) {
+			event->payload["success"] = false;
+		} else {
+			event->payload["success"] = true;
+		}		
 	}catch(const std::exception & e){
 		event->payload["success"] = false;
 		std::string msg = "Error in handleGetPersistentState(): ";

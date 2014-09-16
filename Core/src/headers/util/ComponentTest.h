@@ -31,7 +31,7 @@ public:
 	}
 
 	~ComponentTest(){
-		//io.deletePath("./component_test");	
+		io.deletePath("./component_test");	
 	}
 
 protected:
