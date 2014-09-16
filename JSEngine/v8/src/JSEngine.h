@@ -23,7 +23,7 @@
 #include "logger/Logger.h"
 #include "util/Any.h"
 #include "events/EventManager.h"
-#include "apiserver/ApiClient.h"
+#include "apiserver/BasicApiClient.h"
 
 namespace Susi {
 namespace JS {
@@ -32,23 +32,23 @@ namespace V8 {
 
 
 struct EngineToBridgeMessage {
-	enum Type {PUBLISH, SUBSCRIBECONSUMER, SUBSCRIBEPROCESSOR, UNSUBSCRIBE};
+	enum Type {PUBLISH, SUBSCRIBECONSUMER, SUBSCRIBEPROCESSOR, ACKNOWLEDGE, UNSUBSCRIBE};
 	Type type;
 
 	std::string topic;
 
 	// For publish
 	Susi::Util::Any payload;
+
+	// For Acknowledge
+	Susi::Events::Event event;
 };
 
 struct BridgeToEngineMessage {
 	enum Type {CONSUMER, PROCESSOR, ACKNOWLEDGE};
 	Type type;
-	// For Consumer
-	Susi::Events::SharedEventPtr sharedevent;
-
-	// For Processor
-	Susi::Events::SharedEventPtr event;
+	// For All Types
+	Susi::Events::Event event;
 };
 
 using namespace v8;
@@ -110,6 +110,12 @@ protected:
 		Susi::Util::Any obj = fromJS(args[0]);
 		message.topic = obj["topic"].toString();
 		message.payload = obj["payload"];
+		long cbID = std::chrono::system_clock::now().time_since_epoch().count();
+		Handle<Function> cb = Handle<Function>::Cast(args[1]);
+		if(!cb.IsEmpty()) {
+			finishedCbs[cbID] = cb;
+			message.payload["finishedCbID"] = cbID;
+		}
 		output_channel->put(message);
 		return Undefined();
 	}
@@ -207,8 +213,8 @@ protected:
 							switch(message.type) {
 
 								case BridgeToEngineMessage::CONSUMER: {
-									Handle<Value> evt = fromCPP(message.sharedevent->toAny());
-									std::vector<Handle<Function>> callbacks{consumers.at(message.sharedevent->topic)};
+									Handle<Value> evt = fromCPP(message.event.toAny());
+									std::vector<Handle<Function>> callbacks{consumers.at(message.event.topic)};
 									for(int i = 0; i< callbacks.size(); i++) {
 										callbacks[i]->Call(global, 1, &evt);
 									}
@@ -216,17 +222,26 @@ protected:
 								}
 
 								case BridgeToEngineMessage::PROCESSOR: {
-									Handle<Value> evt = fromCPP(message.event->toAny());
-									std::vector<Handle<Function>> callbacks{processors.at(message.sharedevent->topic)};
+									Handle<Value> evt = fromCPP(message.event.toAny());
+									std::vector<Handle<Function>> callbacks{processors.at(message.event.topic)};
 									for(int i = 0; i< callbacks.size(); i++) {
 										evt = callbacks[i]->Call(global, 1, &evt);
 									}
-									message.event->setPayload(fromJS(evt)["payload"]);
+									message.event.setPayload(fromJS(evt)["payload"]);
+
+									EngineToBridgeMessage ack;
+									ack.event = message.event;
+									ack.type = EngineToBridgeMessage::ACKNOWLEDGE;
+									output_channel->put(ack);
 									break;
 								}
 
 								case BridgeToEngineMessage::ACKNOWLEDGE: {
-
+									long cbID = message.event.payload["finishedCbID"];
+									// TODO: delete message.event.payload["finishedCbID"];
+									Handle<Value> evt = fromCPP(message.event.toAny());
+									finishedCbs[cbID]->Call(global, 1, &evt);
+									finishedCbs.erase(cbID);
 									break;
 								}
 							}
@@ -247,6 +262,7 @@ public:
 	static Persistent<Context> context;
 	static std::map<std::string, std::vector<Handle<Function>>> consumers;
 	static std::map<std::string, std::vector<Handle<Function>>> processors;
+	static std::map<long, Handle<Function>> finishedCbs;
 	static std::shared_ptr<Susi::Util::Channel<BridgeToEngineMessage>> input_channel;
 	static std::shared_ptr<Susi::Util::Channel<EngineToBridgeMessage>> output_channel;
 
@@ -302,14 +318,13 @@ public:
 Persistent<Context> Engine::context = Persistent<Context>();
 std::map<std::string, std::vector<Handle<Function>>> Engine::consumers;
 std::map<std::string, std::vector<Handle<Function>>> Engine::processors;
+std::map<long, Handle<Function>> Engine::finishedCbs;
 std::shared_ptr<Susi::Util::Channel<BridgeToEngineMessage>> Engine::input_channel;
 std::shared_ptr<Susi::Util::Channel<EngineToBridgeMessage>> Engine::output_channel;
 
 
-class EngineBridge {
+class EngineBridge : public Susi::Api::BasicApiClient {
 protected:
-	Susi::Api::ApiClient susi_api;
-
 	std::shared_ptr<Susi::Util::Channel<EngineToBridgeMessage>> input_channel;
 	std::shared_ptr<Susi::Util::Channel<BridgeToEngineMessage>> output_channel;
 
@@ -317,24 +332,24 @@ protected:
 	std::thread t;
 	std::map<std::string, long> topicIDs;
 
-	void publishCallback(Susi::Events::SharedEventPtr event) {
+	void onAck(Susi::Events::Event & event) {
 		BridgeToEngineMessage message;
 		message.type = BridgeToEngineMessage::ACKNOWLEDGE;
-		message.sharedevent = event;
+		message.event = event;
 		output_channel->put(message);
 	}
 
-	void consumerCallback(Susi::Events::SharedEventPtr event) {
+	void onConsumerEvent(Susi::Events::Event & event) {
 		BridgeToEngineMessage message;
 		message.type = BridgeToEngineMessage::CONSUMER;
-		message.sharedevent = event;
+		message.event = event;
 		output_channel->put(message);
 	}
 
-	void processorCallback(Susi::Events::EventPtr event) {
+	void onProcessorEvent(Susi::Events::Event & event) {
 		BridgeToEngineMessage message;
 		message.type = BridgeToEngineMessage::PROCESSOR;
-		message.event = std::move(event);
+		message.event = event;
 		output_channel->put(message);
 	}
 
@@ -342,7 +357,7 @@ public:
 	EngineBridge(std::shared_ptr<Susi::Util::Channel<EngineToBridgeMessage>> input_channel_,
 		std::shared_ptr<Susi::Util::Channel<BridgeToEngineMessage>> output_channel_,
 		std::string address = "[::1]:4000")
-		: susi_api{address},
+		: BasicApiClient{address},
 		running{true} {
 		input_channel = input_channel_;
 		output_channel = output_channel_;
@@ -356,29 +371,30 @@ public:
 					switch(message.type) {
 						case EngineToBridgeMessage::PUBLISH:
 						{
-							Susi::Events::EventPtr evt = susi_api.createEvent(message.topic);
+							auto evt = Susi::Events::Event(message.topic);
 							if(!message.payload.isNull()) {
-								evt->setPayload(message.payload);
+								evt.setPayload(message.payload);
 							}
-							Susi::Events::Consumer callback = [this](Susi::Events::SharedEventPtr event) {this->publishCallback(event);};
-							this->susi_api.publish(std::move(evt), callback);
+							sendPublish(evt);
 							break;
 						}
 						case EngineToBridgeMessage::SUBSCRIBECONSUMER:
 						{
-							Susi::Events::Consumer callback = [this](Susi::Events::SharedEventPtr event) {this->consumerCallback(event);};
-							this->susi_api.subscribe(message.topic, callback);
+							sendRegisterConsumer(message.topic);
 							break;
 						}
 						case EngineToBridgeMessage::SUBSCRIBEPROCESSOR:
 						{
-							Susi::Events::Processor callback = [this](Susi::Events::EventPtr event) {this->processorCallback(std::move(event));};
-							this->susi_api.subscribe(message.topic, callback);
+							sendRegisterProcessor(message.topic);
 							break;
 						}
 						case EngineToBridgeMessage::UNSUBSCRIBE:
 						{
-
+							Susi::Logger::log("JSEngineBridge: UNSUBSCRIBE NOT YET IMPLEMENTED!");
+						}
+						case EngineToBridgeMessage::ACKNOWLEDGE:
+						{
+							sendAck(message.event);
 						}
 					}
 				} catch(Susi::Util::ChannelClosedException e) {
