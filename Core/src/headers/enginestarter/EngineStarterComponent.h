@@ -19,8 +19,8 @@ namespace Susi {
 	namespace EngineStarter {
 		class StarterComponent : public Susi::System::BaseComponent , public Starter {
 			public:
-				StarterComponent (Susi::System::ComponentManager * mgr, std::string path) :
-					Susi::System::BaseComponent{mgr}, Starter{path} {}
+				StarterComponent (Susi::System::ComponentManager * mgr) :
+					Susi::System::BaseComponent{mgr}, Starter{} {}
 
 				virtual void start() override {
 					subscribe("enginestarter::start", [this](Susi::Events::EventPtr evt){handleStart(std::move(evt));});
@@ -41,37 +41,9 @@ namespace Susi {
 					stop();
 				}
 			protected:
-				void handleStart(Susi::Events::EventPtr event) {
-					try{
-						execute();
-					}catch(const std::exception & e){
-						std::string msg = "Error in handleStart(): ";
-						msg += e.what();
-						throw std::runtime_error(msg);
-					}
-				}
-
-				void handleRestart(Susi::Events::EventPtr event) {
-					try{
-						killall();
-						execute();
-					}catch(const std::exception & e){
-						std::string msg = "Error in handleRestart(): ";
-						msg += e.what();
-						throw std::runtime_error(msg);
-					}
-				}
-
-				void handleStop(Susi::Events::EventPtr event) {
-					try{
-						killall();
-					}catch(const std::exception & e){
-						std::string msg = "Error in handleStop(): ";
-						msg += e.what();
-						throw std::runtime_error(msg);
-					}
-				}
-
+				void handleStart(Susi::Events::EventPtr event);
+				void handleRestart(Susi::Events::EventPtr event);
+				void handleStop(Susi::Events::EventPtr event);
 		};
 	}
 

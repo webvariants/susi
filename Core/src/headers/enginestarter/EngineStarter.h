@@ -22,12 +22,11 @@
 
 namespace Susi {
 	namespace EngineStarter {
-		class Starter {
-				std::string path;
+		class Starter {				
 				std::vector<Poco::ProcessHandle> phs; 
 			public:
-				Starter(std::string path);
-				void execute();
+				Starter();
+				void execute(std::string path);
 				void killall();
 			private:
 				void rec_dir(const std::string & path);
