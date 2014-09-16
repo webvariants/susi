@@ -29,46 +29,125 @@ namespace Susi {
 namespace JS {
 namespace V8 {
 
-
-
-struct EngineToBridgeMessage {
-	enum Type {PUBLISH, SUBSCRIBECONSUMER, SUBSCRIBEPROCESSOR, ACKNOWLEDGE, UNSUBSCRIBE};
-	Type type;
-
-	std::string topic;
-
-	// For publish
-	Susi::Util::Any payload;
-	long cbID;
-
-	// For Acknowledge
-	Susi::Events::Event event;
-};
-
-struct BridgeToEngineMessage {
-	enum Type {CONSUMER, PROCESSOR, ACKNOWLEDGE};
-	Type type;
-	// For All Types
-	Susi::Events::Event event;
-};
-
 using namespace v8;
 
-class Engine{
+class Engine : public Susi::Api::BasicApiClient {
 protected:
-	static Persistent<Context> setupContext() {
+
+	Susi::Util::Channel<std::function<void()>> callback_channel;
+
+	Persistent<Context> setupContext() {
 		// Create a template for the global object.
 		Handle<ObjectTemplate> global{ObjectTemplate::New()};
 		// Bind the global 'print' function to the C++ Print callback.
-		global->Set(String::New("log"), FunctionTemplate::New(Susi::JS::V8::Engine::Log));
-		global->Set(String::New("publish"), FunctionTemplate::New(Susi::JS::V8::Engine::Publish));
-		global->Set(String::New("subscribeConsumer"), FunctionTemplate::New(Susi::JS::V8::Engine::subscribeConsumer));
-		global->Set(String::New("subscribeProcessor"), FunctionTemplate::New(Susi::JS::V8::Engine::subscribeProcessor));
+		global->Set(String::New("log"), FunctionTemplate::New([] (const Arguments& args) -> Handle<Value>  {
+				Handle<External> data = Handle<External>::Cast(args.Data());
+				auto self = static_cast<Susi::JS::V8::Engine*>(data->Value());
+
+				Susi::Logger::log(self->fromJS(args[0]).toJSONString());
+				return Undefined();
+			},
+			External::New(this)
+		));
+
+
+		global->Set(String::New("publish"), FunctionTemplate::New([] (const Arguments& args) -> Handle<Value>  {
+				Handle<External> data = Handle<External>::Cast(args.Data());
+				auto self = static_cast<Susi::JS::V8::Engine*>(data->Value());
+
+				Susi::Events::Event evt{};
+				Susi::Util::Any obj = self->fromJS(args[0]);
+				if(obj.isObject()) {
+					evt.setTopic(static_cast<std::string>(obj["topic"]));
+					evt.setPayload(obj["payload"]);
+				}
+				else if(obj.isString()) {
+					evt.setTopic(static_cast<std::string>(obj));
+				}
+				else {
+					return ThrowException(String::New("publish: input has to be either a string or an object containing at least topic"));
+				}
+				if(args.Length() > 1) {
+					self->finishedCbs[evt.id] = Persistent<Function>::New(Handle<Function>::Cast(args[1]));
+				}
+
+				self->sendPublish(evt);
+
+				return True();
+			},
+			External::New(this)
+		));
+
+
+		global->Set(String::New("subscribeConsumer"), FunctionTemplate::New([] (const Arguments& args) -> Handle<Value> {
+				Handle<External> data = Handle<External>::Cast(args.Data());
+				auto self = static_cast<Susi::JS::V8::Engine*>(data->Value());
+
+				if(args.Length() < 2) {
+					Susi::Logger::log("JSEngine - subscribeConsumer: wrong number of Arguments");
+					return Undefined();
+				}
+				Locker v8Locker;
+				HandleScope scope;
+
+				Susi::Util::Any value = self->fromJS(args[0]);
+				std::string topic = value;
+
+				Persistent<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[1]));
+
+				if(callback.IsEmpty()) {
+					Susi::Logger::log("JSEngine - subscribeConsumer: Topic: "+topic+" , failed - callback not found");
+					return ThrowException(String::New("subscribeConsumer: you have to specify a callback function as second argument"));
+				}
+
+				Susi::Logger::log("JSEngine - subscribeConsumer: Topic: "+topic);
+
+				if(self->consumers.count(topic) == 0) {
+					self->sendRegisterConsumer(topic);
+				}
+				self->consumers[topic].push_back(callback);
+
+				return True();
+			},
+			External::New(this)
+		));
+		global->Set(String::New("subscribeProcessor"), FunctionTemplate::New([] (const Arguments& args) -> Handle<Value> {
+				Handle<External> data = Handle<External>::Cast(args.Data());
+				auto self = static_cast<Susi::JS::V8::Engine*>(data->Value());
+
+				if(args.Length() < 2) {
+					Susi::Logger::log("JSEngine - subscribeProcessor: wrong number of Arguments");
+					return Undefined();
+				}
+				Locker v8Locker;
+				HandleScope scope;
+
+				Susi::Util::Any value = self->fromJS(args[0]);
+				std::string topic = value;
+
+				Persistent<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[1]));
+
+				if(callback.IsEmpty()) {
+					Susi::Logger::log("JSEngine - subscribeProcessor: Topic: "+topic+" , failed - callback not found");
+					return ThrowException(String::New("subscribeProcessor: you have to specify a callback function as second argument"));
+				}
+
+				Susi::Logger::log("JSEngine - subscribeProcessor: Topic: "+topic);
+
+				if(self->processors.count(topic) == 0) {
+					self->sendRegisterProcessor(topic);
+				}
+				self->processors[topic].push_back(callback);
+
+				return True();
+			},
+			External::New(this)
+		));
 
 		return Context::New(NULL, global);
 	}
 
-	static Susi::Util::Any fromJS(Handle<Value> value) {
+	Susi::Util::Any fromJS(Handle<Value> value) {
 		Locker v8Locker;
 		HandleScope scope;
 
@@ -85,7 +164,7 @@ protected:
 	    return Susi::Util::Any{};
 	}
 
-	static Handle<Value> fromCPP(Susi::Util::Any value) {
+	Handle<Value> fromCPP(Susi::Util::Any value) {
 		Locker v8Locker;
 		HandleScope scope;
 
@@ -99,116 +178,61 @@ protected:
 	    return scope.Close(JSON_parse->Call(JSON, 1, &valueHandle));
 	}
 
-	// Susi API Mapping
-
-	static Handle<Value> Log(const Arguments& args) {
-		Susi::Logger::log(fromJS(args[0]).toJSONString());
-		return Undefined();
-	}
-
-	static Handle<Value> Publish(const Arguments& args) {
-		Susi::Logger::log("JSEngine - Publish: start");
-		EngineToBridgeMessage message;
-		message.type = EngineToBridgeMessage::PUBLISH;
-		Susi::Logger::log("JSEngine - Publish: set obj");
-		Susi::Util::Any obj = fromJS(args[0]);
-		try {
-			Susi::Logger::log("JSEngine - Publish: set topic");
-			if (obj.isObject()) {
-				message.topic = static_cast<std::string>(obj["topic"]);
-				Susi::Logger::log("JSEngine - Publish: check payload " +message.topic);
-				if(obj["payload"]) {
-					message.payload = obj["payload"];
-				}
+	virtual void onConsumerEvent(Susi::Events::Event & event) override{
+		auto evt = std::make_shared<Susi::Events::Event>(event);
+		std::function<void()> f = [this, evt]() {
+			Locker v8Locker;
+			HandleScope scope;
+			std::vector<Persistent<Function>> consumer = consumers[evt->topic];
+			Handle<Object> global{context->Global()};
+			Handle<Value> e = fromCPP(evt->toAny());
+			for (auto & c : consumer)
+			{
+				c->Call(global, 1, &e);
 			}
-			else {
-				message.topic = static_cast<std::string>(obj);
+		};
+
+		callback_channel.put(f);
+	}
+
+	virtual void onProcessorEvent(Susi::Events::Event & event) override {
+		auto evt = std::make_shared<Susi::Events::Event>(event);
+		std::function<void()> f = [this, evt](){
+			Locker v8Locker;
+			HandleScope scope;
+			std::vector<Persistent<Function>> processor = processors[evt->topic];
+			Handle<Object> global{context->Global()};
+			Handle<Value> e = fromCPP(evt->toAny());
+			for (auto & c : processor)
+			{
+				e = c->Call(global, 1, &e);
 			}
-		}
-		catch (Susi::Util::Any::WrongTypeException e) {
-			Susi::Logger::log(e.what());
-		}
-		Susi::Logger::log("JSEngine - Publish: get timestamp");
-		long cbID = std::chrono::system_clock::now().time_since_epoch().count();
-		Susi::Logger::log("JSEngine - Publish: check callback");
-		if(args.Length() > 1) {
-			Handle<Function> cb = Handle<Function>::Cast(args[1]);
-			if(!cb.IsEmpty()) {
-				Susi::Logger::log("JSEngine - Publish: set callback");
-				finishedCbs[cbID] = cb;
-				message.payload["finishedCbID"] = cbID;
+			Susi::Util::Any ev = fromJS(e);
+			evt->setPayload(ev["payload"]);
+			sendAck(*evt);
+		};
+
+		callback_channel.put(f);
+	}
+
+	virtual void onAck(Susi::Events::Event & event) override{
+		auto evt = std::make_shared<Susi::Events::Event>(event);
+		std::function<void()> f = [this, evt](){
+			try {
+				Locker v8Locker;
+				HandleScope scope;
+				Handle<Object> global{context->Global()};
+				Handle<Value> e = fromCPP(evt->toAny());
+				finishedCbs.at(evt->id)->Call(global, 1, &e);
+				finishedCbs.erase(evt->id);
 			}
-		}
-		Susi::Logger::log("JSEngine - Publish: send message to bridge");
-		output_channel->put(message);
-		return Undefined();
+			catch(...) {
+			}
+		};
+
+		callback_channel.put(f);
 	}
 
-	static Handle<Value> subscribeConsumer(const Arguments& args) {
-		if(args.Length() < 2) {
-			Susi::Logger::log("JSEngine - subscribeConsumer: wrong number of Arguments");
-			return Undefined();
-		}
-		Locker v8Locker;
-		HandleScope scope;
-
-		Susi::Util::Any value = fromJS(args[0]);
-		std::string topic = value;
-
-		Handle<Function> callback = Handle<Function>::Cast(args[1]);
-
-		if(callback.IsEmpty()) {
-			Susi::Logger::log("JSEngine - subscribeConsumer: Topic: "+topic+" , failed - callback not found");
-			return Undefined();
-		}
-
-		Susi::Logger::log("JSEngine - subscribeConsumer: Topic: "+topic);
-
-		if(consumers.count(topic) == 0) {
-			EngineToBridgeMessage message;
-			message.type = EngineToBridgeMessage::SUBSCRIBECONSUMER;
-			message.topic = topic;
-			output_channel->put(message);
-		}
-		consumers[topic].push_back(callback);
-
-		return Undefined();
-	}
-
-	static Handle<Value> subscribeProcessor(const Arguments& args) {
-		if(args.Length() < 2) {
-			Susi::Logger::log("JSEngine - subscribeProcessor: wrong number of Arguments");
-			return Undefined();
-		}
-		Locker v8Locker;
-		HandleScope scope;
-
-		Susi::Util::Any value = fromJS(args[0]);
-		std::string topic = value;
-
-		Handle<Function> callback = Handle<Function>::Cast(args[1]);
-
-		if(callback.IsEmpty()) {
-			Susi::Logger::log("JSEngine - subscribeProcessor: Topic: "+topic+" , failed - callback not found");
-			return Undefined();
-		}
-
-		Susi::Logger::log("JSEngine - subscribeProcessor: Topic: "+topic);
-
-		if(processors.count(topic) == 0) {
-			EngineToBridgeMessage message;
-			message.type = EngineToBridgeMessage::SUBSCRIBEPROCESSOR;
-			message.topic = topic;
-			output_channel->put(message);
-		}
-		processors[topic].push_back(callback);
-
-		return Undefined();
-	}
-
-	// First Executes a string within the current v8 context.
-	// Waits for input from the input channel -> (Susi Event System)
-	// Blocks until channel is destroyed
 	bool run(Handle<String> source) {
 		TryCatch try_catch;
 		bool return_val = false;
@@ -230,80 +254,34 @@ protected:
 			    }
 			    else {
 			    	return_val = true;
-			    	Handle<Object> global{context->Global()};
-					while(true) {
-						try {
-							auto message = input_channel->get();
-							switch(message.type) {
-
-								case BridgeToEngineMessage::CONSUMER: {
-									Susi::Logger::log("JSEngine - run: Consumer");
-									Handle<Value> evt = fromCPP(message.event.toAny());
-									std::vector<Handle<Function>> callbacks{consumers.at(message.event.topic)};
-									for(int i = 0; i< callbacks.size(); i++) {
-										callbacks[i]->Call(global, 1, &evt);
-									}
-									break;
-								}
-
-								case BridgeToEngineMessage::PROCESSOR: {
-									Susi::Logger::log("JSEngine - run: Processor");
-									Handle<Value> evt = fromCPP(message.event.toAny());
-									std::vector<Handle<Function>> callbacks{processors.at(message.event.topic)};
-									for(int i = 0; i< callbacks.size(); i++) {
-										evt = callbacks[i]->Call(global, 1, &evt);
-									}
-									message.event.setPayload(fromJS(evt)["payload"]);
-
-									EngineToBridgeMessage ack;
-									ack.event = message.event;
-									ack.type = EngineToBridgeMessage::ACKNOWLEDGE;
-									output_channel->put(ack);
-									break;
-								}
-
-								case BridgeToEngineMessage::ACKNOWLEDGE: {
-									Susi::Logger::log("JSEngine - run: Acknowledge");
-									if(message.event.payload) {
-										long cbID = message.event.payload["finishedCbID"];
-										// TODO: delete message.event.payload["finishedCbID"];
-										Handle<Value> evt = fromCPP(message.event.toAny());
-										finishedCbs[cbID]->Call(global, 1, &evt);
-										finishedCbs.erase(cbID);
-									}
-									break;
-								}
-							}
-						}
-						catch (Susi::Util::ChannelClosedException e) {
-							break;
-						}
-					}
+			    	while(true) {
+			    		try {
+			    			auto f = callback_channel.get();
+			    			f();
+			    		}
+			    		catch(Susi::Util::ChannelClosedException e) {
+			    			return return_val;
+			    		}
+			    	}
 			    }
 			}
-			context->Exit();
 	    }
 
 		return return_val;
 	}
 
 public:
-	static Persistent<Context> context;
-	static std::map<std::string, std::vector<Handle<Function>>> consumers;
-	static std::map<std::string, std::vector<Handle<Function>>> processors;
-	static std::map<long, Handle<Function>> finishedCbs;
-	static std::shared_ptr<Susi::Util::Channel<BridgeToEngineMessage>> input_channel;
-	static std::shared_ptr<Susi::Util::Channel<EngineToBridgeMessage>> output_channel;
+	Persistent<Context> context;
+	std::map<std::string, std::vector<Persistent<Function>>> consumers;
+	std::map<std::string, std::vector<Persistent<Function>>> processors;
+	std::map<long, Persistent<Function>> finishedCbs;
 
 	HandleScope scope;
 
 
-	Engine(std::shared_ptr<Susi::Util::Channel<BridgeToEngineMessage>> input_channel_,
-		   std::shared_ptr<Susi::Util::Channel<EngineToBridgeMessage>> output_channel_)
+	Engine(std::string address = "[::1]:4000")
+		: BasicApiClient{address}
 	{
-		input_channel = input_channel_;
-		output_channel = output_channel_;
-
 		if(context.IsEmpty()) {
 			Locker v8Locker;
 			HandleScope scope;
@@ -335,126 +313,18 @@ public:
 	}
 
 	void stop() {
-		input_channel->close();
+		context->Exit();
+		context.Dispose();
 	}
 
 	~Engine() {
-		context.Dispose();
+		close();
+		stop();
 	}
 };
 
-// define static variables of engine
-Persistent<Context> Engine::context = Persistent<Context>();
-std::map<std::string, std::vector<Handle<Function>>> Engine::consumers;
-std::map<std::string, std::vector<Handle<Function>>> Engine::processors;
-std::map<long, Handle<Function>> Engine::finishedCbs;
-std::shared_ptr<Susi::Util::Channel<BridgeToEngineMessage>> Engine::input_channel;
-std::shared_ptr<Susi::Util::Channel<EngineToBridgeMessage>> Engine::output_channel;
-
-
-class EngineBridge : public Susi::Api::BasicApiClient {
-protected:
-	std::shared_ptr<Susi::Util::Channel<EngineToBridgeMessage>> input_channel;
-	std::shared_ptr<Susi::Util::Channel<BridgeToEngineMessage>> output_channel;
-
-	bool running;
-	std::thread t;
-	std::map<std::string, long> topicIDs;
-
-	void onAck(Susi::Events::Event & event) {
-		Susi::Logger::log("JSEngineBridge - onAck");
-		BridgeToEngineMessage message;
-		message.type = BridgeToEngineMessage::ACKNOWLEDGE;
-		message.event = event;
-		output_channel->put(message);
-	}
-
-	void onConsumerEvent(Susi::Events::Event & event) {
-		Susi::Logger::log("JSEngineBridge - onConsumerEvent");
-		BridgeToEngineMessage message;
-		message.type = BridgeToEngineMessage::CONSUMER;
-		message.event = event;
-		output_channel->put(message);
-	}
-
-	void onProcessorEvent(Susi::Events::Event & event) {
-		Susi::Logger::log("JSEngineBridge - onProcessorEvent");
-		BridgeToEngineMessage message;
-		message.type = BridgeToEngineMessage::PROCESSOR;
-		message.event = event;
-		output_channel->put(message);
-	}
-
-public:
-	EngineBridge(std::shared_ptr<Susi::Util::Channel<EngineToBridgeMessage>> input_channel_,
-		std::shared_ptr<Susi::Util::Channel<BridgeToEngineMessage>> output_channel_,
-		std::string address = "[::1]:4000")
-		: BasicApiClient{address},
-		running{true} {
-		input_channel = input_channel_;
-		output_channel = output_channel_;
-	}
-
-	void start() {
-		t = std::move(std::thread{[this]() {
-			while(true) {
-				try {
-					auto message = this->input_channel->get();
-					switch(message.type) {
-						case EngineToBridgeMessage::PUBLISH:
-						{
-							Susi::Logger::log("JSEngineBridge - start: Publish");
-							auto evt = Susi::Events::Event(message.topic);
-							if(!message.payload.isNull()) {
-								evt.setPayload(message.payload);
-							}
-							sendPublish(evt);
-							break;
-						}
-						case EngineToBridgeMessage::SUBSCRIBECONSUMER:
-						{
-							Susi::Logger::log("JSEngineBridge - start: RegisterConsumer");
-							sendRegisterConsumer(message.topic);
-							break;
-						}
-						case EngineToBridgeMessage::SUBSCRIBEPROCESSOR:
-						{
-							Susi::Logger::log("JSEngineBridge - start: RegisterProcessor");
-							sendRegisterProcessor(message.topic);
-							break;
-						}
-						case EngineToBridgeMessage::UNSUBSCRIBE:
-						{
-							Susi::Logger::log("JSEngineBridge: UNSUBSCRIBE NOT YET IMPLEMENTED!");
-						}
-						case EngineToBridgeMessage::ACKNOWLEDGE:
-						{
-							Susi::Logger::log("JSEngineBridge - start: Acknowledge");
-							sendAck(message.event);
-						}
-						default: {
-							Susi::Logger::log("JSEngineBridge - start: Message Type Unknown");
-							break;
-						}
-					}
-				} catch(Susi::Util::ChannelClosedException e) {
-					return;
-				}
-			}
-		}});
-	}
-
-	void stop() {
-		input_channel->close();
-		if(t.joinable()) {
-			t.join();
-		}
-	}
-};
-
-}
 
 }
 }
-
+}
 #endif // __V8ENGINE__

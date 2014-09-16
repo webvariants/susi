@@ -11,13 +11,8 @@ int main(int argc, char** argv){
 		return 1;
 	}
 
-	std::shared_ptr<Susi::Util::Channel<Susi::JS::V8::EngineToBridgeMessage>> bridge_in{new Susi::Util::Channel<Susi::JS::V8::EngineToBridgeMessage>()};
-	std::shared_ptr<Susi::Util::Channel<Susi::JS::V8::BridgeToEngineMessage>> engine_in{new Susi::Util::Channel<Susi::JS::V8::BridgeToEngineMessage>()};
+	Susi::JS::V8::Engine engine;
 
-	Susi::JS::V8::Engine engine{engine_in, bridge_in};
-	Susi::JS::V8::EngineBridge enginebridge{bridge_in, engine_in};
-
-	enginebridge.start();
 	engine.runFile(std::string{argv[1]});
 
 	bool stop = false;
