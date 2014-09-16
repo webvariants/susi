@@ -103,6 +103,7 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 		if(config["base"].isString()){
 			base = static_cast<std::string>(config["base"]);
 		}
+		
 		return std::shared_ptr<Component>{new Susi::IOControllerComponent{mgr, base}};
 	});
 	manager->registerDependency("iocontroller","eventsystem");

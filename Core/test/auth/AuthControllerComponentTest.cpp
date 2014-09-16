@@ -92,21 +92,10 @@ protected:
 		evt->sessionID = sessionID;
 		auto result = publish_sync(std::move(evt));
 
-		//std::cout<<"EDGE CASE:"<<result->toAny().toJSONString()<<std::endl;
-		EXPECT_FALSE(static_cast<bool>(result->payload["success"]));
-
-		auto headers = result->getHeaders();
-		bool error_found = false;
-
-		for(size_t i=0; i<headers.size(); ++i) {
-			if(headers[i].first == "error") {
-				error_found = true;
-				break;
-			}
-		}
-
-		EXPECT_TRUE(error_found);
-
+		//std::cout<<"EDGE CASE:"<<result->toAny().toString()<<std::endl;
+		EXPECT_FALSE(static_cast<bool>(result->payload["success"]));			
+		
+		EXPECT_TRUE(hasErrorHeader(result));
 	}
 
 };

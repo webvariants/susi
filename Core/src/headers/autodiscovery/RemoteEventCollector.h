@@ -30,7 +30,7 @@ protected:
 		Susi::Events::Consumer finishCallback = [this](Susi::Events::SharedEventPtr evt){
 			sendAck(*evt);
 		};
-		_eventsystem->publish(eventPtr);
+		_eventsystem->publish(eventPtr, finishCallback);
 	}
 
 public:
