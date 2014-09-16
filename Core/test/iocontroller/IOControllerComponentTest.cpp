@@ -94,10 +94,97 @@ protected:
 
 	virtual void BadCases() override {
 
+		auto evt = createEvent("io::writeFile");
+		evt->payload["filename"] = base_path + "/test_dir/test.txt";
+		evt->payload["content"] = "foobar";	
+		auto result = publish_sync(std::move(evt));	
+
+		//std::cout<<"EDGE CASE:"<<result->toAny().toJSONString()<<std::endl;
+		EXPECT_FALSE(static_cast<bool>(result->payload["success"]));
+		EXPECT_TRUE(hasErrorHeader(result));
+
+		auto evt2 = createEvent("io::readFile");
+		evt2->payload["filename"] = base_path +  "/test_dir/test.txt";
+		auto result2 = publish_sync(std::move(evt2));
+		EXPECT_FALSE(static_cast<bool>(result2->payload["success"]));
+		EXPECT_TRUE(hasErrorHeader(result2));
+
+		auto evt3 = createEvent("io::movePath");
+		evt3->payload["source_path"] = base_path +  "/test_dir";
+		evt3->payload["dest_path"] = base_path +  "/test_dir2";
+		auto result3 = publish_sync(std::move(evt3));
+		EXPECT_FALSE(static_cast<bool>(result3->payload["success"]));
+		EXPECT_TRUE(hasErrorHeader(result3));
+
+		auto evt4 = createEvent("io::deletePath");
+		evt4->payload["path"] = base_path +  "/test_dir";
+		auto result4 = publish_sync(std::move(evt4));
+		EXPECT_FALSE(static_cast<bool>(result4->payload["success"]));		
+
+		auto evt5 = createEvent("io::copyPath");
+		evt5->payload["source_path"] = base_path +  "/test_dir";
+		evt5->payload["dest_path"] = base_path +  "/test_dir2";
+		auto result5 = publish_sync(std::move(evt5));
+		EXPECT_FALSE(static_cast<bool>(result5->payload["success"]));
+		EXPECT_TRUE(hasErrorHeader(result5));
+
+
+		auto evt6 = createEvent("io::setExecutable");
+		evt6->payload["path"] = base_path +  "/test_dir/test.txt";
+		evt6->payload["isExecutable"] = true;
+		auto result6 = publish_sync(std::move(evt6));
+		EXPECT_FALSE(static_cast<bool>(result6->payload["success"]));
+		EXPECT_TRUE(hasErrorHeader(result6));
+
+		auto evt7 = createEvent("io::getExecutable");
+		evt7->payload["path"] = base_path +  "/test_dir/test.txt";
+		auto result7 = publish_sync(std::move(evt7));
+		EXPECT_FALSE(static_cast<bool>(result7->payload["success"]));
+		EXPECT_TRUE(hasErrorHeader(result7));
+
 	}
 
 	virtual void EdgeCases() override {
 
+		// test with missing params
+
+		auto evt = createEvent("io::writeFile");
+		auto result = publish_sync(std::move(evt));	
+
+		//std::cout<<"EDGE CASE:"<<result->toAny().toJSONString()<<std::endl;
+		EXPECT_FALSE(static_cast<bool>(result->payload["success"]));
+		EXPECT_TRUE(hasErrorHeader(result));
+
+		auto evt2 = createEvent("io::readFile");
+		auto result2 = publish_sync(std::move(evt2));
+		EXPECT_FALSE(static_cast<bool>(result2->payload["success"]));
+		EXPECT_TRUE(hasErrorHeader(result2));
+
+		auto evt3 = createEvent("io::movePath");
+		auto result3 = publish_sync(std::move(evt3));
+		EXPECT_FALSE(static_cast<bool>(result3->payload["success"]));
+		EXPECT_TRUE(hasErrorHeader(result3));
+
+		auto evt4 = createEvent("io::deletePath");
+		auto result4 = publish_sync(std::move(evt4));
+		EXPECT_FALSE(static_cast<bool>(result4->payload["success"]));		
+		EXPECT_TRUE(hasErrorHeader(result4));
+
+		auto evt5 = createEvent("io::copyPath");		
+		auto result5 = publish_sync(std::move(evt5));
+		EXPECT_FALSE(static_cast<bool>(result5->payload["success"]));
+		EXPECT_TRUE(hasErrorHeader(result5));
+
+
+		auto evt6 = createEvent("io::setExecutable");		
+		auto result6 = publish_sync(std::move(evt6));
+		EXPECT_FALSE(static_cast<bool>(result6->payload["success"]));
+		EXPECT_TRUE(hasErrorHeader(result6));
+
+		auto evt7 = createEvent("io::getExecutable");
+		auto result7 = publish_sync(std::move(evt7));
+		EXPECT_FALSE(static_cast<bool>(result7->payload["success"]));
+		EXPECT_TRUE(hasErrorHeader(result7));
 	}
 
 };
