@@ -31,7 +31,7 @@ public:
 	}
 
 	~ComponentTest(){
-		//io.deletePath("./component_test");	
+		io.deletePath("./component_test");	
 	}
 
 protected:
@@ -58,6 +58,11 @@ protected:
 									"\"identifier\" : \"auth\","
 									"\"type\": \"sqlite3\","
 									"\"uri\" : \"./component_test/auth.sqlite3\""
+									"},"
+									"{"
+									"\"identifier\" : \"test_db\","
+									"\"type\": \"sqlite3\","
+									"\"uri\" : \"./component_test/test_db.sqlite3\""
 									"}"
 								"],"
 								"\"authcontroller\": {"
