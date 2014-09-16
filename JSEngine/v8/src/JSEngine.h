@@ -39,6 +39,7 @@ struct EngineToBridgeMessage {
 
 	// For publish
 	Susi::Util::Any payload;
+	long cbID;
 
 	// For Acknowledge
 	Susi::Events::Event event;
@@ -93,7 +94,7 @@ protected:
 		Handle<Object> JSON = global->Get(String::New("JSON"))->ToObject();
 	    Handle<Function> JSON_parse = Handle<Function>::Cast(JSON->Get(String::New("parse")));
 
-	    Handle<Value> valueHandle{String::New(value.toString().c_str())};
+	    Handle<Value> valueHandle{String::New(value.toJSONString().c_str())};
 
 	    return scope.Close(JSON_parse->Call(JSON, 1, &valueHandle));
 	}
@@ -101,7 +102,7 @@ protected:
 	// Susi API Mapping
 
 	static Handle<Value> Log(const Arguments& args) {
-		Susi::Logger::log(fromJS(args[0]).toString());
+		Susi::Logger::log(fromJS(args[0]).toJSONString());
 		return Undefined();
 	}
 
@@ -114,14 +115,14 @@ protected:
 		try {
 			Susi::Logger::log("JSEngine - Publish: set topic");
 			if (obj.isObject()) {
-				message.topic = obj["topic"].toString();
-				Susi::Logger::log("JSEngine - Publish: check payload");
+				message.topic = static_cast<std::string>(obj["topic"]);
+				Susi::Logger::log("JSEngine - Publish: check payload " +message.topic);
 				if(obj["payload"]) {
 					message.payload = obj["payload"];
 				}
 			}
 			else {
-				message.topic = obj.toString();
+				message.topic = static_cast<std::string>(obj);
 			}
 		}
 		catch (Susi::Util::Any::WrongTypeException e) {
