@@ -31,7 +31,7 @@ public:
 	}
 
 	~ComponentTest(){
-		io.deletePath("./component_test");	
+		//io.deletePath("./component_test");	
 	}
 
 protected:
@@ -165,6 +165,21 @@ protected:
 			cv.wait(lock,[&called](){return called;});
 		}
 		return result;
+	}
+
+
+	bool hasErrorHeader(Susi::Events::SharedEventPtr event) {
+		auto headers = event->getHeaders();
+		bool error_found = false;
+
+		for(size_t i=0; i<headers.size(); ++i) {
+			if(headers[i].first == "error") {
+				error_found = true;
+				break;
+			}			
+		}
+
+		return error_found;
 	}
 
 private:

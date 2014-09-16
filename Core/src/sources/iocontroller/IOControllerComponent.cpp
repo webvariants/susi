@@ -73,10 +73,13 @@ void Susi::IOControllerComponent::handleMovePath(Susi::Events::EventPtr event) {
 void Susi::IOControllerComponent::handleMakeDir(Susi::Events::EventPtr event) {
 	try{
 		std::string dir = event->payload["dir"];
+
 		event->payload["success"] = makeDir(dir);
 	}catch(const std::exception & e){
 		std::string msg = "Error in handleMakeDir(): ";
 		msg += e.what();
+
+		std::cout<<"ERRORRR:"<<msg<<std::endl;
 		throw std::runtime_error(msg);
 	}
 }
