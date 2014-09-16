@@ -41,7 +41,7 @@ TEST_F(SessionTest, Attribs) {
 	bool result2_bool = result2;
 	EXPECT_EQ(true, result2_bool);
 
-	// set value to array	
+	// set value to array
 	Susi::Util::Any array{Susi::Util::Any::Array{1,2,3,4}};
 	session.setAttribute("array", array);
 	// read just set value
@@ -55,7 +55,7 @@ TEST_F(SessionTest, Attribs) {
 	EXPECT_FALSE(result4.isNull());
 
 	Susi::Util::Any array4{Susi::Util::Any::Array{Susi::Util::Any::Array{1,2,3,4},Susi::Util::Any{5}}};
-	EXPECT_EQ(array4.toString(),result4.toString());
+	EXPECT_EQ(array4.toJSONString(),result4.toJSONString());
 
 	int result4_int = result4[1];
 	EXPECT_EQ(5,result4_int);
@@ -65,8 +65,8 @@ TEST_F(SessionTest, Attribs) {
 	session.pushAttribute("real", 5);
 	auto result5 = session.getAttribute("real");
 	EXPECT_FALSE(result5.isNull());
-	EXPECT_EQ(array2[0].toString(),result5[0].toString());
-	EXPECT_EQ(array2[1].toString(),result5[1].toString());	
+	EXPECT_EQ(array2[0].toJSONString(),result5[0].toJSONString());
+	EXPECT_EQ(array2[1].toJSONString(),result5[1].toJSONString());
 
 	// set value with empty string as key
 	session.setAttribute("", "empty Test");

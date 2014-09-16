@@ -17,7 +17,7 @@ public:
 	//on live system, sessionID will be set by handlePublish from ApiServerForComponent
 	std::string sessionID = "abc";
 protected:
-	
+
 	virtual void SetUp() override {
 		componentManager->startComponent("authcontroller");
 
@@ -25,8 +25,8 @@ protected:
 		auto evt = createEvent("db::query");
 		evt->payload["identifier"] = "auth";
 		evt->payload["query"] = "create table users( id integer, username varchar(100), password varchar(100));";
-	
-		publish_sync(std::move(evt));		
+
+		publish_sync(std::move(evt));
 
 		auto evt2 = createEvent("db::query");
 			evt2->payload["identifier"] = "auth";
@@ -35,8 +35,8 @@ protected:
 		publish_sync(std::move(evt2));
 
 
-	}	
-	
+	}
+
 	virtual void TearDown() override {
 		componentManager->stopComponent("authcontroller");
 	}
@@ -61,8 +61,8 @@ protected:
 		evt3->sessionID = sessionID;
 		auto result3 = publish_sync(std::move(evt3));
 		EXPECT_EQ("John", static_cast<std::string>(result3->payload["username"]));
-				
-		auto evt4 = createEvent("auth::logout");		
+
+		auto evt4 = createEvent("auth::logout");
 		evt4->sessionID = sessionID;
 		auto result4 = publish_sync(std::move(evt4));
 
@@ -70,7 +70,7 @@ protected:
 		evt5->sessionID = sessionID;
 		auto result5 = publish_sync(std::move(evt5));
 		EXPECT_FALSE(static_cast<bool>(result5->payload["success"]));
-		
+
 	}
 
 	virtual void BadCases() override {
@@ -89,10 +89,10 @@ protected:
 		// missing param
 		auto evt = createEvent("auth::login");
 		evt->payload["username"] = "foo";
-		evt->sessionID = sessionID;				
-		auto result = publish_sync(std::move(evt));		
+		evt->sessionID = sessionID;
+		auto result = publish_sync(std::move(evt));
 
-		//std::cout<<"EDGE CASE:"<<result->toAny().toString()<<std::endl;
+		//std::cout<<"EDGE CASE:"<<result->toAny().toJSONString()<<std::endl;
 		EXPECT_FALSE(static_cast<bool>(result->payload["success"]));
 
 		auto headers = result->getHeaders();
@@ -102,9 +102,9 @@ protected:
 			if(headers[i].first == "error") {
 				error_found = true;
 				break;
-			}			
+			}
 		}
-		
+
 		EXPECT_TRUE(error_found);
 
 	}

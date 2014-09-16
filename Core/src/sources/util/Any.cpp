@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de), Thomas Krause (thomas.krause@webvariants.de)
  */
 #include <util/Any.h>
@@ -96,13 +96,13 @@ Any::Any(bool && value) {
 Any::Any(int && value) {
 	type = INTEGER;
 	this->integerValue = value;
-	value = 0;		
+	value = 0;
 }
 
 Any::Any(long && value) {
-	type = INTEGER;	
+	type = INTEGER;
 	this->integerValue = value;
-	value = 0;	
+	value = 0;
 }
 
 Any::Any(long long && value) {
@@ -147,7 +147,7 @@ void Any::operator=(Any && value) {
 		case STRING:
 			std::swap(value.stringValue , stringValue);
 			break;
-		case ARRAY:			
+		case ARRAY:
 			std::swap(value.arrayValue , arrayValue);
 			break;
 		case OBJECT:
@@ -171,7 +171,7 @@ void Any::operator=(int && value) {
 	}
 	type = INTEGER;
 	this->integerValue = value;
-	value = 0;	
+	value = 0;
 }
 
 void Any::operator=(long && value) {
@@ -224,7 +224,7 @@ void Any::operator=(std::map<std::string,Any> && value) {
 void Any::operator=(const bool & value) {
 	if(this->type != UNDEFINED && this->type != BOOL){
 		throw WrongTypeException(BOOL, this->type);
-	}	
+	}
 	this->type = BOOL;
 	this->boolValue = value;
 }
@@ -392,7 +392,7 @@ size_t Any::size() const {
 	if(type != ARRAY && type != OBJECT) {
 
 		throw WrongTypeException(ARRAY, type);
-	} 
+	}
 
 	if(type == ARRAY) {
 		return this->arrayValue.size();
@@ -412,11 +412,11 @@ void Any::set(std::string key, Any value) {
 	}
 	if(type == OBJECT) {
 		std::vector<std::string> elems;
-		Susi::Util::Helpers::split(key, '.', elems);	
+		Susi::Util::Helpers::split(key, '.', elems);
 		auto * current = this;
 
 		for(size_t e=0; e<elems.size()-1; e++){
-			current = &(*current)[elems[e]];	
+			current = &(*current)[elems[e]];
 			if((*current).isNull()){
 				*current = Susi::Util::Any::Object{};
 			}
@@ -440,16 +440,16 @@ Any Any::get(std::string key) {
 			Any found = this->objectValue;
 			Any next  = this->objectValue;
 			for(size_t e=0; e<elems.size(); e++)
-			{				
+			{
 				std::string elem = elems[e];
 				found = next[elem];
-				next = found;				
-				if(found.getType() == Susi::Util::Any::UNDEFINED) {					
+				next = found;
+				if(found.getType() == Susi::Util::Any::UNDEFINED) {
 					throw std::runtime_error("key doesn't exist!"+key);
 				} else if(e == (elems.size()-2) && found.getType() != Susi::Util::Any::OBJECT) {
 					throw WrongTypeException(OBJECT, type);
 				}
-				
+
 			}
 			return found;
 		}
@@ -459,14 +459,14 @@ Any Any::get(std::string key) {
 }
 
 
-// index operators 
+// index operators
 Any& Any::operator[](const int pos) {
 	if(type == UNDEFINED){
 		type = ARRAY;
 	}
 	if(type != ARRAY) {
 		throw WrongTypeException(ARRAY, type);
-	} 
+	}
 	return this->arrayValue[pos];
 }
 
@@ -555,7 +555,7 @@ Any::operator std::map<std::string,std::string>(){
 		if(!kv.second.isNull()) { // empty object
 			if(!kv.second.isString()) {
 				throw WrongTypeException(STRING, type);
-			}	
+			}
 			result[kv.first] = kv.second.stringValue;
 		} else {
 			result[kv.first] = "";
@@ -600,7 +600,7 @@ bool Any::operator!=(const Any & other) const{
 	return !(*this == other);
 }
 
-std::string Any::toString(){
+std::string Any::toJSONString(){
 	std::string result;
 	switch(this->type) {
 		case UNDEFINED: {
@@ -613,12 +613,12 @@ std::string Any::toString(){
 		}
 		case INTEGER: {
 			result = std::to_string(integerValue);
-			break;	
+			break;
 		}
 		case DOUBLE: {
 			result = std::to_string(doubleValue);
-			break;	
-		}		
+			break;
+		}
 		case STRING: {
 			result += "\"";
 			result += escapeJSON(stringValue);
@@ -629,7 +629,7 @@ std::string Any::toString(){
 			size_t max_size = this->size() - 1;
 			result = "[";
 			if(this->size())for (size_t i = 0; i <= max_size; ++i) {
-				result += arrayValue[i].toString();
+				result += arrayValue[i].toJSONString();
 				if(i < max_size) {
 					result += ",";
 				}
@@ -645,7 +645,7 @@ std::string Any::toString(){
 				result += "\"";
 				result += escapeJSON(kv.first);
 				result += "\":";
-				result += kv.second.toString();
+				result += kv.second.toJSONString();
 				if(current++ < max_size-1){
 					result += ",";
 				}
@@ -660,14 +660,14 @@ std::string Any::toString(){
 Any Any::fromString(std::string str) {
 	try{
 		if(Susi::Util::Any::testIsStringJsonPrimitive(str)) {
-			Susi::Util::Any v;		
-			if(Susi::Util::Helpers::isInteger(str)) {			
+			Susi::Util::Any v;
+			if(Susi::Util::Helpers::isInteger(str)) {
 				v = Susi::Util::Any{std::stoi(str)};
 			} else if(Susi::Util::Helpers::isDouble(str)) {
 				v = Susi::Util::Any{std::stod(str)};
 			} else {
 				//value is String
-				v = str;	
+				v = str;
 			}
 
 			return v;
@@ -678,9 +678,9 @@ Any Any::fromString(std::string str) {
 			jsmntok_t tokens[JSON_TOKENS];
 			jsmn_init(&p);
 			r = jsmn_parse(&p, str.c_str(), str.size(), tokens, JSON_TOKENS);
-			
+
 			if(r < 0) {
-				throw std::runtime_error{"Any::fromString parse error"};	
+				throw std::runtime_error{"Any::fromString parse error"};
 			}
 
 			jsmntok_t * start = &tokens[0];
@@ -735,7 +735,7 @@ Any Any::tokenToAny(jsmntok_t * & t, const  char *js){
 		case JSMN_PRIMITIVE: {
 			std::string str{js+(t->start),js+(t->end)};
 			if(str.compare("null") == 0) {
-				result = Any{};										
+				result = Any{};
 			} else if(str.compare("true") == 0) {
 				result = true;
 			} else if(str.compare("false") == 0) {
@@ -834,7 +834,7 @@ std::string Any::unescapeJSON(const std::string& input) {
                             output += input[i];
                             break;
                     }
-                
+
                     s = Any::UNESCAPED;
                     break;
                 }

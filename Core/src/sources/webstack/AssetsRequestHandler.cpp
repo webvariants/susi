@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
@@ -18,16 +18,16 @@ void Susi::AssetsRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& req
 		std::string fileLocation = _rootDirectory.path()+"/"+request.getURI().substr(8);
 		Susi::Logger::debug("Target file: "+fileLocation);
 		Poco::File f(fileLocation);
-		
+
 		Poco::Timestamp dateTime    = f.getLastModified();
 		Poco::File::FileSize length = f.getSize();
 		response.set("Last-Modified", Poco::DateTimeFormatter::format(dateTime, Poco::DateTimeFormat::HTTP_FORMAT));
 		response.setContentLength(static_cast<int>(length));
-		
+
 		if(fileLocation.find(".svg") == fileLocation.size()-4){
 			response.setContentType("image/svg+xml");
 		}
-		
+
 		response.setChunkedTransferEncoding(false);
 
 		Poco::FileInputStream istr(fileLocation);

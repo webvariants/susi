@@ -26,9 +26,9 @@ void Susi::Api::ApiServerForComponent::onClose(std::string & id) {
 
 void Susi::Api::ApiServerForComponent::onMessage(std::string & id, Susi::Util::Any & packet) {
 	try{
-		std::cout<<"onMessage:"<<packet.toString()<<std::endl;
+		std::cout<<"onMessage:"<<packet.toJSONString()<<std::endl;
 		auto type = packet["type"];
-		if(type.isString()){			
+		if(type.isString()){
 			if(type=="registerConsumer"){
 				handleRegisterConsumer(id,packet);
 			}else if(type=="registerProcessor"){
@@ -43,7 +43,7 @@ void Susi::Api::ApiServerForComponent::onMessage(std::string & id, Susi::Util::A
 				handleAck(id,packet);
 			}else {
 				sendFail(id,"type not known");
-			}			
+			}
 		}else{
 			sendFail(id,"type is not a string");
 		}
@@ -79,7 +79,7 @@ void Susi::Api::ApiServerForComponent::handleRegisterConsumer(std::string & id, 
 				{"sessionid",event->sessionID}
 			};
 			std::string _id = id;
-			//std::cout<<"got consumer event, try to send it "+packet.toString()<<std::endl;
+			//std::cout<<"got consumer event, try to send it "+packet.toJSONString()<<std::endl;
 			send(_id,packet);
 		};
 		long subid = eventManager->subscribe(topic,callback);
