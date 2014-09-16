@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
@@ -32,7 +32,7 @@
 
 namespace Susi {
 	namespace Util {
-		class Any {	
+		class Any {
 		public:
 			typedef std::map<std::string,Any> Object;
 			typedef std::deque<Any> Array;
@@ -51,7 +51,7 @@ namespace Susi {
 				UNESCAPED
 			};
 
-		protected:	
+		protected:
 			Type type;
 
 			bool boolValue;
@@ -61,14 +61,14 @@ namespace Susi {
 			std::deque<Any> arrayValue;
 			std::map<std::string,Any> objectValue;
 
-		public:		
+		public:
 			class WrongTypeException: public std::exception {
 				protected:
 					Type _expected;
 					Type _actual;
 					std::string msg;
 				public:
-					WrongTypeException(Type expected, Type actual) 
+					WrongTypeException(Type expected, Type actual)
 						: _expected{expected},
 						  _actual{actual} {}
 					using std::exception::what;
@@ -94,7 +94,7 @@ namespace Susi {
 			};
 
 			Any(); // undefined ctor;
-			
+
 			// copy ctor's
 			Any(const Any & value);
 			Any(const bool & value);
@@ -117,7 +117,7 @@ namespace Susi {
 			Any(std::string && value);
 			Any(std::deque<Any> && value);
 			Any(std::map<std::string,Any> && value);
-			
+
 			// move asignment operator
 			void operator=(Any && value);
 			void operator=(bool && value);
@@ -144,10 +144,10 @@ namespace Susi {
 			// index operators
 			Any& operator[](const int pos);
 			Any& operator[](std::string key);
-			Any& operator[](const char * key);				
+			Any& operator[](const char * key);
 
 			//reference conversion operators
-			operator bool&(); // Any foo(true); bool & value = foo; value = false; EXPECT_FALSE(foo);			
+			operator bool&(); // Any foo(true); bool & value = foo; value = false; EXPECT_FALSE(foo);
 			operator long long&();
 			operator double&();
 			operator std::string&();
@@ -157,7 +157,7 @@ namespace Susi {
 			// copy conversion operators
 			operator int();
 			operator long();
-			operator std::map<std::string,std::string>();		
+			operator std::map<std::string,std::string>();
 
 			bool operator==(const Any & other) const;
 			bool operator!=(const Any & other) const;
@@ -188,14 +188,14 @@ namespace Susi {
 			// should throw if key doesn't exist
 			Any get(std::string key);
 
-			// json de/encoder; 
-			std::string toString();
+			// json de/encoder;
+			std::string toJSONString();
 			static Any fromString(std::string str);
 			static std::string escapeJSON(const std::string& input);
 			static std::string unescapeJSON(const std::string& input);
 
 		protected:
-			// json helper			
+			// json helper
 			static bool testIsStringJsonPrimitive(std::string str);
 			static Any tokenToAny(jsmntok_t * & t, const char *js);
 		};

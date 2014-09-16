@@ -23,7 +23,7 @@ void StateController::savePersistent() {
 	Susi::Util::Any obj = persistentStates;
 
 	Susi::IOController io;
-	io.writeFile(fileLocation,obj.toString());
+	io.writeFile(fileLocation,obj.toJSONString());
 }
 
 bool StateController::loadPersistent() {

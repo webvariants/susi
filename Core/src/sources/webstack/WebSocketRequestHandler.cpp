@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de), Thomas Krause (thomas.krause@webvariants.de)
  */
 
@@ -23,11 +23,11 @@ void Susi::WebSocketRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& 
 	std::string id = cookies["susisession"];
     Susi::Logger::debug("register sender in ws");
     apiServer->registerSender(id,[&socket](Susi::Util::Any & arg){
-    	std::string msg = arg.toString();
+    	std::string msg = arg.toJSONString();
     	Susi::Logger::debug("send frame to websocket");
-    	socket.sendFrame(msg.data(), msg.length(), Poco::Net::WebSocket::FRAME_TEXT);        
+    	socket.sendFrame(msg.data(), msg.length(), Poco::Net::WebSocket::FRAME_TEXT);
     });
-    
+
     apiServer->onConnect(id);
 
     char buffer[4096];
@@ -43,7 +43,7 @@ void Susi::WebSocketRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& 
 		}
 		std::string str(buffer, n);
 		Susi::Util::Any packet = Susi::Util::Any::fromString(str);
-		apiServer->onMessage(id,packet);   			
+		apiServer->onMessage(id,packet);
 	}
 	Susi::Logger::debug("closing websocket");
 	apiServer->onClose(id);

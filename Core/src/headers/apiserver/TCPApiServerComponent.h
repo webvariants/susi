@@ -34,7 +34,7 @@ protected:
 		std::string sessionID = "";
 		Susi::Api::JSONStreamCollector collector;
 	public:
-		Connection(const Poco::Net::StreamSocket& s, 
+		Connection(const Poco::Net::StreamSocket& s,
 				   std::shared_ptr<Susi::Events::ManagerComponent> eventManager,
 				   std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager) :
 			Poco::Net::TCPServerConnection{s},
@@ -50,7 +50,7 @@ protected:
 				api.onConnect(sessionID);
 				api.registerSender(sessionID,[this](Susi::Util::Any & msg) {
 					if(this==nullptr) return;
-					std::string str = msg.toString()+"\n";
+					std::string str = msg.toJSONString()+"\n";
 					socket().sendBytes(str.c_str(),str.size());
 			});
 		}
@@ -97,8 +97,8 @@ protected:
 
 public:
 	TCPApiServerComponent(Susi::System::ComponentManager * mgr,
-						  std::string addr, 
-						  size_t threads = 4, 
+						  std::string addr,
+						  size_t threads = 4,
 						  size_t backlog = 16) :
 		Susi::System::BaseComponent{mgr},
 		address{addr},
