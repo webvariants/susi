@@ -41,6 +41,7 @@ protected:
 		Handle<ObjectTemplate> global{ObjectTemplate::New()};
 		// Bind the global 'print' function to the C++ Print callback.
 		global->Set(String::New("log"), FunctionTemplate::New([] (const Arguments& args) -> Handle<Value>  {
+
 				Handle<External> data = Handle<External>::Cast(args.Data());
 				auto self = static_cast<Susi::JS::V8::Engine*>(data->Value());
 
@@ -52,6 +53,7 @@ protected:
 
 
 		global->Set(String::New("publish"), FunctionTemplate::New([] (const Arguments& args) -> Handle<Value>  {
+
 				Handle<External> data = Handle<External>::Cast(args.Data());
 				auto self = static_cast<Susi::JS::V8::Engine*>(data->Value());
 
@@ -87,8 +89,6 @@ protected:
 					Susi::Logger::log("JSEngine - subscribeConsumer: wrong number of Arguments");
 					return Undefined();
 				}
-				Locker v8Locker;
-				HandleScope scope;
 
 				Susi::Util::Any value = self->fromJS(args[0]);
 				std::string topic = value;
@@ -119,15 +119,13 @@ protected:
 					Susi::Logger::log("JSEngine - subscribeProcessor: wrong number of Arguments");
 					return Undefined();
 				}
-				Locker v8Locker;
-				HandleScope scope;
 
 				Susi::Util::Any value = self->fromJS(args[0]);
 				std::string topic = value;
 
 				Persistent<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[1]));
 
-				if(callback.IsEmpty()) {
+				if(callback.IsEmpty() || args.Length() < 2) {
 					Susi::Logger::log("JSEngine - subscribeProcessor: Topic: "+topic+" , failed - callback not found");
 					return ThrowException(String::New("subscribeProcessor: you have to specify a callback function as second argument"));
 				}
@@ -148,8 +146,7 @@ protected:
 	}
 
 	Susi::Util::Any fromJS(Handle<Value> value) {
-		Locker v8Locker;
-		HandleScope scope;
+
 
 	    Handle<Object> global = context->Global();
 
@@ -165,9 +162,7 @@ protected:
 	}
 
 	Handle<Value> fromCPP(Susi::Util::Any value) {
-		Locker v8Locker;
 		HandleScope scope;
-
 	    Handle<Object> global = Susi::JS::V8::Engine::context->Global();
 
 		Handle<Object> JSON = global->Get(String::New("JSON"))->ToObject();
@@ -181,8 +176,6 @@ protected:
 	virtual void onConsumerEvent(Susi::Events::Event & event) override{
 		auto evt = std::make_shared<Susi::Events::Event>(event);
 		std::function<void()> f = [this, evt]() {
-			Locker v8Locker;
-			HandleScope scope;
 			std::vector<Persistent<Function>> consumer = consumers[evt->topic];
 			Handle<Object> global{context->Global()};
 			Handle<Value> e = fromCPP(evt->toAny());
@@ -198,8 +191,6 @@ protected:
 	virtual void onProcessorEvent(Susi::Events::Event & event) override {
 		auto evt = std::make_shared<Susi::Events::Event>(event);
 		std::function<void()> f = [this, evt](){
-			Locker v8Locker;
-			HandleScope scope;
 			std::vector<Persistent<Function>> processor = processors[evt->topic];
 			Handle<Object> global{context->Global()};
 			Handle<Value> e = fromCPP(evt->toAny());
@@ -219,8 +210,6 @@ protected:
 		auto evt = std::make_shared<Susi::Events::Event>(event);
 		std::function<void()> f = [this, evt](){
 			try {
-				Locker v8Locker;
-				HandleScope scope;
 				Handle<Object> global{context->Global()};
 				Handle<Value> e = fromCPP(evt->toAny());
 				finishedCbs.at(evt->id)->Call(global, 1, &e);
@@ -265,6 +254,8 @@ protected:
 			    	}
 			    }
 			}
+			context->Exit();
+    		context.Dispose();
 	    }
 
 		return return_val;
@@ -276,15 +267,17 @@ public:
 	std::map<std::string, std::vector<Persistent<Function>>> processors;
 	std::map<long, Persistent<Function>> finishedCbs;
 
-	HandleScope scope;
-
+	Isolate * isolate;
+	Isolate::Scope isolate_scope;
 
 	Engine(std::string address = "[::1]:4000")
-		: BasicApiClient{address}
+		: BasicApiClient{address},
+		isolate{Isolate::New()},
+		isolate_scope{isolate}
 	{
+		Locker v8Locker;
+		HandleScope scope;
 		if(context.IsEmpty()) {
-			Locker v8Locker;
-			HandleScope scope;
 			TryCatch try_catch;
 			context = Persistent<Context>(setupContext());
 			if(try_catch.HasCaught()) {
@@ -296,8 +289,6 @@ public:
 
 	// This function will block the thread (because of run)
 	bool run(std::string source) {
-		Locker v8Locker;
-		HandleScope scope;
 		return this->run(String::New(source.c_str()));
 	}
 
@@ -307,19 +298,14 @@ public:
 		std::stringstream buffer;
 		buffer << t.rdbuf();
 
-		Locker v8Locker;
-		HandleScope scope;
 		return this->run(String::New(buffer.str().c_str()));
 	}
 
 	void stop() {
 		callback_channel.close();
-		context->Exit();
-		context.Dispose();
 	}
 
 	~Engine() {
-		close();
 		stop();
 	}
 };
