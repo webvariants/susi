@@ -15,14 +15,12 @@ void Susi::World::setup(){
 	setupSessionManager();
 	setupDBManager();
 	setupIOController();
-	setupEngineStarter();
 	setupStateController();
 }
 
 void Susi::World::tearDown(){
 	tcpServer.reset();
 	httpServer.reset();
-	engineStarter.reset();
 	authController.reset();
 	ioController.reset();
 	dbManager.reset();
@@ -50,19 +48,6 @@ void Susi::World::setupStateController(){
 
 	Susi::States::EventInterface::init();
 }
-
-void Susi::World::setupEngineStarter(){
-	std::string base = "./controller/";
-	try{
-		auto & app = Poco::Util::Application::instance();
-		auto & cfg = app.config();
-		base = cfg.getString("enginestarter.root");
-	}catch(const std::exception & e){}
-	engineStarter = std::shared_ptr<Susi::EngineStarter::Starter>{new Susi::EngineStarter::Starter(base)};
-
-	Susi::EngineStarter::EventInterface::init();
-}
-
 
 void Susi::World::setupTCPServer(){
 	std::string addr = "[::1]:4000";

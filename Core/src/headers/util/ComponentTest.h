@@ -74,7 +74,7 @@ protected:
 									"\"backlog\": 32"
 								"},"
 								"\"enginestarter\": {"
-									"\"path\": \"./engines\""
+									"\"path\": \"./enginestarter_test\""
 								"},"
 								"\"iocontroller\": {"
 									"\"base\": \".\""
