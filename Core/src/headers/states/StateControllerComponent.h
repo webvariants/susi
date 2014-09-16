@@ -23,8 +23,9 @@ namespace Susi {
 				Susi::System::BaseComponent{mgr}, StateController{file} {}
 
 			virtual void start() override {
-				subscribe("heartbeat::fiveMinute",[this](::Susi::Events::EventPtr evt){handleSave(std::move(evt));});
+				subscribe("heartbeat::fiveMinute",[this](::Susi::Events::EventPtr evt){handleAutoSave(std::move(evt));});
 
+				subscribe("state::saveState", [this](::Susi::Events::EventPtr evt){handleSave(std::move(evt));});
 				subscribe("state::setState", [this](::Susi::Events::EventPtr evt){handleSetState(std::move(evt));});
 				subscribe("state::getState", [this](::Susi::Events::EventPtr evt){handleGetState(std::move(evt));});
 				subscribe("state::setPersistentState", [this](::Susi::Events::EventPtr evt){handleSetPersistentState(std::move(evt));});
@@ -35,6 +36,7 @@ namespace Susi {
 				unsubscribeAll();
 			}
 		protected:
+			void handleAutoSave(Susi::Events::EventPtr event);
 			void handleSave(Susi::Events::EventPtr event);
 			void handleSetState(Susi::Events::EventPtr event);
 			void handleGetState(Susi::Events::EventPtr event);
