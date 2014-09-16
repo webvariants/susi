@@ -25,6 +25,7 @@ void Susi::States::StateControllerComponent::handleSetState(Susi::Events::EventP
 		Susi::Util::Any value = event->payload["value"];
 		event->payload["success"] = setState(stateID, value);
 	}catch(const std::exception & e){
+		event->payload["success"] = false;
 		std::string msg = "Error in handleSetState(): ";
 		msg += e.what();
 		throw std::runtime_error(msg);

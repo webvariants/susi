@@ -12,7 +12,14 @@ protected:
 	}
 
 	virtual void GoodCases() override {
-
+		//create event
+		auto evt = createEvent("state::setState");
+		evt->payload["stateID"] = "foo";
+		evt->payload["value"] = "bar";		
+		//fire event
+		auto result = publish_sync(std::move(evt));
+		//check event
+		EXPECT_TRUE(static_cast<bool>(result->payload["success"]));	
 	}
 
 	virtual void BadCases() override {
