@@ -313,6 +313,7 @@ public:
 	}
 
 	void stop() {
+		callback_channel.close();
 		context->Exit();
 		context.Dispose();
 	}
