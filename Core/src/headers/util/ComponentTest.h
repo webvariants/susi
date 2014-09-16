@@ -83,7 +83,7 @@ protected:
 									"\"lifetime\": 600000"
 								"},"
 								"\"statecontroller\": {"
-									"\"file\": \"./states.json\""
+									"\"file\": \"./component_test/states.json\""
 								"},"
 								"\"syscallcontroller\": {"
 									"\"threads\": 4,"

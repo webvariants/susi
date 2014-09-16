@@ -92,7 +92,7 @@ protected:
 		evt->sessionID = sessionID;
 		auto result = publish_sync(std::move(evt));
 
-		//std::cout<<"EDGE CASE:"<<result->toAny().toString()<<std::endl;
+		//std::cout<<"EDGE CASE:"<<result->toAny().toJSONString()<<std::endl;
 		EXPECT_FALSE(static_cast<bool>(result->payload["success"]));			
 		
 		EXPECT_TRUE(hasErrorHeader(result));
