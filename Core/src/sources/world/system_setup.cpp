@@ -132,6 +132,7 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 	});
 	manager->registerDependency("statecontroller","eventsystem");
 	manager->registerDependency("statecontroller","iocontroller");
+	manager->registerDependency("statecontroller","heartbeat");
 
 	/**
 	 * Declare syscallcontroller
