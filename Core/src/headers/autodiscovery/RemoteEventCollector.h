@@ -30,7 +30,7 @@ protected:
 		Susi::Events::Consumer finishCallback = [this](Susi::Events::SharedEventPtr evt){
 			sendAck(*evt);
 		};
-		_eventsystem->publish(eventPtr, finishCallback);
+		_eventsystem->publish(std::move(eventPtr), finishCallback);
 	}
 
 public:
@@ -44,7 +44,7 @@ public:
 		sendRegisterProcessor("*@"+_ownId);
 	}
 
-}
+};
 
 }
 }
