@@ -42,7 +42,6 @@ void Susi::World::setupStateController(){
 		new Susi::States::StateController(file)
 	};
 
-	Susi::States::EventInterface::init();
 }
 
 void Susi::World::setupTCPServer(){
@@ -69,5 +68,4 @@ void Susi::World::setupSessionManager(){
 
 void Susi::World::setupIOController() {
 	ioController = std::shared_ptr<Susi::IOController>{new Susi::IOController()};
-	Susi::IOEventInterface::initEventInterface();
 }

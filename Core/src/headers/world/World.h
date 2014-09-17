@@ -25,12 +25,10 @@
 #include "tiny-js/JSEngine.h"
 #include "db/Manager.h"
 #include "iocontroller/IOController.h"
-#include "iocontroller/IOEventInterface.h"
 #include "logger/Logger.h"
 #include "enginestarter/EngineStarter.h"
 #include "auth/AuthController.h"
 #include "states/StateController.h"
-#include "states/StateEventInterface.h"
 
 namespace Susi{
 
