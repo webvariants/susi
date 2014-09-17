@@ -24,16 +24,11 @@
 #include "sessions/SessionManagerEventInterface.h"
 #include "tiny-js/JSEngine.h"
 #include "db/Manager.h"
-#include "db/EventInterface.h"
 #include "iocontroller/IOController.h"
-#include "heartbeat/HeartBeat.h"
-#include "iocontroller/IOEventInterface.h"
 #include "logger/Logger.h"
 #include "enginestarter/EngineStarter.h"
 #include "auth/AuthController.h"
-#include "auth/AuthEventInterface.h"
 #include "states/StateController.h"
-#include "states/StateEventInterface.h"
 
 namespace Susi{
 
@@ -57,7 +52,6 @@ namespace Susi{
 		std::shared_ptr<Susi::HttpServer> 				httpServer{nullptr};
 		std::shared_ptr<Susi::Sessions::SessionManager> sessionManager{nullptr};
 		std::shared_ptr<Susi::IOController>				ioController{nullptr};
-		std::shared_ptr<Susi::HeartBeat>				heartBeat{nullptr};
 		std::shared_ptr<Susi::DB::Manager>				dbManager{nullptr};
 		std::shared_ptr<Susi::Logger>					logger{nullptr};
 		std::shared_ptr<Susi::Auth::Controller>			authController{nullptr};

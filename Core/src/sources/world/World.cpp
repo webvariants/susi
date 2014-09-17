@@ -11,9 +11,7 @@ void Susi::World::setup(){
 	std::cout<<"WORLD setup:"<<std::endl;
 	setupEventManager();
 	setupTCPServer();
-	setupHeartBeat();
 	setupSessionManager();
-	setupDBManager();
 	setupIOController();
 	setupStateController();
 }
@@ -23,9 +21,7 @@ void Susi::World::tearDown(){
 	httpServer.reset();
 	authController.reset();
 	ioController.reset();
-	dbManager.reset();
 	stateController.reset();
-	heartBeat.reset();
 	sessionManager.reset();
 	eventManager.reset();
 	logger.reset();
@@ -46,7 +42,6 @@ void Susi::World::setupStateController(){
 		new Susi::States::StateController(file)
 	};
 
-	Susi::States::EventInterface::init();
 }
 
 void Susi::World::setupTCPServer(){
@@ -73,46 +68,4 @@ void Susi::World::setupSessionManager(){
 
 void Susi::World::setupIOController() {
 	ioController = std::shared_ptr<Susi::IOController>{new Susi::IOController()};
-	Susi::IOEventInterface::initEventInterface();
 }
-
-void Susi::World::setupHeartBeat() {
-	heartBeat = std::shared_ptr<Susi::HeartBeat>{new Susi::HeartBeat()};
-}
-
-void Susi::World::setupDBManager(){
-	std::vector<std::tuple<std::string,std::string,std::string>> dbs;
-	std::string dbConfigPath = "./dbs.conf";
-	try{
-		auto & app = Poco::Util::Application::instance();
-		auto & cfg = app.config();
-		dbConfigPath = cfg.getString("db.config");
-	}catch(const std::exception & e){}
-	
-	try{
-		IOController io;		
-		std::string configData = io.readFile(dbConfigPath);
-				
-		if(configData != ""){
-
-			std::map<std::string,Susi::Util::Any> data = Susi::Util::Any::fromString(configData);		
-			for (std::map<std::string,Susi::Util::Any>::iterator it=data.begin(); it!=data.end(); ++it) {
-
-				std::string name = it->second["name"];
-				std::string type = it->second["type"];
-				std::string uri  = it->second["uri"];
-				
-				auto tuple = std::make_tuple(name, type, uri);
-				dbs.push_back(tuple);
-			}
-		} 
-	}catch(const std::exception & e){
-		std::string msg = "Execption while setup DBManager: ";
-		msg += e.what();
-		Susi::Logger::warn(msg);
-		dbs.push_back(std::make_tuple("auth","sqlite3","./auth.db"));
-	}
-	dbManager = std::shared_ptr<Susi::DB::Manager>{new Susi::DB::Manager(dbs)};
-	Susi::DB::init();
-}
-
