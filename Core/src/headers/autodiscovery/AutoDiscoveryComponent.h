@@ -59,11 +59,11 @@ public:
 	AutoDiscoveryComponent(std::string mcastGroup, std::string ownAddr, Susi::System::ComponentManager* componentManager) :
 		Susi::System::BaseComponent{componentManager}, Susi::Autodiscovery::Manager{mcastGroup,ownAddr}, _ownAddr{ownAddr} {}
 
-	virtual void start(){
+	virtual void start() override {
 		Susi::Autodiscovery::Manager::start();
 	}
 
-	virtual void stop(){
+	virtual void stop() override {
 		Susi::Autodiscovery::Manager::stop();
 		while(_collectors.size())_collectors.pop_back();
 	}
