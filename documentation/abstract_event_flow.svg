@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="80cm" height="32cm" viewBox="-211 -133 1591 622" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <g>
+    <rect style="fill: #ffffff" x="27" y="49" width="168" height="38"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="27" y="49" width="168" height="38"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="111" y="71.9">
+      <tspan x="111" y="71.9">DateTime Controller</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="353.1" y="48.8" width="168" height="38"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="353.1" y="48.8" width="168" height="38"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="437.1" y="71.7">
+      <tspan x="437.1" y="71.7">Event Core</tspan>
+    </text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="111" y1="87" x2="111.254" y2="477.514"/>
+    <polygon style="fill: #000000" points="111.259,485.014 106.252,475.017 111.254,477.514 116.252,475.011 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="111.259,485.014 106.252,475.017 111.254,477.514 116.252,475.011 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="437.1" y1="86.8" x2="436.124" y2="477.514"/>
+    <polygon style="fill: #000000" points="436.106,485.014 431.131,475.001 436.124,477.514 441.131,475.026 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="436.106,485.014 431.131,475.001 436.124,477.514 441.131,475.026 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1056.24" y1="94.9194" x2="1056.1" y2="457.514"/>
+    <polygon style="fill: #000000" points="1056.1,465.014 1051.1,455.012 1056.1,457.514 1061.1,455.016 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1056.1,465.014 1051.1,455.012 1056.1,457.514 1061.1,455.016 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="111" y1="116" x2="426.264" y2="116.97"/>
+    <polygon style="fill: #000000" points="433.764,116.993 423.749,121.962 426.264,116.97 423.779,111.962 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="433.764,116.993 423.749,121.962 426.264,116.97 423.779,111.962 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="173" y="110">
+    <tspan x="173" y="110">RegisterProcessor("GetDate")</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="717.1" y1="228.25" x2="446.836" y2="228.25"/>
+    <polygon style="fill: #000000" points="439.336,228.25 449.336,223.25 446.836,228.25 449.336,233.25 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="439.336,228.25 449.336,223.25 446.836,228.25 449.336,233.25 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="480" y="219">
+    <tspan x="480" y="219">Publish("GetDate", state-object)</tspan>
+  </text>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="364" y="269">
+    <tspan x="364" y="269"></tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="438.1" y1="380.25" x2="702.364" y2="381.214"/>
+    <polygon style="fill: #000000" points="709.864,381.242 699.846,386.205 702.364,381.214 699.882,376.205 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="709.864,381.242 699.846,386.205 702.364,381.214 699.882,376.205 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="502" y="374">
+    <tspan x="502" y="374">Acknowledge(state-object)</tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="-195.9" y="48.8" width="168" height="38"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="-195.9" y="48.8" width="168" height="38"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="-111.9" y="71.7">
+      <tspan x="-111.9" y="71.7">Event Logger</tspan>
+    </text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="-111.9" y1="86.8" x2="-111.679" y2="473.514"/>
+    <polygon style="fill: #000000" points="-111.675,481.014 -116.681,471.017 -111.679,473.514 -106.681,471.011 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="-111.675,481.014 -116.681,471.017 -111.679,473.514 -106.681,471.011 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="-113.9" y1="156.25" x2="426.364" y2="156.25"/>
+    <polygon style="fill: #000000" points="433.864,156.25 423.864,161.25 426.364,156.25 423.864,151.25 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="433.864,156.25 423.864,161.25 426.364,156.25 423.864,151.25 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="-45.9" y="146.7">
+    <tspan x="-45.9" y="146.7">RegisterConsumer("*")</tspan>
+  </text>
+  <g>
+    <rect style="fill: #ffffff" x="972.25" y="55.95" width="168" height="38"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="972.25" y="55.95" width="168" height="38"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="1056.25" y="78.85">
+      <tspan x="1056.25" y="78.85">Web Client</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="630.25" y="49.95" width="168" height="38"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="630.25" y="49.95" width="168" height="38"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="714.25" y="72.85">
+      <tspan x="714.25" y="72.85">Web Stack</tspan>
+    </text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="714.291" y1="88.9393" x2="715.08" y2="473.514"/>
+    <polygon style="fill: #000000" points="715.095,481.014 710.075,471.024 715.08,473.514 720.075,471.004 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="715.095,481.014 710.075,471.024 715.08,473.514 720.075,471.004 "/>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="1055.1" y1="200.25" x2="724.836" y2="199.279"/>
+    <polygon style="fill: #000000" points="717.336,199.257 727.351,194.286 724.836,199.279 727.321,204.286 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="717.336,199.257 727.351,194.286 724.836,199.279 727.321,204.286 "/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="747.1" y="190.25">
+    <tspan x="747.1" y="190.25">Websocket-Request("GetDate", state-object)</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="435.836" y1="261.186" x2="119.836" y2="261.248"/>
+    <polygon style="fill: #000000" points="112.336,261.25 122.335,256.248 119.836,261.248 122.337,266.248 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="112.336,261.25 122.335,256.248 119.836,261.248 122.337,266.248 "/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="175.1" y="253.25">
+    <tspan x="175.1" y="253.25">Forward("GetDate", state-object)</tspan>
+  </text>
+  <g>
+    <polygon style="fill: #ffffff" points="26.1,276.25 154.1,276.25 166.1,288.25 166.1,319.65 26.1,319.65 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="26.1,276.25 154.1,276.25 166.1,288.25 166.1,319.65 26.1,319.65 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="154.1,276.25 154.1,288.25 166.1,288.25 "/>
+    <text font-size="10.1598" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="33.1" y="298.65">
+      <tspan x="33.1" y="298.65">Enrich state-object </tspan>
+      <tspan x="33.1" y="311.35">with current date</tspan>
+    </text>
+  </g>
+  <g>
+    <polygon style="fill: #ffffff" points="1071.6,142.95 1211.8,142.95 1223.8,154.95 1223.8,237.15 1071.6,237.15 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1071.6,142.95 1211.8,142.95 1223.8,154.95 1223.8,237.15 1071.6,237.15 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="1211.8,142.95 1211.8,154.95 1223.8,154.95 "/>
+    <text font-size="10.1598" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1078.6" y="165.35">
+      <tspan x="1078.6" y="165.35">Client wants to get</tspan>
+      <tspan x="1078.6" y="178.05">the current date.</tspan>
+      <tspan x="1078.6" y="190.75">So he sends a request </tspan>
+      <tspan x="1078.6" y="203.45">with an identifier and</tspan>
+      <tspan x="1078.6" y="216.15">a state-object for</tspan>
+      <tspan x="1078.6" y="228.85">the reply.</tspan>
+    </text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="111.1" y1="347.25" x2="428.364" y2="348.22"/>
+    <polygon style="fill: #000000" points="435.864,348.243 425.849,353.213 428.364,348.22 425.879,343.213 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="435.864,348.243 425.849,353.213 428.364,348.22 425.879,343.213 "/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="439.1" y="360.25">
+    <tspan x="439.1" y="360.25"></tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="183.1" y="342.25">
+    <tspan x="183.1" y="342.25">Acknowledge(state-object)</tspan>
+  </text>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="437.572" y1="399.125" x2="-103.164" y2="398.265"/>
+    <polygon style="fill: #000000" points="-110.664,398.254 -100.656,393.269 -103.164,398.265 -100.672,403.269 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="-110.664,398.254 -100.656,393.269 -103.164,398.265 -100.672,403.269 "/>
+  </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="130.6" y="391.85">
+    <tspan x="130.6" y="391.85">Forward("GetDate", state-object)</tspan>
+  </text>
+  <g>
+    <polygon style="fill: #ffffff" points="-189.4,410.95 -55.3,410.95 -43.3,422.95 -43.3,441.65 -189.4,441.65 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="-189.4,410.95 -55.3,410.95 -43.3,422.95 -43.3,441.65 -189.4,441.65 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="-55.3,410.95 -55.3,422.95 -43.3,422.95 "/>
+    <text font-size="10.1598" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="-182.4" y="433.35">
+      <tspan x="-182.4" y="433.35">Logger logs the event</tspan>
+    </text>
+  </g>
+  <g>
+    <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="714.604" y1="399.231" x2="1045.36" y2="400.221"/>
+    <polygon style="fill: #000000" points="1052.86,400.243 1042.85,405.213 1045.36,400.221 1042.88,395.213 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1052.86,400.243 1042.85,405.213 1045.36,400.221 1042.88,395.213 "/>
+  </g>
+  <text font-size="12.8" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="802.6" y="389.85">
+    <tspan x="802.6" y="389.85">Websocket-Response(state-object)</tspan>
+  </text>
+  <g>
+    <polygon style="fill: #ffffff" points="1075.6,362.95 1289,362.95 1301,374.95 1301,419.05 1075.6,419.05 "/>
+    <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="1075.6,362.95 1289,362.95 1301,374.95 1301,419.05 1075.6,419.05 "/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="1289,362.95 1289,374.95 1301,374.95 "/>
+    <text font-size="10.1598" style="fill: #000000;text-anchor:start;font-family:monospace;font-style:normal;font-weight:normal" x="1082.6" y="385.35">
+      <tspan x="1082.6" y="385.35">The state-object now contains</tspan>
+      <tspan x="1082.6" y="398.05">the current date, as given by the </tspan>
+      <tspan x="1082.6" y="410.75">DateTime Controller.</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="157.6" y="-57.05" width="168" height="38"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="157.6" y="-57.05" width="168" height="38"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="241.6" y="-34.15">
+      <tspan x="241.6" y="-34.15">Auth Controller</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="368.1" y="-129.35" width="168" height="38"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="368.1" y="-129.35" width="168" height="38"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="452.1" y="-106.45">
+      <tspan x="452.1" y="-106.45">Heartbeat</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="374.6" y="-55.65" width="168" height="38"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="374.6" y="-55.65" width="168" height="38"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="458.6" y="-32.75">
+      <tspan x="458.6" y="-32.75">Session Manager</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="586.6" y="-54.05" width="168" height="38"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="586.6" y="-54.05" width="168" height="38"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="670.6" y="-31.15">
+      <tspan x="670.6" y="-31.15">TCP API Server</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="32.6" y="-131.05" width="168" height="38"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="32.6" y="-131.05" width="168" height="38"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="116.6" y="-108.15">
+      <tspan x="116.6" y="-108.15">IO Controller</tspan>
+    </text>
+  </g>
+  <g>
+    <rect style="fill: #ffffff" x="-68.9" y="-57.35" width="168" height="38"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x="-68.9" y="-57.35" width="168" height="38"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="15.1" y="-34.45">
+      <tspan x="15.1" y="-34.45">DB Manager</tspan>
+    </text>
+  </g>
+  <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke-dasharray: 20; stroke: #000000" x1="-209.9" y1="14.25" x2="1378.1" y2="12.25"/>
+</svg>
