@@ -29,7 +29,6 @@
 #include "logger/Logger.h"
 #include "enginestarter/EngineStarter.h"
 #include "auth/AuthController.h"
-#include "auth/AuthEventInterface.h"
 #include "states/StateController.h"
 #include "states/StateEventInterface.h"
 
