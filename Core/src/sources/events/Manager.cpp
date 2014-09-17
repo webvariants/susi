@@ -1,6 +1,13 @@
 #include "events/EventManager.h"
 
 long Susi::Events::Manager::subscribe(std::string topic, Susi::Events::Processor processor){
+	if(Susi::Util::Glob::isGlob(topic)){
+		auto predicate = [topic](Susi::Events::Event& event){
+			Susi::Util::Glob glob{topic};
+			return glob.match(event.topic);
+		};
+		return subscribe(predicate,processor);
+	}
 	std::lock_guard<std::mutex> lock(mutex);
 	long id = std::chrono::system_clock::now().time_since_epoch().count();
 	processorsByTopic[topic].push_back(std::make_pair(id,processor));
@@ -13,6 +20,13 @@ long Susi::Events::Manager::subscribe(Susi::Events::Predicate pred, Susi::Events
 	return id;
 }
 long Susi::Events::Manager::subscribe(std::string topic, Susi::Events::Consumer consumer){
+	if(Susi::Util::Glob::isGlob(topic)){
+		auto predicate = [topic](Susi::Events::Event& event){
+			Susi::Util::Glob glob{topic};
+			return glob.match(event.topic);
+		};
+		return subscribe(predicate,consumer);
+	}
 	std::lock_guard<std::mutex> lock(mutex);
 	long id = std::chrono::system_clock::now().time_since_epoch().count();
 	consumersByTopic[topic].push_back(std::make_pair(id,consumer));
@@ -143,8 +157,8 @@ void Susi::Events::Manager::ack(EventPtr event){
 				}
 			}
 			if(process.get()==nullptr){
-				std::cout<<"cant find process, this should not happen"<<std::endl;
-				std::cout<<event->topic<<std::endl;
+				/*std::cout<<"cant find process, this should not happen"<<std::endl;
+				std::cout<<event->topic<<std::endl;*/
 				delete event.release();
 				return;
 			}
