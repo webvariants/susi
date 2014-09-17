@@ -55,6 +55,7 @@ namespace Susi {
 				std::string commandSpecifier = event->payload["cmd"];
 				std::string commandline = commands[commandSpecifier];
 				Any args = event->payload["args"];
+
 				if(args.isObject()){
 					Any::Object argsObject = args;
 					for(auto& kv : argsObject){
