@@ -1,3 +1,4 @@
+/*
 #include <gtest/gtest.h>
 //#include <Poco/Dynamic/Var.h>
 #include "sessions/SessionManager.h"
@@ -23,8 +24,8 @@ protected:
 	}
 };
 
-/* 
-@FIXME when world object will be removed
+
+// @FIXME when world object will be removed
 TEST_F(SessionManagerTest, Init) {
 	EXPECT_FALSE(sessionManager.checkSession(sessionID));
 	sessionManager.updateSession(sessionID);
@@ -33,7 +34,7 @@ TEST_F(SessionManagerTest, Init) {
 	std::this_thread::sleep_for(duration);
 	EXPECT_FALSE(sessionManager.checkSession(sessionID));
 }
-*/
+
 
 
 TEST_F(SessionManagerTest, SetGetAttribute){
@@ -87,3 +88,5 @@ TEST_F(SessionManagerTest, SetPushGetAttribute){
 		});
 	}
 }
+
+*/
