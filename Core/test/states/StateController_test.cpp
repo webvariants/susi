@@ -1,22 +1,22 @@
 #include "gtest/gtest.h"
 #include "iocontroller/IOController.h"
-#include "world/World.h"
 #include "logger/Logger.h"
 #include "states/StateController.h"
 
 using Susi::Util::Any;
 
 class StateControllerTest : public ::testing::Test {
+public:
+   	std::string base_path = Poco::Path(Poco::Path::current()).toString() + "state_test/";
+   	Susi::IOController io;
 protected:
 	std::shared_ptr<Susi::States::StateController> controller{nullptr};
-	virtual void SetUp() override {
-		world.setupEventManager();
-		//world.setupHeartBeat();
-		world.setupIOController();
-		controller = std::make_shared<Susi::States::StateController>(std::string("./states.json"));
+	virtual void SetUp() override {		
+		io.makeDir(base_path);
+		controller = std::make_shared<Susi::States::StateController>(std::string(base_path + "states.json"));
 	}
 	virtual void TearDown() override {
-		world.ioController->deletePath("./states.json");
+		io.deletePath(base_path);
 	}
 };
 

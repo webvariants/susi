@@ -8,8 +8,7 @@ public:
 protected:
 	
 	virtual void SetUp() override {
-		base_path = Poco::Path(Poco::Path::current()).toString() + "/iocontroller_test";
-		io = Susi::IOController{base_path};
+		base_path = Poco::Path(Poco::Path::current()).toString() + "/iocontroller_test";		
 		io.makeDir(base_path);
 		componentManager->startComponent("iocontroller");
 	}

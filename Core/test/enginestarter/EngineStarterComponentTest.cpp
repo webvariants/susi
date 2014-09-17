@@ -2,17 +2,14 @@
 
 class EngineStarterComponentTest : public ComponentTest {
 public:
-	std::string base_path;
+	std::string script;
+	std::string output;
 	Susi::IOController io;
 protected:
 	
-	virtual void SetUp() override {
-		base_path = Poco::Path(Poco::Path::current()).toString() + "enginestarter_test/";
-		io = Susi::IOController{base_path};
-		io.makeDir(base_path);
-
-		std::string script = base_path+"test.sh";
-		std::string output = base_path+"test.out";
+	virtual void SetUp() override {		
+		script = base_path+"test.sh";
+		output = base_path+"test.out";
 
 		io.writeFile(script,"#!/bin/bash\nfor i in $(seq 1 10); do echo -n foobar >> "+output+"\nsleep 0.1; done; exit 0\n");
 		io.setExecutable(script,true);
@@ -21,20 +18,57 @@ protected:
 	}
 	
 	virtual void TearDown() override {
-		//io.deletePath(base_path);
 		componentManager->stopComponent("enginestarter");
 	}
 
 	virtual void GoodCases() override {
+		std::string content;
+
+		std::cout<<"OUTPUT PATH:"<<output<<std::endl;
+
 		//create event
 		auto evt = createEvent("enginestarter::start");	
 		evt->payload["path"] = base_path;
-		auto result = publish_sync(std::move(evt));
+		publish_sync(std::move(evt));
 
 		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
-		//check event
-		//EXPECT_TRUE(static_cast<bool>(result->payload["success"]));
+		content = io.readFile(output);
+		EXPECT_TRUE(content.length() > 0);
+		io.deletePath(output);
+
+		//start stop
+		auto evt2 = createEvent("enginestarter::start");	
+		evt2->payload["path"] = base_path;
+		publish_sync(std::move(evt2));
+
+		auto evt3 = createEvent("enginestarter::stop");			
+		publish_sync(std::move(evt3));
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+
+		EXPECT_THROW({
+			content = io.readFile(output);
+		},std::runtime_error);
+
+		//restart
+		auto evt4 = createEvent("enginestarter::start");	
+		evt4->payload["path"] = base_path;
+		publish_sync(std::move(evt4));
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+		auto evt5 = createEvent("enginestarter::stop");			
+		publish_sync(std::move(evt5));
+
+		auto evt6 = createEvent("enginestarter::restart");
+		evt6->payload["path"] = base_path;		
+		publish_sync(std::move(evt6));
+
+		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+
+		content = io.readFile(output);	
+		EXPECT_TRUE(content.length() > 0);		
 
 	}
 

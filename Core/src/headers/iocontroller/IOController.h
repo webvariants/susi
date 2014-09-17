@@ -30,7 +30,6 @@ namespace Susi {
 		Poco::Path base_path;
 
 		IOController();
-		IOController(std::string base_path);
 		// high level
 		std::size_t writeFile(std::string filename,char* ptr, std::size_t len);
 		std::size_t writeFile(std::string filename,std::string content);

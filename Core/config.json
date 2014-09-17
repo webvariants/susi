@@ -31,9 +31,7 @@
 		"path": "./engines"
 	},
 
-	"iocontroller": {
-		"base": "."
-	},
+	"iocontroller": {},
 
 	"sessionmanager": {
 		"lifetime": 600000

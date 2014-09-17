@@ -18,8 +18,8 @@
 namespace Susi {
 	class IOControllerComponent : public Susi::System::BaseComponent , public IOController {
 		public:
-			IOControllerComponent (Susi::System::ComponentManager * mgr, std::string base_path) :
-				Susi::System::BaseComponent{mgr}, IOController{base_path} {}
+			IOControllerComponent (Susi::System::ComponentManager * mgr) :
+				Susi::System::BaseComponent{mgr}, IOController{} {}
 
 			~IOControllerComponent() {
 				stop();

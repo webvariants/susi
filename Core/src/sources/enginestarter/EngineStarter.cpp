@@ -31,7 +31,6 @@ void Susi::EngineStarter::Starter::rec_dir(const std::string & path)
   for (Poco::DirectoryIterator it(path); it != end; ++it) {
   	if(!it->isDirectory() && it->canExecute()) {
   		std::vector<std::string> args;
-  		std::cout<<"EXECUTE PATH:"<<it->path()<<std::endl;
 		Poco::ProcessHandle ph = Poco::Process::launch(it->path(), args);
 		this->phs.push_back(ph);
 	}else if (it->isDirectory()) {

@@ -21,17 +21,23 @@
 
 class ComponentTest : public ::testing::Test {
 public:
+	std::string base_path;
+
 	ComponentTest(){
-		Susi::Logger::setLevel(0);
-		Susi::Util::Any::Object cfg = Susi::Util::Any::fromString(configString);
+		Susi::Logger::setLevel(7);
+
+		base_path = Poco::Path(Poco::Path::current()).toString() + "component_test/";
+
+		Susi::Util::Any::Object cfg = Susi::Util::Any::fromString(getConfigString(base_path));
 		componentManager = Susi::System::createSusiComponentManager(cfg);
 		eventManager = componentManager->getComponent<Susi::Events::ManagerComponent>("eventsystem");
 
-		io.makeDir("./component_test");
+		
+		io.makeDir(base_path);
 	}
 
 	~ComponentTest(){
-		io.deletePath("./component_test");	
+		io.deletePath(base_path);
 	}
 
 protected:
@@ -44,60 +50,62 @@ protected:
 	virtual void BadCases() = 0;
 	virtual void EdgeCases() = 0;
 
+	std::string getConfigString(std::string path) {
+		std::string configString ="{"
+				"\"eventsystem\" : {"
+					"\"threads\": 4,"
+					"\"queuelen\": 32"
+				"},"
+				"\"heartbeat\": {"
+					"\"fix\":\"me\""
+				"},"
+				"\"dbmanager\": ["
+					"{"
+					"\"identifier\" : \"auth\","
+					"\"type\": \"sqlite3\","
+					"\"uri\" : \""+path+"/auth.sqlite3\""
+					"},"
+					"{"
+					"\"identifier\" : \"test_db\","
+					"\"type\": \"sqlite3\","
+					"\"uri\" : \""+path+"/test_db.sqlite3\""
+					"}"
+				"],"
+				"\"authcontroller\": {"
+					"\"db\": \"auth\""
+				"},"
+				"\"tcpapiserver\": {"
+					"\"address\": \"[::1]:4000\","
+					"\"threads\": 4,"
+					"\"backlog\": 32"
+				"},"
+				"\"enginestarter\": {"
+					"\"path\": \"./enginestarter_test\""
+				"},"
+				"\"iocontroller\": {},"
+				"\"sessionmanager\": {"
+					"\"lifetime\": 600000"
+				"},"
+				"\"statecontroller\": {"
+					"\"file\": \""+path+"/states.json\""
+				"},"
+				"\"syscallcontroller\": {"
+					"\"threads\": 4,"
+					"\"queuelen\": 16,"
+					"\"commands\": {"
+						"\"ECHO\" : \"echo $arg\","
+						"\"PWD\"  : \"pwd\""
+					"}"
+				"},"
+				"\"httpserver\": {"
+					"\"address\": \"[::1]:8080\","
+					"\"assets\": \"./assets\""
+				"}"
+			"}";
 
-	std::string configString ="{"
-								"\"eventsystem\" : {"
-									"\"threads\": 4,"
-									"\"queuelen\": 32"
-								"},"
-								"\"heartbeat\": {"
-									"\"fix\":\"me\""
-								"},"
-								"\"dbmanager\": ["
-									"{"
-									"\"identifier\" : \"auth\","
-									"\"type\": \"sqlite3\","
-									"\"uri\" : \"./component_test/auth.sqlite3\""
-									"},"
-									"{"
-									"\"identifier\" : \"test_db\","
-									"\"type\": \"sqlite3\","
-									"\"uri\" : \"./component_test/test_db.sqlite3\""
-									"}"
-								"],"
-								"\"authcontroller\": {"
-									"\"db\": \"auth\""
-								"},"
-								"\"tcpapiserver\": {"
-									"\"address\": \"[::1]:4000\","
-									"\"threads\": 4,"
-									"\"backlog\": 32"
-								"},"
-								"\"enginestarter\": {"
-									"\"path\": \"./enginestarter_test\""
-								"},"
-								"\"iocontroller\": {"
-									"\"base\": \".\""
-								"},"
-								"\"sessionmanager\": {"
-									"\"lifetime\": 600000"
-								"},"
-								"\"statecontroller\": {"
-									"\"file\": \"./component_test/states.json\""
-								"},"
-								"\"syscallcontroller\": {"
-									"\"threads\": 4,"
-									"\"queuelen\": 16,"
-									"\"commands\": {"
-										"\"ECHO\" : \"echo $arg\","
-										"\"PWD\"  : \"pwd\""
-									"}"
-								"},"
-								"\"httpserver\": {"
-									"\"address\": \"[::1]:8080\","
-									"\"assets\": \"./assets\""
-								"}"
-							"}";
+		return configString;						
+	}
+
 	long subscribe(std::string topic, Susi::Events::Processor processor){
 		long id = eventManager->subscribe(topic,std::move(processor));
 		return id;

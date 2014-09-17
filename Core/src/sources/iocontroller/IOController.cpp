@@ -12,15 +12,7 @@
 #include "iocontroller/IOController.h"
 
 //Constructor
-Susi::IOController::IOController() {
-	// use current as base path
-	this->base_path = Poco::Path(Poco::Path::current());
-}
-
-Susi::IOController::IOController(std::string base_path) {
-	// init with base path
-	this->base_path = Poco::Path(base_path);
-}
+Susi::IOController::IOController() {}
 
  //high level
 std::size_t Susi::IOController::writeFile(std::string filename,char* ptr, std::size_t len) {
@@ -152,7 +144,6 @@ bool Susi::IOController::makeDir(std::string dir) {
 
 	Poco::Path p(true);
 
-	p.append(this->base_path);
 	p.append(dir);
 
 	Poco::File f(p);

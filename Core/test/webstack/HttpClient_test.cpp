@@ -7,6 +7,8 @@
 #include "webstack/HttpClient.h"
 
 class HttpClientTest : public ::testing::Test {
+public:
+   	std::string base_path = Poco::Path(Poco::Path::current()).toString() + "clienttest/";
 protected:
 	Susi::IOController io;
 	std::shared_ptr<Susi::System::ComponentManager> componentManager;
@@ -30,11 +32,11 @@ protected:
 		componentManager = Susi::System::createSusiComponentManager(Susi::Util::Any::fromString(config));
 		componentManager->startAll();
 
-		io.makeDir("./clienttest/test");
-		io.writeFile("./clienttest/test/test.txt","foobar");
+		io.makeDir(base_path + "test");
+		io.writeFile(base_path + "test/test.txt","foobar");
 	}
 	virtual void TearDown() override {
-		io.deletePath("./clienttest");
+		io.deletePath(base_path );
 		componentManager->stopAll();
 	}
 };
@@ -43,7 +45,7 @@ TEST_F(HttpClientTest, Contruct) {
 
 	Susi::HttpClient client("http://[::1]:8080/");
 	
-	std::string result = client.get("assets/test/test.txt");
+	std::string result = client.get(base_path + "assets/test/test.txt");
 
 	EXPECT_EQ("foobar",result);
 
