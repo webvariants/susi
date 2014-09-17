@@ -1,3 +1,4 @@
+/*
 #include "gtest/gtest.h"
 #include "world/World.h"
 #include "iocontroller/IOController.h"
@@ -80,3 +81,4 @@ TEST_F(EngineStarterTest, ExecuteInSubdir) {
 	std::string data = io.readFile(output);
 	EXPECT_EQ("foobar",data);
 }
+*/

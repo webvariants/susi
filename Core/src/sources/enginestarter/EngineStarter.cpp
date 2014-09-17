@@ -1,8 +1,6 @@
 #include "enginestarter/EngineStarter.h"
 
-Susi::EngineStarter::Starter::Starter(std::string path) {
-	this->path = path;
-}
+Susi::EngineStarter::Starter::Starter() {}
 
 void Susi::EngineStarter::Starter::killall() {
 	try{
@@ -17,9 +15,9 @@ void Susi::EngineStarter::Starter::killall() {
 
 }
 
-void Susi::EngineStarter::Starter::execute() {
+void Susi::EngineStarter::Starter::execute(std::string path) {
 	try{
-		this->rec_dir(this->path);
+		this->rec_dir(path);
 	}catch(const std::exception & e){
 		std::string msg = "Error in EngineStarter::execute : ";
 		msg += e.what();
@@ -33,6 +31,7 @@ void Susi::EngineStarter::Starter::rec_dir(const std::string & path)
   for (Poco::DirectoryIterator it(path); it != end; ++it) {
   	if(!it->isDirectory() && it->canExecute()) {
   		std::vector<std::string> args;
+  		std::cout<<"EXECUTE PATH:"<<it->path()<<std::endl;
 		Poco::ProcessHandle ph = Poco::Process::launch(it->path(), args);
 		this->phs.push_back(ph);
 	}else if (it->isDirectory()) {

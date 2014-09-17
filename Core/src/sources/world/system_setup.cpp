@@ -86,12 +86,8 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 	/**
 	 * Declare enginestarter
 	 */
-	manager->registerComponent("enginestarter", [](ComponentManager * mgr, Any & config) {
-		std::string path{""};
-		if(config["path"].isString()){
-			path = static_cast<std::string>(config["path"]);
-		}
-		return std::shared_ptr<Component>{new Susi::EngineStarter::StarterComponent{mgr, path}};
+	manager->registerComponent("enginestarter", [](ComponentManager * mgr, Any & config) {		
+		return std::shared_ptr<Component>{new Susi::EngineStarter::StarterComponent{mgr}};
 	});
 	manager->registerDependency("enginestarter","eventsystem");
 
@@ -132,6 +128,7 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 	});
 	manager->registerDependency("statecontroller","eventsystem");
 	manager->registerDependency("statecontroller","iocontroller");
+	manager->registerDependency("statecontroller","heartbeat");
 
 	/**
 	 * Declare syscallcontroller
