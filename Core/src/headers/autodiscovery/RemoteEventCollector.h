@@ -41,6 +41,9 @@ public:
 		std::shared_ptr<Susi::Events::ManagerComponent> eventsystem) :
 			Susi::Api::BasicApiClient{addr}, _ownId{ownId}, _eventsystem{eventsystem}
 	{
+		if(_eventsystem.get() == nullptr){
+			throw std::runtime_error{"no event manager supplied"};
+		}
 		sendRegisterProcessor("*@"+_ownId);
 	}
 

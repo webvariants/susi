@@ -53,5 +53,10 @@
 	"httpserver": {
 		"address": "[::1]:8080",
 		"assets": "./assets"
+	},
+
+	"autodiscovery": {
+		"mcast": "239.23.23.23:4242",
+		"address": "[::1]:4000"
 	}
 }

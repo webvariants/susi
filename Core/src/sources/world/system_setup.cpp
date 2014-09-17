@@ -162,5 +162,21 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 	manager->registerDependency("httpserver","eventsystem");
 	manager->registerDependency("httpserver","sessionmanager");
 	
+	/**
+	 * Declare Autodiscovery
+	 */
+	manager->registerComponent("autodiscovery", [](ComponentManager * mgr, Any & config){
+		std::string mcast{"239.23.23.23:4242"};
+		std::string ownName{"susi"};
+		if(config["mcast"].isString()){
+			mcast = static_cast<std::string>(config["mcast"]);
+		}
+		if(config["address"].isString()){
+			ownName = static_cast<std::string>(config["address"]);
+		}
+		return std::shared_ptr<Component>{new Susi::Autodiscovery::AutoDiscoveryComponent{mcast,ownName,mgr}};
+	});
+	manager->registerDependency("autodiscovery","eventsystem");
+
 	return manager;
 }

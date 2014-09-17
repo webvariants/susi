@@ -14,7 +14,7 @@ protected:
 
 	virtual void GoodCases() override {
 		Susi::Autodiscovery::RemoteEventCollector collector{"[::1]:4000","samplename",eventManager};
-		std::this_thread::sleep_for(std::chrono::milliseconds{250});
+		std::this_thread::sleep_for(std::chrono::milliseconds{100});
 		std::condition_variable cond;
 		bool called = false;
 		std::mutex mutex;
@@ -33,11 +33,15 @@ protected:
 	}
 
 	virtual void BadCases() override {
-
+		EXPECT_THROW({
+			Susi::Autodiscovery::RemoteEventCollector collector("[::1]:4001","samplename",eventManager);	
+		},std::exception);
 	}
 
 	virtual void EdgeCases() override {
-
+		EXPECT_THROW({
+			Susi::Autodiscovery::RemoteEventCollector collector("[::1]:4000","samplename",nullptr);	
+		},std::exception);
 	}
 
 };
