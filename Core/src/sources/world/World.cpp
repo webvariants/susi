@@ -62,8 +62,7 @@ void Susi::World::setupSessionManager(){
 		lifetime = cfg.getInt("session.lifetime");
 	}catch(const std::exception & e){}
 	sessionManager = std::shared_ptr<Susi::Sessions::SessionManager>{new Susi::Sessions::SessionManager()};
-	sessionManager->init(std::chrono::milliseconds(lifetime*1000));
-	Susi::Sessions::initEventInterface();
+	sessionManager->init(std::chrono::milliseconds(lifetime*1000));	
 }
 
 void Susi::World::setupIOController() {

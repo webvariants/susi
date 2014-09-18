@@ -21,7 +21,6 @@
 #include "apiserver/TCPApiServer.h"
 #include "webstack/HttpServer.h"
 #include "sessions/SessionManager.h"
-#include "sessions/SessionManagerEventInterface.h"
 #include "tiny-js/JSEngine.h"
 #include "db/Manager.h"
 #include "iocontroller/IOController.h"
