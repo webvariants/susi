@@ -31,12 +31,66 @@
 namespace Susi {
 	class HttpClient {
 		protected:
-			std::string _uri;
-		public:
-			HttpClient(std::string uri);
+			Poco::URI _uri;
+			Poco::Net::HTTPClientSession _session;
+			std::vector<Poco::Net::HTTPCookie> _cookies;
+			Poco::Net::HTTPResponse::HTTPStatus _status;
+			std::vector<std::pair<std::string,std::string>> _headers;
+		
+			void parseResponse(Poco::Net::HTTPResponse & resp){
+				_status = resp.getStatus();
+				resp.getCookies(_cookies);
+				_headers.clear();
+				for(auto & kv : resp){
+					_headers.push_back(kv);
+				}
+			}
 
-			std::pair<std::shared_ptr<Poco::Net::HTTPResponse>, std::string> get(std::string req);
-			std::pair<std::shared_ptr<Poco::Net::HTTPResponse>, std::string> post(std::string body, std::string uri_ = "", std::vector<std::pair<std::string, std::string>> headers = std::vector<std::pair<std::string, std::string>>{});
+		public:
+			HttpClient(std::string uri) : _uri{uri}, _session{_uri.getHost(),_uri.getPort()} {}
+
+			void addCookie(std::string key, std::string value){
+				_cookies.push_back(Poco::Net::HTTPCookie{key,value});
+			}
+
+			void addHeader(std::string key, std::string value){
+				_headers.push_back(std::pair<std::string,std::string>{key,value});
+			}
+
+			Poco::Net::HTTPResponse::HTTPStatus getStatus(){
+				return _status;
+			}
+
+			std::string get(std::string path){
+				Poco::Net::HTTPRequest req(Poco::Net::HTTPRequest::HTTP_GET, path, Poco::Net::HTTPMessage::HTTP_1_1);
+				//req.setCookies(_cookies);
+				for(auto & kv : _headers){
+					req.add(kv.first,kv.second);
+				}
+				_session.sendRequest(req);
+				Poco::Net::HTTPResponse resp;
+				std::istream & dataStream = _session.receiveResponse(resp);
+				std::istreambuf_iterator<char> eos;
+				std::string body(std::istreambuf_iterator<char>(dataStream), eos);
+				parseResponse(resp);
+				return body;
+			}
+
+			std::string post(std::string path, std::string data){
+				Poco::Net::HTTPRequest req(Poco::Net::HTTPRequest::HTTP_GET, path, Poco::Net::HTTPMessage::HTTP_1_1);
+				//req.setCookies(_cookies);
+				for(auto & kv : _headers){
+					req.add(kv.first,kv.second);
+				}
+				std::ostream & toServerStream = _session.sendRequest(req);
+				toServerStream << data;
+				Poco::Net::HTTPResponse resp;
+				std::istream & fromServerStream = _session.receiveResponse(resp);
+				std::istreambuf_iterator<char> eos;
+				std::string body(std::istreambuf_iterator<char>(fromServerStream), eos);
+				parseResponse(resp);
+				return body;
+			}
 
 			void connectWebSocket(std::string socket);
 			void send(std::string data);

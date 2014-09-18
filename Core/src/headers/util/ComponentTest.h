@@ -101,7 +101,7 @@ protected:
 				"},"
 				"\"httpserver\": {"
 					"\"address\": \"[::1]:8080\","
-					"\"assets\": \"./assets\""
+					"\"assets\": \"/tmp/assets\""
 				"}"
 			"}";
 
