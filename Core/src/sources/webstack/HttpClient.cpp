@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
@@ -13,11 +13,12 @@
 
 
 Susi::HttpClient::HttpClient(std::string uri) {
-	_uri = uri;	
+	_uri = uri;
 }
-			
-std::string Susi::HttpClient::get(std::string req) {
-	std::string content;
+
+std::pair<std::shared_ptr<Poco::Net::HTTPResponse>, std::string> Susi::HttpClient::get(std::string req) {
+	std::shared_ptr<Poco::Net::HTTPResponse> res{new Poco::Net::HTTPResponse()};
+	std::string body;
 	try
 	  {
 	    // prepare session
@@ -39,77 +40,71 @@ std::string Susi::HttpClient::get(std::string req) {
 	    Poco::Net::HTTPRequest req(Poco::Net::HTTPRequest::HTTP_GET, path, Poco::Net::HTTPMessage::HTTP_1_1);
 	    session.sendRequest(req);
 
-	    // get response
-	    Poco::Net::HTTPResponse res;	    
-
 	    // print response
-	    std::istream &is = session.receiveResponse(res);
+	    std::istream &is = session.receiveResponse(*res);
 
-	    std::cout <<"STATUS:"<< res.getStatus() << " " << res.getReason() << std::endl;
+	    std::cout <<"STATUS:"<< res->getStatus() << " " << res->getReason() << std::endl;
 
-	    //Poco::StreamCopier::copyStream(is, content);
-	    Poco::StreamCopier::copyToString(is, content);
-	    
-	    std::cout<<"Content:"<<content<<std::endl;
-	  }
+	    Poco::StreamCopier::copyStream(is, std::cout);
+	    Poco::StreamCopier::copyToString(is, body);
+
+	    }
 	  catch (Poco::Exception &ex)
 	  {
 	    std::cerr << ex.displayText() << std::endl;
-	    return "error";
 	  }
-	return content;
+	return std::make_pair(res, body);
 }
 
-std::string Susi::HttpClient::post(std::string formular) {
-	
-	 std::string reqUri = _uri;
-	 Poco::URI uri(reqUri.append(formular));
+std::shared_ptr<Poco::Net::HTTPResponse> Susi::HttpClient::post(std::string body, std::vector<std::pair<std::string, std::string>> headers, std::string uri_ = "")  {
+	if(uri_ == "") {
+		uri_ = _uri;
+	}
+	Poco::URI uri(uri_);
 
-	 std::cout<<"HOST:"<<uri.getHost()<<std::endl;
-	 std::cout<<"PORT:"<<uri.getPort()<<std::endl;
+	std::cout<<"HOST:"<<uri.getHost()<<std::endl;
+	std::cout<<"PORT:"<<uri.getPort()<<std::endl;
 
-	 Poco::Net::HTTPClientSession session(uri.getHost(), uri.getPort());
+	// prepare path
+	std::string path(uri.getPath());
+	if (path.empty()) path = "/";
+	std::cout<<"PATH:"<<path<<std::endl;
 
-	 // prepare path
-	 std::string path(uri.getPath());
+	Poco::Net::HTTPClientSession session(uri.getHost(), uri.getPort());
 
-	 std::cout<<"PATH:"<<path<<std::endl;
-	 if (path.empty()) path = "/";
+	Poco::Net::HTTPRequest req(Poco::Net::HTTPRequest::HTTP_POST, path, Poco::Net::HTTPMessage::HTTP_1_1);
+	req.setContentType("application/x-www-form-urlencoded");
+	req.setContentLength( body.length() );
 
-	 Poco::Net::HTTPRequest req(Poco::Net::HTTPRequest::HTTP_POST, path, Poco::Net::HTTPMessage::HTTP_1_1);
-	 
-	 req.setContentType("application/x-www-form-urlencoded");
-	 
-	 Poco::Net::HTMLForm form;
-	 
-	 form.add("action", "uploadVideoComplete");	 
-	 form.add("checkOauth", "0dac14fbc490e2def12110fd215c1c42");
+	if(headers.size() > 0 && headers.size() < req.getFieldLimit()) {
+		for(auto h : headers) {
+			req.set(h.first, h.second);
+		}
+	}
 
+	std::ostream & myout = session.sendRequest(req);
+	myout << body;
 
-	 //form.add("", "");
-	 // Send the request.
-	 form.prepareSubmit(req);
-	 std::ostream& ostr = session.sendRequest(req);
-	 form.write(ostr);
+	req.write(std::cout);
 
-	 try {
-		 // Receive the response.
-		 Poco::Net::HTTPResponse res;
-		 std::istream& rs = session.receiveResponse(res);
+	// Receive the response.
+	std::shared_ptr<Poco::Net::HTTPResponse> res{new Poco::Net::HTTPResponse()};
+	try {
+		std::istream& rs = session.receiveResponse(*res);
 
-		 std::cout <<"STATUS:"<< res.getStatus() << " " << res.getReason() << std::endl;
+		std::cout << rs.rdbuf();
+		std::cout <<"STATUS:"<< res->getStatus() << " " << res->getReason() << std::endl;
 
-		 std::string responseText;
-		 Poco::StreamCopier copier;
-		 copier.copyToString(rs, responseText);
-		 std::cout << responseText << std::endl;
+		std::string responseText;
+		Poco::StreamCopier copier;
+		copier.copyToString(rs, responseText);
+		std::cout << responseText << std::endl;
 
-	  } catch (Poco::Exception &ex) {
-	    std::cerr << ex.displayText() << std::endl;
-	    return "error";
-	  }
+	} catch (Poco::Exception &ex) {
+		std::cerr << ex.displayText() << std::endl;
+	}
 
-	return "OK";
+	return res;
 }
 
 void Susi::HttpClient::connectWebSocket(std::string socket) {
