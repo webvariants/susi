@@ -18,12 +18,9 @@
 #include <chrono>
 #include <thread>
 #include <iostream>
-//#include <Poco/Util/Application.h>
-//#include <Poco/Dynamic/Var.h>
-#include "sessions/Session.h"
 
+#include "sessions/Session.h"
 #include "util/Any.h"
-#include "events/global.h"
 #include "events/EventManager.h"
 
 namespace Susi{

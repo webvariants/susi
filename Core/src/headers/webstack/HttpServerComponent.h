@@ -16,7 +16,7 @@
 #include "Poco/Net/HTTPRequestHandler.h"
 #include <iostream>
 
-#include "apiserver/ApiServerForComponent.h"
+#include "apiserver/ApiServerComponent.h"
 #include "webstack/RequestHandlerFactory.h"
 #include "logger/Logger.h"
 #include "world/BaseComponent.h"
@@ -25,7 +25,7 @@ namespace Susi {
 
 class HttpServerComponent : public Susi::System::BaseComponent {
 protected:
-	Susi::Api::ApiServerForComponent apiServer;
+	Susi::Api::ApiServerComponent apiServer;
 	Poco::Net::SocketAddress address;
 	Poco::Net::ServerSocket serverSocket;
 	Poco::Net::HTTPServer server;

@@ -1,29 +1,29 @@
-#include "apiserver/ApiServer.h"
-#include "world/World.h"
+#include "apiserver/ApiServerComponent.h"
 
-void Susi::Api::ApiServer::onConnect(std::string & id) {
-	std::cout<<"got new connection!"<<std::endl;
-	world.sessionManager->updateSession(id);
+void Susi::Api::ApiServerComponent::onConnect(std::string & id){
+	Susi::Logger::info("got new connection!");
+	sessionManager->updateSession(id);
 }
-void Susi::Api::ApiServer::onClose(std::string & id) {
-	std::cout<<"lost connection..."<<std::endl;
-	world.sessionManager->killSession(id);
+
+void Susi::Api::ApiServerComponent::onClose(std::string & id) {
+	Susi::Logger::info("lost connection...");
+	sessionManager->killSession(id);
 	senders.erase(id);
 	eventsToAck.erase(id);
 
 	auto & subs = consumerSubscriptions[id];
 	for(auto & kv : subs) {
-		Susi::Events::unsubscribe(kv.second);
+		eventManager->unsubscribe(kv.second);
 	}
 	consumerSubscriptions.erase(id);
 	auto & subs2 = processorSubscriptions[id];
 	for(auto & kv : subs2) {
-		Susi::Events::unsubscribe(kv.second);
+		eventManager->unsubscribe(kv.second);
 	}
 	processorSubscriptions.erase(id);
 }
 
-void Susi::Api::ApiServer::onMessage(std::string & id, Susi::Util::Any & packet) {
+void Susi::Api::ApiServerComponent::onMessage(std::string & id, Susi::Util::Any & packet) {
 	try{
 		//std::cout<<"onMessage:"<<packet.toJSONString()<<std::endl;
 		auto type = packet["type"];
@@ -53,7 +53,7 @@ void Susi::Api::ApiServer::onMessage(std::string & id, Susi::Util::Any & packet)
 	}
 }
 
-void Susi::Api::ApiServer::handleRegisterConsumer(std::string & id, Susi::Util::Any & packet){
+void Susi::Api::ApiServerComponent::handleRegisterConsumer(std::string & id, Susi::Util::Any & packet){
 	auto & data = packet["data"];
 
 	if(data.isString()){
@@ -81,7 +81,7 @@ void Susi::Api::ApiServer::handleRegisterConsumer(std::string & id, Susi::Util::
 			//std::cout<<"got consumer event, try to send it "+packet.toJSONString()<<std::endl;
 			send(_id,packet);
 		};
-		long subid = Susi::Events::subscribe(topic,callback);
+		long subid = eventManager->subscribe(topic,callback);
 		subs[topic] = subid;
 		sendOk(id);
 	}else{
@@ -89,7 +89,7 @@ void Susi::Api::ApiServer::handleRegisterConsumer(std::string & id, Susi::Util::
 		sendFail(id,"data is not a string");
 	}
 }
-void Susi::Api::ApiServer::handleRegisterProcessor(std::string & id, Susi::Util::Any & packet){
+void Susi::Api::ApiServerComponent::handleRegisterProcessor(std::string & id, Susi::Util::Any & packet){
 	auto & data = packet["data"];
 	if(data.isString()){
 		std::string topic = data;
@@ -98,7 +98,7 @@ void Susi::Api::ApiServer::handleRegisterProcessor(std::string & id, Susi::Util:
 			sendFail(id,"you are allready subscribed to "+topic);
 			return;
 		}
-		long subid = Susi::Events::subscribe(topic,[this,id](Susi::Events::EventPtr event){
+		long subid = eventManager->subscribe(topic,[this,id](Susi::Events::EventPtr event){
 			Susi::Util::Any::Array headers;
 			for(auto & kv : event->headers){
 				headers.push_back(Susi::Util::Any::Object{{kv.first,kv.second}});
@@ -122,14 +122,14 @@ void Susi::Api::ApiServer::handleRegisterProcessor(std::string & id, Susi::Util:
 		sendFail(id,"data is not a string");
 	}
 }
-void Susi::Api::ApiServer::handleUnregisterConsumer(std::string & id, Susi::Util::Any & packet){
+void Susi::Api::ApiServerComponent::handleUnregisterConsumer(std::string & id, Susi::Util::Any & packet){
 	auto & data = packet["data"];
 	if(data.isString()){
 		std::string topic = data;
 		auto & subs = consumerSubscriptions[id];
 		if(subs.find(topic)!=subs.end()){
 			long subid = subs[topic];
-			Susi::Events::unsubscribe(subid);
+			eventManager->unsubscribe(subid);
 			sendOk(id);
 		}else{
 			sendFail(id,"you are not registered for "+topic);
@@ -139,14 +139,14 @@ void Susi::Api::ApiServer::handleUnregisterConsumer(std::string & id, Susi::Util
 	}
 }
 
-void Susi::Api::ApiServer::handleUnregisterProcessor(std::string & id, Susi::Util::Any & packet){
+void Susi::Api::ApiServerComponent::handleUnregisterProcessor(std::string & id, Susi::Util::Any & packet){
 	auto & data = packet["data"];
 	if(data.isString()){
 		std::string topic = data;
 		auto & subs = processorSubscriptions[id];
 		if(subs.find(topic)!=subs.end()){
 			long subid = subs[topic];
-			Susi::Events::unsubscribe(subid);
+			eventManager->unsubscribe(subid);
 			sendOk(id);
 		}else{
 			sendFail(id,"you are not registered for "+topic);
@@ -155,13 +155,13 @@ void Susi::Api::ApiServer::handleUnregisterProcessor(std::string & id, Susi::Uti
 		sendFail(id,"data is not a string");
 	}
 }
-void Susi::Api::ApiServer::handlePublish(std::string & id, Susi::Util::Any & packet){
+void Susi::Api::ApiServerComponent::handlePublish(std::string & id, Susi::Util::Any & packet){
 	auto & eventData = packet["data"];
 	if(!eventData.isObject() || !eventData["topic"].isString()){
 		sendFail(id,"data is not an object or topic is not set correctly");
 		return;
 	}
-	auto event = Susi::Events::createEvent(eventData["topic"]);
+	auto event = eventManager->createEvent(eventData["topic"]);
 	event->sessionID = id;
 	auto eventID = eventData["id"];
 	if(eventID.isNull()){
@@ -182,7 +182,7 @@ void Susi::Api::ApiServer::handlePublish(std::string & id, Susi::Util::Any & pac
 		event->payload = eventData["payload"];
 	}
 
-	Susi::Events::publish(std::move(event),[this,id](Susi::Events::SharedEventPtr event){
+	eventManager->publish(std::move(event),[this,id](Susi::Events::SharedEventPtr event){
 		Susi::Util::Any::Array headers;
 		for(auto & kv : event->headers){
 			headers.push_back(Susi::Util::Any::Object{{kv.first,kv.second}});
@@ -203,7 +203,7 @@ void Susi::Api::ApiServer::handlePublish(std::string & id, Susi::Util::Any & pac
 	sendOk(id);
 }
 
-void Susi::Api::ApiServer::handleAck(std::string & id, Susi::Util::Any & packet){
+void Susi::Api::ApiServerComponent::handleAck(std::string & id, Susi::Util::Any & packet){
 	auto & eventData = packet["data"];
 	if(!eventData.isObject() || !eventData["topic"].isString()){
 		sendFail(id,"data is not an object or topic is not set correctly");
@@ -225,18 +225,18 @@ void Susi::Api::ApiServer::handleAck(std::string & id, Susi::Util::Any & packet)
 	if(!eventData["payload"].isNull()){
 		event->payload = eventData["payload"];
 	}
-	Susi::Events::ack(std::move(event));
+	eventManager->ack(std::move(event));
 	sendOk(id);
 }
 
-void Susi::Api::ApiServer::sendOk(std::string & id){
+void Susi::Api::ApiServerComponent::sendOk(std::string & id){
 	Susi::Util::Any response;
 	response["type"] = "status";
 	response["error"] = false;
 	send(id,response);
 }
 
-void Susi::Api::ApiServer::sendFail(std::string & id,std::string error){
+void Susi::Api::ApiServerComponent::sendFail(std::string & id,std::string error){
 	Susi::Util::Any response;
 	response["type"] = "status";
 	response["error"] = true;

@@ -1,5 +1,4 @@
 #include "auth/AuthController.h"
-#include "world/World.h"
 
 bool Susi::Auth::Controller::login(std::string sessionID, std::string username, std::string password) {
 	

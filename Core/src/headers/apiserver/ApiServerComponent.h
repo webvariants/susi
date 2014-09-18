@@ -5,30 +5,34 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
- * @author: Tino Rusch (tino.rusch@webvariants.de)
+ *
+ * @author: Tino Rusch (tino.rusch@webvariants.de), Thomas Krause (thomas.krause@webvariants.de) 
  */
 
-#ifndef __APISERVER__
-#define __APISERVER__
+#ifndef __API_SERVER_COMPONENT__
+#define __API_SERVER_COMPONENT__
 
 #include <memory>
-#include "events/global.h"
 #include <functional>
 #include <mutex>
+#include "events/EventManagerComponent.h"
+#include "sessions/SessionManagerComponent.h"
 
 namespace Susi {
 namespace Api {
 
-class ApiServer {
+class ApiServerComponent {
 protected:
+	std::shared_ptr<Susi::Events::ManagerComponent> eventManager;
+	std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager;
+
 	std::map<std::string,std::function<void(Susi::Util::Any&)>> senders;
 	std::map<std::string,std::map<std::string,long>> consumerSubscriptions;
 	std::map<std::string,std::map<std::string,long>> processorSubscriptions;
 	std::map<std::string,std::map<long,Susi::Events::EventPtr>> eventsToAck;
 	
 	std::mutex mutex;
-
+	
 	void handleRegisterConsumer(std::string & id, Susi::Util::Any & packet);
 	void handleRegisterProcessor(std::string & id, Susi::Util::Any & packet);
 	void handleUnregisterConsumer(std::string & id, Susi::Util::Any & packet);
@@ -46,6 +50,17 @@ protected:
 	}
 
 public:
+	
+	ApiServerComponent(std::shared_ptr<Susi::Events::ManagerComponent> _eventManager,
+						  std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager) {
+		eventManager = _eventManager;
+		sessionManager = _sessionManager;
+	}
+
+	void onConnect(std::string & id);
+	void onMessage(std::string & id, Susi::Util::Any & packet);
+	void onClose(std::string & id);
+
 	inline void registerSender(std::string id , std::function<void(Susi::Util::Any&)> sender){
 		std::lock_guard<std::mutex> lock{mutex};
 		senders[id] = sender;
@@ -54,12 +69,10 @@ public:
 		std::lock_guard<std::mutex> lock{mutex};
 		senders.erase(id);
 	}
-	void onConnect(std::string & id);
-	void onMessage(std::string & id, Susi::Util::Any & packet);
-	void onClose(std::string & id);
+
 };
 
 }
 }
 
-#endif // __APISERVER__
+#endif // __API_SERVER_COMPONENT__
