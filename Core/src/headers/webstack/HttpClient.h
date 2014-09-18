@@ -36,7 +36,7 @@ namespace Susi {
 			HttpClient(std::string uri);
 
 			std::pair<std::shared_ptr<Poco::Net::HTTPResponse>, std::string> get(std::string req);
-			std::shared_ptr<Poco::Net::HTTPResponse> post(std::string body, std::vector<std::pair<std::string, std::string>> headers, std::string uri_);
+			std::pair<std::shared_ptr<Poco::Net::HTTPResponse>, std::string> post(std::string body, std::string uri_ = "", std::vector<std::pair<std::string, std::string>> headers = std::vector<std::pair<std::string, std::string>>{});
 
 			void connectWebSocket(std::string socket);
 			void send(std::string data);

@@ -4,16 +4,19 @@
 #include "config/Config.h"
 #include "iocontroller/IOController.h"
 
+#include <thread>
+#include <chrono>
+
 #include "webstack/HttpClient.h"
 
-class HttpClientTest : public ::testing::Test {
+class HttpServerTest : public ::testing::Test {
 public:
    	std::string base_path = Poco::Path(Poco::Path::current()).toString() + "clienttest/";
 protected:
 	Susi::IOController io;
 	std::shared_ptr<Susi::System::ComponentManager> componentManager;
 	virtual void SetUp() override {
-		
+
 		std::string config = "{"
 		"		\"eventsystem\" : {"
 		"			\"threads\": 4,"
@@ -25,15 +28,18 @@ protected:
 		"		},"
 		"		\"httpserver\": {"
 		"			\"address\": \"[::1]:8080\","
-		"			\"assets\": \"./clienttest\""
+		"			\"assets\": \""+base_path+"\""
 		"		}"
 		"	}";
+
+		Susi::Logger::log("HttpClient Base Path: "+base_path);
 
 		componentManager = Susi::System::createSusiComponentManager(Susi::Util::Any::fromString(config));
 		componentManager->startAll();
 
-		io.makeDir(base_path + "test");
-		io.writeFile(base_path + "test/test.txt","foobar");
+		io.makeDir(base_path + "/test");
+		io.writeFile(base_path + "/test/test.txt","foobar");
+		std::this_thread::sleep_for(std::chrono::milliseconds{250});
 	}
 	virtual void TearDown() override {
 		io.deletePath(base_path );
@@ -41,13 +47,27 @@ protected:
 	}
 };
 
-TEST_F(HttpClientTest, Contruct) {
+TEST_F(HttpServerTest, GetAsset) {
 
-	Susi::HttpClient client("http://[::1]:8080/");
-	
-	std::string result = client.get(base_path + "assets/test/test.txt");
+	Susi::HttpClient client("http://[::1]:8080");
 
-	EXPECT_EQ("foobar",result);
+	auto result = client.get("/assets/test/test.txt");
+	std::string body = result.second;
 
-	//client.post("form");
+	std::cout<<"Status: "<<result.first->getStatus()<<std::endl;
+	std::cout<<"Body: "<<result.second<<std::endl;
+
+	EXPECT_EQ("foobar",body);
+}
+
+TEST_F(HttpServerTest, PostToForm) {
+
+	Susi::HttpClient client("http://[::1]:8080");
+	auto result = client.post("var1=value1&var2=value2", "/form");
+	std::string body = result.second;
+
+	std::cout<<"Status: "<<result.first->getStatus()<<std::endl;
+	std::cout<<"Body: "<<result.second<<std::endl;
+
+	EXPECT_EQ("var1=value1&var2=value2",body);
 }
