@@ -1,5 +1,4 @@
 #include <gtest/gtest.h>
-//#include <Poco/Dynamic/Var.h>
 #include "sessions/Session.h"
 
 class SessionTest : public ::testing::Test {
