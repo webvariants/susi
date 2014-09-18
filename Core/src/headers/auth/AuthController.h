@@ -27,6 +27,7 @@
 namespace Susi {
 	namespace Auth {
 		class Controller{
+			protected:
 				std::string _dbIdentifier;
 				std::shared_ptr<Susi::DB::DBComponent> _dbManager;
 				std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager;
