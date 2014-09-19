@@ -10,11 +10,13 @@
  */
 
 #include "sessions/SessionManager.h"
+#include "logger/Logger.h"
 
 using namespace Susi::Sessions;
 
 bool SessionManager::init(std::chrono::milliseconds stdSessionLifetime) {
 	std::lock_guard<std::mutex> lock(mutex);
+	Susi::Logger::debug("init session manager. inited: "+std::to_string(initialized));
 	// Causes problem in tests, since we have a world object which does all the init stuff
 	// Second init fails...
 	if(initialized) {		
@@ -22,8 +24,8 @@ bool SessionManager::init(std::chrono::milliseconds stdSessionLifetime) {
 	}
 
 	initialized = true;
-	if(stdLifetime.count() <= 0) {
-		stdLifetime = std::chrono::milliseconds(1000);
+	if(stdSessionLifetime.count() <= 0) {
+		stdLifetime = std::chrono::milliseconds(10000);
 	} else {
 		this->stdLifetime = stdSessionLifetime;
 	}
@@ -40,6 +42,7 @@ int SessionManager::checkSessions(){
 	int deleted = 0;	
 	for(auto it = std::begin(sessions); it!=std::end(sessions); ){
 		if(it->second.isDead()){
+			Susi::Logger::debug("delete session "+it->first);
 			sessions.erase(it++);
 			deleted++;
 		}else{
@@ -66,8 +69,11 @@ int SessionManager::checkSessions(){
 bool SessionManager::checkSession(std::string id){
 	std::lock_guard<std::mutex> lock(mutex);
 	try{
-		return !sessions.at(id).isDead();
+		bool alive = !sessions.at(id).isDead();
+		Susi::Logger::debug("session is alive: "+std::to_string(alive));
+		return alive;
 	}catch(const std::exception & e){
+		Susi::Logger::debug("session is not known");
 		return false;
 	}
 }
@@ -132,6 +138,7 @@ void SessionManager::updateSession(std::string id){
 		sessions[id].addTime(stdLifetime);
 	}
 	else {
+		Susi::Logger::debug("create new session with "+std::to_string(this->stdLifetime.count()));
 		sessions[id] = Session(this->stdLifetime);
 	}
 }
