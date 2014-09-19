@@ -52,16 +52,13 @@ TEST_F(HttpServerTest, PostToForm) {
 
 	Susi::HttpClient client("http://[::1]:8080");
 	client.addHeader("Content-Type","multipart/form-data; boundary=----WebKitFormBoundaryePkpFF7tjBAqx29L");
-	std::string postData =  "------WebKitFormBoundaryePkpFF7tjBAqx29L"
-							"Content-Disposition: form-data; name=\"MAX_FILE_SIZE\""
-							""
-							"100000"
-							"------WebKitFormBoundaryePkpFF7tjBAqx29L"
-							"Content-Disposition: form-data; name=\"uploadedfile\"; filename=\"hello.txt\""
-							"Content-Type: application/x-object"
-							""
-							"foobar"
-							"------WebKitFormBoundaryePkpFF7tjBAqx29L--";
+	std::string postData =  "------WebKitFormBoundaryePkpFF7tjBAqx29L\n"
+							"Content-Disposition: form-data; name=\"uploadedfile\"; filename=\"hello.txt\"\n"
+							"Content-Type: application/x-object\n"
+							"\n"
+							"foobar\n"
+							"------WebKitFormBoundaryePkpFF7tjBAqx29L--\n";
+	std::cout<<postData<<std::endl;
 	auto body = client.post("/form",postData);
 
 	std::cout<<"Status: "<<client.getStatus()<<std::endl;
