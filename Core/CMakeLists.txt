@@ -15,16 +15,18 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 project( "SUSI" )
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/dev")
+
+include(CodeCoverage)
 
 find_package(POCO REQUIRED PocoFoundation PocoUtil PocoJSON PocoNet)
 find_package(SOCI REQUIRED)
 find_package(Threads REQUIRED)
 
-ADD_SUBDIRECTORY (${CMAKE_SOURCE_DIR}/test/gtest-1.7.0)
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+add_subdirectory( ${CMAKE_SOURCE_DIR}/test/gtest-1.7.0 )
+include_directories( ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR} )
 
-set( CMAKE_COLOR_MAKEFILE ON)
+set( CMAKE_COLOR_MAKEFILE ON )
 
 set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g -Wall --std=c++11 -fPIC -O0" )
 
@@ -36,15 +38,18 @@ include_directories( ${SOCI_INCLUDE_DIRS} )
 file( GLOB SRCFILES ${CMAKE_SOURCE_DIR}/src/sources/**/*.cpp )
 file( GLOB TESTFILES ${CMAKE_SOURCE_DIR}/test/*/*.cpp )
 
+#LIBRARY
 add_library( libsusi SHARED ${SRCFILES} )
 set_target_properties(libsusi PROPERTIES OUTPUT_NAME susi)
 
+#SUSI BINARY
 add_executable( susi ${CMAKE_SOURCE_DIR}/src/sources/main.cc )
 target_link_libraries(susi libsusi)
 target_link_libraries(susi ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(susi ${SOCI_LIBRARY})
 target_link_libraries(susi ${POCO_LIBRARIES})
 
+#SUSI TESTS
 add_executable( susi_test ${TESTFILES})
 target_link_libraries(susi_test libsusi)
 target_link_libraries(susi_test ${CMAKE_THREAD_LIBS_INIT})
@@ -52,3 +57,5 @@ target_link_libraries(susi_test ${SOCI_LIBRARY})
 target_link_libraries(susi_test ${POCO_LIBRARIES})
 target_link_libraries(susi_test gtest)
 target_link_libraries(susi_test gtest_main)
+
+
