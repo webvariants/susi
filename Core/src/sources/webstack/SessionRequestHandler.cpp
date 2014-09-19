@@ -19,7 +19,7 @@ void Susi::SessionRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& re
 			request.add("susisession",id);
 		}
 	}catch(const std::exception & e){
-		Susi::Logger::error("failed in session-request-handler");
+		Susi::Logger::debug("no session found, add new one");
 		Poco::Timestamp now;
 		id = std::to_string(now.epochMicroseconds());
 		_sessionManager->updateSession(id);

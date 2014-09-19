@@ -59,7 +59,7 @@ bool Susi::System::ComponentManager::startComponent(std::string name){
 	}
 	data.component->start();
 	data.running = true;
-	Susi::Logger::info("started component "+name+"!");
+	Susi::Logger::debug("started component "+name+"!");
 	return true;
 }
 

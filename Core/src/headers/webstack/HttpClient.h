@@ -33,13 +33,17 @@ namespace Susi {
 		protected:
 			Poco::URI _uri;
 			Poco::Net::HTTPClientSession _session;
-			std::vector<Poco::Net::HTTPCookie> _cookies;
+			//Poco::Net::NameValueCollection _cookies;
 			Poco::Net::HTTPResponse::HTTPStatus _status;
 			std::vector<std::pair<std::string,std::string>> _headers;
 		
 			void parseResponse(Poco::Net::HTTPResponse & resp){
 				_status = resp.getStatus();
-				resp.getCookies(_cookies);
+				/*std::vector<Poco::Net::HTTPCookie> cookies;
+				resp.getCookies(cookies);
+				for(auto & cookie : cookies){
+					_cookies.add(cookie.getName(),cookie.getValue());
+				}*/
 				_headers.clear();
 				for(auto & kv : resp){
 					_headers.push_back(kv);
@@ -49,10 +53,9 @@ namespace Susi {
 		public:
 			HttpClient(std::string uri) : _uri{uri}, _session{_uri.getHost(),_uri.getPort()} {}
 
-			void addCookie(std::string key, std::string value){
-				_cookies.push_back(Poco::Net::HTTPCookie{key,value});
-			}
-
+			/*void addCookie(std::string key, std::string value){
+				_cookies.add(key,value);
+			}*/
 			void addHeader(std::string key, std::string value){
 				_headers.push_back(std::pair<std::string,std::string>{key,value});
 			}
