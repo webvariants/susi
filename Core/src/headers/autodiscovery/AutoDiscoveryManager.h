@@ -105,7 +105,6 @@ public:
 								onNewHost(senderAddr);
 							}
 						}
-						_socket.sendTo(buffer, n, sender);
 					} catch (Poco::Exception& exc) {
 						std::cerr << "Multicast: " << exc.displayText() << std::endl;
 					}
