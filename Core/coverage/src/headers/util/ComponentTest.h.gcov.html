@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-19 09:31:24</td>
+            <td class="headerValue">2014-09-19 09:48:32</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">20</td>
@@ -239,7 +239,7 @@
 <span class="lineNum">     177 </span><span class="lineCov">        264 :                 });</span>
 <a name="178"><span class="lineNum">     178 </span>            :                 {</a>
 <span class="lineNum">     179 </span><span class="lineCov">         88 :                         std::unique_lock&lt;std::mutex&gt; lock{mutex};</span>
-<span class="lineNum">     180 </span><span class="lineCov">        262 :                         cv.wait(lock,[&amp;called](){return called;});</span>
+<span class="lineNum">     180 </span><span class="lineCov">        263 :                         cv.wait(lock,[&amp;called](){return called;});</span>
 <span class="lineNum">     181 </span>            :                 }
 <span class="lineNum">     182 </span><span class="lineCov">        176 :                 return result;</span>
 <span class="lineNum">     183 </span>            :         }

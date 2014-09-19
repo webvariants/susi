@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-19 09:31:24</td>
+            <td class="headerValue">2014-09-19 09:48:32</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">16</td>
@@ -109,7 +109,7 @@
 <span class="lineNum">      47 </span><span class="lineCov">          1 :                 std::unique_lock&lt;std::mutex&gt; lk(m3);</span>
 <a name="48"><span class="lineNum">      48 </span>            :                 cv3.wait_for(lk,</a>
 <span class="lineNum">      49 </span>            :                         std::chrono::duration&lt;int,std::milli&gt;{250},
-<span class="lineNum">      50 </span><span class="lineCov">          3 :                         [&amp;c3](){return c3;});</span>
+<span class="lineNum">      50 </span><span class="lineCov">          2 :                         [&amp;c3](){return c3;});</span>
 <span class="lineNum">      51 </span><span class="lineCov">          1 :                 EXPECT_TRUE(c3);</span>
 <span class="lineNum">      52 </span>            :         }
 <span class="lineNum">      53 </span>            :         {

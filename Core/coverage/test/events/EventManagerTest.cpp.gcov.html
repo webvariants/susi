@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-19 09:31:24</td>
+            <td class="headerValue">2014-09-19 09:48:32</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">81</td>
@@ -338,7 +338,7 @@
 <span class="lineNum">     276 </span>            :         // wait for finish callback 
 <a name="277"><span class="lineNum">     277 </span>            :         {</a>
 <span class="lineNum">     278 </span><span class="lineCov">          1 :                 std::unique_lock&lt;std::mutex&gt; lk(mutex);</span>
-<span class="lineNum">     279 </span><span class="lineCov">          3 :                 condTwo.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledTwo;});</span>
+<span class="lineNum">     279 </span><span class="lineCov">          2 :                 condTwo.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledTwo;});</span>
 <span class="lineNum">     280 </span><span class="lineCov">          1 :                 EXPECT_TRUE(callbackCalledTwo);</span>
 <span class="lineNum">     281 </span><span class="lineCov">          1 :         }</span>
 <span class="lineNum">     282 </span><span class="lineCov">          1 : }</span>

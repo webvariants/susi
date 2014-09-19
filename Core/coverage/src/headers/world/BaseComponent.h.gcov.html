@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-19 09:31:24</td>
+            <td class="headerValue">2014-09-19 09:48:32</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">7</td>
@@ -116,11 +116,11 @@
 <span class="lineNum">      54 </span>            :         bool unsubscribe(long id){
 <a name="55"><span class="lineNum">      55 </span>            :                 return eventManager-&gt;unsubscribe(id);</a>
 <span class="lineNum">      56 </span>            :         }
-<span class="lineNum">      57 </span><span class="lineCov">          7 :         void publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer{}){</span>
-<a name="58"><span class="lineNum">      58 </span><span class="lineCov">          7 :                 eventManager-&gt;publish(std::move(event),finishCallback);</span></a>
-<span class="lineNum">      59 </span><span class="lineCov">          7 :         }</span>
-<span class="lineNum">      60 </span><span class="lineCov">          7 :         Susi::Events::EventPtr createEvent(std::string topic){</span>
-<span class="lineNum">      61 </span><span class="lineCov">          7 :                 return eventManager-&gt;createEvent(topic);</span>
+<span class="lineNum">      57 </span><span class="lineCov">          8 :         void publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer{}){</span>
+<a name="58"><span class="lineNum">      58 </span><span class="lineCov">          8 :                 eventManager-&gt;publish(std::move(event),finishCallback);</span></a>
+<span class="lineNum">      59 </span><span class="lineCov">          8 :         }</span>
+<span class="lineNum">      60 </span><span class="lineCov">          8 :         Susi::Events::EventPtr createEvent(std::string topic){</span>
+<span class="lineNum">      61 </span><span class="lineCov">          8 :                 return eventManager-&gt;createEvent(topic);</span>
 <span class="lineNum">      62 </span>            :         }
 <a name="63"><span class="lineNum">      63 </span>            : </a>
 <span class="lineNum">      64 </span>            : 
