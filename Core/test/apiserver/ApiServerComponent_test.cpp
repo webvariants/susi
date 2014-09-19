@@ -1,8 +1,8 @@
 #include "gtest/gtest.h"
-#include "apiserver/ApiServerForComponent.h"
+#include "apiserver/ApiServerComponent.h"
 
 
-class ApiServerForComponentTest : public ::testing::Test {
+class ApiServerComponentTest : public ::testing::Test {
 protected:
 
 	virtual void SetUp() override {
@@ -13,5 +13,5 @@ protected:
 	}
 };
 
-TEST_F(ApiServerForComponentTest, Contruct) {
+TEST_F(ApiServerComponentTest, Contruct) {
 }

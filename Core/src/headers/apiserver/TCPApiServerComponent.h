@@ -17,7 +17,7 @@
 #include "Poco/Net/TCPServerConnection.h"
 #include "Poco/Net/Socket.h"
 #include "logger/Logger.h"
-#include "apiserver/ApiServerForComponent.h"
+#include "apiserver/ApiServerComponent.h"
 #include "apiserver/JSONStreamCollector.h"
 #include "world/BaseComponent.h"
 
@@ -30,7 +30,7 @@ class TCPApiServerComponent : public Susi::System::BaseComponent {
 protected:
 	class Connection : public Poco::Net::TCPServerConnection {
 	protected:
-		Susi::Api::ApiServerForComponent api;
+		Susi::Api::ApiServerComponent api;
 		std::string sessionID = "";
 		Susi::Api::JSONStreamCollector collector;
 	public:

@@ -19,7 +19,7 @@
 #include "Poco/Net/WebSocket.h"
 
 #include <chrono>
-#include "apiserver/ApiServerForComponent.h"
+#include "apiserver/ApiServerComponent.h"
 #include "util/Any.h"
 #include "logger/Logger.h"
 
@@ -27,10 +27,10 @@ namespace Susi {
 
 	class WebSocketRequestHandler: public Poco::Net::HTTPRequestHandler {
 		protected:
-			Susi::Api::ApiServerForComponent *apiServer;
+			Susi::Api::ApiServerComponent *apiServer;
 		public:
     		void handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
-    		WebSocketRequestHandler(Susi::Api::ApiServerForComponent* server);
+    		WebSocketRequestHandler(Susi::Api::ApiServerComponent* server);
 	};
 
 }

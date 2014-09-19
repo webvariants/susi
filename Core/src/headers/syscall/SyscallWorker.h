@@ -18,8 +18,6 @@
 #include "Poco/PipeStream.h"
 #include "Poco/StreamCopier.h"
 
-//#include "events/EventSystem.h"
-#include "events/global.h" 
 #include "util/Any.h"
 #include <fstream>
 #include <iostream>

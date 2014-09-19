@@ -17,7 +17,6 @@
 #include <vector>
 #include <string>
 
-#include "events/global.h"
 #include "logger/Logger.h"
 
 namespace Susi {

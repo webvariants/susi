@@ -23,7 +23,7 @@
 
 #include "webstack/FormRequestHandler.h"
 
-#include "apiserver/ApiServerForComponent.h"
+#include "apiserver/ApiServerComponent.h"
 
 namespace Susi {
 
@@ -31,11 +31,11 @@ class RequestHandlerFactory: public Poco::Net::HTTPRequestHandlerFactory
 {
 protected:
     std::string _assetRoot;
-    Susi::Api::ApiServerForComponent *_apiServer;
+    Susi::Api::ApiServerComponent *_apiServer;
     std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager;
 public:
     RequestHandlerFactory(std::string assetRoot, 
-                          Susi::Api::ApiServerForComponent *apiServer, 
+                          Susi::Api::ApiServerComponent *apiServer, 
                           std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager) : 
                             _assetRoot{assetRoot} , 
                             _apiServer(apiServer) ,

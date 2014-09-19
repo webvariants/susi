@@ -1,3 +1,5 @@
+/*
+
 #include "gtest/gtest.h"
 
 #include "apiserver/BasicApiClient.h"
@@ -6,9 +8,7 @@
 class TCPApiServerTest : public ::testing::Test {
 protected:
 	virtual void SetUp() override {
-		world.setup/*EventManager();
-		world.setupSessionManager();
-		world.setupTCPServer*/();
+		world.setup();
 	}
 };
 
@@ -84,3 +84,5 @@ TEST_F(TCPApiServerTest,Basic){
 	EXPECT_TRUE(client.onCloseCalled);
 
 }
+
+*/
