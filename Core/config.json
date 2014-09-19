@@ -58,5 +58,7 @@
 	"autodiscovery": {
 		"mcast": "239.23.23.23:4242",
 		"address": "[::1]:4000"
-	}
+	},
+
+	"apiserver": {}
 }

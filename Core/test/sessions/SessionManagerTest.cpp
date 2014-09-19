@@ -24,13 +24,14 @@ protected:
 
 TEST_F(SessionManagerTest, Init) {
 	EXPECT_FALSE(sessionManager->checkSession(sessionID));	
+
+	
 	sessionManager->updateSession(sessionID);
 	EXPECT_TRUE(sessionManager->checkSession(sessionID));
 
 	auto duration = std::chrono::milliseconds(1100);
 	std::this_thread::sleep_for(duration);
-	EXPECT_FALSE(sessionManager->checkSession(sessionID));
-	
+	EXPECT_FALSE(sessionManager->checkSession(sessionID));	
 }
 
 

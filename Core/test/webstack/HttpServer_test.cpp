@@ -14,14 +14,14 @@ class HttpServerTest : public ComponentTest {
 protected:
 	Susi::IOController io;
 	virtual void SetUp() override {
-		io.makeDir("/tmp/assets");
-		io.writeFile("/tmp/assets/test.txt","foobar");
+		io.makeDir(base_path+"tmp/assets");
+		io.writeFile(base_path+"tmp/assets/test.txt","foobar");
 		componentManager->startComponent("httpserver");
 		std::this_thread::sleep_for(std::chrono::milliseconds{150});
 	}
 	virtual void TearDown() override {
 		componentManager->stopAll();
-		io.deletePath("/tmp/assets");
+		io.deletePath(base_path+"/tmp/assets");
 	}
 
 	virtual void GoodCases() override {

@@ -43,7 +43,7 @@ public:
     Poco::Net::HTTPRequestHandler* createRequestHandler(const Poco::Net::HTTPServerRequest& request){
         Susi::Logger::debug("got request with URI: "+request.getURI());
         try{
-            if(request.getURI().find("/assets/")==0){
+            if(request.getURI().find("/assets/")==0){                
             	return new SessionRequestHandler(new AssetsRequestHandler(_assetRoot), _sessionManager);
             }else if(request.getURI() == "/ws"){
             	return new SessionRequestHandler(new WebSocketRequestHandler(_apiServer), _sessionManager);

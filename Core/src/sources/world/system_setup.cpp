@@ -157,7 +157,7 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 			assetRoot = static_cast<std::string>(config["assets"]);
 		}
 		return std::shared_ptr<Component>{new Susi::HttpServerComponent{mgr, address, assetRoot}};
-	});
+	});	
 	manager->registerDependency("httpserver","apiserver");
 	
 	/**

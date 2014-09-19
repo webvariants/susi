@@ -84,7 +84,7 @@ protected:
 				"},"
 				"\"iocontroller\": {},"
 				"\"sessionmanager\": {"
-					"\"lifetime\": 600000"
+					"\"lifetime\": 1000"
 				"},"
 				"\"statecontroller\": {"
 					"\"file\": \""+path+"/states.json\""
@@ -101,8 +101,9 @@ protected:
 				"},"
 				"\"httpserver\": {"
 					"\"address\": \"[::1]:8080\","
-					"\"assets\": \"/tmp/assets\""
-				"}"
+					"\"assets\": \""+path+"/tmp/assets\""
+				"},"
+				"\"apiserver\": {}"
 			"}";
 
 		return configString;						
