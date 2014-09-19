@@ -1,0 +1,361 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info.cleaned - src/sources/tiny-js/TinyJS_MathFunctions.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">src/sources/tiny-js</a> - TinyJS_MathFunctions.cpp<span style="font-size: 80%;"> (source / <a href="TinyJS_MathFunctions.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">129</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2014-09-19 09:31:24</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">29</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :  * TinyJS
+<span class="lineNum">       3 </span>            :  *
+<span class="lineNum">       4 </span>            :  * A single-file Javascript-alike engine
+<span class="lineNum">       5 </span>            :  *
+<span class="lineNum">       6 </span>            :  * -  Math and Trigonometry functions
+<span class="lineNum">       7 </span>            :  *
+<span class="lineNum">       8 </span>            :  * Authored By O.Z.L.B. &lt;ozlbinfo@gmail.com&gt;
+<span class="lineNum">       9 </span>            :  *
+<span class="lineNum">      10 </span>            :  * Copyright (C) 2011 O.Z.L.B.
+<span class="lineNum">      11 </span>            :  *
+<span class="lineNum">      12 </span>            :  * Permission is hereby granted, free of charge, to any person obtaining a copy of
+<span class="lineNum">      13 </span>            :  * this software and associated documentation files (the &quot;Software&quot;), to deal in
+<span class="lineNum">      14 </span>            :  * the Software without restriction, including without limitation the rights to
+<span class="lineNum">      15 </span>            :  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+<span class="lineNum">      16 </span>            :  * of the Software, and to permit persons to whom the Software is furnished to do
+<span class="lineNum">      17 </span>            :  * so, subject to the following conditions:
+<span class="lineNum">      18 </span>            : 
+<span class="lineNum">      19 </span>            :  * The above copyright notice and this permission notice shall be included in all
+<span class="lineNum">      20 </span>            :  * copies or substantial portions of the Software.
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            :  * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+<span class="lineNum">      23 </span>            :  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+<span class="lineNum">      24 </span>            :  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+<span class="lineNum">      25 </span>            :  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+<span class="lineNum">      26 </span>            :  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+<span class="lineNum">      27 </span>            :  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+<span class="lineNum">      28 </span>            :  * SOFTWARE.
+<span class="lineNum">      29 </span>            :  */
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            : #include &lt;math.h&gt;
+<span class="lineNum">      32 </span>            : #include &lt;cstdlib&gt;
+<span class="lineNum">      33 </span>            : #include &lt;sstream&gt;
+<span class="lineNum">      34 </span>            : #include &quot;tiny-js/TinyJS_MathFunctions.h&quot;
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            : using namespace std;
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            : #define k_E                 exp(1.0)
+<span class="lineNum">      39 </span>            : #define k_PI                3.1415926535897932384626433832795
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : #define F_ABS(a)            ((a)&gt;=0 ? (a) : (-(a)))
+<span class="lineNum">      42 </span>            : #define F_MIN(a,b)          ((a)&gt;(b) ? (b) : (a))
+<span class="lineNum">      43 </span>            : #define F_MAX(a,b)          ((a)&gt;(b) ? (a) : (b))
+<span class="lineNum">      44 </span>            : #define F_SGN(a)            ((a)&gt;0 ? 1 : ((a)&lt;0 ? -1 : 0 ))
+<span class="lineNum">      45 </span>            : #define F_RNG(a,min,max)    ((a)&lt;(min) ? min : ((a)&gt;(max) ? max : a ))
+<span class="lineNum">      46 </span>            : #define F_ROUND(a)          ((a)&gt;0 ? (int) ((a)+0.5) : (int) ((a)-0.5) )
+<span class="lineNum">      47 </span>            :  
+<span class="lineNum">      48 </span>            : //CScriptVar shortcut macro
+<span class="lineNum">      49 </span>            : #define scIsInt(a)          ( c-&gt;getParameter(a)-&gt;isInt() )
+<span class="lineNum">      50 </span>            : #define scIsDouble(a)       ( c-&gt;getParameter(a)-&gt;isDouble() )  
+<span class="lineNum">      51 </span>            : #define scGetInt(a)         ( c-&gt;getParameter(a)-&gt;getInt() )
+<span class="lineNum">      52 </span>            : #define scGetDouble(a)      ( c-&gt;getParameter(a)-&gt;getDouble() )  
+<span class="lineNum">      53 </span>            : #define scReturnInt(a)      ( c-&gt;getReturnVar()-&gt;setInt(a) )
+<span class="lineNum">      54 </span>            : #define scReturnDouble(a)   ( c-&gt;getReturnVar()-&gt;setDouble(a) )  
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            : #ifdef _MSC_VER
+<span class="lineNum">      57 </span>            : namespace
+<span class="lineNum">      58 </span>            : {
+<span class="lineNum">      59 </span>            :     double asinh( const double &amp;value )
+<span class="lineNum">      60 </span>            :     {
+<span class="lineNum">      61 </span>            :         double returned;
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span>            :         if(value&gt;0)
+<span class="lineNum">      64 </span>            :         returned = log(value + sqrt(value * value + 1));
+<span class="lineNum">      65 </span>            :         else
+<span class="lineNum">      66 </span>            :         returned = -log(-value + sqrt(value * value + 1));
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            :         return(returned);
+<span class="lineNum">      69 </span>            :     }
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            :     double acosh( const double &amp;value )
+<span class="lineNum">      72 </span>            :     {
+<span class="lineNum">      73 </span>            :         double returned;
+<span class="lineNum">      74 </span>            : 
+<span class="lineNum">      75 </span>            :         if(value&gt;0)
+<span class="lineNum">      76 </span>            :         returned = log(value + sqrt(value * value - 1));
+<span class="lineNum">      77 </span>            :         else
+<span class="lineNum">      78 </span>            :         returned = -log(-value + sqrt(value * value - 1));
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            :         return(returned);
+<span class="lineNum">      81 </span>            :     }
+<span class="lineNum">      82 </span>            : }
+<span class="lineNum">      83 </span>            : #endif
+<a name="84"><span class="lineNum">      84 </span>            : </a>
+<span class="lineNum">      85 </span>            : //Math.abs(x) - returns absolute of given value
+<span class="lineNum">      86 </span><span class="lineNoCov">          0 : void scMathAbs(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">      87 </span><span class="lineNoCov">          0 :     if ( scIsInt(&quot;a&quot;) ) {</span>
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :       scReturnInt( F_ABS( scGetInt(&quot;a&quot;) ) );</span>
+<span class="lineNum">      89 </span><span class="lineNoCov">          0 :     } else if ( scIsDouble(&quot;a&quot;) ) {</span>
+<span class="lineNum">      90 </span><span class="lineNoCov">          0 :       scReturnDouble( F_ABS( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">      91 </span>            :     }
+<span class="lineNum">      92 </span><span class="lineNoCov">          0 : }</span>
+<a name="93"><span class="lineNum">      93 </span>            : </a>
+<span class="lineNum">      94 </span>            : //Math.round(a) - returns nearest round of given value
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 : void scMathRound(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">      96 </span><span class="lineNoCov">          0 :     if ( scIsInt(&quot;a&quot;) ) {</span>
+<span class="lineNum">      97 </span><span class="lineNoCov">          0 :       scReturnInt( F_ROUND( scGetInt(&quot;a&quot;) ) );</span>
+<span class="lineNum">      98 </span><span class="lineNoCov">          0 :     } else if ( scIsDouble(&quot;a&quot;) ) {</span>
+<span class="lineNum">      99 </span><span class="lineNoCov">          0 :       scReturnDouble( F_ROUND( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     100 </span>            :     }
+<span class="lineNum">     101 </span><span class="lineNoCov">          0 : }</span>
+<a name="102"><span class="lineNum">     102 </span>            : </a>
+<span class="lineNum">     103 </span>            : //Math.min(a,b) - returns minimum of two given values 
+<span class="lineNum">     104 </span><span class="lineNoCov">          0 : void scMathMin(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :     if ( (scIsInt(&quot;a&quot;)) &amp;&amp; (scIsInt(&quot;b&quot;)) ) {</span>
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :       scReturnInt( F_MIN( scGetInt(&quot;a&quot;), scGetInt(&quot;b&quot;) ) );</span>
+<span class="lineNum">     107 </span>            :     } else {
+<span class="lineNum">     108 </span><span class="lineNoCov">          0 :       scReturnDouble( F_MIN( scGetDouble(&quot;a&quot;), scGetDouble(&quot;b&quot;) ) );</span>
+<span class="lineNum">     109 </span>            :     }
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 : }</span>
+<a name="111"><span class="lineNum">     111 </span>            : </a>
+<span class="lineNum">     112 </span>            : //Math.max(a,b) - returns maximum of two given values  
+<span class="lineNum">     113 </span><span class="lineNoCov">          0 : void scMathMax(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     114 </span><span class="lineNoCov">          0 :     if ( (scIsInt(&quot;a&quot;)) &amp;&amp; (scIsInt(&quot;b&quot;)) ) {</span>
+<span class="lineNum">     115 </span><span class="lineNoCov">          0 :       scReturnInt( F_MAX( scGetInt(&quot;a&quot;), scGetInt(&quot;b&quot;) ) );</span>
+<span class="lineNum">     116 </span>            :     } else {
+<span class="lineNum">     117 </span><span class="lineNoCov">          0 :       scReturnDouble( F_MAX( scGetDouble(&quot;a&quot;), scGetDouble(&quot;b&quot;) ) );</span>
+<span class="lineNum">     118 </span>            :     }
+<span class="lineNum">     119 </span><span class="lineNoCov">          0 : }</span>
+<a name="120"><span class="lineNum">     120 </span>            : </a>
+<span class="lineNum">     121 </span>            : //Math.range(x,a,b) - returns value limited between two given values  
+<span class="lineNum">     122 </span><span class="lineNoCov">          0 : void scMathRange(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     123 </span><span class="lineNoCov">          0 :     if ( (scIsInt(&quot;x&quot;)) ) {</span>
+<span class="lineNum">     124 </span><span class="lineNoCov">          0 :       scReturnInt( F_RNG( scGetInt(&quot;x&quot;), scGetInt(&quot;a&quot;), scGetInt(&quot;b&quot;) ) );</span>
+<span class="lineNum">     125 </span>            :     } else {
+<span class="lineNum">     126 </span><span class="lineNoCov">          0 :       scReturnDouble( F_RNG( scGetDouble(&quot;x&quot;), scGetDouble(&quot;a&quot;), scGetDouble(&quot;b&quot;) ) );</span>
+<span class="lineNum">     127 </span>            :     }
+<span class="lineNum">     128 </span><span class="lineNoCov">          0 : }</span>
+<a name="129"><span class="lineNum">     129 </span>            : </a>
+<span class="lineNum">     130 </span>            : //Math.sign(a) - returns sign of given value (-1==negative,0=zero,1=positive)
+<span class="lineNum">     131 </span><span class="lineNoCov">          0 : void scMathSign(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     132 </span><span class="lineNoCov">          0 :     if ( scIsInt(&quot;a&quot;) ) {</span>
+<span class="lineNum">     133 </span><span class="lineNoCov">          0 :       scReturnInt( F_SGN( scGetInt(&quot;a&quot;) ) );</span>
+<span class="lineNum">     134 </span><span class="lineNoCov">          0 :     } else if ( scIsDouble(&quot;a&quot;) ) {</span>
+<span class="lineNum">     135 </span><span class="lineNoCov">          0 :       scReturnDouble( F_SGN( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     136 </span>            :     }
+<span class="lineNum">     137 </span><span class="lineNoCov">          0 : }</span>
+<a name="138"><span class="lineNum">     138 </span>            : </a>
+<span class="lineNum">     139 </span>            : //Math.PI() - returns PI value
+<span class="lineNum">     140 </span><span class="lineNoCov">          0 : void scMathPI(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     141 </span><span class="lineNoCov">          0 :     scReturnDouble(k_PI);</span>
+<span class="lineNum">     142 </span><span class="lineNoCov">          0 : }</span>
+<a name="143"><span class="lineNum">     143 </span>            : </a>
+<span class="lineNum">     144 </span>            : //Math.toDegrees(a) - returns degree value of a given angle in radians
+<span class="lineNum">     145 </span><span class="lineNoCov">          0 : void scMathToDegrees(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     146 </span><span class="lineNoCov">          0 :     scReturnDouble( (180.0/k_PI)*( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     147 </span><span class="lineNoCov">          0 : }</span>
+<a name="148"><span class="lineNum">     148 </span>            : </a>
+<span class="lineNum">     149 </span>            : //Math.toRadians(a) - returns radians value of a given angle in degrees
+<span class="lineNum">     150 </span><span class="lineNoCov">          0 : void scMathToRadians(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     151 </span><span class="lineNoCov">          0 :     scReturnDouble( (k_PI/180.0)*( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     152 </span><span class="lineNoCov">          0 : }</span>
+<a name="153"><span class="lineNum">     153 </span>            : </a>
+<span class="lineNum">     154 </span>            : //Math.sin(a) - returns trig. sine of given angle in radians
+<span class="lineNum">     155 </span><span class="lineNoCov">          0 : void scMathSin(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     156 </span><span class="lineNoCov">          0 :     scReturnDouble( sin( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     157 </span><span class="lineNoCov">          0 : }</span>
+<a name="158"><span class="lineNum">     158 </span>            : </a>
+<span class="lineNum">     159 </span>            : //Math.asin(a) - returns trig. arcsine of given angle in radians
+<span class="lineNum">     160 </span><span class="lineNoCov">          0 : void scMathASin(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     161 </span><span class="lineNoCov">          0 :     scReturnDouble( asin( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     162 </span><span class="lineNoCov">          0 : }</span>
+<a name="163"><span class="lineNum">     163 </span>            : </a>
+<span class="lineNum">     164 </span>            : //Math.cos(a) - returns trig. cosine of given angle in radians
+<span class="lineNum">     165 </span><span class="lineNoCov">          0 : void scMathCos(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     166 </span><span class="lineNoCov">          0 :     scReturnDouble( cos( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     167 </span><span class="lineNoCov">          0 : }</span>
+<a name="168"><span class="lineNum">     168 </span>            : </a>
+<span class="lineNum">     169 </span>            : //Math.acos(a) - returns trig. arccosine of given angle in radians
+<span class="lineNum">     170 </span><span class="lineNoCov">          0 : void scMathACos(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     171 </span><span class="lineNoCov">          0 :     scReturnDouble( acos( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     172 </span><span class="lineNoCov">          0 : }</span>
+<a name="173"><span class="lineNum">     173 </span>            : </a>
+<span class="lineNum">     174 </span>            : //Math.tan(a) - returns trig. tangent of given angle in radians
+<span class="lineNum">     175 </span><span class="lineNoCov">          0 : void scMathTan(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     176 </span><span class="lineNoCov">          0 :     scReturnDouble( tan( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     177 </span><span class="lineNoCov">          0 : }</span>
+<a name="178"><span class="lineNum">     178 </span>            : </a>
+<span class="lineNum">     179 </span>            : //Math.atan(a) - returns trig. arctangent of given angle in radians
+<span class="lineNum">     180 </span><span class="lineNoCov">          0 : void scMathATan(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     181 </span><span class="lineNoCov">          0 :     scReturnDouble( atan( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     182 </span><span class="lineNoCov">          0 : }</span>
+<a name="183"><span class="lineNum">     183 </span>            : </a>
+<span class="lineNum">     184 </span>            : //Math.sinh(a) - returns trig. hyperbolic sine of given angle in radians
+<span class="lineNum">     185 </span><span class="lineNoCov">          0 : void scMathSinh(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     186 </span><span class="lineNoCov">          0 :     scReturnDouble( sinh( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     187 </span><span class="lineNoCov">          0 : }</span>
+<a name="188"><span class="lineNum">     188 </span>            : </a>
+<span class="lineNum">     189 </span>            : //Math.asinh(a) - returns trig. hyperbolic arcsine of given angle in radians
+<span class="lineNum">     190 </span><span class="lineNoCov">          0 : void scMathASinh(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     191 </span><span class="lineNoCov">          0 :     scReturnDouble( asinh( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     192 </span><span class="lineNoCov">          0 : }</span>
+<a name="193"><span class="lineNum">     193 </span>            : </a>
+<span class="lineNum">     194 </span>            : //Math.cosh(a) - returns trig. hyperbolic cosine of given angle in radians
+<span class="lineNum">     195 </span><span class="lineNoCov">          0 : void scMathCosh(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     196 </span><span class="lineNoCov">          0 :     scReturnDouble( cosh( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     197 </span><span class="lineNoCov">          0 : }</span>
+<a name="198"><span class="lineNum">     198 </span>            : </a>
+<span class="lineNum">     199 </span>            : //Math.acosh(a) - returns trig. hyperbolic arccosine of given angle in radians
+<span class="lineNum">     200 </span><span class="lineNoCov">          0 : void scMathACosh(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     201 </span><span class="lineNoCov">          0 :     scReturnDouble( acosh( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     202 </span><span class="lineNoCov">          0 : }</span>
+<a name="203"><span class="lineNum">     203 </span>            : </a>
+<span class="lineNum">     204 </span>            : //Math.tanh(a) - returns trig. hyperbolic tangent of given angle in radians
+<span class="lineNum">     205 </span><span class="lineNoCov">          0 : void scMathTanh(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     206 </span><span class="lineNoCov">          0 :     scReturnDouble( tanh( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     207 </span><span class="lineNoCov">          0 : }</span>
+<a name="208"><span class="lineNum">     208 </span>            : </a>
+<span class="lineNum">     209 </span>            : //Math.atan(a) - returns trig. hyperbolic arctangent of given angle in radians
+<span class="lineNum">     210 </span><span class="lineNoCov">          0 : void scMathATanh(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     211 </span><span class="lineNoCov">          0 :     scReturnDouble( atan( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     212 </span><span class="lineNoCov">          0 : }</span>
+<a name="213"><span class="lineNum">     213 </span>            : </a>
+<span class="lineNum">     214 </span>            : //Math.E() - returns E Neplero value
+<span class="lineNum">     215 </span><span class="lineNoCov">          0 : void scMathE(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     216 </span><span class="lineNoCov">          0 :     scReturnDouble(k_E);</span>
+<span class="lineNum">     217 </span><span class="lineNoCov">          0 : }</span>
+<a name="218"><span class="lineNum">     218 </span>            : </a>
+<span class="lineNum">     219 </span>            : //Math.log(a) - returns natural logaritm (base E) of given value
+<span class="lineNum">     220 </span><span class="lineNoCov">          0 : void scMathLog(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     221 </span><span class="lineNoCov">          0 :     scReturnDouble( log( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     222 </span><span class="lineNoCov">          0 : }</span>
+<a name="223"><span class="lineNum">     223 </span>            : </a>
+<span class="lineNum">     224 </span>            : //Math.log10(a) - returns logaritm(base 10) of given value
+<span class="lineNum">     225 </span><span class="lineNoCov">          0 : void scMathLog10(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     226 </span><span class="lineNoCov">          0 :     scReturnDouble( log10( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     227 </span><span class="lineNoCov">          0 : }</span>
+<a name="228"><span class="lineNum">     228 </span>            : </a>
+<span class="lineNum">     229 </span>            : //Math.exp(a) - returns e raised to the power of a given number
+<span class="lineNum">     230 </span><span class="lineNoCov">          0 : void scMathExp(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     231 </span><span class="lineNoCov">          0 :     scReturnDouble( exp( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     232 </span><span class="lineNoCov">          0 : }</span>
+<a name="233"><span class="lineNum">     233 </span>            : </a>
+<span class="lineNum">     234 </span>            : //Math.pow(a,b) - returns the result of a number raised to a power (a)^(b)
+<span class="lineNum">     235 </span><span class="lineNoCov">          0 : void scMathPow(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     236 </span><span class="lineNoCov">          0 :     scReturnDouble( pow( scGetDouble(&quot;a&quot;), scGetDouble(&quot;b&quot;) ) );</span>
+<span class="lineNum">     237 </span><span class="lineNoCov">          0 : }</span>
+<a name="238"><span class="lineNum">     238 </span>            : </a>
+<span class="lineNum">     239 </span>            : //Math.sqr(a) - returns square of given value
+<span class="lineNum">     240 </span><span class="lineNoCov">          0 : void scMathSqr(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     241 </span><span class="lineNoCov">          0 :     scReturnDouble( ( scGetDouble(&quot;a&quot;) * scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     242 </span><span class="lineNoCov">          0 : }</span>
+<a name="243"><span class="lineNum">     243 </span>            : </a>
+<span class="lineNum">     244 </span>            : //Math.sqrt(a) - returns square root of given value
+<span class="lineNum">     245 </span><span class="lineNoCov">          0 : void scMathSqrt(CScriptVar *c, void *userdata) {</span>
+<span class="lineNum">     246 </span><span class="lineNoCov">          0 :     scReturnDouble( sqrtf( scGetDouble(&quot;a&quot;) ) );</span>
+<span class="lineNum">     247 </span><span class="lineNoCov">          0 : }</span>
+<a name="248"><span class="lineNum">     248 </span>            : </a>
+<span class="lineNum">     249 </span>            : // ----------------------------------------------- Register Functions
+<span class="lineNum">     250 </span><span class="lineNoCov">          0 : void registerMathFunctions(CTinyJS *tinyJS) {</span>
+<span class="lineNum">     251 </span>            :      
+<span class="lineNum">     252 </span>            :     // --- Math and Trigonometry functions ---
+<span class="lineNum">     253 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.abs(a)&quot;, scMathAbs, 0);</span>
+<span class="lineNum">     254 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.round(a)&quot;, scMathRound, 0);</span>
+<span class="lineNum">     255 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.min(a,b)&quot;, scMathMin, 0);</span>
+<span class="lineNum">     256 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.max(a,b)&quot;, scMathMax, 0);</span>
+<span class="lineNum">     257 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.range(x,a,b)&quot;, scMathRange, 0);</span>
+<span class="lineNum">     258 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.sign(a)&quot;, scMathSign, 0);</span>
+<span class="lineNum">     259 </span>            :     
+<span class="lineNum">     260 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.PI()&quot;, scMathPI, 0);</span>
+<span class="lineNum">     261 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.toDegrees(a)&quot;, scMathToDegrees, 0);</span>
+<span class="lineNum">     262 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.toRadians(a)&quot;, scMathToRadians, 0);</span>
+<span class="lineNum">     263 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.sin(a)&quot;, scMathSin, 0);</span>
+<span class="lineNum">     264 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.asin(a)&quot;, scMathASin, 0);</span>
+<span class="lineNum">     265 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.cos(a)&quot;, scMathCos, 0);</span>
+<span class="lineNum">     266 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.acos(a)&quot;, scMathACos, 0);</span>
+<span class="lineNum">     267 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.tan(a)&quot;, scMathTan, 0);</span>
+<span class="lineNum">     268 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.atan(a)&quot;, scMathATan, 0);</span>
+<span class="lineNum">     269 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.sinh(a)&quot;, scMathSinh, 0);</span>
+<span class="lineNum">     270 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.asinh(a)&quot;, scMathASinh, 0);</span>
+<span class="lineNum">     271 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.cosh(a)&quot;, scMathCosh, 0);</span>
+<span class="lineNum">     272 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.acosh(a)&quot;, scMathACosh, 0);</span>
+<span class="lineNum">     273 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.tanh(a)&quot;, scMathTanh, 0);</span>
+<span class="lineNum">     274 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.atanh(a)&quot;, scMathATanh, 0);</span>
+<span class="lineNum">     275 </span>            :        
+<span class="lineNum">     276 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.E()&quot;, scMathE, 0);</span>
+<span class="lineNum">     277 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.log(a)&quot;, scMathLog, 0);</span>
+<span class="lineNum">     278 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.log10(a)&quot;, scMathLog10, 0);</span>
+<span class="lineNum">     279 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.exp(a)&quot;, scMathExp, 0);</span>
+<span class="lineNum">     280 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.pow(a,b)&quot;, scMathPow, 0);</span>
+<span class="lineNum">     281 </span>            :     
+<span class="lineNum">     282 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.sqr(a)&quot;, scMathSqr, 0);</span>
+<span class="lineNum">     283 </span><span class="lineNoCov">          0 :     tinyJS-&gt;addNative(&quot;function Math.sqrt(a)&quot;, scMathSqrt, 0);    </span>
+<span class="lineNum">     284 </span>            :   
+<span class="lineNum">     285 </span><span class="lineNoCov">          0 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.11</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

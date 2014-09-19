@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info.cleaned - src/sources/webstack/SessionRequestHandler.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">src/sources/webstack</a> - SessionRequestHandler.cpp<span style="font-size: 80%;"> (source / <a href="SessionRequestHandler.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">19</td>
+            <td class="headerCovTableEntry">31</td>
+            <td class="headerCovTableEntryLo">61.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2014-09-19 09:31:24</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;webstack/SessionRequestHandler.h&quot;</a>
+<span class="lineNum">       2 </span>            : 
+<span class="lineNum">       3 </span><span class="lineCov">          2 : void Susi::SessionRequestHandler::handleRequest(Poco::Net::HTTPServerRequest&amp; request,</span>
+<span class="lineNum">       4 </span>            :                        Poco::Net::HTTPServerResponse&amp; response){
+<span class="lineNum">       5 </span><span class="lineCov">          2 :         std::string id = &quot;&quot;;</span>
+<span class="lineNum">       6 </span><span class="lineCov">          2 :         Susi::Logger::debug(&quot;starting SessionRequestHandler&quot;);</span>
+<span class="lineNum">       7 </span>            :         try{
+<span class="lineNum">       8 </span><span class="lineCov">          2 :                 Poco::Net::NameValueCollection cookies;</span>
+<span class="lineNum">       9 </span><span class="lineCov">          2 :                 request.getCookies(cookies);</span>
+<span class="lineNum">      10 </span><span class="lineCov">          4 :                 id = cookies[&quot;susisession&quot;];</span>
+<span class="lineNum">      11 </span><span class="lineNoCov">          0 :                 if(!_sessionManager-&gt;checkSession(id)){</span>
+<span class="lineNum">      12 </span><span class="lineNoCov">          0 :                         Susi::Logger::info(&quot;No valid session&quot;);</span>
+<span class="lineNum">      13 </span><span class="lineNoCov">          0 :                         Poco::Timestamp now;</span>
+<span class="lineNum">      14 </span><span class="lineNoCov">          0 :                         id = std::to_string(now.epochMicroseconds());</span>
+<span class="lineNum">      15 </span><span class="lineNoCov">          0 :                         _sessionManager-&gt;updateSession(id);</span>
+<span class="lineNum">      16 </span><span class="lineNoCov">          0 :                         response.addCookie(Poco::Net::HTTPCookie{&quot;susisession&quot;,id});</span>
+<span class="lineNum">      17 </span><span class="lineNoCov">          0 :                         request.add(&quot;susisession&quot;,id);</span>
+<span class="lineNum">      18 </span>            :                 }else{
+<span class="lineNum">      19 </span><span class="lineNoCov">          0 :                         request.add(&quot;susisession&quot;,id);</span>
+<span class="lineNum">      20 </span><span class="lineCov">          2 :                 }</span>
+<span class="lineNum">      21 </span><span class="lineCov">          2 :         }catch(const std::exception &amp; e){</span>
+<span class="lineNum">      22 </span><span class="lineCov">          2 :                 Susi::Logger::error(&quot;failed in session-request-handler&quot;);</span>
+<span class="lineNum">      23 </span><span class="lineCov">          2 :                 Poco::Timestamp now;</span>
+<span class="lineNum">      24 </span><span class="lineCov">          2 :                 id = std::to_string(now.epochMicroseconds());</span>
+<span class="lineNum">      25 </span><span class="lineCov">          2 :                 _sessionManager-&gt;updateSession(id);</span>
+<span class="lineNum">      26 </span><span class="lineCov">          4 :                 auto cookie = Poco::Net::HTTPCookie{&quot;susisession&quot;,id};</span>
+<span class="lineNum">      27 </span><span class="lineCov">          2 :                 cookie.setPath(&quot;/&quot;);</span>
+<span class="lineNum">      28 </span><span class="lineCov">          2 :                 response.addCookie(cookie);</span>
+<span class="lineNum">      29 </span><span class="lineCov">          4 :                 request.add(&quot;susisession&quot;,id);</span>
+<span class="lineNum">      30 </span>            :         }
+<span class="lineNum">      31 </span>            :         try{
+<span class="lineNum">      32 </span><span class="lineCov">          2 :                 defaultHandler-&gt;handleRequest(request,response);</span>
+<span class="lineNum">      33 </span><span class="lineNoCov">          0 :         }catch(const std::exception &amp; e){</span>
+<span class="lineNum">      34 </span><span class="lineNoCov">          0 :                 std::string msg = &quot;error in http handler: &quot;;</span>
+<span class="lineNum">      35 </span><span class="lineNoCov">          0 :                 msg += e.what();</span>
+<span class="lineNum">      36 </span><span class="lineNoCov">          0 :                 Susi::Logger::error(msg);</span>
+<a name="37"><span class="lineNum">      37 </span>            :         }</a>
+<span class="lineNum">      38 </span><span class="lineCov">          2 :         Susi::Logger::debug(&quot;finished in SessionRequestHandler&quot;);</span>
+<span class="lineNum">      39 </span><span class="lineCov">          5 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.11</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

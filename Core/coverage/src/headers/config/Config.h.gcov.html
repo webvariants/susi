@@ -1,0 +1,169 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info.cleaned - src/headers/config/Config.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">src/headers/config</a> - Config.h<span style="font-size: 80%;"> (source / <a href="Config.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2014-09-19 09:31:24</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :  * Copyright (c) 2014, webvariants GmbH, http://www.webvariants.de
+<span class="lineNum">       3 </span>            :  *
+<span class="lineNum">       4 </span>            :  * This file is released under the terms of the MIT license. You can find the
+<span class="lineNum">       5 </span>            :  * complete text in the attached LICENSE file or online at:
+<span class="lineNum">       6 </span>            :  *
+<span class="lineNum">       7 </span>            :  * http://www.opensource.org/licenses/mit-license.php
+<span class="lineNum">       8 </span>            :  * 
+<span class="lineNum">       9 </span>            :  * @author: Tino Rusch (tino.rusch@webvariants.de)
+<span class="lineNum">      10 </span>            :  */
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #ifndef __CONFIG__
+<span class="lineNum">      13 </span>            : #define __CONFIG__
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : #include &lt;sstream&gt;
+<span class="lineNum">      16 </span>            : #include &lt;iostream&gt;
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : #include &quot;util/Any.h&quot;
+<span class="lineNum">      19 </span>            : #include &quot;util/Helpers.h&quot;
+<span class="lineNum">      20 </span>            : #include &quot;iocontroller/IOController.h&quot;
+<span class="lineNum">      21 </span>            : #include &quot;logger/Logger.h&quot;
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : namespace Susi{
+<span class="lineNum">      24 </span>            : 
+<a name="25"><span class="lineNum">      25 </span>            : using Susi::Util::Any;</a>
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span><span class="lineCov">         15 : class Config {</span>
+<span class="lineNum">      28 </span>            : protected:
+<span class="lineNum">      29 </span>            :         Susi::IOController io;
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            :         // file extension
+<span class="lineNum">      32 </span>            :         std::string file_extension = &quot;json&quot;;
+<span class="lineNum">      33 </span>            :         int load_count = 0;
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            :         // holds the config
+<span class="lineNum">      36 </span>            :         Any _configVar; 
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span>            :         // holds infos to all possible commandline options
+<span class="lineNum">      39 </span>            :         std::map&lt;std::string,std::string&gt; _knownCommandLineOptions;
+<span class="lineNum">      40 </span>            :         
+<span class="lineNum">      41 </span>            :         // used to set a value in the config object (should be used by parseCommandLine())
+<span class="lineNum">      42 </span>            :         void set(std::string key, Any value);
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            :         // recursive config loading, in alphabetical order
+<a name="45"><span class="lineNum">      45 </span>            :         void rec_dir(const std::string &amp; path);</a>
+<span class="lineNum">      46 </span>            : public:
+<span class="lineNum">      47 </span><span class="lineCov">         10 :         Config(){};</span>
+<span class="lineNum">      48 </span>            :         // constructs new config object
+<span class="lineNum">      49 </span>            :         // reads filename and parses into _configVar
+<span class="lineNum">      50 </span>            :         // should throw an error if
+<span class="lineNum">      51 </span>            :         //     - filename does not exist
+<a name="52"><span class="lineNum">      52 </span>            :         //     - file cant be parsed as json</a>
+<span class="lineNum">      53 </span>            :         //     - file doesn't contain a (json) object
+<span class="lineNum">      54 </span><span class="lineCov">         11 :         Config(std::string filename){</span>
+<span class="lineNum">      55 </span><span class="lineCov">         11 :                 loadConfig(filename);</span>
+<span class="lineNum">      56 </span><span class="lineCov">          5 :         }</span>
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            :         Config(const char *filename) : Config{std::string{filename}} {}
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            :         Config(Susi::Util::Any cfg) { _configVar = cfg; }
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span>            :         void loadConfig(std::string path);
+<span class="lineNum">      63 </span>            :         void mergeOptions(std::string key, Any configVar);
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            :         // register a commandline option which will be recognized while parsing
+<span class="lineNum">      66 </span>            :         void registerCommandLineOption(std::string name, std::string key);
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            :         // parses the commandline
+<span class="lineNum">      69 </span>            :         // loops though the args and check if it is in _knownCommandLineOptions
+<span class="lineNum">      70 </span>            :         // if so, place it in the _configVar at the specified key
+<span class="lineNum">      71 </span>            :         // should throw an error if unknown commandline options are supplied, but should parse everything else
+<span class="lineNum">      72 </span>            :         void parseCommandLine(std::vector&lt;std::string&gt; argv);
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span>            :         // get a config variable.
+<span class="lineNum">      75 </span>            :         // keys are in this format: &quot;foo.bar.baz&quot;
+<span class="lineNum">      76 </span>            :         // -&gt; if we have {foo:{bar:{baz:123}}} get(&quot;foo.bar.baz&quot;) should return Any{123};
+<span class="lineNum">      77 </span>            :         // should throw if key doesn't exist
+<span class="lineNum">      78 </span>            :         Any get(std::string key);
+<span class="lineNum">      79 </span>            : 
+<span class="lineNum">      80 </span>            :         Any getConfig();
+<span class="lineNum">      81 </span>            : 
+<span class="lineNum">      82 </span>            :         // returns a help message which shows which options are available
+<span class="lineNum">      83 </span>            :         std::string getHelp();
+<span class="lineNum">      84 </span>            : 
+<span class="lineNum">      85 </span>            :         void setFileExtension(std::string _file_extension);
+<span class="lineNum">      86 </span>            :         
+<span class="lineNum">      87 </span>            :         int getLoadCount();
+<span class="lineNum">      88 </span>            :         void setLoadCount(int _load_count);
+<span class="lineNum">      89 </span>            : };
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span>            : }
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            : #endif // __CONFIG__
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.11</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

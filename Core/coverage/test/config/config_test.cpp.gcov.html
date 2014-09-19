@@ -1,0 +1,359 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info.cleaned - test/config/config_test.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">test/config</a> - config_test.cpp<span style="font-size: 80%;"> (source / <a href="config_test.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">143</td>
+            <td class="headerCovTableEntry">148</td>
+            <td class="headerCovTableEntryHi">96.6 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2014-09-19 09:31:24</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">82</td>
+            <td class="headerCovTableEntry">83</td>
+            <td class="headerCovTableEntryHi">98.8 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;gtest/gtest.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;world/ComponentManager.h&quot;
+<span class="lineNum">       3 </span>            : #include &quot;world/system_setup.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;config/Config.h&quot;
+<a name="5"><span class="lineNum">       5 </span>            : #include &quot;iocontroller/IOController.h&quot;</a>
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span><span class="lineCov">         34 : class ConfigTest : public ::testing::Test {</span>
+<span class="lineNum">       8 </span>            : 
+<span class="lineNum">       9 </span>            : public:
+<span class="lineNum">      10 </span>            :         std::string base_path = Poco::Path(Poco::Path::current()).toString() + &quot;configtest/&quot;;
+<span class="lineNum">      11 </span>            :         Susi::IOController io;
+<a name="12"><span class="lineNum">      12 </span>            : </a>
+<span class="lineNum">      13 </span>            : protected:
+<span class="lineNum">      14 </span><span class="lineCov">         17 :         virtual void SetUp() override {</span>
+<a name="15"><span class="lineNum">      15 </span><span class="lineCov">         17 :                 io.makeDir(base_path);</span></a>
+<span class="lineNum">      16 </span><span class="lineCov">         17 :         }</span>
+<span class="lineNum">      17 </span><span class="lineCov">         17 :         virtual void TearDown() override {</span>
+<span class="lineNum">      18 </span><span class="lineCov">         17 :                 io.deletePath(base_path);</span>
+<span class="lineNum">      19 </span><span class="lineCov">         17 :         }</span>
+<a name="20"><span class="lineNum">      20 </span>            : };</a>
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span><span class="lineCov">          5 : TEST_F(ConfigTest, Contruct) {</span>
+<span class="lineNum">      23 </span>            :         Susi::Util::Any cfg = Susi::Util::Any::Object{
+<span class="lineNum">      24 </span>            :                 {&quot;foo&quot;,&quot;bar&quot;}
+<span class="lineNum">      25 </span><span class="lineCov">          1 :         };</span>
+<span class="lineNum">      26 </span>            :         // Test valid json
+<span class="lineNum">      27 </span><span class="lineCov">          1 :         io.writeFile(base_path + &quot;config.json&quot;,cfg.toJSONString());</span>
+<span class="lineNum">      28 </span><span class="lineCov">          1 :         EXPECT_NO_THROW({</span>
+<span class="lineNum">      29 </span>            :                 auto config = std::make_shared&lt;Susi::Config&gt;(base_path + &quot;config.json&quot;);
+<span class="lineNum">      30 </span><span class="lineCov">          1 :         });</span>
+<a name="31"><span class="lineNum">      31 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span><span class="lineCov">          5 : TEST_F(ConfigTest, ContructInvalidJson) {</span>
+<span class="lineNum">      34 </span><span class="lineCov">          1 :         io.writeFile(base_path + &quot;config.json&quot;,&quot;{\&quot;foo\&quot;,\&quot;bar\&quot;, 22&quot;);</span>
+<span class="lineNum">      35 </span><span class="lineCov">          2 :         EXPECT_THROW({</span>
+<span class="lineNum">      36 </span>            :                 auto config = std::make_shared&lt;Susi::Config&gt;(base_path + &quot;config.json&quot;);
+<span class="lineNum">      37 </span><span class="lineNoCov">          0 :         },std::runtime_error);</span>
+<span class="lineNum">      38 </span><span class="lineCov">          1 : }</span>
+<a name="39"><span class="lineNum">      39 </span>            : </a>
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span><span class="lineCov">          5 : TEST_F(ConfigTest, ContructWrongFormatJson) {</span>
+<span class="lineNum">      42 </span>            :         // Test valid json which is no object;
+<span class="lineNum">      43 </span><span class="lineCov">          1 :         io.writeFile(base_path + &quot;config.json&quot;,&quot;\&quot;wrongformat\&quot;&quot;);</span>
+<span class="lineNum">      44 </span><span class="lineCov">          2 :         EXPECT_THROW({</span>
+<span class="lineNum">      45 </span>            :                 auto config = std::make_shared&lt;Susi::Config&gt;(base_path + &quot;config.json&quot;);
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 :         },std::runtime_error);</span>
+<a name="47"><span class="lineNum">      47 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span><span class="lineCov">          5 : TEST_F(ConfigTest, ContructConfigMissing) {</span>
+<span class="lineNum">      50 </span>            :         // Test nonexistent file;
+<span class="lineNum">      51 </span><span class="lineCov">          2 :         EXPECT_THROW({</span>
+<span class="lineNum">      52 </span>            :                 auto config = std::make_shared&lt;Susi::Config&gt;(base_path + &quot;wrongname.json&quot;);
+<span class="lineNum">      53 </span><span class="lineNoCov">          0 :         },std::runtime_error);</span>
+<span class="lineNum">      54 </span><span class="lineCov">          1 : }</span>
+<a name="55"><span class="lineNum">      55 </span>            : </a>
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span><span class="lineCov">          5 : TEST_F(ConfigTest, Get){</span>
+<span class="lineNum">      58 </span>            :         using Susi::Util::Any;
+<span class="lineNum">      59 </span><span class="lineCov">          1 :         Any cfg = Any::Object{{&quot;foo&quot;,Any::Object{{&quot;bar&quot;, Any::Object{{&quot;baz&quot;,123}}}}}};</span>
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span><span class="lineCov">          1 :         io.writeFile(base_path + &quot;config.json&quot;,cfg.toJSONString());</span>
+<span class="lineNum">      62 </span><span class="lineCov">          1 :         EXPECT_NO_THROW({</span>
+<span class="lineNum">      63 </span>            :                 auto config = std::make_shared&lt;Susi::Config&gt;(base_path + &quot;config.json&quot;);
+<span class="lineNum">      64 </span>            :                 Any value1 = config-&gt;get(&quot;&quot;);
+<span class="lineNum">      65 </span>            :                 EXPECT_EQ(cfg,value1);
+<span class="lineNum">      66 </span>            :                 Any value2 = config-&gt;get(&quot;foo&quot;);
+<span class="lineNum">      67 </span>            :                 EXPECT_EQ(cfg[&quot;foo&quot;],value2);
+<span class="lineNum">      68 </span>            :                 Any value3 = config-&gt;get(&quot;foo.bar&quot;);
+<span class="lineNum">      69 </span>            :                 EXPECT_EQ(cfg[&quot;foo&quot;][&quot;bar&quot;],value3);
+<span class="lineNum">      70 </span>            :                 Any value4 = config-&gt;get(&quot;foo.bar.baz&quot;);
+<span class="lineNum">      71 </span>            :                 EXPECT_EQ(cfg[&quot;foo&quot;][&quot;bar&quot;][&quot;baz&quot;],value4);
+<span class="lineNum">      72 </span><span class="lineNoCov">          0 :         });</span>
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span><span class="lineCov">          1 :         EXPECT_THROW({</span>
+<span class="lineNum">      75 </span>            :                 auto config = std::make_shared&lt;Susi::Config&gt;(base_path + &quot;config.json&quot;);
+<span class="lineNum">      76 </span>            :                 config-&gt;get(&quot;bla&quot;);
+<span class="lineNum">      77 </span><span class="lineNoCov">          0 :         },std::runtime_error);</span>
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span><span class="lineCov">          1 :         EXPECT_THROW({</span>
+<span class="lineNum">      80 </span>            :                 auto config = std::make_shared&lt;Susi::Config&gt;(base_path + &quot;config.json&quot;);
+<span class="lineNum">      81 </span>            :                 config-&gt;get(&quot;bla.blub&quot;);
+<span class="lineNum">      82 </span><span class="lineCov">          1 :         },std::runtime_error);</span>
+<span class="lineNum">      83 </span>            : 
+<a name="84"><span class="lineNum">      84 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span><span class="lineCov">          5 : TEST_F(ConfigTest,CommandLine){</span>
+<span class="lineNum">      87 </span>            :         using Susi::Util::Any;
+<span class="lineNum">      88 </span><span class="lineCov">          1 :         Any cfg = Any::Object{{&quot;foo&quot;,Any::Object{{&quot;bar&quot;, Any::Object{{&quot;baz&quot;,123}}}}}};</span>
+<span class="lineNum">      89 </span><span class="lineCov">          1 :         io.writeFile(base_path + &quot;config.json&quot;,cfg.toJSONString());</span>
+<span class="lineNum">      90 </span>            : 
+<span class="lineNum">      91 </span><span class="lineCov">          2 :         std::vector&lt;std::string&gt; cmdLine_1 = {&quot;prognameIsAllwaysFirstParam&quot;,&quot;-baz&quot;,&quot;321&quot;};</span>
+<span class="lineNum">      92 </span><span class="lineCov">          2 :         std::vector&lt;std::string&gt; cmdLine_2 = {&quot;prognameIsAllwaysFirstParam&quot;,&quot;-baz&quot;,&quot;321.123&quot;};</span>
+<span class="lineNum">      93 </span><span class="lineCov">          2 :         std::vector&lt;std::string&gt; cmdLine_3 = {&quot;prognameIsAllwaysFirstParam&quot;,&quot;-baz&quot;,&quot;this is it&quot;};</span>
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span><span class="lineCov">          1 :         EXPECT_NO_THROW({</span>
+<span class="lineNum">      96 </span>            :                 auto config = std::make_shared&lt;Susi::Config&gt;(base_path + &quot;config.json&quot;);
+<span class="lineNum">      97 </span>            :                 config-&gt;registerCommandLineOption(&quot;baz&quot;,&quot;foo.bar.baz&quot;);
+<span class="lineNum">      98 </span>            :                 config-&gt;parseCommandLine(cmdLine_1);
+<span class="lineNum">      99 </span>            :                 EXPECT_EQ(Any{321}.toJSONString(),config-&gt;get(&quot;foo.bar.baz&quot;).toJSONString());
+<span class="lineNum">     100 </span>            : 
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span>            :                 config-&gt;parseCommandLine(cmdLine_2);
+<span class="lineNum">     103 </span>            :                 EXPECT_EQ(Any{321.123}.toJSONString(),config-&gt;get(&quot;foo.bar.baz&quot;).toJSONString());
+<span class="lineNum">     104 </span>            : 
+<span class="lineNum">     105 </span>            : 
+<span class="lineNum">     106 </span>            :                 config-&gt;parseCommandLine(cmdLine_3);
+<span class="lineNum">     107 </span>            :                 EXPECT_EQ(Any{&quot;this is it&quot;}.toJSONString(),config-&gt;get(&quot;foo.bar.baz&quot;).toJSONString());
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span><span class="lineCov">          1 :         });</span>
+<a name="110"><span class="lineNum">     110 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span><span class="lineCov">          5 : TEST_F(ConfigTest,CommandLineOneDashNoArg){</span>
+<span class="lineNum">     113 </span><span class="lineCov">          1 :         Susi::Config cfg;</span>
+<span class="lineNum">     114 </span><span class="lineCov">          2 :         std::vector&lt;std::string&gt; cmdline = {&quot;prognameIsAllwaysFirstParam&quot;,&quot;-foo&quot;};</span>
+<span class="lineNum">     115 </span><span class="lineCov">          1 :         cfg.parseCommandLine(cmdline);</span>
+<span class="lineNum">     116 </span><span class="lineCov">          2 :         EXPECT_TRUE(cfg.get(&quot;foo&quot;).isObject());</span>
+<a name="117"><span class="lineNum">     117 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span><span class="lineCov">          5 : TEST_F(ConfigTest,CommandLineOneDashOneArg){</span>
+<span class="lineNum">     120 </span><span class="lineCov">          1 :         Susi::Config cfg;</span>
+<span class="lineNum">     121 </span><span class="lineCov">          2 :         std::vector&lt;std::string&gt; cmdline = {&quot;prognameIsAllwaysFirstParam&quot;,&quot;-foo&quot;,&quot;bla&quot;};</span>
+<span class="lineNum">     122 </span><span class="lineCov">          1 :         cfg.parseCommandLine(cmdline);</span>
+<span class="lineNum">     123 </span><span class="lineCov">          1 :         EXPECT_TRUE(cfg.get(&quot;foo&quot;).isString());</span>
+<span class="lineNum">     124 </span><span class="lineCov">          2 :         EXPECT_EQ(&quot;\&quot;bla\&quot;&quot;,cfg.get(&quot;foo&quot;).toJSONString());</span>
+<a name="125"><span class="lineNum">     125 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     126 </span>            : 
+<span class="lineNum">     127 </span><span class="lineCov">          5 : TEST_F(ConfigTest,CommandLineOneDashOneArg2){</span>
+<span class="lineNum">     128 </span><span class="lineCov">          1 :         Susi::Config cfg;</span>
+<span class="lineNum">     129 </span><span class="lineCov">          2 :         std::vector&lt;std::string&gt; cmdline = {&quot;prognameIsAllwaysFirstParam&quot;,&quot;-foo=bla&quot;};</span>
+<span class="lineNum">     130 </span><span class="lineCov">          1 :         cfg.parseCommandLine(cmdline);</span>
+<span class="lineNum">     131 </span><span class="lineCov">          1 :         EXPECT_TRUE(cfg.get(&quot;foo&quot;).isString());</span>
+<span class="lineNum">     132 </span><span class="lineCov">          2 :         EXPECT_EQ(&quot;\&quot;bla\&quot;&quot;,cfg.get(&quot;foo&quot;).toJSONString());</span>
+<a name="133"><span class="lineNum">     133 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     134 </span>            : 
+<span class="lineNum">     135 </span><span class="lineCov">          5 : TEST_F(ConfigTest,CommandLineTwoDashNoArg){</span>
+<span class="lineNum">     136 </span><span class="lineCov">          1 :         Susi::Config cfg;</span>
+<span class="lineNum">     137 </span><span class="lineCov">          2 :         std::vector&lt;std::string&gt; cmdline = {&quot;prognameIsAllwaysFirstParam&quot;,&quot;--foo&quot;};</span>
+<span class="lineNum">     138 </span><span class="lineCov">          1 :         cfg.parseCommandLine(cmdline);</span>
+<span class="lineNum">     139 </span><span class="lineCov">          2 :         EXPECT_TRUE(cfg.get(&quot;foo&quot;).isObject());</span>
+<a name="140"><span class="lineNum">     140 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     141 </span>            : 
+<span class="lineNum">     142 </span><span class="lineCov">          5 : TEST_F(ConfigTest,CommandLineTwoDashOneArg){</span>
+<span class="lineNum">     143 </span><span class="lineCov">          1 :         Susi::Config cfg;</span>
+<span class="lineNum">     144 </span><span class="lineCov">          2 :         std::vector&lt;std::string&gt; cmdline = {&quot;prognameIsAllwaysFirstParam&quot;,&quot;--foo&quot;,&quot;bla&quot;};</span>
+<span class="lineNum">     145 </span><span class="lineCov">          1 :         cfg.parseCommandLine(cmdline);</span>
+<span class="lineNum">     146 </span><span class="lineCov">          1 :         EXPECT_TRUE(cfg.get(&quot;foo&quot;).isString());</span>
+<span class="lineNum">     147 </span><span class="lineCov">          2 :         EXPECT_EQ(&quot;\&quot;bla\&quot;&quot;,cfg.get(&quot;foo&quot;).toJSONString());</span>
+<a name="148"><span class="lineNum">     148 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     149 </span>            : 
+<span class="lineNum">     150 </span><span class="lineCov">          5 : TEST_F(ConfigTest,CommandLineTwoDashOneArg2){</span>
+<span class="lineNum">     151 </span><span class="lineCov">          1 :         Susi::Config cfg;</span>
+<span class="lineNum">     152 </span><span class="lineCov">          2 :         std::vector&lt;std::string&gt; cmdline = {&quot;prognameIsAllwaysFirstParam&quot;,&quot;--foo=bla&quot;};</span>
+<span class="lineNum">     153 </span><span class="lineCov">          1 :         cfg.parseCommandLine(cmdline);</span>
+<span class="lineNum">     154 </span><span class="lineCov">          1 :         EXPECT_TRUE(cfg.get(&quot;foo&quot;).isString());</span>
+<span class="lineNum">     155 </span><span class="lineCov">          2 :         EXPECT_EQ(&quot;\&quot;bla\&quot;&quot;,cfg.get(&quot;foo&quot;).toJSONString());</span>
+<a name="156"><span class="lineNum">     156 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     157 </span>            : 
+<span class="lineNum">     158 </span><span class="lineCov">          5 : TEST_F(ConfigTest,MultipleArguments){</span>
+<span class="lineNum">     159 </span><span class="lineCov">          1 :         Susi::Config cfg;</span>
+<span class="lineNum">     160 </span>            :         std::vector&lt;std::string&gt; cmdline = {
+<span class="lineNum">     161 </span>            :                 &quot;prognameIsAllwaysFirstParam&quot;,
+<span class="lineNum">     162 </span>            :                 &quot;--foo=bla&quot;,
+<span class="lineNum">     163 </span>            :                 &quot;-bar&quot;,&quot;bla&quot;,
+<span class="lineNum">     164 </span>            :                 &quot;-bla&quot;,
+<span class="lineNum">     165 </span><span class="lineCov">          2 :                 &quot;--baz&quot;,&quot;bla&quot;};</span>
+<span class="lineNum">     166 </span><span class="lineCov">          1 :         cfg.parseCommandLine(cmdline);</span>
+<span class="lineNum">     167 </span><span class="lineCov">          1 :         EXPECT_EQ(&quot;\&quot;bla\&quot;&quot;,cfg.get(&quot;foo&quot;).toJSONString());</span>
+<span class="lineNum">     168 </span><span class="lineCov">          1 :         EXPECT_EQ(&quot;\&quot;bla\&quot;&quot;,cfg.get(&quot;bar&quot;).toJSONString());</span>
+<span class="lineNum">     169 </span><span class="lineCov">          1 :         EXPECT_TRUE(cfg.get(&quot;bla&quot;).isObject());</span>
+<span class="lineNum">     170 </span><span class="lineCov">          2 :         EXPECT_EQ(&quot;\&quot;bla\&quot;&quot;,cfg.get(&quot;baz&quot;).toJSONString());</span>
+<a name="171"><span class="lineNum">     171 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     172 </span>            : 
+<span class="lineNum">     173 </span><span class="lineCov">          5 : TEST_F(ConfigTest,MultiLevelArguments){</span>
+<span class="lineNum">     174 </span><span class="lineCov">          1 :         Susi::Config cfg;</span>
+<span class="lineNum">     175 </span><span class="lineCov">          2 :         std::vector&lt;std::string&gt; cmdline = {&quot;prognameIsAllwaysFirstParam&quot;,&quot;--foo.bar.baz=bla&quot;};</span>
+<span class="lineNum">     176 </span><span class="lineCov">          1 :         cfg.parseCommandLine(cmdline);</span>
+<span class="lineNum">     177 </span><span class="lineCov">          1 :         EXPECT_TRUE(cfg.get(&quot;foo.bar.baz&quot;).isString());</span>
+<span class="lineNum">     178 </span><span class="lineCov">          2 :         EXPECT_EQ(&quot;\&quot;bla\&quot;&quot;,cfg.get(&quot;foo.bar.baz&quot;).toJSONString());</span>
+<a name="179"><span class="lineNum">     179 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     180 </span>            : 
+<span class="lineNum">     181 </span><span class="lineCov">          5 : TEST_F(ConfigTest,MultiConfigSupport){</span>
+<span class="lineNum">     182 </span>            : 
+<span class="lineNum">     183 </span>            :         Susi::Util::Any cfg_1 = Susi::Util::Any::Object{
+<span class="lineNum">     184 </span>            :                 {&quot;foo&quot;,&quot;bar&quot;},
+<span class="lineNum">     185 </span>            :                 {&quot;data&quot;, &quot;test1&quot;}
+<span class="lineNum">     186 </span><span class="lineCov">          1 :         };</span>
+<span class="lineNum">     187 </span>            : 
+<span class="lineNum">     188 </span>            :         // Test valid json
+<span class="lineNum">     189 </span><span class="lineCov">          1 :         io.writeFile(base_path+ &quot;config_1.json&quot;,cfg_1.toJSONString());</span>
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span>            :         Susi::Util::Any cfg_2 = Susi::Util::Any::Object{
+<span class="lineNum">     192 </span>            :                 {&quot;john&quot;,&quot;doe&quot;},
+<span class="lineNum">     193 </span>            :                 {&quot;data&quot;, &quot;test2&quot;}
+<span class="lineNum">     194 </span><span class="lineCov">          2 :         };</span>
+<span class="lineNum">     195 </span>            : 
+<span class="lineNum">     196 </span><span class="lineCov">          1 :         io.writeFile(base_path+ &quot;config_2.json&quot;,cfg_2.toJSONString());</span>
+<span class="lineNum">     197 </span>            : 
+<span class="lineNum">     198 </span><span class="lineCov">          2 :         Susi::Config cfg;</span>
+<span class="lineNum">     199 </span>            : 
+<span class="lineNum">     200 </span><span class="lineCov">          1 :         cfg.loadConfig(base_path+ &quot;config_1.json&quot;);</span>
+<span class="lineNum">     201 </span><span class="lineCov">          1 :         cfg.loadConfig(base_path+ &quot;config_2.json&quot;);</span>
+<span class="lineNum">     202 </span>            : 
+<span class="lineNum">     203 </span>            : 
+<span class="lineNum">     204 </span><span class="lineCov">          2 :         Susi::Util::Any conf = cfg.getConfig();</span>
+<span class="lineNum">     205 </span>            : 
+<span class="lineNum">     206 </span><span class="lineCov">          1 :         EXPECT_TRUE(cfg.get(&quot;foo&quot;).isString());</span>
+<span class="lineNum">     207 </span><span class="lineCov">          1 :         EXPECT_EQ(&quot;\&quot;bar\&quot;&quot;,cfg.get(&quot;foo&quot;).toJSONString());</span>
+<span class="lineNum">     208 </span>            : 
+<span class="lineNum">     209 </span><span class="lineCov">          1 :         EXPECT_TRUE(cfg.get(&quot;john&quot;).isString());</span>
+<span class="lineNum">     210 </span><span class="lineCov">          1 :         EXPECT_EQ(&quot;\&quot;doe\&quot;&quot;,cfg.get(&quot;john&quot;).toJSONString());</span>
+<span class="lineNum">     211 </span>            : 
+<span class="lineNum">     212 </span>            :         // test override
+<span class="lineNum">     213 </span><span class="lineCov">          1 :         EXPECT_TRUE(cfg.get(&quot;data&quot;).isString());</span>
+<span class="lineNum">     214 </span><span class="lineCov">          2 :         EXPECT_EQ(&quot;\&quot;test2\&quot;&quot;,cfg.get(&quot;data&quot;).toJSONString());</span>
+<span class="lineNum">     215 </span>            : 
+<a name="216"><span class="lineNum">     216 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     217 </span>            : 
+<span class="lineNum">     218 </span><span class="lineCov">          5 : TEST_F(ConfigTest, LoadAllStartStop){</span>
+<a name="219"><span class="lineNum">     219 </span>            :         // make test independed from config file</a>
+<span class="lineNum">     220 </span>            : 
+<a name="221"><span class="lineNum">     221 </span><span class="lineCov">          3 :         class C1 : public Susi::System::Component {</span></a>
+<a name="222"><span class="lineNum">     222 </span>            :                 public:</a>
+<span class="lineNum">     223 </span><span class="lineCov">          3 :                         virtual void start() override {}</span>
+<a name="224"><span class="lineNum">     224 </span><span class="lineCov">          3 :                         virtual void stop() override {}</span></a>
+<a name="225"><span class="lineNum">     225 </span>            :         };</a>
+<span class="lineNum">     226 </span><span class="lineCov">          1 :         class C2 : public C1 {};</span>
+<span class="lineNum">     227 </span><span class="lineCov">          1 :         class C3 : public C1 {};</span>
+<span class="lineNum">     228 </span>            : 
+<span class="lineNum">     229 </span>            :     std::string test_config = &quot;{&quot;
+<span class="lineNum">     230 </span>            :                 &quot;          \&quot;c1\&quot; : {},&quot;
+<span class="lineNum">     231 </span>            :                 &quot;          \&quot;c2\&quot; : {},&quot;
+<span class="lineNum">     232 </span>            :                 &quot;          \&quot;c3\&quot; : {}&quot;
+<span class="lineNum">     233 </span><span class="lineCov">          1 :                 &quot;  }&quot;;</span>
+<span class="lineNum">     234 </span>            : 
+<span class="lineNum">     235 </span><span class="lineCov">          2 :         Susi::Util::Any::Object config = Susi::Util::Any::fromString(test_config);</span>
+<span class="lineNum">     236 </span>            : 
+<a name="237"><span class="lineNum">     237 </span><span class="lineCov">          2 :         auto manager = std::make_shared&lt;Susi::System::ComponentManager&gt;(config);</span></a>
+<a name="238"><span class="lineNum">     238 </span>            : </a>
+<a name="239"><span class="lineNum">     239 </span><span class="lineCov">          2 :         manager-&gt;registerComponent(&quot;c1&quot;,[](Susi::System::ComponentManager * mgr, Susi::Util::Any &amp; config){ return std::shared_ptr&lt;Susi::System::Component&gt;{new C1{}};});</span></a>
+<span class="lineNum">     240 </span><span class="lineCov">          2 :         manager-&gt;registerComponent(&quot;c2&quot;,[](Susi::System::ComponentManager * mgr, Susi::Util::Any &amp; config){ return std::shared_ptr&lt;Susi::System::Component&gt;{new C2{}};});</span>
+<span class="lineNum">     241 </span><span class="lineCov">          2 :         manager-&gt;registerComponent(&quot;c3&quot;,[](Susi::System::ComponentManager * mgr, Susi::Util::Any &amp; config){ return std::shared_ptr&lt;Susi::System::Component&gt;{new C3{}};});</span>
+<span class="lineNum">     242 </span>            : 
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span><span class="lineCov">          1 :         bool start = manager-&gt;startAll();</span>
+<span class="lineNum">     245 </span><span class="lineCov">          1 :         bool stop  = manager-&gt;stopAll();</span>
+<span class="lineNum">     246 </span>            : 
+<span class="lineNum">     247 </span><span class="lineCov">          1 :         EXPECT_TRUE(start);</span>
+<span class="lineNum">     248 </span><span class="lineCov">          2 :         EXPECT_TRUE(stop);</span>
+<span class="lineNum">     249 </span>            :         /*
+<span class="lineNum">     250 </span>            :         Susi::Config cfg{};
+<span class="lineNum">     251 </span>            :         cfg.loadConfig(&quot;config.json&quot;);
+<span class="lineNum">     252 </span>            : 
+<span class="lineNum">     253 </span>            :         std::shared_ptr&lt;Susi::System::ComponentManager&gt; componentManager = Susi::System::createSusiComponentManager(cfg.getConfig());
+<span class="lineNum">     254 </span>            : 
+<span class="lineNum">     255 </span>            :         bool start = componentManager-&gt;startAll();
+<span class="lineNum">     256 </span>            :         bool stop  = componentManager-&gt;stopAll();
+<span class="lineNum">     257 </span>            : 
+<span class="lineNum">     258 </span>            :         EXPECT_TRUE(start);
+<span class="lineNum">     259 </span>            :         EXPECT_TRUE(stop);
+<span class="lineNum">     260 </span>            :         */
+<a name="261"><span class="lineNum">     261 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     262 </span>            : 
+<span class="lineNum">     263 </span><span class="lineCov">          5 : TEST_F(ConfigTest, LoadConfigsFromDir){</span>
+<span class="lineNum">     264 </span><span class="lineCov">          1 :         Susi::Config cfg;</span>
+<span class="lineNum">     265 </span>            : 
+<span class="lineNum">     266 </span>            :         Susi::Util::Any cfg_content = Susi::Util::Any::Object{
+<span class="lineNum">     267 </span>            :                 {&quot;foo&quot;,&quot;bar&quot;}
+<span class="lineNum">     268 </span><span class="lineCov">          2 :         };</span>
+<span class="lineNum">     269 </span>            : 
+<span class="lineNum">     270 </span><span class="lineCov">          1 :         io.makeDir(base_path+ &quot;sub&quot;);</span>
+<span class="lineNum">     271 </span><span class="lineCov">          1 :         io.makeDir(base_path+ &quot;sub/sub&quot;);</span>
+<span class="lineNum">     272 </span>            :         // Test valid json
+<span class="lineNum">     273 </span><span class="lineCov">          1 :         io.writeFile(base_path+ &quot;config.json&quot;,cfg_content.toJSONString());</span>
+<span class="lineNum">     274 </span><span class="lineCov">          1 :         io.writeFile(base_path+ &quot;config2.json&quot;,cfg_content.toJSONString());</span>
+<span class="lineNum">     275 </span><span class="lineCov">          1 :         io.writeFile(base_path+ &quot;sub/config3.json&quot;,cfg_content.toJSONString());</span>
+<span class="lineNum">     276 </span><span class="lineCov">          1 :         io.writeFile(base_path+ &quot;sub/sub/config4.json&quot;,cfg_content.toJSONString());</span>
+<span class="lineNum">     277 </span>            : 
+<span class="lineNum">     278 </span>            : 
+<span class="lineNum">     279 </span><span class="lineCov">          1 :         cfg.setLoadCount(0);</span>
+<span class="lineNum">     280 </span><span class="lineCov">          1 :         cfg.loadConfig(base_path);</span>
+<a name="281"><span class="lineNum">     281 </span>            : </a>
+<span class="lineNum">     282 </span><span class="lineCov">          2 :         EXPECT_EQ(4,cfg.getLoadCount());</span>
+<span class="lineNum">     283 </span><span class="lineCov">          4 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.11</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

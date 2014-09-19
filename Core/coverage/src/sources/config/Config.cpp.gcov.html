@@ -1,0 +1,306 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info.cleaned - src/sources/config/Config.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">src/sources/config</a> - Config.cpp<span style="font-size: 80%;"> (source / <a href="Config.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">118</td>
+            <td class="headerCovTableEntry">139</td>
+            <td class="headerCovTableEntryMed">84.9 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2014-09-19 09:31:24</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntry">14</td>
+            <td class="headerCovTableEntryMed">85.7 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :  * Copyright (c) 2014, webvariants GmbH, http://www.webvariants.de
+<span class="lineNum">       3 </span>            :  *
+<span class="lineNum">       4 </span>            :  * This file is released under the terms of the MIT license. You can find the
+<span class="lineNum">       5 </span>            :  * complete text in the attached LICENSE file or online at:
+<span class="lineNum">       6 </span>            :  *
+<span class="lineNum">       7 </span>            :  * http://www.opensource.org/licenses/mit-license.php
+<span class="lineNum">       8 </span>            :  *
+<span class="lineNum">       9 </span>            :  * @author: Thomas Krause (thomas.krause@webvariants.de)
+<span class="lineNum">      10 </span>            :  */
+<span class="lineNum">      11 </span>            : 
+<a name="12"><span class="lineNum">      12 </span>            :  #include &quot;config/Config.h&quot;</a>
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span><span class="lineCov">         15 : void Susi::Config::loadConfig(std::string path){</span>
+<span class="lineNum">      15 </span><span class="lineCov">         15 :         std::string content = &quot;&quot;;</span>
+<span class="lineNum">      16 </span><span class="lineCov">         30 :         Susi::Util::Any configVar;</span>
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span><span class="lineCov">         15 :         if(!io.checkDir(path) &amp;&amp; !io.checkFile(path)) {</span>
+<span class="lineNum">      19 </span><span class="lineCov">          1 :                 std::string msg = &quot;Susi::Config::loadConfig &quot;;</span>
+<span class="lineNum">      20 </span><span class="lineCov">          1 :                 msg += (&quot;File: &quot; + path + &quot; file doesn't exist!&quot;);</span>
+<span class="lineNum">      21 </span><span class="lineCov">          1 :                 Susi::Logger::error(msg);</span>
+<span class="lineNum">      22 </span><span class="lineCov">          1 :                 throw std::runtime_error(&quot;file doesn't exist!&quot;);</span>
+<span class="lineNum">      23 </span>            :         }
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span><span class="lineCov">         14 :         if(io.checkFile(path) &amp;&amp; io.checkFileExtension(path, file_extension)) {</span>
+<span class="lineNum">      26 </span>            :                 try {
+<span class="lineNum">      27 </span><span class="lineCov">         13 :                         content = io.readFile(path);</span>
+<span class="lineNum">      28 </span><span class="lineNoCov">          0 :                 } catch(const std::exception &amp; e){</span>
+<span class="lineNum">      29 </span><span class="lineNoCov">          0 :                         std::string msg = &quot;Susi::Config::loadConfig &quot;;</span>
+<span class="lineNum">      30 </span><span class="lineNoCov">          0 :                         msg += &quot;Error reading Config File: &quot; + path;</span>
+<span class="lineNum">      31 </span><span class="lineNoCov">          0 :                         msg += e.what();</span>
+<span class="lineNum">      32 </span><span class="lineNoCov">          0 :                         Susi::Logger::error(msg);</span>
+<span class="lineNum">      33 </span><span class="lineNoCov">          0 :                         throw std::runtime_error(msg);</span>
+<span class="lineNum">      34 </span>            :                 }
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            :                 try {
+<span class="lineNum">      37 </span><span class="lineCov">         13 :                         configVar = Susi::Util::Any::fromString(content);</span>
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 :                 } catch(const std::exception &amp; e){</span>
+<span class="lineNum">      39 </span><span class="lineNoCov">          0 :                         std::string msg = &quot;Susi::Config::loadConfig &quot;;</span>
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 :                         msg += (&quot;File: &quot; + path + &quot; file cant be parsed as json!&quot;);</span>
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 :                         msg += e.what();</span>
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 :                         Susi::Logger::error(msg);</span>
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 :                         throw std::runtime_error(msg);</span>
+<span class="lineNum">      45 </span>            :                 }
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span><span class="lineCov">         13 :                 if(configVar.getType() != Susi::Util::Any::OBJECT) {</span>
+<span class="lineNum">      48 </span><span class="lineCov">          2 :                         std::string msg = &quot;Susi::Config::loadConfig &quot;;</span>
+<span class="lineNum">      49 </span><span class="lineCov">          2 :                         msg += (&quot;File: &quot; + path + &quot; file doesn't contain a (json) object&quot;);</span>
+<span class="lineNum">      50 </span><span class="lineCov">          2 :                         Susi::Logger::error(msg);</span>
+<span class="lineNum">      51 </span><span class="lineCov">          2 :                         throw std::runtime_error(&quot;file doesn't contain a (json) object&quot;);</span>
+<span class="lineNum">      52 </span>            :                 }
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span><span class="lineCov">         11 :                 if(_configVar.isNull()) {</span>
+<span class="lineNum">      55 </span>            :                         // first load or empty
+<span class="lineNum">      56 </span><span class="lineCov">          7 :                         _configVar = configVar;</span>
+<span class="lineNum">      57 </span>            :                 } else {
+<span class="lineNum">      58 </span>            :                         //merge vars
+<span class="lineNum">      59 </span><span class="lineCov">          4 :                         mergeOptions(&quot;&quot;, configVar);</span>
+<span class="lineNum">      60 </span>            :                 }
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span><span class="lineCov">         11 :                 std::string msg = &quot;Susi::Config::loadConfig &quot;;</span>
+<span class="lineNum">      63 </span><span class="lineCov">         11 :                 msg += (&quot;File: &quot; + path);</span>
+<span class="lineNum">      64 </span><span class="lineCov">         11 :                 Susi::Logger::info(msg);</span>
+<span class="lineNum">      65 </span><span class="lineCov">         11 :                 load_count++;</span>
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span><span class="lineCov">          1 :         } else if(io.checkDir(path)) {</span>
+<span class="lineNum">      68 </span><span class="lineCov">          1 :                 rec_dir(path);</span>
+<span class="lineNum">      69 </span><span class="lineCov">         15 :         }</span>
+<a name="70"><span class="lineNum">      70 </span><span class="lineCov">         12 : }</span></a>
+<span class="lineNum">      71 </span>            : 
+<span class="lineNum">      72 </span><span class="lineCov">          3 : void Susi::Config::rec_dir(const std::string &amp; path)</span>
+<span class="lineNum">      73 </span>            : {
+<span class="lineNum">      74 </span><span class="lineCov">          3 :   Poco::DirectoryIterator end;</span>
+<span class="lineNum">      75 </span><span class="lineCov">          9 :   for (Poco::DirectoryIterator it(path); it != end; ++it) {</span>
+<span class="lineNum">      76 </span><span class="lineCov">          6 :         if(!it-&gt;isDirectory()) {</span>
+<span class="lineNum">      77 </span><span class="lineCov">          4 :                 loadConfig(it-&gt;path());</span>
+<span class="lineNum">      78 </span><span class="lineCov">          2 :         }else if (it-&gt;isDirectory()) {</span>
+<span class="lineNum">      79 </span><span class="lineCov">          2 :                 rec_dir(it-&gt;path());</span>
+<span class="lineNum">      80 </span>            :         }
+<span class="lineNum">      81 </span><span class="lineCov">          3 :   }</span>
+<a name="82"><span class="lineNum">      82 </span><span class="lineCov">          3 : }</span></a>
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span><span class="lineNoCov">          0 : void Susi::Config::setFileExtension(std::string _file_extension) {</span>
+<span class="lineNum">      85 </span><span class="lineNoCov">          0 :         file_extension = _file_extension;</span>
+<a name="86"><span class="lineNum">      86 </span><span class="lineNoCov">          0 : }</span></a>
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span><span class="lineCov">          1 : int Susi::Config::getLoadCount() {</span>
+<span class="lineNum">      89 </span><span class="lineCov">          1 :         return load_count;</span>
+<a name="90"><span class="lineNum">      90 </span>            : }</a>
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span><span class="lineCov">          1 : void Susi::Config::setLoadCount(int _load_count) {</span>
+<span class="lineNum">      93 </span><span class="lineCov">          1 :         load_count = _load_count;</span>
+<a name="94"><span class="lineNum">      94 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span><span class="lineCov">          9 : void Susi::Config::mergeOptions(std::string key, Susi::Util::Any configVar) {</span>
+<span class="lineNum">      97 </span><span class="lineCov">          9 :         if(configVar.isObject()) {</span>
+<span class="lineNum">      98 </span><span class="lineCov">          4 :                 std::map&lt;std::string,Susi::Util::Any&gt; config_map = configVar;</span>
+<span class="lineNum">      99 </span><span class="lineCov">          9 :                 for (std::map&lt;std::string,Susi::Util::Any&gt;::iterator it=config_map.begin(); it!=config_map.end(); ++it) {</span>
+<span class="lineNum">     100 </span><span class="lineCov">          5 :                         std::string _key = key;</span>
+<span class="lineNum">     101 </span><span class="lineCov">          5 :                         if(key.length() == 0)  {</span>
+<span class="lineNum">     102 </span><span class="lineCov">          5 :                                 _key.append(it-&gt;first);</span>
+<span class="lineNum">     103 </span><span class="lineCov">          5 :                                 this-&gt;mergeOptions(_key, it-&gt;second);</span>
+<span class="lineNum">     104 </span>            :                         } else {
+<span class="lineNum">     105 </span><span class="lineNoCov">          0 :                                 _key.append(&quot;.&quot;).append(it-&gt;first);</span>
+<span class="lineNum">     106 </span><span class="lineNoCov">          0 :                                 this-&gt;mergeOptions(_key, it-&gt;second);</span>
+<span class="lineNum">     107 </span>            :                         }
+<span class="lineNum">     108 </span><span class="lineCov">          9 :                 }</span>
+<span class="lineNum">     109 </span>            :         } else {
+<span class="lineNum">     110 </span><span class="lineCov">          5 :                 _configVar.set(key, configVar);</span>
+<span class="lineNum">     111 </span>            :         }
+<span class="lineNum">     112 </span><span class="lineCov">          9 : }</span>
+<a name="113"><span class="lineNum">     113 </span>            : </a>
+<span class="lineNum">     114 </span>            : // used to set a value in the config object (should be used by parseCommandLine())
+<span class="lineNum">     115 </span><span class="lineCov">         14 : void Susi::Config::set(std::string key, Any value) {</span>
+<span class="lineNum">     116 </span><span class="lineCov">         14 :         Susi::Logger::debug(&quot;set &quot;+key+&quot; to &quot;+value.toJSONString());</span>
+<span class="lineNum">     117 </span><span class="lineCov">         14 :         std::vector&lt;std::string&gt; elems;</span>
+<span class="lineNum">     118 </span><span class="lineCov">         14 :         Susi::Util::Helpers::split(key, '.', elems);</span>
+<span class="lineNum">     119 </span><span class="lineCov">         14 :         auto * current = &amp;_configVar;</span>
+<span class="lineNum">     120 </span>            : 
+<span class="lineNum">     121 </span><span class="lineCov">         22 :         for(size_t e=0; e&lt;elems.size()-1; e++){</span>
+<span class="lineNum">     122 </span><span class="lineCov">          8 :                 current = &amp;(*current)[elems[e]];</span>
+<span class="lineNum">     123 </span><span class="lineCov">          8 :                 if((*current).isNull()){</span>
+<span class="lineNum">     124 </span><span class="lineCov">          2 :                         *current = Susi::Util::Any::Object{};</span>
+<span class="lineNum">     125 </span>            :                 }
+<span class="lineNum">     126 </span>            :         }
+<span class="lineNum">     127 </span><span class="lineCov">         14 :         (*current)[elems.back()] = value;</span>
+<span class="lineNum">     128 </span><span class="lineCov">         14 : }</span>
+<a name="129"><span class="lineNum">     129 </span>            : </a>
+<span class="lineNum">     130 </span>            :  // register a commandline option which will be recognized while parsing
+<span class="lineNum">     131 </span><span class="lineCov">          1 : void Susi::Config::registerCommandLineOption(std::string name, std::string key) {</span>
+<span class="lineNum">     132 </span><span class="lineCov">          1 :         _knownCommandLineOptions[name] = key;</span>
+<span class="lineNum">     133 </span><span class="lineCov">          1 : }</span>
+<span class="lineNum">     134 </span>            : 
+<span class="lineNum">     135 </span>            : // parses the commandline
+<span class="lineNum">     136 </span>            : // loops though the args and check if it is in _knownCommandLineOptions
+<a name="137"><span class="lineNum">     137 </span>            : // if so, place it in the _configVar at the specified key</a>
+<span class="lineNum">     138 </span>            : // should throw an error if unknown commandline options are supplied, but should parse everything else
+<span class="lineNum">     139 </span><span class="lineCov">         11 : void Susi::Config::parseCommandLine(std::vector&lt;std::string&gt; argv) {</span>
+<span class="lineNum">     140 </span><span class="lineCov">         11 :         std::map&lt;std::string,std::string&gt;::iterator it;</span>
+<span class="lineNum">     141 </span>            : 
+<span class="lineNum">     142 </span><span class="lineCov">         11 :         int argc = argv.size();</span>
+<span class="lineNum">     143 </span>            : 
+<span class="lineNum">     144 </span><span class="lineCov">         25 :         for (int i = 1; i &lt; argc; ++i) {</span>
+<span class="lineNum">     145 </span><span class="lineCov">         14 :                 std::string option = argv[i];</span>
+<span class="lineNum">     146 </span><span class="lineCov">         14 :                 if(option[0] == '-') {</span>
+<span class="lineNum">     147 </span><span class="lineCov">         14 :                         if(option[1] == '-')option = option.substr(2);</span>
+<span class="lineNum">     148 </span><span class="lineCov">          8 :                         else option = option.substr(1);</span>
+<span class="lineNum">     149 </span>            : 
+<span class="lineNum">     150 </span><span class="lineCov">         14 :                         Susi::Util::Any v;</span>
+<span class="lineNum">     151 </span><span class="lineCov">         28 :                         std::string key = option;</span>
+<span class="lineNum">     152 </span>            : 
+<span class="lineNum">     153 </span>            :                         // find '='
+<span class="lineNum">     154 </span><span class="lineCov">         28 :                         std::vector&lt;std::string&gt; elems;</span>
+<span class="lineNum">     155 </span><span class="lineCov">         14 :                         Susi::Util::Helpers::split(key, '=', elems);</span>
+<span class="lineNum">     156 </span><span class="lineCov">         14 :                         if(elems.size() == 2) {</span>
+<span class="lineNum">     157 </span><span class="lineCov">          4 :                                 key = elems[0];</span>
+<span class="lineNum">     158 </span><span class="lineCov">          4 :                                 v   = Susi::Util::Any::fromString(elems[1]);</span>
+<span class="lineNum">     159 </span><span class="lineCov">          4 :                                 set(key,v);</span>
+<span class="lineNum">     160 </span>            :                         } else {
+<span class="lineNum">     161 </span><span class="lineCov">         10 :                                 it = _knownCommandLineOptions.find(key);</span>
+<span class="lineNum">     162 </span>            :                                 // key found
+<span class="lineNum">     163 </span><span class="lineCov">         10 :                                 if(it != _knownCommandLineOptions.end()) {</span>
+<span class="lineNum">     164 </span><span class="lineCov">          3 :                                         std::string key = it-&gt;second;</span>
+<span class="lineNum">     165 </span>            : 
+<span class="lineNum">     166 </span><span class="lineCov">          3 :                                         if(i &lt; (argc-1) &amp;&amp; argv[i+1][0]!='-') {</span>
+<span class="lineNum">     167 </span><span class="lineCov">          3 :                                                 std::string value = argv[(i+1)];</span>
+<span class="lineNum">     168 </span><span class="lineCov">          3 :                                                 v = Susi::Util::Any::fromString(value);</span>
+<span class="lineNum">     169 </span><span class="lineCov">          3 :                                                 i++;</span>
+<span class="lineNum">     170 </span>            :                                         }else{
+<span class="lineNum">     171 </span><span class="lineNoCov">          0 :                                                 v = Susi::Util::Any::Object{};</span>
+<span class="lineNum">     172 </span>            :                                         }
+<span class="lineNum">     173 </span><span class="lineCov">          3 :                                         set(key,v);</span>
+<span class="lineNum">     174 </span>            :                                 }
+<span class="lineNum">     175 </span>            :                                 // key not found
+<span class="lineNum">     176 </span>            :                                 else {
+<span class="lineNum">     177 </span><span class="lineCov">          7 :                                         if(i &lt; (argc-1) &amp;&amp; argv[i+1][0]!='-') {</span>
+<span class="lineNum">     178 </span><span class="lineCov">          4 :                                                 std::string value = argv[(i+1)];</span>
+<span class="lineNum">     179 </span><span class="lineCov">          4 :                                                 v = Susi::Util::Any::fromString(value);</span>
+<span class="lineNum">     180 </span><span class="lineCov">          4 :                                                 i++;</span>
+<span class="lineNum">     181 </span>            :                                         }else{
+<span class="lineNum">     182 </span><span class="lineCov">          3 :                                                 v = Susi::Util::Any::Object{};</span>
+<span class="lineNum">     183 </span>            :                                         }
+<span class="lineNum">     184 </span><span class="lineCov">          7 :                                         set(key,v);</span>
+<span class="lineNum">     185 </span>            :                                 }
+<span class="lineNum">     186 </span><span class="lineCov">         14 :                         }</span>
+<span class="lineNum">     187 </span>            :                 }
+<span class="lineNum">     188 </span><span class="lineCov">         14 :         }</span>
+<span class="lineNum">     189 </span>            : 
+<span class="lineNum">     190 </span><span class="lineCov">         11 : }</span>
+<span class="lineNum">     191 </span>            : 
+<span class="lineNum">     192 </span>            : // get a config variable.
+<span class="lineNum">     193 </span>            : // keys are in this format: &quot;foo.bar.baz&quot;
+<a name="194"><span class="lineNum">     194 </span>            : // -&gt; if we have {foo:{bar:{baz:123}}} get(&quot;foo.bar.baz&quot;) should return Any{123};</a>
+<span class="lineNum">     195 </span>            : // should throw if key doesn't exist
+<span class="lineNum">     196 </span><span class="lineCov">         31 : Susi::Util::Any Susi::Config::get(std::string key) {</span>
+<span class="lineNum">     197 </span><span class="lineCov">         31 :         std::vector&lt;std::string&gt; elems;</span>
+<span class="lineNum">     198 </span>            : 
+<span class="lineNum">     199 </span><span class="lineCov">         31 :         if(key.length() == 0) {</span>
+<span class="lineNum">     200 </span><span class="lineCov">          1 :                 return _configVar;</span>
+<span class="lineNum">     201 </span>            :         } else {
+<span class="lineNum">     202 </span><span class="lineCov">         30 :                 Susi::Util::Helpers::split(key, '.', elems);</span>
+<span class="lineNum">     203 </span>            : 
+<span class="lineNum">     204 </span><span class="lineCov">         30 :                 Susi::Util::Any found = _configVar;</span>
+<span class="lineNum">     205 </span><span class="lineCov">         60 :                 Susi::Util::Any next  = _configVar;</span>
+<span class="lineNum">     206 </span><span class="lineCov">         71 :                 for(size_t e=0; e&lt;elems.size(); e++)</span>
+<span class="lineNum">     207 </span>            :                 {
+<span class="lineNum">     208 </span><span class="lineCov">         43 :                         std::string elem = elems[e];</span>
+<span class="lineNum">     209 </span><span class="lineCov">         43 :                         found = next[elem];</span>
+<span class="lineNum">     210 </span><span class="lineCov">         43 :                         next = found;</span>
+<span class="lineNum">     211 </span><span class="lineCov">         43 :                         if(found.getType() == Susi::Util::Any::UNDEFINED) {</span>
+<span class="lineNum">     212 </span><span class="lineCov">          2 :                                 throw std::runtime_error(&quot;key doesn't exist!&quot;+key);</span>
+<span class="lineNum">     213 </span>            :                         }
+<span class="lineNum">     214 </span>            : 
+<span class="lineNum">     215 </span><span class="lineCov">         43 :                 }</span>
+<span class="lineNum">     216 </span>            : 
+<span class="lineNum">     217 </span><span class="lineCov">         58 :                 return found;</span>
+<span class="lineNum">     218 </span><span class="lineCov">         31 :         }</span>
+<a name="219"><span class="lineNum">     219 </span>            : }</a>
+<span class="lineNum">     220 </span>            : 
+<span class="lineNum">     221 </span><span class="lineCov">          1 : Susi::Util::Any Susi::Config::getConfig() {</span>
+<span class="lineNum">     222 </span><span class="lineCov">          1 :         return _configVar;</span>
+<span class="lineNum">     223 </span>            : }
+<a name="224"><span class="lineNum">     224 </span>            : </a>
+<span class="lineNum">     225 </span>            : // returns a help message which shows which options are available
+<span class="lineNum">     226 </span><span class="lineNoCov">          0 : std::string Susi::Config::getHelp() {</span>
+<span class="lineNum">     227 </span><span class="lineNoCov">          0 :         std::string result;</span>
+<a name="228"><span class="lineNum">     228 </span>            : </a>
+<span class="lineNum">     229 </span><span class="lineNoCov">          0 :         return &quot;foo&quot;;</span>
+<span class="lineNum">     230 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.11</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

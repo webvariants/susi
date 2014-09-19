@@ -1,0 +1,172 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info.cleaned - test/syscall/SyscallComponentTest.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">test/syscall</a> - SyscallComponentTest.cpp<span style="font-size: 80%;"> (source / <a href="SyscallComponentTest.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">57</td>
+            <td class="headerCovTableEntry">57</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2014-09-19 09:31:24</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">21</td>
+            <td class="headerCovTableEntry">22</td>
+            <td class="headerCovTableEntryHi">95.5 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :  * Copyright (c) 2014, webvariants GmbH, http://www.webvariants.de
+<span class="lineNum">       3 </span>            :  *
+<span class="lineNum">       4 </span>            :  * This file is released under the terms of the MIT license. You can find the
+<span class="lineNum">       5 </span>            :  * complete text in the attached LICENSE file or online at:
+<span class="lineNum">       6 </span>            :  *
+<span class="lineNum">       7 </span>            :  * http://www.opensource.org/licenses/mit-license.php
+<span class="lineNum">       8 </span>            :  * 
+<span class="lineNum">       9 </span>            :  * @author: Thomas Krause (thomas.krause@webvariants.de)
+<span class="lineNum">      10 </span>            :  */
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : 
+<a name="13"><span class="lineNum">      13 </span>            : #include &quot;util/ComponentTest.h&quot;</a>
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span><span class="lineCov">          6 : class SyscallComponentTest : public ComponentTest {</span>
+<a name="16"><span class="lineNum">      16 </span>            : protected:</a>
+<span class="lineNum">      17 </span>            :         
+<span class="lineNum">      18 </span><span class="lineCov">          3 :         virtual void SetUp() override {</span>
+<span class="lineNum">      19 </span><span class="lineCov">          3 :                 componentManager-&gt;startComponent(&quot;syscallcontroller&quot;);</span>
+<a name="20"><span class="lineNum">      20 </span><span class="lineCov">          3 :         }</span></a>
+<span class="lineNum">      21 </span>            :         
+<span class="lineNum">      22 </span><span class="lineCov">          3 :         virtual void TearDown() override {</span>
+<span class="lineNum">      23 </span><span class="lineCov">          3 :                 componentManager-&gt;stopComponent(&quot;syscallcontroller&quot;);</span>
+<a name="24"><span class="lineNum">      24 </span><span class="lineCov">          3 :         }</span></a>
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span><span class="lineCov">          1 :         virtual void GoodCases() override {</span>
+<span class="lineNum">      27 </span>            : 
+<span class="lineNum">      28 </span><span class="lineCov">          1 :                 auto evt1 = createEvent(&quot;syscall::exec&quot;);</span>
+<span class="lineNum">      29 </span><span class="lineCov">          1 :                 evt1-&gt;payload[&quot;cmd&quot;] = &quot;TEST1&quot;;          </span>
+<span class="lineNum">      30 </span><span class="lineCov">          2 :                 auto result1 = publish_sync(std::move(evt1));</span>
+<span class="lineNum">      31 </span>            :                 //std::cout&lt;&lt;&quot;EDGE CASE:&quot;&lt;&lt;result1-&gt;toAny().toJSONString()&lt;&lt;std::endl;
+<span class="lineNum">      32 </span>            : 
+<span class="lineNum">      33 </span><span class="lineCov">          1 :                 int ret1 = result1-&gt;payload[&quot;return&quot;];</span>
+<span class="lineNum">      34 </span><span class="lineCov">          2 :                 std::string stderr1 = result1-&gt;payload[&quot;stderr&quot;];</span>
+<span class="lineNum">      35 </span><span class="lineCov">          2 :                 std::string stdout1 = result1-&gt;payload[&quot;stdout&quot;];</span>
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span><span class="lineCov">          1 :                 EXPECT_EQ(0, ret1);</span>
+<span class="lineNum">      38 </span><span class="lineCov">          1 :                 EXPECT_EQ(&quot;&quot;, stderr1);</span>
+<span class="lineNum">      39 </span><span class="lineCov">          1 :                 EXPECT_EQ(&quot;foo&quot;, stdout1);</span>
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span><span class="lineCov">          2 :                 auto evt2 = createEvent(&quot;syscall::exec&quot;);</span>
+<span class="lineNum">      42 </span><span class="lineCov">          1 :                 evt2-&gt;payload[&quot;cmd&quot;] = &quot;TEST2&quot;;</span>
+<span class="lineNum">      43 </span><span class="lineCov">          2 :                 auto result2 = publish_sync(std::move(evt2));</span>
+<span class="lineNum">      44 </span>            :                 
+<span class="lineNum">      45 </span><span class="lineCov">          1 :                 int ret2 = result2-&gt;payload[&quot;return&quot;];</span>
+<span class="lineNum">      46 </span><span class="lineCov">          1 :                 std::string stderr2 = result2-&gt;payload[&quot;stderr&quot;];</span>
+<span class="lineNum">      47 </span><span class="lineCov">          2 :                 std::string stdout2 = result2-&gt;payload[&quot;stdout&quot;];</span>
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span><span class="lineCov">          1 :                 EXPECT_EQ(0, ret2);</span>
+<span class="lineNum">      50 </span><span class="lineCov">          1 :                 EXPECT_EQ(&quot;foo&quot;, stderr2);</span>
+<span class="lineNum">      51 </span><span class="lineCov">          1 :                 EXPECT_EQ(&quot;&quot;, stdout2);</span>
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span><span class="lineCov">          2 :                 auto evt3 = createEvent(&quot;syscall::exec&quot;);</span>
+<span class="lineNum">      54 </span><span class="lineCov">          1 :                 evt3-&gt;payload[&quot;cmd&quot;] = &quot;TEST3&quot;;</span>
+<span class="lineNum">      55 </span><span class="lineCov">          1 :                 evt3-&gt;payload[&quot;args&quot;] = Susi::Util::Any::Object{{&quot;arg&quot; , &quot;foo&quot;}};              </span>
+<span class="lineNum">      56 </span><span class="lineCov">          2 :                 auto result3 = publish_sync(std::move(evt3));</span>
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span><span class="lineCov">          1 :                 int ret3 = result3-&gt;payload[&quot;return&quot;];</span>
+<span class="lineNum">      59 </span><span class="lineCov">          1 :                 std::string stderr3 = result3-&gt;payload[&quot;stderr&quot;];</span>
+<span class="lineNum">      60 </span><span class="lineCov">          2 :                 std::string stdout3 = result3-&gt;payload[&quot;stdout&quot;];</span>
+<span class="lineNum">      61 </span>            : 
+<span class="lineNum">      62 </span><span class="lineCov">          1 :                 EXPECT_EQ(0, ret3);</span>
+<span class="lineNum">      63 </span><span class="lineCov">          1 :                 EXPECT_EQ(&quot;&quot;, stderr3);</span>
+<span class="lineNum">      64 </span><span class="lineCov">          4 :                 EXPECT_EQ(&quot;foo&quot;, stdout3);</span>
+<span class="lineNum">      65 </span>            :                 
+<a name="66"><span class="lineNum">      66 </span><span class="lineCov">          1 :         }</span></a>
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span><span class="lineCov">          1 :         virtual void BadCases() override {</span>
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span><span class="lineCov">          1 :                 auto evt1 = createEvent(&quot;syscall::exec&quot;);</span>
+<span class="lineNum">      71 </span><span class="lineCov">          1 :                 evt1-&gt;payload[&quot;cmd&quot;] = &quot;TEST_DONT_EXIST_IN_CONFIG&quot;;</span>
+<span class="lineNum">      72 </span><span class="lineCov">          2 :                 auto result1 = publish_sync(std::move(evt1));           </span>
+<span class="lineNum">      73 </span>            : 
+<span class="lineNum">      74 </span><span class="lineCov">          2 :                 EXPECT_TRUE(hasErrorHeader(result1));   </span>
+<a name="75"><span class="lineNum">      75 </span><span class="lineCov">          1 :         }</span></a>
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span><span class="lineCov">          1 :         virtual void EdgeCases() override {</span>
+<span class="lineNum">      78 </span>            :                 // missing cmd param
+<span class="lineNum">      79 </span><span class="lineCov">          1 :                 auto evt2 = createEvent(&quot;syscall::exec&quot;);             </span>
+<span class="lineNum">      80 </span><span class="lineCov">          2 :                 auto result2 = publish_sync(std::move(evt2));</span>
+<span class="lineNum">      81 </span><span class="lineCov">          2 :                 EXPECT_TRUE(hasErrorHeader(result2));           </span>
+<span class="lineNum">      82 </span><span class="lineCov">          1 :         }</span>
+<span class="lineNum">      83 </span>            : 
+<a name="84"><span class="lineNum">      84 </span>            : };</a>
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span><span class="lineCov">          5 : TEST_F(SyscallComponentTest,GoodCases){</span>
+<span class="lineNum">      87 </span><span class="lineCov">          1 :         GoodCases();</span>
+<a name="88"><span class="lineNum">      88 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span><span class="lineCov">          5 : TEST_F(SyscallComponentTest,BadCases){</span>
+<span class="lineNum">      91 </span><span class="lineCov">          1 :         BadCases();</span>
+<a name="92"><span class="lineNum">      92 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      93 </span>            : 
+<a name="94"><span class="lineNum">      94 </span><span class="lineCov">          5 : TEST_F(SyscallComponentTest,EdgeCases){</span></a>
+<span class="lineNum">      95 </span><span class="lineCov">          1 :         EdgeCases();</span>
+<span class="lineNum">      96 </span><span class="lineCov">          4 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.11</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

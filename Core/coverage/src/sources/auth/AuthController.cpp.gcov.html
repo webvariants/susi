@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info.cleaned - src/sources/auth/AuthController.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">src/sources/auth</a> - AuthController.cpp<span style="font-size: 80%;"> (source / <a href="AuthController.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">23</td>
+            <td class="headerCovTableEntry">24</td>
+            <td class="headerCovTableEntryHi">95.8 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2014-09-19 09:31:24</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;auth/AuthController.h&quot;</a>
+<span class="lineNum">       2 </span>            : 
+<span class="lineNum">       3 </span><span class="lineCov">          4 : bool Susi::Auth::Controller::login(std::string sessionID, std::string username, std::string password) {</span>
+<span class="lineNum">       4 </span>            :         
+<span class="lineNum">       5 </span><span class="lineCov">          4 :         if(this-&gt;isLoggedIn(sessionID) == false) {</span>
+<span class="lineNum">       6 </span><span class="lineCov">          4 :                 auto db = _dbManager-&gt;getDatabase(this-&gt;_dbIdentifier);</span>
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span><span class="lineCov">          8 :                 Susi::Util::Any result = db-&gt;query(&quot;SELECT id FROM users WHERE username=\'&quot;+username+&quot;\' AND password=\'&quot;+password+&quot;\'&quot;);</span>
+<span class="lineNum">       9 </span>            : 
+<span class="lineNum">      10 </span><span class="lineCov">          4 :                 if(result.size()==0) {</span>
+<span class="lineNum">      11 </span><span class="lineCov">          2 :                         return false;</span>
+<span class="lineNum">      12 </span>            :                 } else {
+<span class="lineNum">      13 </span><span class="lineCov">          2 :                         _sessionManager-&gt;setSessionAttribute(sessionID, &quot;User&quot;, Susi::Util::Any::Object({{&quot;username&quot;,username}}));</span>
+<span class="lineNum">      14 </span><span class="lineCov">          2 :                         return true;</span>
+<span class="lineNum">      15 </span><span class="lineCov">          4 :                 }               </span>
+<span class="lineNum">      16 </span>            :         } else {
+<span class="lineNum">      17 </span><span class="lineNoCov">          0 :                 return true; // allready logged in</span>
+<span class="lineNum">      18 </span>            :         }
+<span class="lineNum">      19 </span>            : 
+<a name="20"><span class="lineNum">      20 </span>            : }</a>
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span><span class="lineCov">          2 : void Susi::Auth::Controller::logout(std::string sessionID) {</span>
+<span class="lineNum">      23 </span><span class="lineCov">          2 :         _sessionManager-&gt;removeSessionAttribute(sessionID, &quot;User&quot;);</span>
+<a name="24"><span class="lineNum">      24 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span><span class="lineCov">          9 : bool Susi::Auth::Controller::isLoggedIn(std::string sessionID) {        </span>
+<span class="lineNum">      27 </span><span class="lineCov">          9 :         Susi::Util::Any user = _sessionManager-&gt;getSessionAttribute(sessionID, &quot;User&quot;);    </span>
+<span class="lineNum">      28 </span><span class="lineCov">          9 :         return !(user.isNull());        </span>
+<a name="29"><span class="lineNum">      29 </span>            : }</a>
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span><span class="lineCov">          3 : std::string Susi::Auth::Controller::getUsername(std::string sessionID) {        </span>
+<span class="lineNum">      32 </span><span class="lineCov">          3 :         Susi::Util::Any user = _sessionManager-&gt;getSessionAttribute(sessionID, &quot;User&quot;);</span>
+<span class="lineNum">      33 </span>            : 
+<span class="lineNum">      34 </span><span class="lineCov">          3 :         if(user.isNull()) {</span>
+<span class="lineNum">      35 </span><span class="lineCov">          1 :                 return &quot;&quot;;</span>
+<span class="lineNum">      36 </span>            :         } else {
+<span class="lineNum">      37 </span><span class="lineCov">          2 :                 std::string username = user[&quot;username&quot;];</span>
+<a name="38"><span class="lineNum">      38 </span><span class="lineCov">          2 :                 return username;        </span></a>
+<span class="lineNum">      39 </span><span class="lineCov">          3 :         }</span>
+<span class="lineNum">      40 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.11</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

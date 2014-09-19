@@ -1,0 +1,1234 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info.cleaned - test/gtest-1.7.0/include/gtest/internal/gtest-internal.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../../../index.html">top level</a> - <a href="index.html">test/gtest-1.7.0/include/gtest/internal</a> - gtest-internal.h<span style="font-size: 80%;"> (source / <a href="gtest-internal.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntry">11</td>
+            <td class="headerCovTableEntryLo">63.6 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2014-09-19 09:31:24</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">318</td>
+            <td class="headerCovTableEntry">621</td>
+            <td class="headerCovTableEntryLo">51.2 %</td>
+          </tr>
+          <tr><td><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : // Copyright 2005, Google Inc.</a>
+<span class="lineNum">       2 </span>            : // All rights reserved.
+<span class="lineNum">       3 </span>            : //
+<span class="lineNum">       4 </span>            : // Redistribution and use in source and binary forms, with or without
+<span class="lineNum">       5 </span>            : // modification, are permitted provided that the following conditions are
+<span class="lineNum">       6 </span>            : // met:
+<span class="lineNum">       7 </span>            : //
+<span class="lineNum">       8 </span>            : //     * Redistributions of source code must retain the above copyright
+<span class="lineNum">       9 </span>            : // notice, this list of conditions and the following disclaimer.
+<span class="lineNum">      10 </span>            : //     * Redistributions in binary form must reproduce the above
+<span class="lineNum">      11 </span>            : // copyright notice, this list of conditions and the following disclaimer
+<span class="lineNum">      12 </span>            : // in the documentation and/or other materials provided with the
+<span class="lineNum">      13 </span>            : // distribution.
+<span class="lineNum">      14 </span>            : //     * Neither the name of Google Inc. nor the names of its
+<span class="lineNum">      15 </span>            : // contributors may be used to endorse or promote products derived from
+<span class="lineNum">      16 </span>            : // this software without specific prior written permission.
+<span class="lineNum">      17 </span>            : //
+<span class="lineNum">      18 </span>            : // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+<span class="lineNum">      19 </span>            : // &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+<span class="lineNum">      20 </span>            : // LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+<span class="lineNum">      21 </span>            : // A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+<span class="lineNum">      22 </span>            : // OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+<span class="lineNum">      23 </span>            : // SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+<span class="lineNum">      24 </span>            : // LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+<span class="lineNum">      25 </span>            : // DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+<span class="lineNum">      26 </span>            : // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+<span class="lineNum">      27 </span>            : // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+<span class="lineNum">      28 </span>            : // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+<span class="lineNum">      29 </span>            : //
+<span class="lineNum">      30 </span>            : // Authors: wan@google.com (Zhanyong Wan), eefacm@gmail.com (Sean Mcafee)
+<span class="lineNum">      31 </span>            : //
+<span class="lineNum">      32 </span>            : // The Google C++ Testing Framework (Google Test)
+<span class="lineNum">      33 </span>            : //
+<span class="lineNum">      34 </span>            : // This header file declares functions and macros used internally by
+<span class="lineNum">      35 </span>            : // Google Test.  They are subject to change without notice.
+<span class="lineNum">      36 </span>            : 
+<span class="lineNum">      37 </span>            : #ifndef GTEST_INCLUDE_GTEST_INTERNAL_GTEST_INTERNAL_H_
+<span class="lineNum">      38 </span>            : #define GTEST_INCLUDE_GTEST_INTERNAL_GTEST_INTERNAL_H_
+<span class="lineNum">      39 </span>            : 
+<span class="lineNum">      40 </span>            : #include &quot;gtest/internal/gtest-port.h&quot;
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span>            : #if GTEST_OS_LINUX
+<span class="lineNum">      43 </span>            : # include &lt;stdlib.h&gt;
+<span class="lineNum">      44 </span>            : # include &lt;sys/types.h&gt;
+<span class="lineNum">      45 </span>            : # include &lt;sys/wait.h&gt;
+<span class="lineNum">      46 </span>            : # include &lt;unistd.h&gt;
+<span class="lineNum">      47 </span>            : #endif  // GTEST_OS_LINUX
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            : #if GTEST_HAS_EXCEPTIONS
+<span class="lineNum">      50 </span>            : # include &lt;stdexcept&gt;
+<span class="lineNum">      51 </span>            : #endif
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span>            : #include &lt;ctype.h&gt;
+<span class="lineNum">      54 </span>            : #include &lt;float.h&gt;
+<span class="lineNum">      55 </span>            : #include &lt;string.h&gt;
+<span class="lineNum">      56 </span>            : #include &lt;iomanip&gt;
+<span class="lineNum">      57 </span>            : #include &lt;limits&gt;
+<span class="lineNum">      58 </span>            : #include &lt;set&gt;
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span>            : #include &quot;gtest/gtest-message.h&quot;
+<span class="lineNum">      61 </span>            : #include &quot;gtest/internal/gtest-string.h&quot;
+<span class="lineNum">      62 </span>            : #include &quot;gtest/internal/gtest-filepath.h&quot;
+<span class="lineNum">      63 </span>            : #include &quot;gtest/internal/gtest-type-util.h&quot;
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            : // Due to C++ preprocessor weirdness, we need double indirection to
+<span class="lineNum">      66 </span>            : // concatenate two tokens when one of them is __LINE__.  Writing
+<span class="lineNum">      67 </span>            : //
+<span class="lineNum">      68 </span>            : //   foo ## __LINE__
+<span class="lineNum">      69 </span>            : //
+<span class="lineNum">      70 </span>            : // will result in the token foo__LINE__, instead of foo followed by
+<span class="lineNum">      71 </span>            : // the current line number.  For more details, see
+<span class="lineNum">      72 </span>            : // http://www.parashift.com/c++-faq-lite/misc-technical-issues.html#faq-39.6
+<span class="lineNum">      73 </span>            : #define GTEST_CONCAT_TOKEN_(foo, bar) GTEST_CONCAT_TOKEN_IMPL_(foo, bar)
+<span class="lineNum">      74 </span>            : #define GTEST_CONCAT_TOKEN_IMPL_(foo, bar) foo ## bar
+<span class="lineNum">      75 </span>            : 
+<span class="lineNum">      76 </span>            : class ProtocolMessage;
+<span class="lineNum">      77 </span>            : namespace proto2 { class Message; }
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span>            : namespace testing {
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            : // Forward declarations.
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            : class AssertionResult;                 // Result of an assertion.
+<span class="lineNum">      84 </span>            : class Message;                         // Represents a failure message.
+<span class="lineNum">      85 </span>            : class Test;                            // Represents a test.
+<span class="lineNum">      86 </span>            : class TestInfo;                        // Information about a test.
+<span class="lineNum">      87 </span>            : class TestPartResult;                  // Result of a test part.
+<span class="lineNum">      88 </span>            : class UnitTest;                        // A collection of test cases.
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            : template &lt;typename T&gt;
+<span class="lineNum">      91 </span>            : ::std::string PrintToString(const T&amp; value);
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            : namespace internal {
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span>            : struct TraceInfo;                      // Information about a trace point.
+<span class="lineNum">      96 </span>            : class ScopedTrace;                     // Implements scoped trace.
+<span class="lineNum">      97 </span>            : class TestInfoImpl;                    // Opaque implementation of TestInfo
+<span class="lineNum">      98 </span>            : class UnitTestImpl;                    // Opaque implementation of UnitTest
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span>            : // How many times InitGoogleTest() has been called.
+<span class="lineNum">     101 </span>            : GTEST_API_ extern int g_init_gtest_count;
+<span class="lineNum">     102 </span>            : 
+<span class="lineNum">     103 </span>            : // The text used in failure messages to indicate the start of the
+<span class="lineNum">     104 </span>            : // stack trace.
+<span class="lineNum">     105 </span>            : GTEST_API_ extern const char kStackTraceMarker[];
+<span class="lineNum">     106 </span>            : 
+<span class="lineNum">     107 </span>            : // Two overloaded helpers for checking at compile time whether an
+<span class="lineNum">     108 </span>            : // expression is a null pointer literal (i.e. NULL or any 0-valued
+<span class="lineNum">     109 </span>            : // compile-time integral constant).  Their return values have
+<span class="lineNum">     110 </span>            : // different sizes, so we can use sizeof() to test which version is
+<span class="lineNum">     111 </span>            : // picked by the compiler.  These helpers have no implementations, as
+<span class="lineNum">     112 </span>            : // we only need their signatures.
+<span class="lineNum">     113 </span>            : //
+<span class="lineNum">     114 </span>            : // Given IsNullLiteralHelper(x), the compiler will pick the first
+<span class="lineNum">     115 </span>            : // version if x can be implicitly converted to Secret*, and pick the
+<span class="lineNum">     116 </span>            : // second version otherwise.  Since Secret is a secret and incomplete
+<span class="lineNum">     117 </span>            : // type, the only expression a user can write that has type Secret* is
+<span class="lineNum">     118 </span>            : // a null pointer literal.  Therefore, we know that x is a null
+<span class="lineNum">     119 </span>            : // pointer literal if and only if the first version is picked by the
+<span class="lineNum">     120 </span>            : // compiler.
+<span class="lineNum">     121 </span>            : char IsNullLiteralHelper(Secret* p);
+<span class="lineNum">     122 </span>            : char (&amp;IsNullLiteralHelper(...))[2];  // NOLINT
+<span class="lineNum">     123 </span>            : 
+<span class="lineNum">     124 </span>            : // A compile-time bool constant that is true if and only if x is a
+<span class="lineNum">     125 </span>            : // null pointer literal (i.e. NULL or any 0-valued compile-time
+<span class="lineNum">     126 </span>            : // integral constant).
+<span class="lineNum">     127 </span>            : #ifdef GTEST_ELLIPSIS_NEEDS_POD_
+<span class="lineNum">     128 </span>            : // We lose support for NULL detection where the compiler doesn't like
+<span class="lineNum">     129 </span>            : // passing non-POD classes through ellipsis (...).
+<span class="lineNum">     130 </span>            : # define GTEST_IS_NULL_LITERAL_(x) false
+<span class="lineNum">     131 </span>            : #else
+<span class="lineNum">     132 </span>            : # define GTEST_IS_NULL_LITERAL_(x) \
+<span class="lineNum">     133 </span>            :     (sizeof(::testing::internal::IsNullLiteralHelper(x)) == 1)
+<span class="lineNum">     134 </span>            : #endif  // GTEST_ELLIPSIS_NEEDS_POD_
+<span class="lineNum">     135 </span>            : 
+<span class="lineNum">     136 </span>            : // Appends the user-supplied message to the Google-Test-generated message.
+<span class="lineNum">     137 </span>            : GTEST_API_ std::string AppendUserMessage(
+<span class="lineNum">     138 </span>            :     const std::string&amp; gtest_msg, const Message&amp; user_msg);
+<span class="lineNum">     139 </span>            : 
+<span class="lineNum">     140 </span>            : #if GTEST_HAS_EXCEPTIONS
+<span class="lineNum">     141 </span>            : 
+<span class="lineNum">     142 </span>            : // This exception is thrown by (and only by) a failed Google Test
+<span class="lineNum">     143 </span>            : // assertion when GTEST_FLAG(throw_on_failure) is true (if exceptions
+<span class="lineNum">     144 </span>            : // are enabled).  We derive it from std::runtime_error, which is for
+<span class="lineNum">     145 </span>            : // errors presumably detectable only at run time.  Since
+<span class="lineNum">     146 </span>            : // std::runtime_error inherits from std::exception, many testing
+<span class="lineNum">     147 </span>            : // frameworks know how to extract and print the message inside it.
+<span class="lineNum">     148 </span>            : class GTEST_API_ GoogleTestFailureException : public ::std::runtime_error {
+<span class="lineNum">     149 </span>            :  public:
+<span class="lineNum">     150 </span>            :   explicit GoogleTestFailureException(const TestPartResult&amp; failure);
+<span class="lineNum">     151 </span>            : };
+<span class="lineNum">     152 </span>            : 
+<span class="lineNum">     153 </span>            : #endif  // GTEST_HAS_EXCEPTIONS
+<span class="lineNum">     154 </span>            : 
+<span class="lineNum">     155 </span>            : // A helper class for creating scoped traces in user programs.
+<span class="lineNum">     156 </span>            : class GTEST_API_ ScopedTrace {
+<span class="lineNum">     157 </span>            :  public:
+<span class="lineNum">     158 </span>            :   // The c'tor pushes the given source file location and message onto
+<span class="lineNum">     159 </span>            :   // a trace stack maintained by Google Test.
+<span class="lineNum">     160 </span>            :   ScopedTrace(const char* file, int line, const Message&amp; message);
+<span class="lineNum">     161 </span>            : 
+<span class="lineNum">     162 </span>            :   // The d'tor pops the info pushed by the c'tor.
+<span class="lineNum">     163 </span>            :   //
+<span class="lineNum">     164 </span>            :   // Note that the d'tor is not virtual in order to be efficient.
+<span class="lineNum">     165 </span>            :   // Don't inherit from ScopedTrace!
+<span class="lineNum">     166 </span>            :   ~ScopedTrace();
+<span class="lineNum">     167 </span>            : 
+<span class="lineNum">     168 </span>            :  private:
+<span class="lineNum">     169 </span>            :   GTEST_DISALLOW_COPY_AND_ASSIGN_(ScopedTrace);
+<span class="lineNum">     170 </span>            : } GTEST_ATTRIBUTE_UNUSED_;  // A ScopedTrace object does its job in its
+<span class="lineNum">     171 </span>            :                             // c'tor and d'tor.  Therefore it doesn't
+<span class="lineNum">     172 </span>            :                             // need to be used otherwise.
+<span class="lineNum">     173 </span>            : 
+<span class="lineNum">     174 </span>            : // Constructs and returns the message for an equality assertion
+<span class="lineNum">     175 </span>            : // (e.g. ASSERT_EQ, EXPECT_STREQ, etc) failure.
+<span class="lineNum">     176 </span>            : //
+<span class="lineNum">     177 </span>            : // The first four parameters are the expressions used in the assertion
+<span class="lineNum">     178 </span>            : // and their values, as strings.  For example, for ASSERT_EQ(foo, bar)
+<span class="lineNum">     179 </span>            : // where foo is 5 and bar is 6, we have:
+<span class="lineNum">     180 </span>            : //
+<span class="lineNum">     181 </span>            : //   expected_expression: &quot;foo&quot;
+<span class="lineNum">     182 </span>            : //   actual_expression:   &quot;bar&quot;
+<span class="lineNum">     183 </span>            : //   expected_value:      &quot;5&quot;
+<span class="lineNum">     184 </span>            : //   actual_value:        &quot;6&quot;
+<span class="lineNum">     185 </span>            : //
+<span class="lineNum">     186 </span>            : // The ignoring_case parameter is true iff the assertion is a
+<span class="lineNum">     187 </span>            : // *_STRCASEEQ*.  When it's true, the string &quot; (ignoring case)&quot; will
+<span class="lineNum">     188 </span>            : // be inserted into the message.
+<span class="lineNum">     189 </span>            : GTEST_API_ AssertionResult EqFailure(const char* expected_expression,
+<span class="lineNum">     190 </span>            :                                      const char* actual_expression,
+<span class="lineNum">     191 </span>            :                                      const std::string&amp; expected_value,
+<span class="lineNum">     192 </span>            :                                      const std::string&amp; actual_value,
+<span class="lineNum">     193 </span>            :                                      bool ignoring_case);
+<span class="lineNum">     194 </span>            : 
+<span class="lineNum">     195 </span>            : // Constructs a failure message for Boolean assertions such as EXPECT_TRUE.
+<span class="lineNum">     196 </span>            : GTEST_API_ std::string GetBoolAssertionFailureMessage(
+<span class="lineNum">     197 </span>            :     const AssertionResult&amp; assertion_result,
+<span class="lineNum">     198 </span>            :     const char* expression_text,
+<span class="lineNum">     199 </span>            :     const char* actual_predicate_value,
+<span class="lineNum">     200 </span>            :     const char* expected_predicate_value);
+<span class="lineNum">     201 </span>            : 
+<span class="lineNum">     202 </span>            : // This template class represents an IEEE floating-point number
+<span class="lineNum">     203 </span>            : // (either single-precision or double-precision, depending on the
+<span class="lineNum">     204 </span>            : // template parameters).
+<span class="lineNum">     205 </span>            : //
+<span class="lineNum">     206 </span>            : // The purpose of this class is to do more sophisticated number
+<span class="lineNum">     207 </span>            : // comparison.  (Due to round-off error, etc, it's very unlikely that
+<span class="lineNum">     208 </span>            : // two floating-points will be equal exactly.  Hence a naive
+<span class="lineNum">     209 </span>            : // comparison by the == operation often doesn't work.)
+<span class="lineNum">     210 </span>            : //
+<span class="lineNum">     211 </span>            : // Format of IEEE floating-point:
+<span class="lineNum">     212 </span>            : //
+<span class="lineNum">     213 </span>            : //   The most-significant bit being the leftmost, an IEEE
+<span class="lineNum">     214 </span>            : //   floating-point looks like
+<span class="lineNum">     215 </span>            : //
+<span class="lineNum">     216 </span>            : //     sign_bit exponent_bits fraction_bits
+<span class="lineNum">     217 </span>            : //
+<span class="lineNum">     218 </span>            : //   Here, sign_bit is a single bit that designates the sign of the
+<span class="lineNum">     219 </span>            : //   number.
+<span class="lineNum">     220 </span>            : //
+<span class="lineNum">     221 </span>            : //   For float, there are 8 exponent bits and 23 fraction bits.
+<span class="lineNum">     222 </span>            : //
+<span class="lineNum">     223 </span>            : //   For double, there are 11 exponent bits and 52 fraction bits.
+<span class="lineNum">     224 </span>            : //
+<span class="lineNum">     225 </span>            : //   More details can be found at
+<span class="lineNum">     226 </span>            : //   http://en.wikipedia.org/wiki/IEEE_floating-point_standard.
+<span class="lineNum">     227 </span>            : //
+<span class="lineNum">     228 </span>            : // Template parameter:
+<span class="lineNum">     229 </span>            : //
+<span class="lineNum">     230 </span>            : //   RawType: the raw floating-point type (either float or double)
+<span class="lineNum">     231 </span>            : template &lt;typename RawType&gt;
+<span class="lineNum">     232 </span>            : class FloatingPoint {
+<span class="lineNum">     233 </span>            :  public:
+<span class="lineNum">     234 </span>            :   // Defines the unsigned integer type that has the same size as the
+<span class="lineNum">     235 </span>            :   // floating point number.
+<span class="lineNum">     236 </span>            :   typedef typename TypeWithSize&lt;sizeof(RawType)&gt;::UInt Bits;
+<span class="lineNum">     237 </span>            : 
+<span class="lineNum">     238 </span>            :   // Constants.
+<span class="lineNum">     239 </span>            : 
+<span class="lineNum">     240 </span>            :   // # of bits in a number.
+<span class="lineNum">     241 </span>            :   static const size_t kBitCount = 8*sizeof(RawType);
+<span class="lineNum">     242 </span>            : 
+<span class="lineNum">     243 </span>            :   // # of fraction bits in a number.
+<span class="lineNum">     244 </span>            :   static const size_t kFractionBitCount =
+<span class="lineNum">     245 </span>            :     std::numeric_limits&lt;RawType&gt;::digits - 1;
+<span class="lineNum">     246 </span>            : 
+<span class="lineNum">     247 </span>            :   // # of exponent bits in a number.
+<span class="lineNum">     248 </span>            :   static const size_t kExponentBitCount = kBitCount - 1 - kFractionBitCount;
+<span class="lineNum">     249 </span>            : 
+<span class="lineNum">     250 </span>            :   // The mask for the sign bit.
+<span class="lineNum">     251 </span>            :   static const Bits kSignBitMask = static_cast&lt;Bits&gt;(1) &lt;&lt; (kBitCount - 1);
+<span class="lineNum">     252 </span>            : 
+<span class="lineNum">     253 </span>            :   // The mask for the fraction bits.
+<span class="lineNum">     254 </span>            :   static const Bits kFractionBitMask =
+<span class="lineNum">     255 </span>            :     ~static_cast&lt;Bits&gt;(0) &gt;&gt; (kExponentBitCount + 1);
+<span class="lineNum">     256 </span>            : 
+<span class="lineNum">     257 </span>            :   // The mask for the exponent bits.
+<span class="lineNum">     258 </span>            :   static const Bits kExponentBitMask = ~(kSignBitMask | kFractionBitMask);
+<span class="lineNum">     259 </span>            : 
+<span class="lineNum">     260 </span>            :   // How many ULP's (Units in the Last Place) we want to tolerate when
+<span class="lineNum">     261 </span>            :   // comparing two numbers.  The larger the value, the more error we
+<span class="lineNum">     262 </span>            :   // allow.  A 0 value means that two numbers must be exactly the same
+<span class="lineNum">     263 </span>            :   // to be considered equal.
+<span class="lineNum">     264 </span>            :   //
+<span class="lineNum">     265 </span>            :   // The maximum error of a single floating-point operation is 0.5
+<span class="lineNum">     266 </span>            :   // units in the last place.  On Intel CPU's, all floating-point
+<span class="lineNum">     267 </span>            :   // calculations are done with 80-bit precision, while double has 64
+<span class="lineNum">     268 </span>            :   // bits.  Therefore, 4 should be enough for ordinary use.
+<span class="lineNum">     269 </span>            :   //
+<span class="lineNum">     270 </span>            :   // See the following article for more details on ULP:
+<span class="lineNum">     271 </span>            :   // http://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/
+<span class="lineNum">     272 </span>            :   static const size_t kMaxUlps = 4;
+<span class="lineNum">     273 </span>            : 
+<span class="lineNum">     274 </span>            :   // Constructs a FloatingPoint from a raw floating-point number.
+<span class="lineNum">     275 </span>            :   //
+<span class="lineNum">     276 </span>            :   // On an Intel CPU, passing a non-normalized NAN (Not a Number)
+<span class="lineNum">     277 </span>            :   // around may change its bits, although the new value is guaranteed
+<span class="lineNum">     278 </span>            :   // to be also a NAN.  Therefore, don't expect this constructor to
+<span class="lineNum">     279 </span>            :   // preserve the bits in x when x is a NAN.
+<span class="lineNum">     280 </span>            :   explicit FloatingPoint(const RawType&amp; x) { u_.value_ = x; }
+<span class="lineNum">     281 </span>            : 
+<span class="lineNum">     282 </span>            :   // Static methods
+<span class="lineNum">     283 </span>            : 
+<span class="lineNum">     284 </span>            :   // Reinterprets a bit pattern as a floating-point number.
+<span class="lineNum">     285 </span>            :   //
+<span class="lineNum">     286 </span>            :   // This function is needed to test the AlmostEquals() method.
+<span class="lineNum">     287 </span>            :   static RawType ReinterpretBits(const Bits bits) {
+<span class="lineNum">     288 </span>            :     FloatingPoint fp(0);
+<span class="lineNum">     289 </span>            :     fp.u_.bits_ = bits;
+<span class="lineNum">     290 </span>            :     return fp.u_.value_;
+<span class="lineNum">     291 </span>            :   }
+<span class="lineNum">     292 </span>            : 
+<span class="lineNum">     293 </span>            :   // Returns the floating-point number that represent positive infinity.
+<span class="lineNum">     294 </span>            :   static RawType Infinity() {
+<span class="lineNum">     295 </span>            :     return ReinterpretBits(kExponentBitMask);
+<span class="lineNum">     296 </span>            :   }
+<span class="lineNum">     297 </span>            : 
+<span class="lineNum">     298 </span>            :   // Returns the maximum representable finite floating-point number.
+<span class="lineNum">     299 </span>            :   static RawType Max();
+<span class="lineNum">     300 </span>            : 
+<span class="lineNum">     301 </span>            :   // Non-static methods
+<span class="lineNum">     302 </span>            : 
+<span class="lineNum">     303 </span>            :   // Returns the bits that represents this number.
+<span class="lineNum">     304 </span>            :   const Bits &amp;bits() const { return u_.bits_; }
+<span class="lineNum">     305 </span>            : 
+<span class="lineNum">     306 </span>            :   // Returns the exponent bits of this number.
+<span class="lineNum">     307 </span>            :   Bits exponent_bits() const { return kExponentBitMask &amp; u_.bits_; }
+<span class="lineNum">     308 </span>            : 
+<span class="lineNum">     309 </span>            :   // Returns the fraction bits of this number.
+<span class="lineNum">     310 </span>            :   Bits fraction_bits() const { return kFractionBitMask &amp; u_.bits_; }
+<span class="lineNum">     311 </span>            : 
+<span class="lineNum">     312 </span>            :   // Returns the sign bit of this number.
+<span class="lineNum">     313 </span>            :   Bits sign_bit() const { return kSignBitMask &amp; u_.bits_; }
+<span class="lineNum">     314 </span>            : 
+<span class="lineNum">     315 </span>            :   // Returns true iff this is NAN (not a number).
+<span class="lineNum">     316 </span>            :   bool is_nan() const {
+<span class="lineNum">     317 </span>            :     // It's a NAN if the exponent bits are all ones and the fraction
+<span class="lineNum">     318 </span>            :     // bits are not entirely zeros.
+<span class="lineNum">     319 </span>            :     return (exponent_bits() == kExponentBitMask) &amp;&amp; (fraction_bits() != 0);
+<span class="lineNum">     320 </span>            :   }
+<span class="lineNum">     321 </span>            : 
+<span class="lineNum">     322 </span>            :   // Returns true iff this number is at most kMaxUlps ULP's away from
+<span class="lineNum">     323 </span>            :   // rhs.  In particular, this function:
+<span class="lineNum">     324 </span>            :   //
+<span class="lineNum">     325 </span>            :   //   - returns false if either number is (or both are) NAN.
+<span class="lineNum">     326 </span>            :   //   - treats really large numbers as almost equal to infinity.
+<span class="lineNum">     327 </span>            :   //   - thinks +0.0 and -0.0 are 0 DLP's apart.
+<span class="lineNum">     328 </span>            :   bool AlmostEquals(const FloatingPoint&amp; rhs) const {
+<span class="lineNum">     329 </span>            :     // The IEEE standard says that any comparison operation involving
+<span class="lineNum">     330 </span>            :     // a NAN must return false.
+<span class="lineNum">     331 </span>            :     if (is_nan() || rhs.is_nan()) return false;
+<span class="lineNum">     332 </span>            : 
+<span class="lineNum">     333 </span>            :     return DistanceBetweenSignAndMagnitudeNumbers(u_.bits_, rhs.u_.bits_)
+<span class="lineNum">     334 </span>            :         &lt;= kMaxUlps;
+<span class="lineNum">     335 </span>            :   }
+<span class="lineNum">     336 </span>            : 
+<span class="lineNum">     337 </span>            :  private:
+<span class="lineNum">     338 </span>            :   // The data type used to store the actual floating-point number.
+<span class="lineNum">     339 </span>            :   union FloatingPointUnion {
+<span class="lineNum">     340 </span>            :     RawType value_;  // The raw floating-point number.
+<span class="lineNum">     341 </span>            :     Bits bits_;      // The bits that represent the number.
+<span class="lineNum">     342 </span>            :   };
+<span class="lineNum">     343 </span>            : 
+<span class="lineNum">     344 </span>            :   // Converts an integer from the sign-and-magnitude representation to
+<span class="lineNum">     345 </span>            :   // the biased representation.  More precisely, let N be 2 to the
+<span class="lineNum">     346 </span>            :   // power of (kBitCount - 1), an integer x is represented by the
+<span class="lineNum">     347 </span>            :   // unsigned number x + N.
+<span class="lineNum">     348 </span>            :   //
+<span class="lineNum">     349 </span>            :   // For instance,
+<span class="lineNum">     350 </span>            :   //
+<span class="lineNum">     351 </span>            :   //   -N + 1 (the most negative number representable using
+<span class="lineNum">     352 </span>            :   //          sign-and-magnitude) is represented by 1;
+<span class="lineNum">     353 </span>            :   //   0      is represented by N; and
+<span class="lineNum">     354 </span>            :   //   N - 1  (the biggest number representable using
+<span class="lineNum">     355 </span>            :   //          sign-and-magnitude) is represented by 2N - 1.
+<span class="lineNum">     356 </span>            :   //
+<span class="lineNum">     357 </span>            :   // Read http://en.wikipedia.org/wiki/Signed_number_representations
+<span class="lineNum">     358 </span>            :   // for more details on signed number representations.
+<span class="lineNum">     359 </span>            :   static Bits SignAndMagnitudeToBiased(const Bits &amp;sam) {
+<span class="lineNum">     360 </span>            :     if (kSignBitMask &amp; sam) {
+<span class="lineNum">     361 </span>            :       // sam represents a negative number.
+<span class="lineNum">     362 </span>            :       return ~sam + 1;
+<span class="lineNum">     363 </span>            :     } else {
+<span class="lineNum">     364 </span>            :       // sam represents a positive number.
+<span class="lineNum">     365 </span>            :       return kSignBitMask | sam;
+<span class="lineNum">     366 </span>            :     }
+<span class="lineNum">     367 </span>            :   }
+<span class="lineNum">     368 </span>            : 
+<span class="lineNum">     369 </span>            :   // Given two numbers in the sign-and-magnitude representation,
+<span class="lineNum">     370 </span>            :   // returns the distance between them as an unsigned number.
+<span class="lineNum">     371 </span>            :   static Bits DistanceBetweenSignAndMagnitudeNumbers(const Bits &amp;sam1,
+<span class="lineNum">     372 </span>            :                                                      const Bits &amp;sam2) {
+<span class="lineNum">     373 </span>            :     const Bits biased1 = SignAndMagnitudeToBiased(sam1);
+<span class="lineNum">     374 </span>            :     const Bits biased2 = SignAndMagnitudeToBiased(sam2);
+<span class="lineNum">     375 </span>            :     return (biased1 &gt;= biased2) ? (biased1 - biased2) : (biased2 - biased1);
+<span class="lineNum">     376 </span>            :   }
+<span class="lineNum">     377 </span>            : 
+<span class="lineNum">     378 </span>            :   FloatingPointUnion u_;
+<span class="lineNum">     379 </span>            : };
+<span class="lineNum">     380 </span>            : 
+<span class="lineNum">     381 </span>            : // We cannot use std::numeric_limits&lt;T&gt;::max() as it clashes with the max()
+<span class="lineNum">     382 </span>            : // macro defined by &lt;windows.h&gt;.
+<span class="lineNum">     383 </span>            : template &lt;&gt;
+<span class="lineNum">     384 </span>            : inline float FloatingPoint&lt;float&gt;::Max() { return FLT_MAX; }
+<span class="lineNum">     385 </span>            : template &lt;&gt;
+<span class="lineNum">     386 </span>            : inline double FloatingPoint&lt;double&gt;::Max() { return DBL_MAX; }
+<span class="lineNum">     387 </span>            : 
+<span class="lineNum">     388 </span>            : // Typedefs the instances of the FloatingPoint template class that we
+<span class="lineNum">     389 </span>            : // care to use.
+<span class="lineNum">     390 </span>            : typedef FloatingPoint&lt;float&gt; Float;
+<span class="lineNum">     391 </span>            : typedef FloatingPoint&lt;double&gt; Double;
+<span class="lineNum">     392 </span>            : 
+<span class="lineNum">     393 </span>            : // In order to catch the mistake of putting tests that use different
+<span class="lineNum">     394 </span>            : // test fixture classes in the same test case, we need to assign
+<span class="lineNum">     395 </span>            : // unique IDs to fixture classes and compare them.  The TypeId type is
+<span class="lineNum">     396 </span>            : // used to hold such IDs.  The user should treat TypeId as an opaque
+<span class="lineNum">     397 </span>            : // type: the only operation allowed on TypeId values is to compare
+<span class="lineNum">     398 </span>            : // them for equality using the == operator.
+<span class="lineNum">     399 </span>            : typedef const void* TypeId;
+<span class="lineNum">     400 </span>            : 
+<span class="lineNum">     401 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     402 </span>            : class TypeIdHelper {
+<span class="lineNum">     403 </span>            :  public:
+<span class="lineNum">     404 </span>            :   // dummy_ must not have a const type.  Otherwise an overly eager
+<span class="lineNum">     405 </span>            :   // compiler (e.g. MSVC 7.1 &amp; 8.0) may try to merge
+<span class="lineNum">     406 </span>            :   // TypeIdHelper&lt;T&gt;::dummy_ for different Ts as an &quot;optimization&quot;.
+<span class="lineNum">     407 </span>            :   static bool dummy_;
+<span class="lineNum">     408 </span>            : };
+<span class="lineNum">     409 </span>            : 
+<span class="lineNum">     410 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     411 </span>            : bool TypeIdHelper&lt;T&gt;::dummy_ = false;
+<span class="lineNum">     412 </span>            : 
+<span class="lineNum">     413 </span>            : // GetTypeId&lt;T&gt;() returns the ID of type T.  Different values will be
+<span class="lineNum">     414 </span>            : // returned for different types.  Calling the function twice with the
+<a name="415"><span class="lineNum">     415 </span>            : // same type argument is guaranteed to return the same ID.</a>
+<span class="lineNum">     416 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     417 </span><span class="lineCov">        110 : TypeId GetTypeId() {</span>
+<span class="lineNum">     418 </span>            :   // The compiler is required to allocate a different
+<span class="lineNum">     419 </span>            :   // TypeIdHelper&lt;T&gt;::dummy_ variable for each T used to instantiate
+<span class="lineNum">     420 </span>            :   // the template.  Therefore, the address of dummy_ is guaranteed to
+<span class="lineNum">     421 </span>            :   // be unique.
+<span class="lineNum">     422 </span><span class="lineCov">        110 :   return &amp;(TypeIdHelper&lt;T&gt;::dummy_);</span>
+<span class="lineNum">     423 </span>            : }
+<span class="lineNum">     424 </span>            : 
+<span class="lineNum">     425 </span>            : // Returns the type ID of ::testing::Test.  Always call this instead
+<span class="lineNum">     426 </span>            : // of GetTypeId&lt; ::testing::Test&gt;() to get the type ID of
+<span class="lineNum">     427 </span>            : // ::testing::Test, as the latter may give the wrong result due to a
+<span class="lineNum">     428 </span>            : // suspected linker bug when compiling Google Test as a Mac OS X
+<span class="lineNum">     429 </span>            : // framework.
+<span class="lineNum">     430 </span>            : GTEST_API_ TypeId GetTestTypeId();
+<span class="lineNum">     431 </span>            : 
+<span class="lineNum">     432 </span>            : // Defines the abstract factory interface that creates instances
+<span class="lineNum">     433 </span>            : // of a Test object.
+<a name="434"><span class="lineNum">     434 </span>            : class TestFactoryBase {</a>
+<span class="lineNum">     435 </span>            :  public:
+<span class="lineNum">     436 </span><span class="lineNoCov">          0 :   virtual ~TestFactoryBase() {}</span>
+<span class="lineNum">     437 </span>            : 
+<span class="lineNum">     438 </span>            :   // Creates a test instance to run. The instance is both created and destroyed
+<span class="lineNum">     439 </span>            :   // within TestInfoImpl::Run()
+<span class="lineNum">     440 </span>            :   virtual Test* CreateTest() = 0;
+<a name="441"><span class="lineNum">     441 </span>            : </a>
+<span class="lineNum">     442 </span>            :  protected:
+<span class="lineNum">     443 </span><span class="lineCov">        145 :   TestFactoryBase() {}</span>
+<span class="lineNum">     444 </span>            : 
+<span class="lineNum">     445 </span>            :  private:
+<span class="lineNum">     446 </span>            :   GTEST_DISALLOW_COPY_AND_ASSIGN_(TestFactoryBase);
+<span class="lineNum">     447 </span>            : };
+<span class="lineNum">     448 </span>            : 
+<span class="lineNum">     449 </span>            : // This class provides implementation of TeastFactoryBase interface.
+<a name="450"><span class="lineNum">     450 </span>            : // It is used in TEST and TEST_F macros.</a>
+<span class="lineNum">     451 </span>            : template &lt;class TestClass&gt;
+<a name="452"><span class="lineNum">     452 </span><span class="lineCov">        145 : class TestFactoryImpl : public TestFactoryBase {</span></a>
+<span class="lineNum">     453 </span>            :  public:
+<span class="lineNum">     454 </span><span class="lineCov">        145 :   virtual Test* CreateTest() { return new TestClass; }</span>
+<span class="lineNum">     455 </span>            : };
+<span class="lineNum">     456 </span>            : 
+<span class="lineNum">     457 </span>            : #if GTEST_OS_WINDOWS
+<span class="lineNum">     458 </span>            : 
+<span class="lineNum">     459 </span>            : // Predicate-formatters for implementing the HRESULT checking macros
+<span class="lineNum">     460 </span>            : // {ASSERT|EXPECT}_HRESULT_{SUCCEEDED|FAILED}
+<span class="lineNum">     461 </span>            : // We pass a long instead of HRESULT to avoid causing an
+<span class="lineNum">     462 </span>            : // include dependency for the HRESULT type.
+<span class="lineNum">     463 </span>            : GTEST_API_ AssertionResult IsHRESULTSuccess(const char* expr,
+<span class="lineNum">     464 </span>            :                                             long hr);  // NOLINT
+<span class="lineNum">     465 </span>            : GTEST_API_ AssertionResult IsHRESULTFailure(const char* expr,
+<span class="lineNum">     466 </span>            :                                             long hr);  // NOLINT
+<span class="lineNum">     467 </span>            : 
+<span class="lineNum">     468 </span>            : #endif  // GTEST_OS_WINDOWS
+<span class="lineNum">     469 </span>            : 
+<span class="lineNum">     470 </span>            : // Types of SetUpTestCase() and TearDownTestCase() functions.
+<span class="lineNum">     471 </span>            : typedef void (*SetUpTestCaseFunc)();
+<span class="lineNum">     472 </span>            : typedef void (*TearDownTestCaseFunc)();
+<span class="lineNum">     473 </span>            : 
+<span class="lineNum">     474 </span>            : // Creates a new TestInfo object and registers it with Google Test;
+<span class="lineNum">     475 </span>            : // returns the created object.
+<span class="lineNum">     476 </span>            : //
+<span class="lineNum">     477 </span>            : // Arguments:
+<span class="lineNum">     478 </span>            : //
+<span class="lineNum">     479 </span>            : //   test_case_name:   name of the test case
+<span class="lineNum">     480 </span>            : //   name:             name of the test
+<span class="lineNum">     481 </span>            : //   type_param        the name of the test's type parameter, or NULL if
+<span class="lineNum">     482 </span>            : //                     this is not a typed or a type-parameterized test.
+<span class="lineNum">     483 </span>            : //   value_param       text representation of the test's value parameter,
+<span class="lineNum">     484 </span>            : //                     or NULL if this is not a type-parameterized test.
+<span class="lineNum">     485 </span>            : //   fixture_class_id: ID of the test fixture class
+<span class="lineNum">     486 </span>            : //   set_up_tc:        pointer to the function that sets up the test case
+<span class="lineNum">     487 </span>            : //   tear_down_tc:     pointer to the function that tears down the test case
+<span class="lineNum">     488 </span>            : //   factory:          pointer to the factory that creates a test object.
+<span class="lineNum">     489 </span>            : //                     The newly created TestInfo instance will assume
+<span class="lineNum">     490 </span>            : //                     ownership of the factory object.
+<span class="lineNum">     491 </span>            : GTEST_API_ TestInfo* MakeAndRegisterTestInfo(
+<span class="lineNum">     492 </span>            :     const char* test_case_name,
+<span class="lineNum">     493 </span>            :     const char* name,
+<span class="lineNum">     494 </span>            :     const char* type_param,
+<span class="lineNum">     495 </span>            :     const char* value_param,
+<span class="lineNum">     496 </span>            :     TypeId fixture_class_id,
+<span class="lineNum">     497 </span>            :     SetUpTestCaseFunc set_up_tc,
+<span class="lineNum">     498 </span>            :     TearDownTestCaseFunc tear_down_tc,
+<span class="lineNum">     499 </span>            :     TestFactoryBase* factory);
+<span class="lineNum">     500 </span>            : 
+<span class="lineNum">     501 </span>            : // If *pstr starts with the given prefix, modifies *pstr to be right
+<span class="lineNum">     502 </span>            : // past the prefix and returns true; otherwise leaves *pstr unchanged
+<span class="lineNum">     503 </span>            : // and returns false.  None of pstr, *pstr, and prefix can be NULL.
+<span class="lineNum">     504 </span>            : GTEST_API_ bool SkipPrefix(const char* prefix, const char** pstr);
+<span class="lineNum">     505 </span>            : 
+<span class="lineNum">     506 </span>            : #if GTEST_HAS_TYPED_TEST || GTEST_HAS_TYPED_TEST_P
+<span class="lineNum">     507 </span>            : 
+<span class="lineNum">     508 </span>            : // State of the definition of a type-parameterized test case.
+<span class="lineNum">     509 </span>            : class GTEST_API_ TypedTestCasePState {
+<span class="lineNum">     510 </span>            :  public:
+<span class="lineNum">     511 </span>            :   TypedTestCasePState() : registered_(false) {}
+<span class="lineNum">     512 </span>            : 
+<span class="lineNum">     513 </span>            :   // Adds the given test name to defined_test_names_ and return true
+<span class="lineNum">     514 </span>            :   // if the test case hasn't been registered; otherwise aborts the
+<span class="lineNum">     515 </span>            :   // program.
+<span class="lineNum">     516 </span>            :   bool AddTestName(const char* file, int line, const char* case_name,
+<span class="lineNum">     517 </span>            :                    const char* test_name) {
+<span class="lineNum">     518 </span>            :     if (registered_) {
+<span class="lineNum">     519 </span>            :       fprintf(stderr, &quot;%s Test %s must be defined before &quot;
+<span class="lineNum">     520 </span>            :               &quot;REGISTER_TYPED_TEST_CASE_P(%s, ...).\n&quot;,
+<span class="lineNum">     521 </span>            :               FormatFileLocation(file, line).c_str(), test_name, case_name);
+<span class="lineNum">     522 </span>            :       fflush(stderr);
+<span class="lineNum">     523 </span>            :       posix::Abort();
+<span class="lineNum">     524 </span>            :     }
+<span class="lineNum">     525 </span>            :     defined_test_names_.insert(test_name);
+<span class="lineNum">     526 </span>            :     return true;
+<span class="lineNum">     527 </span>            :   }
+<span class="lineNum">     528 </span>            : 
+<span class="lineNum">     529 </span>            :   // Verifies that registered_tests match the test names in
+<span class="lineNum">     530 </span>            :   // defined_test_names_; returns registered_tests if successful, or
+<span class="lineNum">     531 </span>            :   // aborts the program otherwise.
+<span class="lineNum">     532 </span>            :   const char* VerifyRegisteredTestNames(
+<span class="lineNum">     533 </span>            :       const char* file, int line, const char* registered_tests);
+<span class="lineNum">     534 </span>            : 
+<span class="lineNum">     535 </span>            :  private:
+<span class="lineNum">     536 </span>            :   bool registered_;
+<span class="lineNum">     537 </span>            :   ::std::set&lt;const char*&gt; defined_test_names_;
+<span class="lineNum">     538 </span>            : };
+<span class="lineNum">     539 </span>            : 
+<span class="lineNum">     540 </span>            : // Skips to the first non-space char after the first comma in 'str';
+<span class="lineNum">     541 </span>            : // returns NULL if no comma is found in 'str'.
+<span class="lineNum">     542 </span>            : inline const char* SkipComma(const char* str) {
+<span class="lineNum">     543 </span>            :   const char* comma = strchr(str, ',');
+<span class="lineNum">     544 </span>            :   if (comma == NULL) {
+<span class="lineNum">     545 </span>            :     return NULL;
+<span class="lineNum">     546 </span>            :   }
+<span class="lineNum">     547 </span>            :   while (IsSpace(*(++comma))) {}
+<span class="lineNum">     548 </span>            :   return comma;
+<span class="lineNum">     549 </span>            : }
+<span class="lineNum">     550 </span>            : 
+<span class="lineNum">     551 </span>            : // Returns the prefix of 'str' before the first comma in it; returns
+<span class="lineNum">     552 </span>            : // the entire string if it contains no comma.
+<span class="lineNum">     553 </span>            : inline std::string GetPrefixUntilComma(const char* str) {
+<span class="lineNum">     554 </span>            :   const char* comma = strchr(str, ',');
+<span class="lineNum">     555 </span>            :   return comma == NULL ? str : std::string(str, comma);
+<span class="lineNum">     556 </span>            : }
+<span class="lineNum">     557 </span>            : 
+<span class="lineNum">     558 </span>            : // TypeParameterizedTest&lt;Fixture, TestSel, Types&gt;::Register()
+<span class="lineNum">     559 </span>            : // registers a list of type-parameterized tests with Google Test.  The
+<span class="lineNum">     560 </span>            : // return value is insignificant - we just need to return something
+<span class="lineNum">     561 </span>            : // such that we can call this function in a namespace scope.
+<span class="lineNum">     562 </span>            : //
+<span class="lineNum">     563 </span>            : // Implementation note: The GTEST_TEMPLATE_ macro declares a template
+<span class="lineNum">     564 </span>            : // template parameter.  It's defined in gtest-type-util.h.
+<span class="lineNum">     565 </span>            : template &lt;GTEST_TEMPLATE_ Fixture, class TestSel, typename Types&gt;
+<span class="lineNum">     566 </span>            : class TypeParameterizedTest {
+<span class="lineNum">     567 </span>            :  public:
+<span class="lineNum">     568 </span>            :   // 'index' is the index of the test in the type list 'Types'
+<span class="lineNum">     569 </span>            :   // specified in INSTANTIATE_TYPED_TEST_CASE_P(Prefix, TestCase,
+<span class="lineNum">     570 </span>            :   // Types).  Valid values for 'index' are [0, N - 1] where N is the
+<span class="lineNum">     571 </span>            :   // length of Types.
+<span class="lineNum">     572 </span>            :   static bool Register(const char* prefix, const char* case_name,
+<span class="lineNum">     573 </span>            :                        const char* test_names, int index) {
+<span class="lineNum">     574 </span>            :     typedef typename Types::Head Type;
+<span class="lineNum">     575 </span>            :     typedef Fixture&lt;Type&gt; FixtureClass;
+<span class="lineNum">     576 </span>            :     typedef typename GTEST_BIND_(TestSel, Type) TestClass;
+<span class="lineNum">     577 </span>            : 
+<span class="lineNum">     578 </span>            :     // First, registers the first type-parameterized test in the type
+<span class="lineNum">     579 </span>            :     // list.
+<span class="lineNum">     580 </span>            :     MakeAndRegisterTestInfo(
+<span class="lineNum">     581 </span>            :         (std::string(prefix) + (prefix[0] == '\0' ? &quot;&quot; : &quot;/&quot;) + case_name + &quot;/&quot;
+<span class="lineNum">     582 </span>            :          + StreamableToString(index)).c_str(),
+<span class="lineNum">     583 </span>            :         GetPrefixUntilComma(test_names).c_str(),
+<span class="lineNum">     584 </span>            :         GetTypeName&lt;Type&gt;().c_str(),
+<span class="lineNum">     585 </span>            :         NULL,  // No value parameter.
+<span class="lineNum">     586 </span>            :         GetTypeId&lt;FixtureClass&gt;(),
+<span class="lineNum">     587 </span>            :         TestClass::SetUpTestCase,
+<span class="lineNum">     588 </span>            :         TestClass::TearDownTestCase,
+<span class="lineNum">     589 </span>            :         new TestFactoryImpl&lt;TestClass&gt;);
+<span class="lineNum">     590 </span>            : 
+<span class="lineNum">     591 </span>            :     // Next, recurses (at compile time) with the tail of the type list.
+<span class="lineNum">     592 </span>            :     return TypeParameterizedTest&lt;Fixture, TestSel, typename Types::Tail&gt;
+<span class="lineNum">     593 </span>            :         ::Register(prefix, case_name, test_names, index + 1);
+<span class="lineNum">     594 </span>            :   }
+<span class="lineNum">     595 </span>            : };
+<span class="lineNum">     596 </span>            : 
+<span class="lineNum">     597 </span>            : // The base case for the compile time recursion.
+<span class="lineNum">     598 </span>            : template &lt;GTEST_TEMPLATE_ Fixture, class TestSel&gt;
+<span class="lineNum">     599 </span>            : class TypeParameterizedTest&lt;Fixture, TestSel, Types0&gt; {
+<span class="lineNum">     600 </span>            :  public:
+<span class="lineNum">     601 </span>            :   static bool Register(const char* /*prefix*/, const char* /*case_name*/,
+<span class="lineNum">     602 </span>            :                        const char* /*test_names*/, int /*index*/) {
+<span class="lineNum">     603 </span>            :     return true;
+<span class="lineNum">     604 </span>            :   }
+<span class="lineNum">     605 </span>            : };
+<span class="lineNum">     606 </span>            : 
+<span class="lineNum">     607 </span>            : // TypeParameterizedTestCase&lt;Fixture, Tests, Types&gt;::Register()
+<span class="lineNum">     608 </span>            : // registers *all combinations* of 'Tests' and 'Types' with Google
+<span class="lineNum">     609 </span>            : // Test.  The return value is insignificant - we just need to return
+<span class="lineNum">     610 </span>            : // something such that we can call this function in a namespace scope.
+<span class="lineNum">     611 </span>            : template &lt;GTEST_TEMPLATE_ Fixture, typename Tests, typename Types&gt;
+<span class="lineNum">     612 </span>            : class TypeParameterizedTestCase {
+<span class="lineNum">     613 </span>            :  public:
+<span class="lineNum">     614 </span>            :   static bool Register(const char* prefix, const char* case_name,
+<span class="lineNum">     615 </span>            :                        const char* test_names) {
+<span class="lineNum">     616 </span>            :     typedef typename Tests::Head Head;
+<span class="lineNum">     617 </span>            : 
+<span class="lineNum">     618 </span>            :     // First, register the first test in 'Test' for each type in 'Types'.
+<span class="lineNum">     619 </span>            :     TypeParameterizedTest&lt;Fixture, Head, Types&gt;::Register(
+<span class="lineNum">     620 </span>            :         prefix, case_name, test_names, 0);
+<span class="lineNum">     621 </span>            : 
+<span class="lineNum">     622 </span>            :     // Next, recurses (at compile time) with the tail of the test list.
+<span class="lineNum">     623 </span>            :     return TypeParameterizedTestCase&lt;Fixture, typename Tests::Tail, Types&gt;
+<span class="lineNum">     624 </span>            :         ::Register(prefix, case_name, SkipComma(test_names));
+<span class="lineNum">     625 </span>            :   }
+<span class="lineNum">     626 </span>            : };
+<span class="lineNum">     627 </span>            : 
+<span class="lineNum">     628 </span>            : // The base case for the compile time recursion.
+<span class="lineNum">     629 </span>            : template &lt;GTEST_TEMPLATE_ Fixture, typename Types&gt;
+<span class="lineNum">     630 </span>            : class TypeParameterizedTestCase&lt;Fixture, Templates0, Types&gt; {
+<span class="lineNum">     631 </span>            :  public:
+<span class="lineNum">     632 </span>            :   static bool Register(const char* /*prefix*/, const char* /*case_name*/,
+<span class="lineNum">     633 </span>            :                        const char* /*test_names*/) {
+<span class="lineNum">     634 </span>            :     return true;
+<span class="lineNum">     635 </span>            :   }
+<span class="lineNum">     636 </span>            : };
+<span class="lineNum">     637 </span>            : 
+<span class="lineNum">     638 </span>            : #endif  // GTEST_HAS_TYPED_TEST || GTEST_HAS_TYPED_TEST_P
+<span class="lineNum">     639 </span>            : 
+<span class="lineNum">     640 </span>            : // Returns the current OS stack trace as an std::string.
+<span class="lineNum">     641 </span>            : //
+<span class="lineNum">     642 </span>            : // The maximum number of stack frames to be included is specified by
+<span class="lineNum">     643 </span>            : // the gtest_stack_trace_depth flag.  The skip_count parameter
+<span class="lineNum">     644 </span>            : // specifies the number of top frames to be skipped, which doesn't
+<span class="lineNum">     645 </span>            : // count against the number of frames to be included.
+<span class="lineNum">     646 </span>            : //
+<span class="lineNum">     647 </span>            : // For example, if Foo() calls Bar(), which in turn calls
+<span class="lineNum">     648 </span>            : // GetCurrentOsStackTraceExceptTop(..., 1), Foo() will be included in
+<span class="lineNum">     649 </span>            : // the trace but Bar() and GetCurrentOsStackTraceExceptTop() won't.
+<span class="lineNum">     650 </span>            : GTEST_API_ std::string GetCurrentOsStackTraceExceptTop(
+<span class="lineNum">     651 </span>            :     UnitTest* unit_test, int skip_count);
+<span class="lineNum">     652 </span>            : 
+<span class="lineNum">     653 </span>            : // Helpers for suppressing warnings on unreachable code or constant
+<span class="lineNum">     654 </span>            : // condition.
+<span class="lineNum">     655 </span>            : 
+<span class="lineNum">     656 </span>            : // Always returns true.
+<span class="lineNum">     657 </span>            : GTEST_API_ bool AlwaysTrue();
+<span class="lineNum">     658 </span>            : 
+<span class="lineNum">     659 </span>            : // Always returns false.
+<span class="lineNum">     660 </span>            : inline bool AlwaysFalse() { return !AlwaysTrue(); }
+<span class="lineNum">     661 </span>            : 
+<span class="lineNum">     662 </span>            : // Helper for suppressing false warning from Clang on a const char*
+<span class="lineNum">     663 </span>            : // variable declared in a conditional expression always being NULL in
+<a name="664"><span class="lineNum">     664 </span>            : // the else branch.</a>
+<a name="665"><span class="lineNum">     665 </span>            : struct GTEST_API_ ConstCharPtr {</a>
+<span class="lineNum">     666 </span><span class="lineCov">         92 :   ConstCharPtr(const char* str) : value(str) {}</span>
+<span class="lineNum">     667 </span><span class="lineCov">         92 :   operator bool() const { return true; }</span>
+<span class="lineNum">     668 </span>            :   const char* value;
+<span class="lineNum">     669 </span>            : };
+<span class="lineNum">     670 </span>            : 
+<span class="lineNum">     671 </span>            : // A simple Linear Congruential Generator for generating random
+<span class="lineNum">     672 </span>            : // numbers with a uniform distribution.  Unlike rand() and srand(), it
+<span class="lineNum">     673 </span>            : // doesn't use global state (and therefore can't interfere with user
+<span class="lineNum">     674 </span>            : // code).  Unlike rand_r(), it's portable.  An LCG isn't very random,
+<span class="lineNum">     675 </span>            : // but it's good enough for our purposes.
+<span class="lineNum">     676 </span>            : class GTEST_API_ Random {
+<span class="lineNum">     677 </span>            :  public:
+<span class="lineNum">     678 </span>            :   static const UInt32 kMaxRange = 1u &lt;&lt; 31;
+<span class="lineNum">     679 </span>            : 
+<span class="lineNum">     680 </span>            :   explicit Random(UInt32 seed) : state_(seed) {}
+<span class="lineNum">     681 </span>            : 
+<span class="lineNum">     682 </span>            :   void Reseed(UInt32 seed) { state_ = seed; }
+<span class="lineNum">     683 </span>            : 
+<span class="lineNum">     684 </span>            :   // Generates a random number from [0, range).  Crashes if 'range' is
+<span class="lineNum">     685 </span>            :   // 0 or greater than kMaxRange.
+<span class="lineNum">     686 </span>            :   UInt32 Generate(UInt32 range);
+<span class="lineNum">     687 </span>            : 
+<span class="lineNum">     688 </span>            :  private:
+<span class="lineNum">     689 </span>            :   UInt32 state_;
+<span class="lineNum">     690 </span>            :   GTEST_DISALLOW_COPY_AND_ASSIGN_(Random);
+<span class="lineNum">     691 </span>            : };
+<span class="lineNum">     692 </span>            : 
+<span class="lineNum">     693 </span>            : // Defining a variable of type CompileAssertTypesEqual&lt;T1, T2&gt; will cause a
+<span class="lineNum">     694 </span>            : // compiler error iff T1 and T2 are different types.
+<span class="lineNum">     695 </span>            : template &lt;typename T1, typename T2&gt;
+<span class="lineNum">     696 </span>            : struct CompileAssertTypesEqual;
+<span class="lineNum">     697 </span>            : 
+<span class="lineNum">     698 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     699 </span>            : struct CompileAssertTypesEqual&lt;T, T&gt; {
+<span class="lineNum">     700 </span>            : };
+<span class="lineNum">     701 </span>            : 
+<span class="lineNum">     702 </span>            : // Removes the reference from a type if it is a reference type,
+<span class="lineNum">     703 </span>            : // otherwise leaves it unchanged.  This is the same as
+<span class="lineNum">     704 </span>            : // tr1::remove_reference, which is not widely available yet.
+<span class="lineNum">     705 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     706 </span>            : struct RemoveReference { typedef T type; };  // NOLINT
+<span class="lineNum">     707 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     708 </span>            : struct RemoveReference&lt;T&amp;&gt; { typedef T type; };  // NOLINT
+<span class="lineNum">     709 </span>            : 
+<span class="lineNum">     710 </span>            : // A handy wrapper around RemoveReference that works when the argument
+<span class="lineNum">     711 </span>            : // T depends on template parameters.
+<span class="lineNum">     712 </span>            : #define GTEST_REMOVE_REFERENCE_(T) \
+<span class="lineNum">     713 </span>            :     typename ::testing::internal::RemoveReference&lt;T&gt;::type
+<span class="lineNum">     714 </span>            : 
+<span class="lineNum">     715 </span>            : // Removes const from a type if it is a const type, otherwise leaves
+<span class="lineNum">     716 </span>            : // it unchanged.  This is the same as tr1::remove_const, which is not
+<span class="lineNum">     717 </span>            : // widely available yet.
+<span class="lineNum">     718 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     719 </span>            : struct RemoveConst { typedef T type; };  // NOLINT
+<span class="lineNum">     720 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     721 </span>            : struct RemoveConst&lt;const T&gt; { typedef T type; };  // NOLINT
+<span class="lineNum">     722 </span>            : 
+<span class="lineNum">     723 </span>            : // MSVC 8.0, Sun C++, and IBM XL C++ have a bug which causes the above
+<span class="lineNum">     724 </span>            : // definition to fail to remove the const in 'const int[3]' and 'const
+<span class="lineNum">     725 </span>            : // char[3][4]'.  The following specialization works around the bug.
+<span class="lineNum">     726 </span>            : template &lt;typename T, size_t N&gt;
+<span class="lineNum">     727 </span>            : struct RemoveConst&lt;const T[N]&gt; {
+<span class="lineNum">     728 </span>            :   typedef typename RemoveConst&lt;T&gt;::type type[N];
+<span class="lineNum">     729 </span>            : };
+<span class="lineNum">     730 </span>            : 
+<span class="lineNum">     731 </span>            : #if defined(_MSC_VER) &amp;&amp; _MSC_VER &lt; 1400
+<span class="lineNum">     732 </span>            : // This is the only specialization that allows VC++ 7.1 to remove const in
+<span class="lineNum">     733 </span>            : // 'const int[3] and 'const int[3][4]'.  However, it causes trouble with GCC
+<span class="lineNum">     734 </span>            : // and thus needs to be conditionally compiled.
+<span class="lineNum">     735 </span>            : template &lt;typename T, size_t N&gt;
+<span class="lineNum">     736 </span>            : struct RemoveConst&lt;T[N]&gt; {
+<span class="lineNum">     737 </span>            :   typedef typename RemoveConst&lt;T&gt;::type type[N];
+<span class="lineNum">     738 </span>            : };
+<span class="lineNum">     739 </span>            : #endif
+<span class="lineNum">     740 </span>            : 
+<span class="lineNum">     741 </span>            : // A handy wrapper around RemoveConst that works when the argument
+<span class="lineNum">     742 </span>            : // T depends on template parameters.
+<span class="lineNum">     743 </span>            : #define GTEST_REMOVE_CONST_(T) \
+<span class="lineNum">     744 </span>            :     typename ::testing::internal::RemoveConst&lt;T&gt;::type
+<span class="lineNum">     745 </span>            : 
+<span class="lineNum">     746 </span>            : // Turns const U&amp;, U&amp;, const U, and U all into U.
+<span class="lineNum">     747 </span>            : #define GTEST_REMOVE_REFERENCE_AND_CONST_(T) \
+<span class="lineNum">     748 </span>            :     GTEST_REMOVE_CONST_(GTEST_REMOVE_REFERENCE_(T))
+<span class="lineNum">     749 </span>            : 
+<span class="lineNum">     750 </span>            : // Adds reference to a type if it is not a reference type,
+<span class="lineNum">     751 </span>            : // otherwise leaves it unchanged.  This is the same as
+<span class="lineNum">     752 </span>            : // tr1::add_reference, which is not widely available yet.
+<span class="lineNum">     753 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     754 </span>            : struct AddReference { typedef T&amp; type; };  // NOLINT
+<span class="lineNum">     755 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     756 </span>            : struct AddReference&lt;T&amp;&gt; { typedef T&amp; type; };  // NOLINT
+<span class="lineNum">     757 </span>            : 
+<span class="lineNum">     758 </span>            : // A handy wrapper around AddReference that works when the argument T
+<span class="lineNum">     759 </span>            : // depends on template parameters.
+<span class="lineNum">     760 </span>            : #define GTEST_ADD_REFERENCE_(T) \
+<span class="lineNum">     761 </span>            :     typename ::testing::internal::AddReference&lt;T&gt;::type
+<span class="lineNum">     762 </span>            : 
+<span class="lineNum">     763 </span>            : // Adds a reference to const on top of T as necessary.  For example,
+<span class="lineNum">     764 </span>            : // it transforms
+<span class="lineNum">     765 </span>            : //
+<span class="lineNum">     766 </span>            : //   char         ==&gt; const char&amp;
+<span class="lineNum">     767 </span>            : //   const char   ==&gt; const char&amp;
+<span class="lineNum">     768 </span>            : //   char&amp;        ==&gt; const char&amp;
+<span class="lineNum">     769 </span>            : //   const char&amp;  ==&gt; const char&amp;
+<span class="lineNum">     770 </span>            : //
+<span class="lineNum">     771 </span>            : // The argument T must depend on some template parameters.
+<span class="lineNum">     772 </span>            : #define GTEST_REFERENCE_TO_CONST_(T) \
+<span class="lineNum">     773 </span>            :     GTEST_ADD_REFERENCE_(const GTEST_REMOVE_REFERENCE_(T))
+<span class="lineNum">     774 </span>            : 
+<span class="lineNum">     775 </span>            : // ImplicitlyConvertible&lt;From, To&gt;::value is a compile-time bool
+<span class="lineNum">     776 </span>            : // constant that's true iff type From can be implicitly converted to
+<span class="lineNum">     777 </span>            : // type To.
+<span class="lineNum">     778 </span>            : template &lt;typename From, typename To&gt;
+<span class="lineNum">     779 </span>            : class ImplicitlyConvertible {
+<span class="lineNum">     780 </span>            :  private:
+<span class="lineNum">     781 </span>            :   // We need the following helper functions only for their types.
+<span class="lineNum">     782 </span>            :   // They have no implementations.
+<span class="lineNum">     783 </span>            : 
+<span class="lineNum">     784 </span>            :   // MakeFrom() is an expression whose type is From.  We cannot simply
+<span class="lineNum">     785 </span>            :   // use From(), as the type From may not have a public default
+<span class="lineNum">     786 </span>            :   // constructor.
+<span class="lineNum">     787 </span>            :   static From MakeFrom();
+<span class="lineNum">     788 </span>            : 
+<span class="lineNum">     789 </span>            :   // These two functions are overloaded.  Given an expression
+<span class="lineNum">     790 </span>            :   // Helper(x), the compiler will pick the first version if x can be
+<span class="lineNum">     791 </span>            :   // implicitly converted to type To; otherwise it will pick the
+<span class="lineNum">     792 </span>            :   // second version.
+<span class="lineNum">     793 </span>            :   //
+<span class="lineNum">     794 </span>            :   // The first version returns a value of size 1, and the second
+<span class="lineNum">     795 </span>            :   // version returns a value of size 2.  Therefore, by checking the
+<span class="lineNum">     796 </span>            :   // size of Helper(x), which can be done at compile time, we can tell
+<span class="lineNum">     797 </span>            :   // which version of Helper() is used, and hence whether x can be
+<span class="lineNum">     798 </span>            :   // implicitly converted to type To.
+<span class="lineNum">     799 </span>            :   static char Helper(To);
+<span class="lineNum">     800 </span>            :   static char (&amp;Helper(...))[2];  // NOLINT
+<span class="lineNum">     801 </span>            : 
+<span class="lineNum">     802 </span>            :   // We have to put the 'public' section after the 'private' section,
+<span class="lineNum">     803 </span>            :   // or MSVC refuses to compile the code.
+<span class="lineNum">     804 </span>            :  public:
+<span class="lineNum">     805 </span>            :   // MSVC warns about implicitly converting from double to int for
+<span class="lineNum">     806 </span>            :   // possible loss of data, so we need to temporarily disable the
+<span class="lineNum">     807 </span>            :   // warning.
+<span class="lineNum">     808 </span>            : #ifdef _MSC_VER
+<span class="lineNum">     809 </span>            : # pragma warning(push)          // Saves the current warning state.
+<span class="lineNum">     810 </span>            : # pragma warning(disable:4244)  // Temporarily disables warning 4244.
+<span class="lineNum">     811 </span>            : 
+<span class="lineNum">     812 </span>            :   static const bool value =
+<span class="lineNum">     813 </span>            :       sizeof(Helper(ImplicitlyConvertible::MakeFrom())) == 1;
+<span class="lineNum">     814 </span>            : # pragma warning(pop)           // Restores the warning state.
+<span class="lineNum">     815 </span>            : #elif defined(__BORLANDC__)
+<span class="lineNum">     816 </span>            :   // C++Builder cannot use member overload resolution during template
+<span class="lineNum">     817 </span>            :   // instantiation.  The simplest workaround is to use its C++0x type traits
+<span class="lineNum">     818 </span>            :   // functions (C++Builder 2009 and above only).
+<span class="lineNum">     819 </span>            :   static const bool value = __is_convertible(From, To);
+<span class="lineNum">     820 </span>            : #else
+<span class="lineNum">     821 </span>            :   static const bool value =
+<span class="lineNum">     822 </span>            :       sizeof(Helper(ImplicitlyConvertible::MakeFrom())) == 1;
+<span class="lineNum">     823 </span>            : #endif  // _MSV_VER
+<span class="lineNum">     824 </span>            : };
+<span class="lineNum">     825 </span>            : template &lt;typename From, typename To&gt;
+<span class="lineNum">     826 </span>            : const bool ImplicitlyConvertible&lt;From, To&gt;::value;
+<span class="lineNum">     827 </span>            : 
+<span class="lineNum">     828 </span>            : // IsAProtocolMessage&lt;T&gt;::value is a compile-time bool constant that's
+<span class="lineNum">     829 </span>            : // true iff T is type ProtocolMessage, proto2::Message, or a subclass
+<span class="lineNum">     830 </span>            : // of those.
+<span class="lineNum">     831 </span>            : template &lt;typename T&gt;
+<span class="lineNum">     832 </span>            : struct IsAProtocolMessage
+<span class="lineNum">     833 </span>            :     : public bool_constant&lt;
+<span class="lineNum">     834 </span>            :   ImplicitlyConvertible&lt;const T*, const ::ProtocolMessage*&gt;::value ||
+<span class="lineNum">     835 </span>            :   ImplicitlyConvertible&lt;const T*, const ::proto2::Message*&gt;::value&gt; {
+<span class="lineNum">     836 </span>            : };
+<span class="lineNum">     837 </span>            : 
+<span class="lineNum">     838 </span>            : // When the compiler sees expression IsContainerTest&lt;C&gt;(0), if C is an
+<span class="lineNum">     839 </span>            : // STL-style container class, the first overload of IsContainerTest
+<span class="lineNum">     840 </span>            : // will be viable (since both C::iterator* and C::const_iterator* are
+<span class="lineNum">     841 </span>            : // valid types and NULL can be implicitly converted to them).  It will
+<span class="lineNum">     842 </span>            : // be picked over the second overload as 'int' is a perfect match for
+<span class="lineNum">     843 </span>            : // the type of argument 0.  If C::iterator or C::const_iterator is not
+<span class="lineNum">     844 </span>            : // a valid type, the first overload is not viable, and the second
+<span class="lineNum">     845 </span>            : // overload will be picked.  Therefore, we can determine whether C is
+<span class="lineNum">     846 </span>            : // a container class by checking the type of IsContainerTest&lt;C&gt;(0).
+<span class="lineNum">     847 </span>            : // The value of the expression is insignificant.
+<span class="lineNum">     848 </span>            : //
+<span class="lineNum">     849 </span>            : // Note that we look for both C::iterator and C::const_iterator.  The
+<span class="lineNum">     850 </span>            : // reason is that C++ injects the name of a class as a member of the
+<span class="lineNum">     851 </span>            : // class itself (e.g. you can refer to class iterator as either
+<span class="lineNum">     852 </span>            : // 'iterator' or 'iterator::iterator').  If we look for C::iterator
+<span class="lineNum">     853 </span>            : // only, for example, we would mistakenly think that a class named
+<span class="lineNum">     854 </span>            : // iterator is an STL container.
+<span class="lineNum">     855 </span>            : //
+<span class="lineNum">     856 </span>            : // Also note that the simpler approach of overloading
+<span class="lineNum">     857 </span>            : // IsContainerTest(typename C::const_iterator*) and
+<span class="lineNum">     858 </span>            : // IsContainerTest(...) doesn't work with Visual Age C++ and Sun C++.
+<a name="859"><span class="lineNum">     859 </span>            : typedef int IsContainer;</a>
+<span class="lineNum">     860 </span>            : template &lt;class C&gt;
+<span class="lineNum">     861 </span><span class="lineNoCov">          0 : IsContainer IsContainerTest(int /* dummy */,</span>
+<span class="lineNum">     862 </span>            :                             typename C::iterator* /* it */ = NULL,
+<span class="lineNum">     863 </span>            :                             typename C::const_iterator* /* const_it */ = NULL) {
+<span class="lineNum">     864 </span><span class="lineNoCov">          0 :   return 0;</span>
+<span class="lineNum">     865 </span>            : }
+<span class="lineNum">     866 </span>            : 
+<a name="867"><span class="lineNum">     867 </span>            : typedef char IsNotContainer;</a>
+<span class="lineNum">     868 </span>            : template &lt;class C&gt;
+<span class="lineNum">     869 </span><span class="lineNoCov">          0 : IsNotContainer IsContainerTest(long /* dummy */) { return '\0'; }</span>
+<span class="lineNum">     870 </span>            : 
+<span class="lineNum">     871 </span>            : // EnableIf&lt;condition&gt;::type is void when 'Cond' is true, and
+<span class="lineNum">     872 </span>            : // undefined when 'Cond' is false.  To use SFINAE to make a function
+<span class="lineNum">     873 </span>            : // overload only apply when a particular expression is true, add
+<span class="lineNum">     874 </span>            : // &quot;typename EnableIf&lt;expression&gt;::type* = 0&quot; as the last parameter.
+<span class="lineNum">     875 </span>            : template&lt;bool&gt; struct EnableIf;
+<span class="lineNum">     876 </span>            : template&lt;&gt; struct EnableIf&lt;true&gt; { typedef void type; };  // NOLINT
+<span class="lineNum">     877 </span>            : 
+<span class="lineNum">     878 </span>            : // Utilities for native arrays.
+<span class="lineNum">     879 </span>            : 
+<span class="lineNum">     880 </span>            : // ArrayEq() compares two k-dimensional native arrays using the
+<span class="lineNum">     881 </span>            : // elements' operator==, where k can be any integer &gt;= 0.  When k is
+<span class="lineNum">     882 </span>            : // 0, ArrayEq() degenerates into comparing a single pair of values.
+<span class="lineNum">     883 </span>            : 
+<span class="lineNum">     884 </span>            : template &lt;typename T, typename U&gt;
+<span class="lineNum">     885 </span>            : bool ArrayEq(const T* lhs, size_t size, const U* rhs);
+<span class="lineNum">     886 </span>            : 
+<span class="lineNum">     887 </span>            : // This generic version is used when k is 0.
+<span class="lineNum">     888 </span>            : template &lt;typename T, typename U&gt;
+<span class="lineNum">     889 </span>            : inline bool ArrayEq(const T&amp; lhs, const U&amp; rhs) { return lhs == rhs; }
+<span class="lineNum">     890 </span>            : 
+<span class="lineNum">     891 </span>            : // This overload is used when k &gt;= 1.
+<span class="lineNum">     892 </span>            : template &lt;typename T, typename U, size_t N&gt;
+<span class="lineNum">     893 </span>            : inline bool ArrayEq(const T(&amp;lhs)[N], const U(&amp;rhs)[N]) {
+<span class="lineNum">     894 </span>            :   return internal::ArrayEq(lhs, N, rhs);
+<span class="lineNum">     895 </span>            : }
+<span class="lineNum">     896 </span>            : 
+<span class="lineNum">     897 </span>            : // This helper reduces code bloat.  If we instead put its logic inside
+<span class="lineNum">     898 </span>            : // the previous ArrayEq() function, arrays with different sizes would
+<span class="lineNum">     899 </span>            : // lead to different copies of the template code.
+<span class="lineNum">     900 </span>            : template &lt;typename T, typename U&gt;
+<span class="lineNum">     901 </span>            : bool ArrayEq(const T* lhs, size_t size, const U* rhs) {
+<span class="lineNum">     902 </span>            :   for (size_t i = 0; i != size; i++) {
+<span class="lineNum">     903 </span>            :     if (!internal::ArrayEq(lhs[i], rhs[i]))
+<span class="lineNum">     904 </span>            :       return false;
+<span class="lineNum">     905 </span>            :   }
+<span class="lineNum">     906 </span>            :   return true;
+<span class="lineNum">     907 </span>            : }
+<span class="lineNum">     908 </span>            : 
+<span class="lineNum">     909 </span>            : // Finds the first element in the iterator range [begin, end) that
+<span class="lineNum">     910 </span>            : // equals elem.  Element may be a native array type itself.
+<span class="lineNum">     911 </span>            : template &lt;typename Iter, typename Element&gt;
+<span class="lineNum">     912 </span>            : Iter ArrayAwareFind(Iter begin, Iter end, const Element&amp; elem) {
+<span class="lineNum">     913 </span>            :   for (Iter it = begin; it != end; ++it) {
+<span class="lineNum">     914 </span>            :     if (internal::ArrayEq(*it, elem))
+<span class="lineNum">     915 </span>            :       return it;
+<span class="lineNum">     916 </span>            :   }
+<span class="lineNum">     917 </span>            :   return end;
+<span class="lineNum">     918 </span>            : }
+<span class="lineNum">     919 </span>            : 
+<span class="lineNum">     920 </span>            : // CopyArray() copies a k-dimensional native array using the elements'
+<span class="lineNum">     921 </span>            : // operator=, where k can be any integer &gt;= 0.  When k is 0,
+<span class="lineNum">     922 </span>            : // CopyArray() degenerates into copying a single value.
+<span class="lineNum">     923 </span>            : 
+<span class="lineNum">     924 </span>            : template &lt;typename T, typename U&gt;
+<span class="lineNum">     925 </span>            : void CopyArray(const T* from, size_t size, U* to);
+<span class="lineNum">     926 </span>            : 
+<span class="lineNum">     927 </span>            : // This generic version is used when k is 0.
+<span class="lineNum">     928 </span>            : template &lt;typename T, typename U&gt;
+<span class="lineNum">     929 </span>            : inline void CopyArray(const T&amp; from, U* to) { *to = from; }
+<span class="lineNum">     930 </span>            : 
+<span class="lineNum">     931 </span>            : // This overload is used when k &gt;= 1.
+<span class="lineNum">     932 </span>            : template &lt;typename T, typename U, size_t N&gt;
+<span class="lineNum">     933 </span>            : inline void CopyArray(const T(&amp;from)[N], U(*to)[N]) {
+<span class="lineNum">     934 </span>            :   internal::CopyArray(from, N, *to);
+<span class="lineNum">     935 </span>            : }
+<span class="lineNum">     936 </span>            : 
+<span class="lineNum">     937 </span>            : // This helper reduces code bloat.  If we instead put its logic inside
+<span class="lineNum">     938 </span>            : // the previous CopyArray() function, arrays with different sizes
+<span class="lineNum">     939 </span>            : // would lead to different copies of the template code.
+<span class="lineNum">     940 </span>            : template &lt;typename T, typename U&gt;
+<span class="lineNum">     941 </span>            : void CopyArray(const T* from, size_t size, U* to) {
+<span class="lineNum">     942 </span>            :   for (size_t i = 0; i != size; i++) {
+<span class="lineNum">     943 </span>            :     internal::CopyArray(from[i], to + i);
+<span class="lineNum">     944 </span>            :   }
+<span class="lineNum">     945 </span>            : }
+<span class="lineNum">     946 </span>            : 
+<span class="lineNum">     947 </span>            : // The relation between an NativeArray object (see below) and the
+<span class="lineNum">     948 </span>            : // native array it represents.
+<span class="lineNum">     949 </span>            : enum RelationToSource {
+<span class="lineNum">     950 </span>            :   kReference,  // The NativeArray references the native array.
+<span class="lineNum">     951 </span>            :   kCopy        // The NativeArray makes a copy of the native array and
+<span class="lineNum">     952 </span>            :                // owns the copy.
+<span class="lineNum">     953 </span>            : };
+<span class="lineNum">     954 </span>            : 
+<span class="lineNum">     955 </span>            : // Adapts a native array to a read-only STL-style container.  Instead
+<span class="lineNum">     956 </span>            : // of the complete STL container concept, this adaptor only implements
+<span class="lineNum">     957 </span>            : // members useful for Google Mock's container matchers.  New members
+<span class="lineNum">     958 </span>            : // should be added as needed.  To simplify the implementation, we only
+<span class="lineNum">     959 </span>            : // support Element being a raw type (i.e. having no top-level const or
+<span class="lineNum">     960 </span>            : // reference modifier).  It's the client's responsibility to satisfy
+<span class="lineNum">     961 </span>            : // this requirement.  Element can be an array type itself (hence
+<span class="lineNum">     962 </span>            : // multi-dimensional arrays are supported).
+<span class="lineNum">     963 </span>            : template &lt;typename Element&gt;
+<span class="lineNum">     964 </span>            : class NativeArray {
+<span class="lineNum">     965 </span>            :  public:
+<span class="lineNum">     966 </span>            :   // STL-style container typedefs.
+<span class="lineNum">     967 </span>            :   typedef Element value_type;
+<span class="lineNum">     968 </span>            :   typedef Element* iterator;
+<span class="lineNum">     969 </span>            :   typedef const Element* const_iterator;
+<span class="lineNum">     970 </span>            : 
+<span class="lineNum">     971 </span>            :   // Constructs from a native array.
+<span class="lineNum">     972 </span>            :   NativeArray(const Element* array, size_t count, RelationToSource relation) {
+<span class="lineNum">     973 </span>            :     Init(array, count, relation);
+<span class="lineNum">     974 </span>            :   }
+<span class="lineNum">     975 </span>            : 
+<span class="lineNum">     976 </span>            :   // Copy constructor.
+<span class="lineNum">     977 </span>            :   NativeArray(const NativeArray&amp; rhs) {
+<span class="lineNum">     978 </span>            :     Init(rhs.array_, rhs.size_, rhs.relation_to_source_);
+<span class="lineNum">     979 </span>            :   }
+<span class="lineNum">     980 </span>            : 
+<span class="lineNum">     981 </span>            :   ~NativeArray() {
+<span class="lineNum">     982 </span>            :     // Ensures that the user doesn't instantiate NativeArray with a
+<span class="lineNum">     983 </span>            :     // const or reference type.
+<span class="lineNum">     984 </span>            :     static_cast&lt;void&gt;(StaticAssertTypeEqHelper&lt;Element,
+<span class="lineNum">     985 </span>            :         GTEST_REMOVE_REFERENCE_AND_CONST_(Element)&gt;());
+<span class="lineNum">     986 </span>            :     if (relation_to_source_ == kCopy)
+<span class="lineNum">     987 </span>            :       delete[] array_;
+<span class="lineNum">     988 </span>            :   }
+<span class="lineNum">     989 </span>            : 
+<span class="lineNum">     990 </span>            :   // STL-style container methods.
+<span class="lineNum">     991 </span>            :   size_t size() const { return size_; }
+<span class="lineNum">     992 </span>            :   const_iterator begin() const { return array_; }
+<span class="lineNum">     993 </span>            :   const_iterator end() const { return array_ + size_; }
+<span class="lineNum">     994 </span>            :   bool operator==(const NativeArray&amp; rhs) const {
+<span class="lineNum">     995 </span>            :     return size() == rhs.size() &amp;&amp;
+<span class="lineNum">     996 </span>            :         ArrayEq(begin(), size(), rhs.begin());
+<span class="lineNum">     997 </span>            :   }
+<span class="lineNum">     998 </span>            : 
+<span class="lineNum">     999 </span>            :  private:
+<span class="lineNum">    1000 </span>            :   // Initializes this object; makes a copy of the input array if
+<span class="lineNum">    1001 </span>            :   // 'relation' is kCopy.
+<span class="lineNum">    1002 </span>            :   void Init(const Element* array, size_t a_size, RelationToSource relation) {
+<span class="lineNum">    1003 </span>            :     if (relation == kReference) {
+<span class="lineNum">    1004 </span>            :       array_ = array;
+<span class="lineNum">    1005 </span>            :     } else {
+<span class="lineNum">    1006 </span>            :       Element* const copy = new Element[a_size];
+<span class="lineNum">    1007 </span>            :       CopyArray(array, a_size, copy);
+<span class="lineNum">    1008 </span>            :       array_ = copy;
+<span class="lineNum">    1009 </span>            :     }
+<span class="lineNum">    1010 </span>            :     size_ = a_size;
+<span class="lineNum">    1011 </span>            :     relation_to_source_ = relation;
+<span class="lineNum">    1012 </span>            :   }
+<span class="lineNum">    1013 </span>            : 
+<span class="lineNum">    1014 </span>            :   const Element* array_;
+<span class="lineNum">    1015 </span>            :   size_t size_;
+<span class="lineNum">    1016 </span>            :   RelationToSource relation_to_source_;
+<span class="lineNum">    1017 </span>            : 
+<span class="lineNum">    1018 </span>            :   GTEST_DISALLOW_ASSIGN_(NativeArray);
+<span class="lineNum">    1019 </span>            : };
+<span class="lineNum">    1020 </span>            : 
+<span class="lineNum">    1021 </span>            : }  // namespace internal
+<span class="lineNum">    1022 </span>            : }  // namespace testing
+<span class="lineNum">    1023 </span>            : 
+<span class="lineNum">    1024 </span>            : #define GTEST_MESSAGE_AT_(file, line, message, result_type) \
+<span class="lineNum">    1025 </span>            :   ::testing::internal::AssertHelper(result_type, file, line, message) \
+<span class="lineNum">    1026 </span>            :     = ::testing::Message()
+<span class="lineNum">    1027 </span>            : 
+<span class="lineNum">    1028 </span>            : #define GTEST_MESSAGE_(message, result_type) \
+<span class="lineNum">    1029 </span>            :   GTEST_MESSAGE_AT_(__FILE__, __LINE__, message, result_type)
+<span class="lineNum">    1030 </span>            : 
+<span class="lineNum">    1031 </span>            : #define GTEST_FATAL_FAILURE_(message) \
+<span class="lineNum">    1032 </span>            :   return GTEST_MESSAGE_(message, ::testing::TestPartResult::kFatalFailure)
+<span class="lineNum">    1033 </span>            : 
+<span class="lineNum">    1034 </span>            : #define GTEST_NONFATAL_FAILURE_(message) \
+<span class="lineNum">    1035 </span>            :   GTEST_MESSAGE_(message, ::testing::TestPartResult::kNonFatalFailure)
+<span class="lineNum">    1036 </span>            : 
+<span class="lineNum">    1037 </span>            : #define GTEST_SUCCESS_(message) \
+<span class="lineNum">    1038 </span>            :   GTEST_MESSAGE_(message, ::testing::TestPartResult::kSuccess)
+<span class="lineNum">    1039 </span>            : 
+<span class="lineNum">    1040 </span>            : // Suppresses MSVC warnings 4072 (unreachable code) for the code following
+<span class="lineNum">    1041 </span>            : // statement if it returns or throws (or doesn't return or throw in some
+<span class="lineNum">    1042 </span>            : // situations).
+<span class="lineNum">    1043 </span>            : #define GTEST_SUPPRESS_UNREACHABLE_CODE_WARNING_BELOW_(statement) \
+<span class="lineNum">    1044 </span>            :   if (::testing::internal::AlwaysTrue()) { statement; }
+<span class="lineNum">    1045 </span>            : 
+<span class="lineNum">    1046 </span>            : #define GTEST_TEST_THROW_(statement, expected_exception, fail) \
+<span class="lineNum">    1047 </span>            :   GTEST_AMBIGUOUS_ELSE_BLOCKER_ \
+<span class="lineNum">    1048 </span>            :   if (::testing::internal::ConstCharPtr gtest_msg = &quot;&quot;) { \
+<span class="lineNum">    1049 </span>            :     bool gtest_caught_expected = false; \
+<span class="lineNum">    1050 </span>            :     try { \
+<span class="lineNum">    1051 </span>            :       GTEST_SUPPRESS_UNREACHABLE_CODE_WARNING_BELOW_(statement); \
+<span class="lineNum">    1052 </span>            :     } \
+<span class="lineNum">    1053 </span>            :     catch (expected_exception const&amp;) { \
+<span class="lineNum">    1054 </span>            :       gtest_caught_expected = true; \
+<span class="lineNum">    1055 </span>            :     } \
+<span class="lineNum">    1056 </span>            :     catch (...) { \
+<span class="lineNum">    1057 </span>            :       gtest_msg.value = \
+<span class="lineNum">    1058 </span>            :           &quot;Expected: &quot; #statement &quot; throws an exception of type &quot; \
+<span class="lineNum">    1059 </span>            :           #expected_exception &quot;.\n  Actual: it throws a different type.&quot;; \
+<span class="lineNum">    1060 </span>            :       goto GTEST_CONCAT_TOKEN_(gtest_label_testthrow_, __LINE__); \
+<span class="lineNum">    1061 </span>            :     } \
+<span class="lineNum">    1062 </span>            :     if (!gtest_caught_expected) { \
+<span class="lineNum">    1063 </span>            :       gtest_msg.value = \
+<span class="lineNum">    1064 </span>            :           &quot;Expected: &quot; #statement &quot; throws an exception of type &quot; \
+<span class="lineNum">    1065 </span>            :           #expected_exception &quot;.\n  Actual: it throws nothing.&quot;; \
+<span class="lineNum">    1066 </span>            :       goto GTEST_CONCAT_TOKEN_(gtest_label_testthrow_, __LINE__); \
+<span class="lineNum">    1067 </span>            :     } \
+<span class="lineNum">    1068 </span>            :   } else \
+<span class="lineNum">    1069 </span>            :     GTEST_CONCAT_TOKEN_(gtest_label_testthrow_, __LINE__): \
+<span class="lineNum">    1070 </span>            :       fail(gtest_msg.value)
+<span class="lineNum">    1071 </span>            : 
+<span class="lineNum">    1072 </span>            : #define GTEST_TEST_NO_THROW_(statement, fail) \
+<span class="lineNum">    1073 </span>            :   GTEST_AMBIGUOUS_ELSE_BLOCKER_ \
+<span class="lineNum">    1074 </span>            :   if (::testing::internal::AlwaysTrue()) { \
+<span class="lineNum">    1075 </span>            :     try { \
+<span class="lineNum">    1076 </span>            :       GTEST_SUPPRESS_UNREACHABLE_CODE_WARNING_BELOW_(statement); \
+<span class="lineNum">    1077 </span>            :     } \
+<span class="lineNum">    1078 </span>            :     catch (...) { \
+<span class="lineNum">    1079 </span>            :       goto GTEST_CONCAT_TOKEN_(gtest_label_testnothrow_, __LINE__); \
+<span class="lineNum">    1080 </span>            :     } \
+<span class="lineNum">    1081 </span>            :   } else \
+<span class="lineNum">    1082 </span>            :     GTEST_CONCAT_TOKEN_(gtest_label_testnothrow_, __LINE__): \
+<span class="lineNum">    1083 </span>            :       fail(&quot;Expected: &quot; #statement &quot; doesn't throw an exception.\n&quot; \
+<span class="lineNum">    1084 </span>            :            &quot;  Actual: it throws.&quot;)
+<span class="lineNum">    1085 </span>            : 
+<span class="lineNum">    1086 </span>            : #define GTEST_TEST_ANY_THROW_(statement, fail) \
+<span class="lineNum">    1087 </span>            :   GTEST_AMBIGUOUS_ELSE_BLOCKER_ \
+<span class="lineNum">    1088 </span>            :   if (::testing::internal::AlwaysTrue()) { \
+<span class="lineNum">    1089 </span>            :     bool gtest_caught_any = false; \
+<span class="lineNum">    1090 </span>            :     try { \
+<span class="lineNum">    1091 </span>            :       GTEST_SUPPRESS_UNREACHABLE_CODE_WARNING_BELOW_(statement); \
+<span class="lineNum">    1092 </span>            :     } \
+<span class="lineNum">    1093 </span>            :     catch (...) { \
+<span class="lineNum">    1094 </span>            :       gtest_caught_any = true; \
+<span class="lineNum">    1095 </span>            :     } \
+<span class="lineNum">    1096 </span>            :     if (!gtest_caught_any) { \
+<span class="lineNum">    1097 </span>            :       goto GTEST_CONCAT_TOKEN_(gtest_label_testanythrow_, __LINE__); \
+<span class="lineNum">    1098 </span>            :     } \
+<span class="lineNum">    1099 </span>            :   } else \
+<span class="lineNum">    1100 </span>            :     GTEST_CONCAT_TOKEN_(gtest_label_testanythrow_, __LINE__): \
+<span class="lineNum">    1101 </span>            :       fail(&quot;Expected: &quot; #statement &quot; throws an exception.\n&quot; \
+<span class="lineNum">    1102 </span>            :            &quot;  Actual: it doesn't.&quot;)
+<span class="lineNum">    1103 </span>            : 
+<span class="lineNum">    1104 </span>            : 
+<span class="lineNum">    1105 </span>            : // Implements Boolean test assertions such as EXPECT_TRUE. expression can be
+<span class="lineNum">    1106 </span>            : // either a boolean expression or an AssertionResult. text is a textual
+<span class="lineNum">    1107 </span>            : // represenation of expression as it was passed into the EXPECT_TRUE.
+<span class="lineNum">    1108 </span>            : #define GTEST_TEST_BOOLEAN_(expression, text, actual, expected, fail) \
+<span class="lineNum">    1109 </span>            :   GTEST_AMBIGUOUS_ELSE_BLOCKER_ \
+<span class="lineNum">    1110 </span>            :   if (const ::testing::AssertionResult gtest_ar_ = \
+<span class="lineNum">    1111 </span>            :       ::testing::AssertionResult(expression)) \
+<span class="lineNum">    1112 </span>            :     ; \
+<span class="lineNum">    1113 </span>            :   else \
+<span class="lineNum">    1114 </span>            :     fail(::testing::internal::GetBoolAssertionFailureMessage(\
+<span class="lineNum">    1115 </span>            :         gtest_ar_, text, #actual, #expected).c_str())
+<span class="lineNum">    1116 </span>            : 
+<span class="lineNum">    1117 </span>            : #define GTEST_TEST_NO_FATAL_FAILURE_(statement, fail) \
+<span class="lineNum">    1118 </span>            :   GTEST_AMBIGUOUS_ELSE_BLOCKER_ \
+<span class="lineNum">    1119 </span>            :   if (::testing::internal::AlwaysTrue()) { \
+<span class="lineNum">    1120 </span>            :     ::testing::internal::HasNewFatalFailureHelper gtest_fatal_failure_checker; \
+<span class="lineNum">    1121 </span>            :     GTEST_SUPPRESS_UNREACHABLE_CODE_WARNING_BELOW_(statement); \
+<span class="lineNum">    1122 </span>            :     if (gtest_fatal_failure_checker.has_new_fatal_failure()) { \
+<span class="lineNum">    1123 </span>            :       goto GTEST_CONCAT_TOKEN_(gtest_label_testnofatal_, __LINE__); \
+<span class="lineNum">    1124 </span>            :     } \
+<span class="lineNum">    1125 </span>            :   } else \
+<span class="lineNum">    1126 </span>            :     GTEST_CONCAT_TOKEN_(gtest_label_testnofatal_, __LINE__): \
+<span class="lineNum">    1127 </span>            :       fail(&quot;Expected: &quot; #statement &quot; doesn't generate new fatal &quot; \
+<span class="lineNum">    1128 </span>            :            &quot;failures in the current thread.\n&quot; \
+<span class="lineNum">    1129 </span>            :            &quot;  Actual: it does.&quot;)
+<span class="lineNum">    1130 </span>            : 
+<span class="lineNum">    1131 </span>            : // Expands to the name of the class that implements the given test.
+<span class="lineNum">    1132 </span>            : #define GTEST_TEST_CLASS_NAME_(test_case_name, test_name) \
+<span class="lineNum">    1133 </span>            :   test_case_name##_##test_name##_Test
+<span class="lineNum">    1134 </span>            : 
+<span class="lineNum">    1135 </span>            : // Helper macro for defining tests.
+<span class="lineNum">    1136 </span>            : #define GTEST_TEST_(test_case_name, test_name, parent_class, parent_id)\
+<span class="lineNum">    1137 </span>            : class GTEST_TEST_CLASS_NAME_(test_case_name, test_name) : public parent_class {\
+<span class="lineNum">    1138 </span>            :  public:\
+<span class="lineNum">    1139 </span>            :   GTEST_TEST_CLASS_NAME_(test_case_name, test_name)() {}\
+<span class="lineNum">    1140 </span>            :  private:\
+<span class="lineNum">    1141 </span>            :   virtual void TestBody();\
+<span class="lineNum">    1142 </span>            :   static ::testing::TestInfo* const test_info_ GTEST_ATTRIBUTE_UNUSED_;\
+<span class="lineNum">    1143 </span>            :   GTEST_DISALLOW_COPY_AND_ASSIGN_(\
+<span class="lineNum">    1144 </span>            :       GTEST_TEST_CLASS_NAME_(test_case_name, test_name));\
+<span class="lineNum">    1145 </span>            : };\
+<span class="lineNum">    1146 </span>            : \
+<span class="lineNum">    1147 </span>            : ::testing::TestInfo* const GTEST_TEST_CLASS_NAME_(test_case_name, test_name)\
+<span class="lineNum">    1148 </span>            :   ::test_info_ =\
+<span class="lineNum">    1149 </span>            :     ::testing::internal::MakeAndRegisterTestInfo(\
+<span class="lineNum">    1150 </span>            :         #test_case_name, #test_name, NULL, NULL, \
+<span class="lineNum">    1151 </span>            :         (parent_id), \
+<span class="lineNum">    1152 </span>            :         parent_class::SetUpTestCase, \
+<span class="lineNum">    1153 </span>            :         parent_class::TearDownTestCase, \
+<span class="lineNum">    1154 </span>            :         new ::testing::internal::TestFactoryImpl&lt;\
+<span class="lineNum">    1155 </span>            :             GTEST_TEST_CLASS_NAME_(test_case_name, test_name)&gt;);\
+<span class="lineNum">    1156 </span>            : void GTEST_TEST_CLASS_NAME_(test_case_name, test_name)::TestBody()
+<span class="lineNum">    1157 </span>            : 
+<span class="lineNum">    1158 </span>            : #endif  // GTEST_INCLUDE_GTEST_INTERNAL_GTEST_INTERNAL_H_
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.11</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

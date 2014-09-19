@@ -1,0 +1,133 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info.cleaned - test/autodiscovery/AutoDiscoveryManager_test.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">test/autodiscovery</a> - AutoDiscoveryManager_test.cpp<span style="font-size: 80%;"> (source / <a href="AutoDiscoveryManager_test.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">29</td>
+            <td class="headerCovTableEntry">29</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2014-09-19 09:31:24</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntry">13</td>
+            <td class="headerCovTableEntryHi">92.3 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;gtest/gtest.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;autodiscovery/AutoDiscoveryManager.h&quot;
+<span class="lineNum">       3 </span>            : #include &lt;mutex&gt;
+<span class="lineNum">       4 </span>            : #include &lt;vector&gt;
+<a name="5"><span class="lineNum">       5 </span>            : #include &lt;utility&gt;</a>
+<span class="lineNum">       6 </span>            : 
+<span class="lineNum">       7 </span><span class="lineCov">          2 : class AutoDiscoveryManagerTest : public ::testing::Test {</span>
+<span class="lineNum">       8 </span>            : protected:      
+<span class="lineNum">       9 </span>            :         std::mutex mutex;
+<a name="10"><span class="lineNum">      10 </span>            :         std::vector&lt;std::pair&lt;std::string,std::string&gt;&gt; list;</a>
+<span class="lineNum">      11 </span>            :         
+<a name="12"><span class="lineNum">      12 </span><span class="lineCov">          3 :         class TestManager : public Susi::Autodiscovery::Manager {</span></a>
+<span class="lineNum">      13 </span>            :         public:
+<span class="lineNum">      14 </span><span class="lineCov">          3 :                 TestManager(std::string addr1,std::string addr2,AutoDiscoveryManagerTest *test) : Susi::Autodiscovery::Manager{addr1,addr2}, _test{test} {}</span>
+<a name="15"><span class="lineNum">      15 </span>            :         protected:</a>
+<span class="lineNum">      16 </span>            :                 AutoDiscoveryManagerTest *_test;
+<span class="lineNum">      17 </span><span class="lineCov">          6 :                 virtual void onNewHost(std::string &amp; addr) override {</span>
+<span class="lineNum">      18 </span><span class="lineCov">          6 :                         std::lock_guard&lt;std::mutex&gt; lock{_test-&gt;mutex};</span>
+<span class="lineNum">      19 </span><span class="lineCov">          6 :                         _test-&gt;list.push_back(std::pair&lt;std::string,std::string&gt;{_ownAddr,addr});</span>
+<span class="lineNum">      20 </span><span class="lineCov">          6 :                 }</span>
+<a name="21"><span class="lineNum">      21 </span>            :         };</a>
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span><span class="lineCov">          1 :         virtual void TearDown() override {</span>
+<span class="lineNum">      24 </span><span class="lineCov">          1 :                 list.clear();</span>
+<span class="lineNum">      25 </span><span class="lineCov">          1 :         }</span>
+<span class="lineNum">      26 </span>            : 
+<a name="27"><span class="lineNum">      27 </span>            : };</a>
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span><span class="lineCov">          5 : TEST_F(AutoDiscoveryManagerTest, Basic) {</span>
+<span class="lineNum">      30 </span><span class="lineCov">          1 :         TestManager manager1{&quot;239.255.255.250:12345&quot;,&quot;Host1&quot;, this};</span>
+<span class="lineNum">      31 </span><span class="lineCov">          2 :         TestManager manager2{&quot;239.255.255.250:12345&quot;,&quot;Host2&quot;, this};</span>
+<span class="lineNum">      32 </span><span class="lineCov">          2 :         TestManager manager3{&quot;239.255.255.250:12345&quot;,&quot;Host3&quot;, this};</span>
+<span class="lineNum">      33 </span><span class="lineCov">          1 :         manager1.start();</span>
+<span class="lineNum">      34 </span><span class="lineCov">          1 :         manager2.start();</span>
+<span class="lineNum">      35 </span><span class="lineCov">          1 :         manager3.start();</span>
+<span class="lineNum">      36 </span><span class="lineCov">          1 :         std::this_thread::sleep_for(std::chrono::milliseconds{250});</span>
+<span class="lineNum">      37 </span><span class="lineCov">          1 :         manager1.stop();</span>
+<span class="lineNum">      38 </span><span class="lineCov">          1 :         manager2.stop();</span>
+<span class="lineNum">      39 </span><span class="lineCov">          1 :         manager3.stop();</span>
+<span class="lineNum">      40 </span>            :         std::vector&lt;std::pair&lt;std::string,std::string&gt;&gt; expected = {
+<span class="lineNum">      41 </span>            :                 {&quot;Host1&quot;,&quot;Host2&quot;},
+<span class="lineNum">      42 </span>            :                 {&quot;Host1&quot;,&quot;Host3&quot;},
+<span class="lineNum">      43 </span>            :                 {&quot;Host2&quot;,&quot;Host1&quot;},
+<span class="lineNum">      44 </span>            :                 {&quot;Host2&quot;,&quot;Host3&quot;},
+<span class="lineNum">      45 </span>            :                 {&quot;Host3&quot;,&quot;Host1&quot;},
+<span class="lineNum">      46 </span>            :                 {&quot;Host3&quot;,&quot;Host2&quot;}
+<span class="lineNum">      47 </span><span class="lineCov">          2 :         };</span>
+<span class="lineNum">      48 </span><span class="lineCov">          7 :         for(auto &amp; pair : expected){</span>
+<span class="lineNum">      49 </span><span class="lineCov">         10 :                 for(auto it = list.begin(); it != list.end(); it++){</span>
+<span class="lineNum">      50 </span><span class="lineCov">         10 :                         if(pair.first == (*it).first &amp;&amp; pair.second == (*it).second){</span>
+<span class="lineNum">      51 </span><span class="lineCov">          6 :                                 list.erase(it);</span>
+<span class="lineNum">      52 </span><span class="lineCov">          6 :                                 break;</span>
+<span class="lineNum">      53 </span>            :                         }
+<span class="lineNum">      54 </span>            :                 }
+<a name="55"><span class="lineNum">      55 </span>            :         }</a>
+<span class="lineNum">      56 </span><span class="lineCov">          2 :         EXPECT_TRUE(list.empty());</span>
+<span class="lineNum">      57 </span><span class="lineCov">          4 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.11</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

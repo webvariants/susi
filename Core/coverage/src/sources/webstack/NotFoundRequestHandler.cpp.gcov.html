@@ -1,0 +1,102 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info.cleaned - src/sources/webstack/NotFoundRequestHandler.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">src/sources/webstack</a> - NotFoundRequestHandler.cpp<span style="font-size: 80%;"> (source / <a href="NotFoundRequestHandler.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2014-09-19 09:31:24</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">1</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :  * Copyright (c) 2014, webvariants GmbH, http://www.webvariants.de
+<span class="lineNum">       3 </span>            :  *
+<span class="lineNum">       4 </span>            :  * This file is released under the terms of the MIT license. You can find the
+<span class="lineNum">       5 </span>            :  * complete text in the attached LICENSE file or online at:
+<span class="lineNum">       6 </span>            :  *
+<span class="lineNum">       7 </span>            :  * http://www.opensource.org/licenses/mit-license.php
+<span class="lineNum">       8 </span>            :  *
+<span class="lineNum">       9 </span>            :  * @author: Tino Rusch (tino.rusch@webvariants.de)
+<span class="lineNum">      10 </span>            :  */
+<span class="lineNum">      11 </span>            : 
+<a name="12"><span class="lineNum">      12 </span>            : #include &quot;webstack/NotFoundRequestHandler.h&quot;</a>
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span><span class="lineNoCov">          0 : void Susi::NotFoundRequestHandler::handleRequest(Poco::Net::HTTPServerRequest&amp; request,</span>
+<span class="lineNum">      15 </span>            :                                                                         Poco::Net::HTTPServerResponse&amp; response) {
+<span class="lineNum">      16 </span><span class="lineNoCov">          0 :         Poco::Util::Application&amp; app = Poco::Util::Application::instance();</span>
+<span class="lineNum">      17 </span><span class="lineNoCov">          0 :         app.logger().information(&quot;Request from &quot; + request.clientAddress().toString()+&quot; &quot;+request.getURI());</span>
+<span class="lineNum">      18 </span><span class="lineNoCov">          0 :         response.setChunkedTransferEncoding(true);</span>
+<span class="lineNum">      19 </span><span class="lineNoCov">          0 :         response.setContentType(&quot;text/html&quot;);</span>
+<span class="lineNum">      20 </span><span class="lineNoCov">          0 :         response.setStatus(Poco::Net::HTTPServerResponse::HTTPStatus::HTTP_NOT_FOUND);</span>
+<span class="lineNum">      21 </span><span class="lineNoCov">          0 :         std::ostream&amp; ostr = response.send();</span>
+<span class="lineNum">      22 </span><span class="lineNoCov">          0 :         ostr &lt;&lt; &quot;&lt;html&gt;&lt;head&gt;&lt;title&gt;SUSI&lt;/title&gt;&lt;/head&gt; &quot;;</span>
+<span class="lineNum">      23 </span><span class="lineNoCov">          0 :         ostr &lt;&lt; &quot;&lt;body&gt;&lt;p style=\&quot;text-align: center;font-size: 48px;\&quot;&gt;&lt;/br&gt;&lt;/br&gt;&lt;/br&gt;&quot;;</span>
+<span class="lineNum">      24 </span><span class="lineNoCov">          0 :         ostr &lt;&lt; &quot;(404) Not found.&quot;;</span>
+<span class="lineNum">      25 </span><span class="lineNoCov">          0 :         ostr &lt;&lt; &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</span>
+<span class="lineNum">      26 </span><span class="lineNoCov">          0 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.11</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

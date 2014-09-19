@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info.cleaned - src/headers/webstack/AssetsRequestHandler.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">src/headers/webstack</a> - AssetsRequestHandler.h<span style="font-size: 80%;"> (source / <a href="AssetsRequestHandler.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2014-09-19 09:31:24</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :  * Copyright (c) 2014, webvariants GmbH, http://www.webvariants.de
+<span class="lineNum">       3 </span>            :  *
+<span class="lineNum">       4 </span>            :  * This file is released under the terms of the MIT license. You can find the
+<span class="lineNum">       5 </span>            :  * complete text in the attached LICENSE file or online at:
+<span class="lineNum">       6 </span>            :  *
+<span class="lineNum">       7 </span>            :  * http://www.opensource.org/licenses/mit-license.php
+<span class="lineNum">       8 </span>            :  * 
+<span class="lineNum">       9 </span>            :  * @author: Tino Rusch (tino.rusch@webvariants.de)
+<span class="lineNum">      10 </span>            :  */
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #ifndef __ASSETSREQUESTHANDLER__
+<span class="lineNum">      13 </span>            : #define __ASSETSREQUESTHANDLER__
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : #include &quot;Poco/Net/HTTPServerRequest.h&quot;
+<span class="lineNum">      16 </span>            : #include &quot;Poco/Net/HTTPServerResponse.h&quot;
+<span class="lineNum">      17 </span>            : #include &quot;Poco/Net/HTTPRequestHandler.h&quot;
+<span class="lineNum">      18 </span>            : #include &quot;Poco/Util/Application.h&quot;
+<span class="lineNum">      19 </span>            : #include &quot;Poco/DateTimeFormatter.h&quot;
+<span class="lineNum">      20 </span>            : #include &quot;Poco/DateTimeFormat.h&quot;
+<span class="lineNum">      21 </span>            : #include &quot;Poco/File.h&quot;
+<span class="lineNum">      22 </span>            : #include &quot;Poco/FileStream.h&quot;
+<span class="lineNum">      23 </span>            : #include &quot;Poco/StreamCopier.h&quot;
+<span class="lineNum">      24 </span>            : 
+<span class="lineNum">      25 </span>            : #include &quot;logger/Logger.h&quot;
+<span class="lineNum">      26 </span>            : 
+<a name="27"><span class="lineNum">      27 </span>            : namespace Susi {</a>
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span><span class="lineCov">          2 : class AssetsRequestHandler: public Poco::Net::HTTPRequestHandler {</span>
+<span class="lineNum">      30 </span>            : private:
+<a name="31"><span class="lineNum">      31 </span>            :         Poco::File _rootDirectory;</a>
+<span class="lineNum">      32 </span>            : public:
+<span class="lineNum">      33 </span><span class="lineCov">          1 :         AssetsRequestHandler(std::string rootDirectory) :</span>
+<span class="lineNum">      34 </span><span class="lineCov">          1 :           _rootDirectory(rootDirectory) {</span>
+<span class="lineNum">      35 </span><span class="lineCov">          1 :                 Susi::Logger::debug(&quot;init assets handler&quot;);</span>
+<span class="lineNum">      36 </span><span class="lineCov">          1 :         }</span>
+<span class="lineNum">      37 </span>            :     virtual void handleRequest(Poco::Net::HTTPServerRequest&amp; request,
+<span class="lineNum">      38 </span>            :                        Poco::Net::HTTPServerResponse&amp; response) override;
+<span class="lineNum">      39 </span>            : };
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span>            : }
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span>            : #endif // __ASSETSREQUESTHANDLER__
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.11</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

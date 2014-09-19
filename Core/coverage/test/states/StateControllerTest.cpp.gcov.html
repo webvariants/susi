@@ -1,0 +1,125 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info.cleaned - test/states/StateControllerTest.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">test/states</a> - StateControllerTest.cpp<span style="font-size: 80%;"> (source / <a href="StateControllerTest.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">28</td>
+            <td class="headerCovTableEntry">28</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2014-09-19 09:31:24</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntry">19</td>
+            <td class="headerCovTableEntryHi">94.7 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;gtest/gtest.h&quot;</a>
+<span class="lineNum">       2 </span>            : #include &quot;iocontroller/IOController.h&quot;
+<span class="lineNum">       3 </span>            : #include &quot;logger/Logger.h&quot;
+<span class="lineNum">       4 </span>            : #include &quot;states/StateController.h&quot;
+<span class="lineNum">       5 </span>            : 
+<a name="6"><span class="lineNum">       6 </span>            : using Susi::Util::Any;</a>
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span><span class="lineCov">          6 : class StateControllerTest : public ::testing::Test {</span>
+<span class="lineNum">       9 </span>            : public:
+<span class="lineNum">      10 </span>            :         std::string base_path = Poco::Path(Poco::Path::current()).toString() + &quot;state_test/&quot;;
+<span class="lineNum">      11 </span>            :         Susi::IOController io;
+<a name="12"><span class="lineNum">      12 </span>            : protected:</a>
+<span class="lineNum">      13 </span>            :         std::shared_ptr&lt;Susi::States::StateController&gt; controller{nullptr};
+<span class="lineNum">      14 </span><span class="lineCov">          3 :         virtual void SetUp() override {         </span>
+<span class="lineNum">      15 </span><span class="lineCov">          3 :                 io.makeDir(base_path);</span>
+<a name="16"><span class="lineNum">      16 </span><span class="lineCov">          3 :                 controller = std::make_shared&lt;Susi::States::StateController&gt;(std::string(base_path + &quot;states.json&quot;));</span></a>
+<span class="lineNum">      17 </span><span class="lineCov">          3 :         }</span>
+<span class="lineNum">      18 </span><span class="lineCov">          3 :         virtual void TearDown() override {</span>
+<span class="lineNum">      19 </span><span class="lineCov">          3 :                 io.deletePath(base_path);</span>
+<span class="lineNum">      20 </span><span class="lineCov">          3 :         }</span>
+<a name="21"><span class="lineNum">      21 </span>            : };</a>
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span><span class="lineCov">          5 : TEST_F(StateControllerTest,Simple){</span>
+<span class="lineNum">      24 </span><span class="lineCov">          1 :         EXPECT_TRUE(controller-&gt;setState(&quot;foo&quot;,&quot;bar&quot;));</span>
+<span class="lineNum">      25 </span><span class="lineCov">          1 :         EXPECT_EQ(Any{&quot;bar&quot;},controller-&gt;getState(&quot;foo&quot;));</span>
+<span class="lineNum">      26 </span><span class="lineCov">          1 :         EXPECT_TRUE(controller-&gt;setPersistentState(&quot;foo&quot;,&quot;bar&quot;));</span>
+<span class="lineNum">      27 </span><span class="lineCov">          1 :         EXPECT_EQ(Any{&quot;bar&quot;},controller-&gt;getPersistentState(&quot;foo&quot;));</span>
+<span class="lineNum">      28 </span><span class="lineCov">          1 : }</span>
+<a name="29"><span class="lineNum">      29 </span>            : </a>
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span><span class="lineCov">          5 : TEST_F(StateControllerTest,Overwrite){</span>
+<span class="lineNum">      32 </span><span class="lineCov">          1 :         EXPECT_TRUE(controller-&gt;setState(&quot;foo&quot;,&quot;bar&quot;));</span>
+<span class="lineNum">      33 </span><span class="lineCov">          1 :         EXPECT_TRUE(controller-&gt;setState(&quot;foo&quot;,&quot;baz&quot;));</span>
+<span class="lineNum">      34 </span><span class="lineCov">          1 :         EXPECT_EQ(Any{&quot;baz&quot;},controller-&gt;getState(&quot;foo&quot;));</span>
+<span class="lineNum">      35 </span>            :         
+<span class="lineNum">      36 </span><span class="lineCov">          1 :         EXPECT_TRUE(controller-&gt;setPersistentState(&quot;foo&quot;,&quot;bar&quot;));</span>
+<span class="lineNum">      37 </span><span class="lineCov">          1 :         EXPECT_TRUE(controller-&gt;setPersistentState(&quot;foo&quot;,&quot;baz&quot;));</span>
+<span class="lineNum">      38 </span><span class="lineCov">          1 :         EXPECT_EQ(Any{&quot;baz&quot;},controller-&gt;getPersistentState(&quot;foo&quot;));</span>
+<span class="lineNum">      39 </span>            :         
+<a name="40"><span class="lineNum">      40 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span><span class="lineCov">          5 : TEST_F(StateControllerTest,PersistentSaveLoad){</span>
+<span class="lineNum">      43 </span><span class="lineCov">          1 :         EXPECT_TRUE(controller-&gt;setPersistentState(&quot;foo&quot;,&quot;bar&quot;));</span>
+<span class="lineNum">      44 </span><span class="lineCov">          1 :         controller-&gt;savePersistent();</span>
+<a name="45"><span class="lineNum">      45 </span><span class="lineCov">          1 :         EXPECT_TRUE(controller-&gt;loadPersistent());</span></a>
+<span class="lineNum">      46 </span><span class="lineCov">          1 :         EXPECT_EQ(Any{&quot;bar&quot;},controller-&gt;getPersistentState(&quot;foo&quot;));     </span>
+<span class="lineNum">      47 </span><span class="lineCov">          4 : }</span>
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            : 
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.11</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

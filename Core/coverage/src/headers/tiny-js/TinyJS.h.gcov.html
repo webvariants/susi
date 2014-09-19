@@ -1,0 +1,436 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info.cleaned - src/headers/tiny-js/TinyJS.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">src/headers/tiny-js</a> - TinyJS.h<span style="font-size: 80%;"> (source / <a href="TinyJS.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2014-09-19 09:31:24</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">0</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntryLo">0.0 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :  * TinyJS
+<span class="lineNum">       3 </span>            :  *
+<span class="lineNum">       4 </span>            :  * A single-file Javascript-alike engine
+<span class="lineNum">       5 </span>            :  *
+<span class="lineNum">       6 </span>            :  * Authored By Gordon Williams &lt;gw@pur3.co.uk&gt;
+<span class="lineNum">       7 </span>            :  *
+<span class="lineNum">       8 </span>            :  * Copyright (C) 2009 Pur3 Ltd
+<span class="lineNum">       9 </span>            :  *
+<span class="lineNum">      10 </span>            :  * Permission is hereby granted, free of charge, to any person obtaining a copy of
+<span class="lineNum">      11 </span>            :  * this software and associated documentation files (the &quot;Software&quot;), to deal in
+<span class="lineNum">      12 </span>            :  * the Software without restriction, including without limitation the rights to
+<span class="lineNum">      13 </span>            :  * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+<span class="lineNum">      14 </span>            :  * of the Software, and to permit persons to whom the Software is furnished to do
+<span class="lineNum">      15 </span>            :  * so, subject to the following conditions:
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span>            :  * The above copyright notice and this permission notice shall be included in all
+<span class="lineNum">      18 </span>            :  * copies or substantial portions of the Software.
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            :  * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+<span class="lineNum">      21 </span>            :  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+<span class="lineNum">      22 </span>            :  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+<span class="lineNum">      23 </span>            :  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+<span class="lineNum">      24 </span>            :  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+<span class="lineNum">      25 </span>            :  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+<span class="lineNum">      26 </span>            :  * SOFTWARE.
+<span class="lineNum">      27 </span>            :  */
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            : #ifndef TINYJS_H
+<span class="lineNum">      30 </span>            : #define TINYJS_H
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span>            : // If defined, this keeps a note of all calls and where from in memory. This is slower, but good for debugging
+<span class="lineNum">      33 </span>            : #define TINYJS_CALL_STACK
+<span class="lineNum">      34 </span>            : 
+<span class="lineNum">      35 </span>            : #ifdef _WIN32
+<span class="lineNum">      36 </span>            : #ifdef _DEBUG
+<span class="lineNum">      37 </span>            : #define _CRTDBG_MAP_ALLOC
+<span class="lineNum">      38 </span>            : #include &lt;stdlib.h&gt;
+<span class="lineNum">      39 </span>            : #include &lt;crtdbg.h&gt;
+<span class="lineNum">      40 </span>            : #endif
+<span class="lineNum">      41 </span>            : #endif
+<span class="lineNum">      42 </span>            : #include &lt;string&gt;
+<span class="lineNum">      43 </span>            : #include &lt;vector&gt;
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            : #ifndef TRACE
+<span class="lineNum">      46 </span>            : #define TRACE printf
+<span class="lineNum">      47 </span>            : #endif // TRACE
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span>            : const int TINYJS_LOOP_MAX_ITERATIONS = 8192;
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            : enum LEX_TYPES {
+<span class="lineNum">      53 </span>            :     LEX_EOF = 0,
+<span class="lineNum">      54 </span>            :     LEX_ID = 256,
+<span class="lineNum">      55 </span>            :     LEX_INT,
+<span class="lineNum">      56 </span>            :     LEX_FLOAT,
+<span class="lineNum">      57 </span>            :     LEX_STR,
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            :     LEX_EQUAL,
+<span class="lineNum">      60 </span>            :     LEX_TYPEEQUAL,
+<span class="lineNum">      61 </span>            :     LEX_NEQUAL,
+<span class="lineNum">      62 </span>            :     LEX_NTYPEEQUAL,
+<span class="lineNum">      63 </span>            :     LEX_LEQUAL,
+<span class="lineNum">      64 </span>            :     LEX_LSHIFT,
+<span class="lineNum">      65 </span>            :     LEX_LSHIFTEQUAL,
+<span class="lineNum">      66 </span>            :     LEX_GEQUAL,
+<span class="lineNum">      67 </span>            :     LEX_RSHIFT,
+<span class="lineNum">      68 </span>            :     LEX_RSHIFTUNSIGNED,
+<span class="lineNum">      69 </span>            :     LEX_RSHIFTEQUAL,
+<span class="lineNum">      70 </span>            :     LEX_PLUSEQUAL,
+<span class="lineNum">      71 </span>            :     LEX_MINUSEQUAL,
+<span class="lineNum">      72 </span>            :     LEX_PLUSPLUS,
+<span class="lineNum">      73 </span>            :     LEX_MINUSMINUS,
+<span class="lineNum">      74 </span>            :     LEX_ANDEQUAL,
+<span class="lineNum">      75 </span>            :     LEX_ANDAND,
+<span class="lineNum">      76 </span>            :     LEX_OREQUAL,
+<span class="lineNum">      77 </span>            :     LEX_OROR,
+<span class="lineNum">      78 </span>            :     LEX_XOREQUAL,
+<span class="lineNum">      79 </span>            :     // reserved words
+<span class="lineNum">      80 </span>            : #define LEX_R_LIST_START LEX_R_IF
+<span class="lineNum">      81 </span>            :     LEX_R_IF,
+<span class="lineNum">      82 </span>            :     LEX_R_ELSE,
+<span class="lineNum">      83 </span>            :     LEX_R_DO,
+<span class="lineNum">      84 </span>            :     LEX_R_WHILE,
+<span class="lineNum">      85 </span>            :     LEX_R_FOR,
+<span class="lineNum">      86 </span>            :     LEX_R_BREAK,
+<span class="lineNum">      87 </span>            :     LEX_R_CONTINUE,
+<span class="lineNum">      88 </span>            :     LEX_R_FUNCTION,
+<span class="lineNum">      89 </span>            :     LEX_R_RETURN,
+<span class="lineNum">      90 </span>            :     LEX_R_VAR,
+<span class="lineNum">      91 </span>            :     LEX_R_TRUE,
+<span class="lineNum">      92 </span>            :     LEX_R_FALSE,
+<span class="lineNum">      93 </span>            :     LEX_R_NULL,
+<span class="lineNum">      94 </span>            :     LEX_R_UNDEFINED,
+<span class="lineNum">      95 </span>            :     LEX_R_NEW,
+<span class="lineNum">      96 </span>            : 
+<span class="lineNum">      97 </span>            :         LEX_R_LIST_END /* always the last entry */
+<span class="lineNum">      98 </span>            : };
+<span class="lineNum">      99 </span>            : 
+<span class="lineNum">     100 </span>            : enum SCRIPTVAR_FLAGS {
+<span class="lineNum">     101 </span>            :     SCRIPTVAR_UNDEFINED   = 0,
+<span class="lineNum">     102 </span>            :     SCRIPTVAR_FUNCTION    = 1,
+<span class="lineNum">     103 </span>            :     SCRIPTVAR_OBJECT      = 2,
+<span class="lineNum">     104 </span>            :     SCRIPTVAR_ARRAY       = 4,
+<span class="lineNum">     105 </span>            :     SCRIPTVAR_DOUBLE      = 8,  // floating point double
+<span class="lineNum">     106 </span>            :     SCRIPTVAR_INTEGER     = 16, // integer number
+<span class="lineNum">     107 </span>            :     SCRIPTVAR_STRING      = 32, // string
+<span class="lineNum">     108 </span>            :     SCRIPTVAR_NULL        = 64, // it seems null is its own data type
+<span class="lineNum">     109 </span>            : 
+<span class="lineNum">     110 </span>            :     SCRIPTVAR_NATIVE      = 128, // to specify this is a native function
+<span class="lineNum">     111 </span>            :     SCRIPTVAR_NUMERICMASK = SCRIPTVAR_NULL |
+<span class="lineNum">     112 </span>            :                             SCRIPTVAR_DOUBLE |
+<span class="lineNum">     113 </span>            :                             SCRIPTVAR_INTEGER,
+<span class="lineNum">     114 </span>            :     SCRIPTVAR_VARTYPEMASK = SCRIPTVAR_DOUBLE |
+<span class="lineNum">     115 </span>            :                             SCRIPTVAR_INTEGER |
+<span class="lineNum">     116 </span>            :                             SCRIPTVAR_STRING |
+<span class="lineNum">     117 </span>            :                             SCRIPTVAR_FUNCTION |
+<span class="lineNum">     118 </span>            :                             SCRIPTVAR_OBJECT |
+<span class="lineNum">     119 </span>            :                             SCRIPTVAR_ARRAY |
+<span class="lineNum">     120 </span>            :                             SCRIPTVAR_NULL,
+<span class="lineNum">     121 </span>            : 
+<span class="lineNum">     122 </span>            : };
+<span class="lineNum">     123 </span>            : 
+<span class="lineNum">     124 </span>            : #define TINYJS_RETURN_VAR &quot;return&quot;
+<span class="lineNum">     125 </span>            : #define TINYJS_PROTOTYPE_CLASS &quot;prototype&quot;
+<span class="lineNum">     126 </span>            : #define TINYJS_TEMP_NAME &quot;&quot;
+<span class="lineNum">     127 </span>            : #define TINYJS_BLANK_DATA &quot;&quot;
+<span class="lineNum">     128 </span>            : 
+<span class="lineNum">     129 </span>            : /// convert the given string into a quoted string suitable for javascript
+<span class="lineNum">     130 </span>            : std::string getJSString(const std::string &amp;str);
+<span class="lineNum">     131 </span>            : 
+<span class="lineNum">     132 </span>            : class CScriptException {
+<span class="lineNum">     133 </span>            : public:
+<span class="lineNum">     134 </span>            :     std::string text;
+<span class="lineNum">     135 </span>            :     CScriptException(const std::string &amp;exceptionText);
+<span class="lineNum">     136 </span>            : };
+<span class="lineNum">     137 </span>            : 
+<span class="lineNum">     138 </span>            : class CScriptLex
+<span class="lineNum">     139 </span>            : {
+<span class="lineNum">     140 </span>            : public:
+<span class="lineNum">     141 </span>            :     CScriptLex(const std::string &amp;input);
+<span class="lineNum">     142 </span>            :     CScriptLex(CScriptLex *owner, int startChar, int endChar);
+<span class="lineNum">     143 </span>            :     ~CScriptLex(void);
+<span class="lineNum">     144 </span>            : 
+<span class="lineNum">     145 </span>            :     char currCh, nextCh;
+<span class="lineNum">     146 </span>            :     int tk; ///&lt; The type of the token that we have
+<span class="lineNum">     147 </span>            :     int tokenStart; ///&lt; Position in the data at the beginning of the token we have here
+<span class="lineNum">     148 </span>            :     int tokenEnd; ///&lt; Position in the data at the last character of the token we have here
+<span class="lineNum">     149 </span>            :     int tokenLastEnd; ///&lt; Position in the data at the last character of the last token
+<span class="lineNum">     150 </span>            :     std::string tkStr; ///&lt; Data contained in the token we have here
+<span class="lineNum">     151 </span>            : 
+<span class="lineNum">     152 </span>            :     void match(int expected_tk); ///&lt; Lexical match wotsit
+<span class="lineNum">     153 </span>            :     static std::string getTokenStr(int token); ///&lt; Get the string representation of the given token
+<span class="lineNum">     154 </span>            :     void reset(); ///&lt; Reset this lex so we can start again
+<span class="lineNum">     155 </span>            : 
+<span class="lineNum">     156 </span>            :     std::string getSubString(int pos); ///&lt; Return a sub-string from the given position up until right now
+<span class="lineNum">     157 </span>            :     CScriptLex *getSubLex(int lastPosition); ///&lt; Return a sub-lexer from the given position up until right now
+<span class="lineNum">     158 </span>            : 
+<span class="lineNum">     159 </span>            :     std::string getPosition(int pos=-1); ///&lt; Return a string representing the position in lines and columns of the character pos given
+<span class="lineNum">     160 </span>            : 
+<span class="lineNum">     161 </span>            : protected:
+<span class="lineNum">     162 </span>            :     /* When we go into a loop, we use getSubLex to get a lexer for just the sub-part of the
+<span class="lineNum">     163 </span>            :        relevant string. This doesn't re-allocate and copy the string, but instead copies
+<span class="lineNum">     164 </span>            :        the data pointer and sets dataOwned to false, and dataStart/dataEnd to the relevant things. */
+<span class="lineNum">     165 </span>            :     char *data; ///&lt; Data string to get tokens from
+<span class="lineNum">     166 </span>            :     int dataStart, dataEnd; ///&lt; Start and end position in data string
+<span class="lineNum">     167 </span>            :     bool dataOwned; ///&lt; Do we own this data string?
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span>            :     int dataPos; ///&lt; Position in data (we CAN go past the end of the string here)
+<span class="lineNum">     170 </span>            : 
+<span class="lineNum">     171 </span>            :     void getNextCh();
+<span class="lineNum">     172 </span>            :     void getNextToken(); ///&lt; Get the text token from our text string
+<span class="lineNum">     173 </span>            : };
+<span class="lineNum">     174 </span>            : 
+<span class="lineNum">     175 </span>            : class CScriptVar;
+<span class="lineNum">     176 </span>            : 
+<span class="lineNum">     177 </span>            : typedef void (*JSCallback)(CScriptVar *var, void *userdata);
+<span class="lineNum">     178 </span>            : 
+<span class="lineNum">     179 </span>            : class CScriptVarLink
+<span class="lineNum">     180 </span>            : {
+<span class="lineNum">     181 </span>            : public:
+<span class="lineNum">     182 </span>            :   std::string name;
+<span class="lineNum">     183 </span>            :   CScriptVarLink *nextSibling;
+<span class="lineNum">     184 </span>            :   CScriptVarLink *prevSibling;
+<span class="lineNum">     185 </span>            :   CScriptVar *var;
+<span class="lineNum">     186 </span>            :   bool owned;
+<span class="lineNum">     187 </span>            : 
+<span class="lineNum">     188 </span>            :   CScriptVarLink(CScriptVar *var, const std::string &amp;name = TINYJS_TEMP_NAME);
+<span class="lineNum">     189 </span>            :   CScriptVarLink(const CScriptVarLink &amp;link); ///&lt; Copy constructor
+<span class="lineNum">     190 </span>            :   ~CScriptVarLink();
+<span class="lineNum">     191 </span>            :   void replaceWith(CScriptVar *newVar); ///&lt; Replace the Variable pointed to
+<span class="lineNum">     192 </span>            :   void replaceWith(CScriptVarLink *newVar); ///&lt; Replace the Variable pointed to (just dereferences)
+<span class="lineNum">     193 </span>            :   int getIntName(); ///&lt; Get the name as an integer (for arrays)
+<span class="lineNum">     194 </span>            :   void setIntName(int n); ///&lt; Set the name as an integer (for arrays)
+<span class="lineNum">     195 </span>            : };
+<span class="lineNum">     196 </span>            : 
+<span class="lineNum">     197 </span>            : /// Variable class (containing a doubly-linked list of children)
+<span class="lineNum">     198 </span>            : class CScriptVar
+<span class="lineNum">     199 </span>            : {
+<span class="lineNum">     200 </span>            : public:
+<span class="lineNum">     201 </span>            :     CScriptVar(); ///&lt; Create undefined
+<span class="lineNum">     202 </span>            :     CScriptVar(const std::string &amp;varData, int varFlags); ///&lt; User defined
+<span class="lineNum">     203 </span>            :     CScriptVar(const std::string &amp;str); ///&lt; Create a string
+<span class="lineNum">     204 </span>            :     CScriptVar(double varData);
+<span class="lineNum">     205 </span>            :     CScriptVar(int val);
+<span class="lineNum">     206 </span>            :     ~CScriptVar(void);
+<span class="lineNum">     207 </span>            : 
+<span class="lineNum">     208 </span>            :     CScriptVar *getReturnVar(); ///&lt; If this is a function, get the result value (for use by native functions)
+<span class="lineNum">     209 </span>            :     void setReturnVar(CScriptVar *var); ///&lt; Set the result value. Use this when setting complex return data as it avoids a deepCopy()
+<span class="lineNum">     210 </span>            :     CScriptVar *getParameter(const std::string &amp;name); ///&lt; If this is a function, get the parameter with the given name (for use by native functions)
+<span class="lineNum">     211 </span>            : 
+<span class="lineNum">     212 </span>            :     CScriptVarLink *findChild(const std::string &amp;childName); ///&lt; Tries to find a child with the given name, may return 0
+<span class="lineNum">     213 </span>            :     CScriptVarLink *findChildOrCreate(const std::string &amp;childName, int varFlags=SCRIPTVAR_UNDEFINED); ///&lt; Tries to find a child with the given name, or will create it with the given flags
+<span class="lineNum">     214 </span>            :     CScriptVarLink *findChildOrCreateByPath(const std::string &amp;path); ///&lt; Tries to find a child with the given path (separated by dots)
+<span class="lineNum">     215 </span>            :     CScriptVarLink *addChild(const std::string &amp;childName, CScriptVar *child=NULL);
+<span class="lineNum">     216 </span>            :     CScriptVarLink *addChildNoDup(const std::string &amp;childName, CScriptVar *child=NULL); ///&lt; add a child overwriting any with the same name
+<span class="lineNum">     217 </span>            :     void removeChild(CScriptVar *child);
+<span class="lineNum">     218 </span>            :     void removeLink(CScriptVarLink *link); ///&lt; Remove a specific link (this is faster than finding via a child)
+<span class="lineNum">     219 </span>            :     void removeAllChildren();
+<span class="lineNum">     220 </span>            :     CScriptVar *getArrayIndex(int idx); ///&lt; The the value at an array index
+<span class="lineNum">     221 </span>            :     void setArrayIndex(int idx, CScriptVar *value); ///&lt; Set the value at an array index
+<span class="lineNum">     222 </span>            :     int getArrayLength(); ///&lt; If this is an array, return the number of items in it (else 0)
+<span class="lineNum">     223 </span>            :     int getChildren(); ///&lt; Get the number of children
+<a name="224"><span class="lineNum">     224 </span>            : </a>
+<span class="lineNum">     225 </span>            :     int getInt();
+<span class="lineNum">     226 </span><span class="lineNoCov">          0 :     bool getBool() { return getInt() != 0; }</span>
+<span class="lineNum">     227 </span>            :     double getDouble();
+<span class="lineNum">     228 </span>            :     const std::string &amp;getString();
+<span class="lineNum">     229 </span>            :     std::string getParsableString(); ///&lt; get Data as a parsable javascript string
+<span class="lineNum">     230 </span>            :     void setInt(int num);
+<span class="lineNum">     231 </span>            :     void setDouble(double val);
+<span class="lineNum">     232 </span>            :     void setString(const std::string &amp;str);
+<span class="lineNum">     233 </span>            :     void setUndefined();
+<span class="lineNum">     234 </span>            :     void setArray();
+<a name="235"><span class="lineNum">     235 </span>            :     bool equals(CScriptVar *v);</a>
+<a name="236"><span class="lineNum">     236 </span>            : </a>
+<a name="237"><span class="lineNum">     237 </span><span class="lineNoCov">          0 :     bool isInt() { return (flags&amp;SCRIPTVAR_INTEGER)!=0; }</span></a>
+<a name="238"><span class="lineNum">     238 </span><span class="lineNoCov">          0 :     bool isDouble() { return (flags&amp;SCRIPTVAR_DOUBLE)!=0; }</span></a>
+<a name="239"><span class="lineNum">     239 </span><span class="lineNoCov">          0 :     bool isString() { return (flags&amp;SCRIPTVAR_STRING)!=0; }</span></a>
+<a name="240"><span class="lineNum">     240 </span><span class="lineNoCov">          0 :     bool isNumeric() { return (flags&amp;SCRIPTVAR_NUMERICMASK)!=0; }</span></a>
+<a name="241"><span class="lineNum">     241 </span><span class="lineNoCov">          0 :     bool isFunction() { return (flags&amp;SCRIPTVAR_FUNCTION)!=0; }</span></a>
+<a name="242"><span class="lineNum">     242 </span><span class="lineNoCov">          0 :     bool isObject() { return (flags&amp;SCRIPTVAR_OBJECT)!=0; }</span></a>
+<a name="243"><span class="lineNum">     243 </span><span class="lineNoCov">          0 :     bool isArray() { return (flags&amp;SCRIPTVAR_ARRAY)!=0; }</span></a>
+<a name="244"><span class="lineNum">     244 </span><span class="lineNoCov">          0 :     bool isNative() { return (flags&amp;SCRIPTVAR_NATIVE)!=0; }</span></a>
+<a name="245"><span class="lineNum">     245 </span><span class="lineNoCov">          0 :     bool isUndefined() { return (flags &amp; SCRIPTVAR_VARTYPEMASK) == SCRIPTVAR_UNDEFINED; }</span></a>
+<span class="lineNum">     246 </span><span class="lineNoCov">          0 :     bool isNull() { return (flags &amp; SCRIPTVAR_NULL)!=0; }</span>
+<span class="lineNum">     247 </span><span class="lineNoCov">          0 :     bool isBasic() { return firstChild==0; } ///&lt; Is this *not* an array/object/etc</span>
+<span class="lineNum">     248 </span>            : 
+<span class="lineNum">     249 </span>            :     CScriptVar *mathsOp(CScriptVar *b, int op); ///&lt; do a maths op with another script variable
+<span class="lineNum">     250 </span>            :     void copyValue(CScriptVar *val); ///&lt; copy the value from the value given
+<span class="lineNum">     251 </span>            :     CScriptVar *deepCopy(); ///&lt; deep copy this node and return the result
+<span class="lineNum">     252 </span>            : 
+<span class="lineNum">     253 </span>            :     void trace(std::string indentStr = &quot;&quot;, const std::string &amp;name = &quot;&quot;); ///&lt; Dump out the contents of this using trace
+<span class="lineNum">     254 </span>            :     std::string getFlagsAsString(); ///&lt; For debugging - just dump a string version of the flags
+<span class="lineNum">     255 </span>            :     void getJSON(std::ostringstream &amp;destination, const std::string linePrefix=&quot;&quot;); ///&lt; Write out all the JS code needed to recreate this script variable to the stream (as JSON)
+<span class="lineNum">     256 </span>            :     void setCallback(JSCallback callback, void *userdata); ///&lt; Set the callback for native functions
+<span class="lineNum">     257 </span>            : 
+<span class="lineNum">     258 </span>            :     CScriptVarLink *firstChild;
+<span class="lineNum">     259 </span>            :     CScriptVarLink *lastChild;
+<span class="lineNum">     260 </span>            : 
+<span class="lineNum">     261 </span>            :     /// For memory management/garbage collection
+<span class="lineNum">     262 </span>            :     CScriptVar *ref(); ///&lt; Add reference to this variable
+<span class="lineNum">     263 </span>            :     void unref(); ///&lt; Remove a reference, and delete this variable if required
+<span class="lineNum">     264 </span>            :     int getRefs(); ///&lt; Get the number of references to this script variable
+<span class="lineNum">     265 </span>            : protected:
+<span class="lineNum">     266 </span>            :     int refs; ///&lt; The number of references held to this - used for garbage collection
+<span class="lineNum">     267 </span>            : 
+<span class="lineNum">     268 </span>            :     std::string data; ///&lt; The contents of this variable if it is a string
+<span class="lineNum">     269 </span>            :     long intData; ///&lt; The contents of this variable if it is an int
+<span class="lineNum">     270 </span>            :     double doubleData; ///&lt; The contents of this variable if it is a double
+<span class="lineNum">     271 </span>            :     int flags; ///&lt; the flags determine the type of the variable - int/double/string/etc
+<span class="lineNum">     272 </span>            :     JSCallback jsCallback; ///&lt; Callback for native functions
+<span class="lineNum">     273 </span>            :     void *jsCallbackUserData; ///&lt; user data passed as second argument to native functions
+<span class="lineNum">     274 </span>            : 
+<span class="lineNum">     275 </span>            :     void init(); ///&lt; initialisation of data members
+<span class="lineNum">     276 </span>            : 
+<span class="lineNum">     277 </span>            :     /** Copy the basic data and flags from the variable given, with no
+<span class="lineNum">     278 </span>            :       * children. Should be used internally only - by copyValue and deepCopy */
+<span class="lineNum">     279 </span>            :     void copySimpleData(CScriptVar *val);
+<span class="lineNum">     280 </span>            : 
+<span class="lineNum">     281 </span>            :     friend class CTinyJS;
+<span class="lineNum">     282 </span>            : };
+<span class="lineNum">     283 </span>            : 
+<span class="lineNum">     284 </span>            : class CTinyJS {
+<span class="lineNum">     285 </span>            : public:
+<span class="lineNum">     286 </span>            :     CTinyJS();
+<span class="lineNum">     287 </span>            :     ~CTinyJS();
+<span class="lineNum">     288 </span>            : 
+<span class="lineNum">     289 </span>            :     void execute(const std::string &amp;code);
+<span class="lineNum">     290 </span>            :     /** Evaluate the given code and return a link to a javascript object,
+<span class="lineNum">     291 </span>            :      * useful for (dangerous) JSON parsing. If nothing to return, will return
+<span class="lineNum">     292 </span>            :      * 'undefined' variable type. CScriptVarLink is returned as this will
+<span class="lineNum">     293 </span>            :      * automatically unref the result as it goes out of scope. If you want to
+<span class="lineNum">     294 </span>            :      * keep it, you must use ref() and unref() */
+<span class="lineNum">     295 </span>            :     CScriptVarLink evaluateComplex(const std::string &amp;code);
+<span class="lineNum">     296 </span>            :     /** Evaluate the given code and return a string. If nothing to return, will return
+<span class="lineNum">     297 </span>            :      * 'undefined' */
+<span class="lineNum">     298 </span>            :     std::string evaluate(const std::string &amp;code);
+<span class="lineNum">     299 </span>            : 
+<span class="lineNum">     300 </span>            :     /// add a native function to be called from TinyJS
+<span class="lineNum">     301 </span>            :     /** example:
+<span class="lineNum">     302 </span>            :        \code
+<span class="lineNum">     303 </span>            :            void scRandInt(CScriptVar *c, void *userdata) { ... }
+<span class="lineNum">     304 </span>            :            tinyJS-&gt;addNative(&quot;function randInt(min, max)&quot;, scRandInt, 0);
+<span class="lineNum">     305 </span>            :        \endcode
+<span class="lineNum">     306 </span>            : 
+<span class="lineNum">     307 </span>            :        or
+<span class="lineNum">     308 </span>            : 
+<span class="lineNum">     309 </span>            :        \code
+<span class="lineNum">     310 </span>            :            void scSubstring(CScriptVar *c, void *userdata) { ... }
+<span class="lineNum">     311 </span>            :            tinyJS-&gt;addNative(&quot;function String.substring(lo, hi)&quot;, scSubstring, 0);
+<span class="lineNum">     312 </span>            :        \endcode
+<span class="lineNum">     313 </span>            :     */
+<span class="lineNum">     314 </span>            :     void addNative(const std::string &amp;funcDesc, JSCallback ptr, void *userdata);
+<span class="lineNum">     315 </span>            : 
+<span class="lineNum">     316 </span>            :     /// Get the given variable specified by a path (var1.var2.etc), or return 0
+<span class="lineNum">     317 </span>            :     CScriptVar *getScriptVariable(const std::string &amp;path);
+<span class="lineNum">     318 </span>            :     /// Get the value of the given variable, or return 0
+<span class="lineNum">     319 </span>            :     const std::string *getVariable(const std::string &amp;path);
+<span class="lineNum">     320 </span>            :     /// set the value of the given variable, return trur if it exists and gets set
+<span class="lineNum">     321 </span>            :     bool setVariable(const std::string &amp;path, const std::string &amp;varData);
+<span class="lineNum">     322 </span>            : 
+<span class="lineNum">     323 </span>            :     /// Send all variables to stdout
+<span class="lineNum">     324 </span>            :     void trace();
+<span class="lineNum">     325 </span>            : 
+<span class="lineNum">     326 </span>            :     CScriptVar *root;   /// root of symbol table
+<span class="lineNum">     327 </span>            : private:
+<span class="lineNum">     328 </span>            :     CScriptLex *l;             /// current lexer
+<span class="lineNum">     329 </span>            :     std::vector&lt;CScriptVar*&gt; scopes; /// stack of scopes when parsing
+<span class="lineNum">     330 </span>            : #ifdef TINYJS_CALL_STACK
+<span class="lineNum">     331 </span>            :     std::vector&lt;std::string&gt; call_stack; /// Names of places called so we can show when erroring
+<span class="lineNum">     332 </span>            : #endif
+<span class="lineNum">     333 </span>            : 
+<span class="lineNum">     334 </span>            :     CScriptVar *stringClass; /// Built in string class
+<span class="lineNum">     335 </span>            :     CScriptVar *objectClass; /// Built in object class
+<span class="lineNum">     336 </span>            :     CScriptVar *arrayClass; /// Built in array class
+<span class="lineNum">     337 </span>            : 
+<span class="lineNum">     338 </span>            :     // parsing - in order of precedence
+<span class="lineNum">     339 </span>            :     CScriptVarLink *functionCall(bool &amp;execute, CScriptVarLink *function, CScriptVar *parent);
+<span class="lineNum">     340 </span>            :     CScriptVarLink *factor(bool &amp;execute);
+<span class="lineNum">     341 </span>            :     CScriptVarLink *unary(bool &amp;execute);
+<span class="lineNum">     342 </span>            :     CScriptVarLink *term(bool &amp;execute);
+<span class="lineNum">     343 </span>            :     CScriptVarLink *expression(bool &amp;execute);
+<span class="lineNum">     344 </span>            :     CScriptVarLink *shift(bool &amp;execute);
+<span class="lineNum">     345 </span>            :     CScriptVarLink *condition(bool &amp;execute);
+<span class="lineNum">     346 </span>            :     CScriptVarLink *logic(bool &amp;execute);
+<span class="lineNum">     347 </span>            :     CScriptVarLink *ternary(bool &amp;execute);
+<span class="lineNum">     348 </span>            :     CScriptVarLink *base(bool &amp;execute);
+<span class="lineNum">     349 </span>            :     void block(bool &amp;execute);
+<span class="lineNum">     350 </span>            :     void statement(bool &amp;execute);
+<span class="lineNum">     351 </span>            :     // parsing utility functions
+<span class="lineNum">     352 </span>            :     CScriptVarLink *parseFunctionDefinition();
+<span class="lineNum">     353 </span>            :     void parseFunctionArguments(CScriptVar *funcVar);
+<span class="lineNum">     354 </span>            : 
+<span class="lineNum">     355 </span>            :     CScriptVarLink *findInScopes(const std::string &amp;childName); ///&lt; Finds a child, looking recursively up the scopes
+<span class="lineNum">     356 </span>            :     /// Look up in any parent classes of the given object
+<span class="lineNum">     357 </span>            :     CScriptVarLink *findInParentClasses(CScriptVar *object, const std::string &amp;name);
+<span class="lineNum">     358 </span>            : };
+<span class="lineNum">     359 </span>            : 
+<span class="lineNum">     360 </span>            : #endif
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.11</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

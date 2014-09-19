@@ -1,0 +1,178 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info.cleaned - src/headers/apiserver/TCPClient.h</title>
+  <link rel="stylesheet" type="text/css" href="../../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../../index.html">top level</a> - <a href="index.html">src/headers/apiserver</a> - TCPClient.h<span style="font-size: 80%;"> (source / <a href="TCPClient.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">29</td>
+            <td class="headerCovTableEntry">38</td>
+            <td class="headerCovTableEntryMed">76.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2014-09-19 09:31:24</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntry">9</td>
+            <td class="headerCovTableEntryMed">77.8 %</td>
+          </tr>
+          <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :  * Copyright (c) 2014, webvariants GmbH, http://www.webvariants.de
+<span class="lineNum">       3 </span>            :  *
+<span class="lineNum">       4 </span>            :  * This file is released under the terms of the MIT license. You can find the
+<span class="lineNum">       5 </span>            :  * complete text in the attached LICENSE file or online at:
+<span class="lineNum">       6 </span>            :  *
+<span class="lineNum">       7 </span>            :  * http://www.opensource.org/licenses/mit-license.php
+<span class="lineNum">       8 </span>            :  * 
+<span class="lineNum">       9 </span>            :  * @author: Tino Rusch (tino.rusch@webvariants.de)
+<span class="lineNum">      10 </span>            :  */
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #ifndef __POCOTCPCLIENT__
+<span class="lineNum">      13 </span>            : #define __POCOTCPCLIENT__
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : #include &lt;Poco/Net/StreamSocket.h&gt;
+<span class="lineNum">      16 </span>            : #include &lt;Poco/Net/SocketAddress.h&gt;
+<span class="lineNum">      17 </span>            : #include &lt;thread&gt;
+<span class="lineNum">      18 </span>            : #include &lt;iostream&gt;
+<span class="lineNum">      19 </span>            : namespace Susi {
+<span class="lineNum">      20 </span>            : namespace Api {
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            :         class TCPClient {
+<span class="lineNum">      23 </span>            :         public:
+<a name="24"><span class="lineNum">      24 </span>            :                 </a>
+<a name="25"><span class="lineNum">      25 </span>            :                 //These functions are not pure virtual, because of destruction problems.</a>
+<a name="26"><span class="lineNum">      26 </span><span class="lineCov">          2 :                 virtual void onConnect() {};</span></a>
+<span class="lineNum">      27 </span><span class="lineNoCov">          0 :                 virtual void onData(std::string &amp; data) {};</span>
+<span class="lineNum">      28 </span><span class="lineCov">          4 :                 virtual void onClose() {};</span>
+<span class="lineNum">      29 </span>            :                 
+<span class="lineNum">      30 </span>            :                 TCPClient(TCPClient &amp;&amp; other){
+<span class="lineNum">      31 </span>            :                         std::swap(isClosed,other.isClosed);
+<span class="lineNum">      32 </span>            :                         std::swap(sa,other.sa);
+<span class="lineNum">      33 </span>            :                         std::swap(sock,other.sock);
+<span class="lineNum">      34 </span>            :                         std::swap(runloop,other.runloop);
+<a name="35"><span class="lineNum">      35 </span>            :                 }</a>
+<span class="lineNum">      36 </span>            : 
+<a name="37"><span class="lineNum">      37 </span><span class="lineCov">          3 :                 TCPClient(std::string address) : sa{address}, sock{sa} {</span></a>
+<span class="lineNum">      38 </span><span class="lineCov">          2 :                         sock.setReceiveTimeout(Poco::Timespan{0,1000000});</span>
+<span class="lineNum">      39 </span><span class="lineCov">          4 :                         runloop = std::move(std::thread{[this](){</span>
+<span class="lineNum">      40 </span><span class="lineCov">          2 :                                 onConnect();</span>
+<span class="lineNum">      41 </span>            :                                 char buff[1024];
+<span class="lineNum">      42 </span>            :                                 int bs;
+<span class="lineNum">      43 </span><span class="lineCov">          6 :                                 while(!isClosed){</span>
+<span class="lineNum">      44 </span>            :                                         try{
+<span class="lineNum">      45 </span>            :                                                 //std::cout&lt;&lt;&quot;wait for bytes&quot;&lt;&lt;std::endl;
+<span class="lineNum">      46 </span><span class="lineCov">          4 :                                                 bs = sock.receiveBytes(buff,1024);</span>
+<span class="lineNum">      47 </span>            :                                                 //std::cout&lt;&lt;&quot;got &quot;&lt;&lt;bs&lt;&lt;std::endl;
+<span class="lineNum">      48 </span><span class="lineCov">          4 :                                                 if(bs&lt;=0){</span>
+<span class="lineNum">      49 </span><span class="lineCov">          2 :                                                         onClose();</span>
+<span class="lineNum">      50 </span><span class="lineCov">          2 :                                                         break;</span>
+<span class="lineNum">      51 </span>            :                                                 }
+<span class="lineNum">      52 </span><span class="lineCov">          2 :                                                 std::string data{buff,static_cast&lt;size_t&gt;(bs)};</span>
+<span class="lineNum">      53 </span><span class="lineCov">          2 :                                                 onData(data);</span>
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 :                                         }catch(const Poco::TimeoutException &amp; e){</span>
+<span class="lineNum">      55 </span>            :                                                 //std::cout&lt;&lt;&quot;timeout!&quot;&lt;&lt;std::endl;
+<span class="lineNum">      56 </span><span class="lineNoCov">          0 :                                                 if(isClosed)break;</span>
+<span class="lineNum">      57 </span><span class="lineNoCov">          0 :                                         }catch(const std::exception &amp; e){</span>
+<span class="lineNum">      58 </span><span class="lineNoCov">          0 :                                                 std::cout&lt;&lt;&quot;Exception: &quot;&lt;&lt;e.what()&lt;&lt;std::endl;</span>
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :                                                 break;</span>
+<span class="lineNum">      60 </span>            :                                         }
+<span class="lineNum">      61 </span>            :                                 }
+<span class="lineNum">      62 </span>            :                                 //std::cout&lt;&lt;&quot;runloop end&quot;&lt;&lt;std::endl;
+<span class="lineNum">      63 </span><span class="lineCov">          6 :                         }});</span>
+<a name="64"><span class="lineNum">      64 </span><span class="lineCov">          2 :                 }</span></a>
+<span class="lineNum">      65 </span>            :                 
+<span class="lineNum">      66 </span><span class="lineCov">          6 :                 void close(){</span>
+<span class="lineNum">      67 </span><span class="lineCov">          6 :                         if(!isClosed){</span>
+<span class="lineNum">      68 </span>            :                                 try{
+<span class="lineNum">      69 </span><span class="lineCov">          2 :                                         sock.shutdown();</span>
+<span class="lineNum">      70 </span><span class="lineCov">          2 :                                         sock.close();</span>
+<span class="lineNum">      71 </span><span class="lineCov">          2 :                                         isClosed = true;</span>
+<span class="lineNum">      72 </span>            :                                         //std::cout&lt;&lt;&quot;isClosed = true&quot; &lt;&lt;std::endl;
+<span class="lineNum">      73 </span><span class="lineCov">          2 :                                         runloop.join();</span>
+<span class="lineNum">      74 </span><span class="lineCov">          2 :                                         onClose();</span>
+<span class="lineNum">      75 </span><span class="lineNoCov">          0 :                                 }catch(const std::exception &amp; e){</span>
+<span class="lineNum">      76 </span><span class="lineNoCov">          0 :                                         std::cout&lt;&lt;&quot;error while closing/joining: &quot;&lt;&lt;e.what()&lt;&lt;std::endl;</span>
+<span class="lineNum">      77 </span><span class="lineNoCov">          0 :                                         onClose();</span>
+<span class="lineNum">      78 </span>            :                                 }
+<a name="79"><span class="lineNum">      79 </span>            :                         }</a>
+<span class="lineNum">      80 </span><span class="lineCov">          6 :                 }</span>
+<span class="lineNum">      81 </span><span class="lineCov">          2 :                 void send(std::string msg){</span>
+<span class="lineNum">      82 </span><span class="lineCov">          2 :                         /*auto bs = */sock.sendBytes(msg.c_str(),msg.size());</span>
+<span class="lineNum">      83 </span>            :                         //std::cout&lt;&lt;&quot;sended &quot;&lt;&lt;bs&lt;&lt;&quot;/&quot;&lt;&lt;msg.size()&lt;&lt;&quot; bytes&quot;&lt;&lt;std::endl;
+<span class="lineNum">      84 </span><span class="lineCov">          1 :                 }</span>
+<span class="lineNum">      85 </span>            :                 void join(){
+<a name="86"><span class="lineNum">      86 </span>            :                         runloop.join();</a>
+<span class="lineNum">      87 </span>            :                 }
+<span class="lineNum">      88 </span><span class="lineCov">          4 :                 virtual ~TCPClient(){</span>
+<span class="lineNum">      89 </span><span class="lineCov">          2 :                         close();</span>
+<span class="lineNum">      90 </span><span class="lineCov">          2 :                 }</span>
+<span class="lineNum">      91 </span>            : 
+<span class="lineNum">      92 </span>            :         private:
+<span class="lineNum">      93 </span>            :                 bool isClosed = false;
+<span class="lineNum">      94 </span>            :                 Poco::Net::SocketAddress sa;
+<span class="lineNum">      95 </span>            :         Poco::Net::StreamSocket sock;
+<span class="lineNum">      96 </span>            :         std::thread runloop;
+<span class="lineNum">      97 </span>            :         };
+<span class="lineNum">      98 </span>            : 
+<span class="lineNum">      99 </span>            : }
+<span class="lineNum">     100 </span>            : }
+<span class="lineNum">     101 </span>            : 
+<span class="lineNum">     102 </span>            : #endif // __POCOTCPCLIENT__
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.11</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>
