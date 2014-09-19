@@ -25,7 +25,7 @@ namespace Susi {
 
 class HttpServerComponent : public Susi::System::BaseComponent {
 protected:
-	Susi::Api::ApiServerComponent apiServer;
+	std::shared_ptr<Susi::Api::ApiServerComponent> _api;
 	Poco::Net::SocketAddress address;
 	Poco::Net::ServerSocket serverSocket;
 	Poco::Net::HTTPServer server;
@@ -34,10 +34,10 @@ protected:
 public:
 	HttpServerComponent (Susi::System::ComponentManager * mgr, std::string addr,std::string assetRoot) :
 		Susi::System::BaseComponent{mgr},
-		apiServer{eventManager,mgr->getComponent<Susi::Sessions::SessionManagerComponent>("sessionmanager")},
+		_api{mgr->getComponent<Susi::Api::ApiServerComponent>("apiserver")},
 		address(addr),
 		serverSocket(address),
-		server(new RequestHandlerFactory(assetRoot, &apiServer,mgr->getComponent<Susi::Sessions::SessionManagerComponent>("sessionmanager")),serverSocket,new Poco::Net::HTTPServerParams)
+		server(new RequestHandlerFactory(assetRoot, _api, mgr->getComponent<Susi::Sessions::SessionManagerComponent>("sessionmanager")),serverSocket,new Poco::Net::HTTPServerParams)
 	{
 			_addr = addr;
 	}

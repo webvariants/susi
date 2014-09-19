@@ -30,32 +30,30 @@ class TCPApiServerComponent : public Susi::System::BaseComponent {
 protected:
 	class Connection : public Poco::Net::TCPServerConnection {
 	protected:
-		Susi::Api::ApiServerComponent api;
+		std::shared_ptr<Susi::Api::ApiServerComponent> _api;
 		std::string sessionID = "";
 		Susi::Api::JSONStreamCollector collector;
 	public:
-		Connection(const Poco::Net::StreamSocket& s,
-				   std::shared_ptr<Susi::Events::ManagerComponent> eventManager,
-				   std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager) :
+		Connection(const Poco::Net::StreamSocket& s,std::shared_ptr<Susi::Api::ApiServerComponent> api) :
 			Poco::Net::TCPServerConnection{s},
-			api{eventManager,sessionManager},
+			_api{api},
 			sessionID{std::to_string(std::chrono::system_clock::now().time_since_epoch().count())},
 			collector{[this](std::string & msg){
 				Susi::Logger::debug("got message in collector!");
 				std::string s = sessionID;
 				auto message = Susi::Util::Any::fromString(msg);
-				api.onMessage(s,message);
+				_api->onMessage(s,message);
 			}} {
 				Susi::Logger::debug("Connection constructor");
-				api.onConnect(sessionID);
-				api.registerSender(sessionID,[this](Susi::Util::Any & msg) {
+				_api->onConnect(sessionID);
+				_api->registerSender(sessionID,[this](Susi::Util::Any & msg) {
 					if(this==nullptr) return;
 					std::string str = msg.toJSONString()+"\n";
 					socket().sendBytes(str.c_str(),str.size());
 			});
 		}
 		~Connection(){
-			api.onClose(sessionID);
+			_api->onClose(sessionID);
 			Susi::Logger::debug("deleting tcp connection");
 		}
 		void run(){
@@ -76,42 +74,37 @@ protected:
 
 	class ConnectionFactory : public Poco::Net::TCPServerConnectionFactory {
 	public:
-		std::shared_ptr<Susi::Events::ManagerComponent> eventManager;
-		std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager;
-		ConnectionFactory(std::shared_ptr<Susi::Events::ManagerComponent> _eventManager,
-						  std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager) {
-			eventManager = _eventManager;
-			sessionManager = _sessionManager;
-		}
+		std::shared_ptr<Susi::Api::ApiServerComponent> _api;
+
+		ConnectionFactory(std::shared_ptr<Susi::Api::ApiServerComponent> api) : _api{api} {}
 		virtual Poco::Net::TCPServerConnection * createConnection(const Poco::Net::StreamSocket& s){
 			//std::cout<<"create connection!"<<std::endl;
 			Susi::Logger::debug("creating new tcp connection");
-			return new Connection{s, eventManager, sessionManager};
+			return new Connection{s, _api};
 		}
 	};
 
+	std::shared_ptr<Susi::Api::ApiServerComponent> api;
 	Poco::Net::SocketAddress address;
 	Poco::Net::ServerSocket serverSocket;
 	Poco::Net::TCPServerParams *params;
 	Poco::Net::TCPServer tcpServer;
-
 public:
 	TCPApiServerComponent(Susi::System::ComponentManager * mgr,
 						  std::string addr,
 						  size_t threads = 4,
 						  size_t backlog = 16) :
 		Susi::System::BaseComponent{mgr},
+		api{componentManager->getComponent<Susi::Api::ApiServerComponent>("apiserver")},
 		address{addr},
 		serverSocket{address},
 		params{new Poco::Net::TCPServerParams},
-		tcpServer{new ConnectionFactory{eventManager,
-										componentManager->getComponent<Susi::Sessions::SessionManagerComponent>("sessionmanager")},
-		serverSocket,
-		params} {
+		tcpServer{new ConnectionFactory{api}, serverSocket,	params} {
 			params->setMaxThreads(threads);
 			params->setMaxQueued(backlog);
 			params->setThreadIdleTime(100);
-	}
+		}
+
 	virtual void start() override {
 		tcpServer.start();
 		std::string msg{"started TCP Api Server on "};

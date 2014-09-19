@@ -31,14 +31,14 @@ class RequestHandlerFactory: public Poco::Net::HTTPRequestHandlerFactory
 {
 protected:
     std::string _assetRoot;
-    Susi::Api::ApiServerComponent *_apiServer;
+    std::shared_ptr<Susi::Api::ApiServerComponent> _apiServer;
     std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager;
 public:
     RequestHandlerFactory(std::string assetRoot, 
-                          Susi::Api::ApiServerComponent *apiServer, 
+                          std::shared_ptr<Susi::Api::ApiServerComponent> apiServer,                          
                           std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager) : 
                             _assetRoot{assetRoot} , 
-                            _apiServer(apiServer) ,
+                            _apiServer{apiServer} ,
                             _sessionManager{sessionManager} {}
     Poco::Net::HTTPRequestHandler* createRequestHandler(const Poco::Net::HTTPServerRequest& request){
         Susi::Logger::debug("got request with URI: "+request.getURI());

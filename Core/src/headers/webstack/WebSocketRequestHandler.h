@@ -27,10 +27,10 @@ namespace Susi {
 
 	class WebSocketRequestHandler: public Poco::Net::HTTPRequestHandler {
 		protected:
-			Susi::Api::ApiServerComponent *apiServer;
+    	std::shared_ptr<Susi::Api::ApiServerComponent> _apiServer;
 		public:
     		void handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
-    		WebSocketRequestHandler(Susi::Api::ApiServerComponent* server);
+    		WebSocketRequestHandler(std::shared_ptr<Susi::Api::ApiServerComponent> apiServer);
 	};
 
 }
