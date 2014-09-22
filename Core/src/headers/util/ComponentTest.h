@@ -5,13 +5,13 @@
   * complete text in the attached LICENSE file or online at:
   *
   * http://www.opensource.org/licenses/mit-license.php
-  * 
+  *
   * @author: Tino Rusch (tino.rusch@webvariants.de)
   */
- 
+
 #ifndef __COMPONENTTEST__
 #define __COMPONENTTEST__
- 
+
 #include "gtest/gtest.h"
 #include "world/system_setup.h"
 #include "config/Config.h"
@@ -28,11 +28,11 @@ public:
 
 		base_path = Poco::Path(Poco::Path::current()).toString() + "component_test";
 
-		Susi::Util::Any::Object cfg = Susi::Util::Any::fromString(getConfigString(base_path));
+		Susi::Util::Any::Object cfg = Susi::Util::Any::fromJSONString(getConfigString(base_path));
 		componentManager = Susi::System::createSusiComponentManager(cfg);
 		eventManager = componentManager->getComponent<Susi::Events::ManagerComponent>("eventsystem");
 
-		
+
 		io.makeDir(base_path);
 	}
 
@@ -106,7 +106,7 @@ protected:
 				"\"apiserver\": {}"
 			"}";
 
-		return configString;						
+		return configString;
 	}
 
 	long subscribe(std::string topic, Susi::Events::Processor processor){
@@ -134,7 +134,7 @@ protected:
 	Susi::Events::EventPtr createEvent(std::string topic){
 		return eventManager->createEvent(topic);
 	}
-	
+
 	Susi::Events::SharedEventPtr waitForConsumerEvent(std::string topic,std::chrono::milliseconds timeout){
 		callbackCalled = false;
 		sharedEvent.reset();
@@ -192,7 +192,7 @@ protected:
 			if(headers[i].first == "error") {
 				error_found = true;
 				break;
-			}			
+			}
 		}
 
 		return error_found;
@@ -220,6 +220,6 @@ private:
 };
 
 
- 
+
 #endif // __COMPONENTTEST__
-  
+

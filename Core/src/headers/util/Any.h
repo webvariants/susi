@@ -190,13 +190,13 @@ namespace Susi {
 
 			// json de/encoder;
 			std::string toJSONString();
-			static Any fromString(std::string str);
+			static Any fromJSONString(std::string str);
 			static std::string escapeJSON(const std::string& input);
 			static std::string unescapeJSON(const std::string& input);
 
 		protected:
 			// json helper
-			static bool testIsStringJsonPrimitive(std::string str);
+			static bool isJsonPrimitive(std::string str);
 			static Any tokenToAny(jsmntok_t * & t, const char *js);
 		};
 	}

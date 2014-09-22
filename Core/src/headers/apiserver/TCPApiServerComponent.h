@@ -41,7 +41,7 @@ protected:
 			collector{[this](std::string & msg){
 				Susi::Logger::debug("got message in collector!");
 				std::string s = sessionID;
-				auto message = Susi::Util::Any::fromString(msg);
+				auto message = Susi::Util::Any::fromJSONString(msg);
 				_api->onMessage(s,message);
 			}} {
 				Susi::Logger::debug("Connection constructor");

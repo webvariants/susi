@@ -34,7 +34,7 @@ void Susi::Config::loadConfig(std::string path){
 		}
 
 		try {
-			configVar = Susi::Util::Any::fromString(content);
+			configVar = Susi::Util::Any::fromJSONString(content);
 		} catch(const std::exception & e){
 			std::string msg = "Susi::Config::loadConfig ";
 			msg += ("File: " + path + " file cant be parsed as json!");
@@ -155,7 +155,7 @@ void Susi::Config::parseCommandLine(std::vector<std::string> argv) {
 			Susi::Util::Helpers::split(key, '=', elems);
 			if(elems.size() == 2) {
 				key = elems[0];
-				v   = Susi::Util::Any::fromString(elems[1]);
+				v   = Susi::Util::Any::fromJSONString(elems[1]);
 				set(key,v);
 			} else {
 				it = _knownCommandLineOptions.find(key);
@@ -165,7 +165,7 @@ void Susi::Config::parseCommandLine(std::vector<std::string> argv) {
 
 					if(i < (argc-1) && argv[i+1][0]!='-') {
 						std::string value = argv[(i+1)];
-						v = Susi::Util::Any::fromString(value);
+						v = Susi::Util::Any::fromJSONString(value);
 						i++;
 					}else{
 						v = Susi::Util::Any::Object{};
@@ -176,7 +176,7 @@ void Susi::Config::parseCommandLine(std::vector<std::string> argv) {
 				else {
 					if(i < (argc-1) && argv[i+1][0]!='-') {
 						std::string value = argv[(i+1)];
-						v = Susi::Util::Any::fromString(value);
+						v = Susi::Util::Any::fromJSONString(value);
 						i++;
 					}else{
 						v = Susi::Util::Any::Object{};

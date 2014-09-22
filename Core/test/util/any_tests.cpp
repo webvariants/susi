@@ -6,7 +6,7 @@
  *
  * http://www.opensource.org/licenses/mit-license.php
  *
- * @author: Tino Rusch (tino.rusch@webvariants.de), Thomas Krause (thomas.krause@webvariants.de)
+ * @author: Tino Rusch (tino.rusch@webvariants.de), Thomas Krause (thomas.krause@webvariants.de), Christian Sonderfeld (christian.sonderfeld@webvariants.de)
  */
 
 #include "gtest/gtest.h"
@@ -69,31 +69,33 @@ TEST(Any, BoolConstructorsAndAssignments) {
 	EXPECT_EQ(true,static_cast<bool>(a));
 
 	// Copy Constructor
-	Any b{a};
+	bool a1{true};
+	Any b{a1};
 	EXPECT_EQ(Any::BOOL,b.getType());
 	EXPECT_TRUE(b.isBool());
 	EXPECT_EQ(true,static_cast<bool>(b));
+	EXPECT_TRUE(a1);
 
 	// Move Constructor
-	Any c{true};
+	bool c{true};
 	Any d{std::move(c)};
 	EXPECT_EQ(Any::BOOL,d.getType());
 	EXPECT_TRUE(d.isBool());
-	EXPECT_EQ(true,static_cast<bool>(d));
-	EXPECT_TRUE(c.isNull());
+	EXPECT_TRUE(static_cast<bool>(d));
 
 	// Copy asignment operator
-	Any e = a;
+	Any e = a1;
 	EXPECT_EQ(Any::BOOL,e.getType());
 	EXPECT_TRUE(e.isBool());
 	EXPECT_EQ(true,static_cast<bool>(e));
+	EXPECT_TRUE(a1);
 
 	// Move asignment operator
-	Any f = std::move(a);
+	bool c1{true};
+	Any f = std::move(c1);
 	EXPECT_EQ(Any::BOOL,f.getType());
 	EXPECT_TRUE(f.isBool());
 	EXPECT_EQ(true,static_cast<bool>(f));
-	EXPECT_TRUE(a.isNull());
 }
 
 TEST(Any, IntegerConstructorsAndAssignments) {
@@ -729,7 +731,7 @@ TEST(Any,ArrayIndexOperators){
 	},Any::WrongTypeException);
 }
 
-TEST(Any, toString){
+TEST(Any, JsonEncoderTest){
 	Any a;
 	EXPECT_EQ("null",a.toJSONString());
 	Any b{true};
@@ -769,7 +771,7 @@ TEST(Any, JsonEncoderDecoderTest){
 		{"object",Any::Object{{"foo","bar"}}}
 	};
 	std::string jsonEncoded = a.toJSONString();
-	Any b = Any::fromString(jsonEncoded);
+	Any b = Any::fromJSONString(jsonEncoded);
 	EXPECT_EQ(a,b);
 }
 
@@ -857,19 +859,30 @@ TEST (Any, StringEscaping){
 	EXPECT_EQ("{\"array\":[{\"foo\":\"bar \\\" \\/ \\b \\f \\n \\r \\t \\\\ \"}]}",j.toJSONString());
 }
 
-TEST (Any, FromString){
+TEST (Any, FromJSONString){
 
-	Any i = Any::fromString("123");
+	Any b = Any::fromJSONString("true");
+	EXPECT_EQ(Any{true}.toJSONString(), b.toJSONString());
+
+	Any i = Any::fromJSONString("123");
 	EXPECT_EQ(Any{123}.toJSONString(), i.toJSONString());
 
-	Any d = Any::fromString("123.45");
+	Any d = Any::fromJSONString("123.45");
 	EXPECT_EQ(Any{123.45}.toJSONString(), d.toJSONString());
 
-	Any s = Any::fromString("this is it!");
+	Any s = Any::fromJSONString("this is it!");
 	EXPECT_EQ(Any{"this is it!"}.toJSONString(), s.toJSONString());
 
-	Any s2 = Any::fromString("\"foo bar!\"");
+	Any s2 = Any::fromJSONString("\"foo bar!\"");
 	EXPECT_EQ(Any{"foo bar!"}.toJSONString(), s2.toJSONString());
+
+	Any a = Any::fromJSONString("[1,2,3]");
+	Any a_test{Any::Array{1,2,3}};
+	EXPECT_EQ(a_test.toJSONString(), a.toJSONString());
+
+	Any o = Any::fromJSONString("{\"first\": 1, \"second\": 2, \"third\": 3}");
+	Any o_test{Any::Object{{"first", 1},{"second", 2},{"third", 3}}};
+	EXPECT_EQ(o_test.toJSONString(), o.toJSONString());
 }
 
 TEST (Any, CopyConversionOperators){

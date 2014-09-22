@@ -657,9 +657,9 @@ std::string Any::toJSONString(){
 	return result;
 }
 
-Any Any::fromString(std::string str) {
+Any Any::fromJSONString(std::string str) {
 	try{
-		if(Susi::Util::Any::testIsStringJsonPrimitive(str)) {
+		if(Susi::Util::Any::isJsonPrimitive(str)) {
 			Susi::Util::Any v;
 			if(Susi::Util::Helpers::isInteger(str)) {
 				v = Susi::Util::Any{std::stoi(str)};
@@ -680,7 +680,7 @@ Any Any::fromString(std::string str) {
 			r = jsmn_parse(&p, str.c_str(), str.size(), tokens, JSON_TOKENS);
 
 			if(r < 0) {
-				throw std::runtime_error{"Any::fromString parse error"};
+				throw std::runtime_error{"Any::fromJSONString parse error"};
 			}
 
 			jsmntok_t * start = &tokens[0];
@@ -692,7 +692,7 @@ Any Any::fromString(std::string str) {
 }
 
 // json helper
-bool Any::testIsStringJsonPrimitive(std::string str){
+bool Any::isJsonPrimitive(std::string str){
 	if(str.find("{") != std::string::npos ||
 	   str.find("[") != std::string::npos ||
 	   str.find("\"") != std::string::npos){

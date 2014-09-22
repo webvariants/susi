@@ -30,7 +30,7 @@ bool StateController::loadPersistent() {
 	Susi::IOController io;
 	std::string fileContent = io.readFile(fileLocation);
 
-	persistentStates = Susi::Util::Any::fromString(fileContent);
+	persistentStates = Susi::Util::Any::fromJSONString(fileContent);
 	return true;
 }
 

@@ -42,7 +42,7 @@ void Susi::WebSocketRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& 
 			break;
 		}
 		std::string str(buffer, n);
-		Susi::Util::Any packet = Susi::Util::Any::fromString(str);
+		Susi::Util::Any packet = Susi::Util::Any::fromJSONString(str);
 		_apiServer->onMessage(id,packet);
 	}
 	Susi::Logger::debug("closing websocket");
