@@ -85,7 +85,6 @@ void Susi::Api::ApiServerComponent::handleRegisterConsumer(std::string & id, Sus
 		subs[topic] = subid;
 		sendOk(id);
 	}else{
-		std::cout<<"handleRegisterConsumer-> data is not a string:"<<std::endl;
 		sendFail(id,"data is not a string");
 	}
 }

@@ -126,7 +126,6 @@ protected:
 		auto statusError = [this](Susi::Util::Any & packet){
 			EXPECT_EQ(Susi::Util::Any{"status"},packet["type"]);
 			EXPECT_EQ(Susi::Util::Any{true},packet["error"]);
-			EXPECT_EQ(Susi::Util::Any{"you are allready subscribed to sample"},packet["data"]);
 			called = true;
 			cond.notify_one();
 		};
@@ -156,6 +155,64 @@ protected:
 		apiserver->onMessage(sessionID,msg);
 		waitForCondition(250);
 
+		msg = Susi::Util::Any::Object{
+			{"type","wrong"},
+			{"data","sample"}
+		};
+		apiserver->onMessage(sessionID,msg);
+		waitForCondition(250);
+
+		msg = Susi::Util::Any::Object{
+			{"type",1},
+			{"data","sample"}
+		};
+		apiserver->onMessage(sessionID,msg);
+		waitForCondition(250);
+
+		msg = Susi::Util::Any::Object{};
+		apiserver->onMessage(sessionID,msg);
+		waitForCondition(250);
+
+		msg = Susi::Util::Any::Object{
+			{"type","registerConsumer"},
+			{"data",false}
+		};
+		apiserver->onMessage(sessionID,msg);
+		waitForCondition(250);
+
+		msg = Susi::Util::Any::Object{
+			{"type","registerProcessor"},
+			{"data",false}
+		};
+		apiserver->onMessage(sessionID,msg);
+		waitForCondition(250);
+
+		msg = Susi::Util::Any::Object{
+			{"type","publish"},
+			{"data",false}
+		};
+		apiserver->onMessage(sessionID,msg);
+		waitForCondition(250);
+
+		msg = Susi::Util::Any::Object{
+			{"type","ack"},
+			{"data",false}
+		};
+		apiserver->onMessage(sessionID,msg);
+		waitForCondition(250);
+
+		msg = Susi::Util::Any::Object{
+			{"type","unregisterConsumer"},
+			{"data","foo"}
+		};
+		apiserver->onMessage(sessionID,msg);
+		waitForCondition(250);//status
+		msg = Susi::Util::Any::Object{
+			{"type","unregisterProcessor"},
+			{"data","foo"}
+		};
+		apiserver->onMessage(sessionID,msg);
+		waitForCondition(250);//status
 	}
 
 	virtual void EdgeCases() override {
