@@ -96,10 +96,65 @@ protected:
 		waitForCondition(250);//status
 		waitForCondition(250);//consumerEvent
 		waitForCondition(250);//ack
+
+		msg = Susi::Util::Any::Object{
+			{"type","unregisterConsumer"},
+			{"data","sample"}
+		};
+		apiserver->onMessage(sessionID,msg);
+		waitForCondition(250);//status
+		msg = Susi::Util::Any::Object{
+			{"type","unregisterProcessor"},
+			{"data","sample"}
+		};
+		apiserver->onMessage(sessionID,msg);
+		waitForCondition(250);//status
+
 		apiserver->onClose(sessionID);
 	}
 
 	virtual void BadCases() override {
+		auto statusSuccess = [this](Susi::Util::Any & packet){
+			Susi::Util::Any expect = Susi::Util::Any::Object{
+				{"type","status"},
+				{"error",false}
+			};
+			EXPECT_EQ(expect.toJSONString(),packet.toJSONString());
+			called = true;
+			cond.notify_one();
+		};
+		auto statusError = [this](Susi::Util::Any & packet){
+			EXPECT_EQ(Susi::Util::Any{"status"},packet["type"]);
+			EXPECT_EQ(Susi::Util::Any{true},packet["error"]);
+			EXPECT_EQ(Susi::Util::Any{"you are allready subscribed to sample"},packet["data"]);
+			called = true;
+			cond.notify_one();
+		};
+
+		apiserver->registerSender(sessionID,statusSuccess);
+		apiserver->onConnect(sessionID);
+		Susi::Util::Any msg = Susi::Util::Any::Object{
+			{"type","registerConsumer"},
+			{"data","sample"}
+		};
+		apiserver->onMessage(sessionID,msg);
+		waitForCondition(250);
+		apiserver->registerSender(sessionID,statusError);
+		apiserver->onMessage(sessionID,msg);
+		waitForCondition(250);
+
+
+		apiserver->registerSender(sessionID,statusSuccess);
+		apiserver->onConnect(sessionID);
+		msg = Susi::Util::Any::Object{
+			{"type","registerProcessor"},
+			{"data","sample"}
+		};
+		apiserver->onMessage(sessionID,msg);
+		waitForCondition(250);
+		apiserver->registerSender(sessionID,statusError);
+		apiserver->onMessage(sessionID,msg);
+		waitForCondition(250);
 
 	}
 
