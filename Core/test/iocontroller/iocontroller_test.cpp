@@ -47,6 +47,20 @@ TEST_F(IOControllerTest,ReadFile){
 	EXPECT_EQ(data,result);
 }
 
+TEST_F(IOControllerTest,ReadFileWithNoReadPermission){
+	// create File
+	std::string path = current_path +"/IOTESTS/foobar_read.dat";
+	controller.writeFile(current_path +"/IOTESTS/foobar_read.dat",data);
+
+	chmod((char*)path.c_str(), 0222);
+
+	EXPECT_THROW ({
+		std::string result = controller.readFile(current_path + "/IOTESTS/foobar_read.dat");
+	}, std::runtime_error);
+
+	chmod((char*)path.c_str(), 0777);
+}
+
 TEST_F(IOControllerTest,ReadFileInNoneExistentDir){
 	EXPECT_THROW ({
 		controller.readFile(current_path +"/IOTESTS/NO_EXISTENT_DIR/foobar.dat");
