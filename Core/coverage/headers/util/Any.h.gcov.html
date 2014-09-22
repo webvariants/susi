@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-22 13:25:57</td>
+            <td class="headerValue">2014-09-22 15:15:52</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">4</td>
@@ -94,7 +94,7 @@
 <span class="lineNum">      32 </span>            : 
 <a name="33"><span class="lineNum">      33 </span>            : namespace Susi {</a>
 <span class="lineNum">      34 </span>            :         namespace Util {
-<span class="lineNum">      35 </span><span class="lineCov">      20093 :                 class Any {</span>
+<span class="lineNum">      35 </span><span class="lineCov">      20177 :                 class Any {</span>
 <span class="lineNum">      36 </span>            :                 public:
 <span class="lineNum">      37 </span>            :                         typedef std::map&lt;std::string,Any&gt; Object;
 <span class="lineNum">      38 </span>            :                         typedef std::deque&lt;Any&gt; Array;
@@ -165,7 +165,7 @@
 <span class="lineNum">     103 </span>            :                         Any(const long long &amp; value);
 <a name="104"><span class="lineNum">     104 </span>            :                         Any(const double &amp; value);</a>
 <span class="lineNum">     105 </span>            :                         Any(const std::string &amp; value);
-<span class="lineNum">     106 </span><span class="lineCov">        131 :                         Any(const char* value) : Any(std::string{value,strlen(value)}) {}</span>
+<span class="lineNum">     106 </span><span class="lineCov">        162 :                         Any(const char* value) : Any(std::string{value,strlen(value)}) {}</span>
 <span class="lineNum">     107 </span>            :                         Any(const std::deque&lt;Any&gt; &amp; value);
 <span class="lineNum">     108 </span>            :                         Any(const std::map&lt;std::string,Any&gt; &amp; value);
 <span class="lineNum">     109 </span>            : 
