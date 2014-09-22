@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info.cleaned - sources/db/Manager.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">sources/db</a> - Manager.cpp<span style="font-size: 80%;"> (source / <a href="Manager.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">41</td>
+            <td class="headerCovTableEntry">43</td>
+            <td class="headerCovTableEntryHi">95.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2014-09-22 09:33:38</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntry">8</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : #include &quot;db/Manager.h&quot;</a>
+<span class="lineNum">       2 </span>            : 
+<a name="3"><span class="lineNum">       3 </span><span class="lineCov">          2 : Susi::DB::Manager::Manager() {}</span></a>
+<span class="lineNum">       4 </span>            : 
+<span class="lineNum">       5 </span><span class="lineCov">         10 : Susi::DB::Manager::Manager(Susi::Util::Any config) {</span>
+<span class="lineNum">       6 </span><span class="lineCov">         10 :         this-&gt;init(config);</span>
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span><span class="lineCov">         10 :         std::string msg = &quot;initialized database manager with &quot;;</span>
+<span class="lineNum">       9 </span><span class="lineCov">         10 :         msg += std::to_string(config.size());</span>
+<span class="lineNum">      10 </span><span class="lineCov">         10 :         msg += &quot; databases&quot;;</span>
+<span class="lineNum">      11 </span><span class="lineCov">         10 :         Susi::Logger::info(msg);</span>
+<a name="12"><span class="lineNum">      12 </span><span class="lineCov">         10 : }</span></a>
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span><span class="lineCov">          1 : Susi::DB::Manager::Manager(std::vector&lt;std::tuple&lt;std::string,std::string,std::string&gt;&gt; dbs) {</span>
+<span class="lineNum">      15 </span><span class="lineCov">          3 :         for(std::size_t i=0; i&lt;dbs.size(); ++i){</span>
+<span class="lineNum">      16 </span><span class="lineCov">          2 :           this-&gt;addDatabase(std::get&lt;0&gt;(dbs[i]), std::get&lt;1&gt;(dbs[i]),std::get&lt;2&gt;(dbs[i]));</span>
+<span class="lineNum">      17 </span>            :         }
+<span class="lineNum">      18 </span><span class="lineCov">          1 :         std::string msg = &quot;initialized database manager with &quot;;</span>
+<span class="lineNum">      19 </span><span class="lineCov">          1 :         msg += std::to_string(dbs.size());</span>
+<span class="lineNum">      20 </span><span class="lineCov">          1 :         msg += &quot; databases&quot;;</span>
+<span class="lineNum">      21 </span><span class="lineCov">          1 :         Susi::Logger::info(msg);</span>
+<a name="22"><span class="lineNum">      22 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span><span class="lineCov">         10 : void Susi::DB::Manager::init(Susi::Util::Any config) {</span>
+<span class="lineNum">      25 </span><span class="lineCov">         10 :         if(config.isArray()) {</span>
+<span class="lineNum">      26 </span><span class="lineCov">         30 :                 for(std::size_t i=0; i&lt;config.size(); ++i){</span>
+<span class="lineNum">      27 </span>            :                         try{
+<span class="lineNum">      28 </span><span class="lineCov">         20 :                                 Susi::Util::Any entry = config[i];</span>
+<span class="lineNum">      29 </span>            : 
+<span class="lineNum">      30 </span><span class="lineCov">         20 :                                 Susi::Logger::info(&quot;INIT:&quot; + entry.toJSONString() +&quot; TYPE:&quot; + (entry.isObject() ? &quot;Object&quot; : &quot;Wrong Type&quot;));</span>
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span><span class="lineCov">         40 :                                 std::string identifier = entry[&quot;identifier&quot;];</span>
+<span class="lineNum">      33 </span><span class="lineCov">         40 :                                 std::string dbtype     = entry[&quot;type&quot;];</span>
+<span class="lineNum">      34 </span><span class="lineCov">         40 :                                 std::string connectURI = entry[&quot;uri&quot;];</span>
+<span class="lineNum">      35 </span><span class="lineCov">         40 :                                 addDatabase(identifier, dbtype, connectURI);</span>
+<span class="lineNum">      36 </span><span class="lineNoCov">          0 :                         }catch(const std::exception &amp; e){</span>
+<span class="lineNum">      37 </span><span class="lineNoCov">          0 :                                 Susi::Logger::error(&quot;malformed config file&quot;);</span>
+<span class="lineNum">      38 </span>            :                         }
+<span class="lineNum">      39 </span>            :                 }
+<span class="lineNum">      40 </span>            :         }
+<a name="41"><span class="lineNum">      41 </span><span class="lineCov">         10 : }</span></a>
+<span class="lineNum">      42 </span>            : 
+<span class="lineNum">      43 </span><span class="lineCov">         23 : void Susi::DB::Manager::addDatabase(std::string identifier,std::string dbtype,std::string connectURI) {</span>
+<span class="lineNum">      44 </span><span class="lineCov">         23 :         this-&gt;dbMap[identifier] = Susi::DB::ManagerItem{dbtype,connectURI};</span>
+<a name="45"><span class="lineNum">      45 </span><span class="lineCov">         23 : }</span></a>
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span><span class="lineCov">         29 : std::shared_ptr&lt;Susi::DB::Database&gt; Susi::DB::Manager::getDatabase(std::string identifier) {</span>
+<span class="lineNum">      48 </span><span class="lineCov">         29 :         if(this-&gt;dbMap.count(identifier) &gt; 0) {</span>
+<span class="lineNum">      49 </span><span class="lineCov">         28 :                 Susi::DB::ManagerItem item = this-&gt;dbMap[identifier];</span>
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span><span class="lineCov">         28 :                 if(item.connected == false) {</span>
+<span class="lineNum">      52 </span><span class="lineCov">         28 :                         item.db = std::shared_ptr&lt;Susi::DB::Database&gt;(new Susi::DB::Database(item.dbtype, item.connectURI));</span>
+<span class="lineNum">      53 </span><span class="lineCov">         28 :                         item.connected = true;</span>
+<span class="lineNum">      54 </span>            :                 }
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span><span class="lineCov">         28 :                 return item.db;</span>
+<span class="lineNum">      57 </span>            : 
+<span class="lineNum">      58 </span>            :         } else {
+<span class="lineNum">      59 </span><span class="lineCov">          1 :                 std::string msg = &quot;DB not found: &quot;;</span>
+<span class="lineNum">      60 </span><span class="lineCov">          1 :                 msg += identifier;</span>
+<span class="lineNum">      61 </span><span class="lineCov">          1 :                 Susi::Logger::error(msg);</span>
+<span class="lineNum">      62 </span>            :         }
+<a name="63"><span class="lineNum">      63 </span>            : </a>
+<span class="lineNum">      64 </span><span class="lineCov">          1 :         return nullptr;</span>
+<span class="lineNum">      65 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.11</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

@@ -37,12 +37,12 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-19 09:48:32</td>
+            <td class="headerValue">2014-09-22 09:02:31</td>
             <td></td>
             <td class="headerItem">Functions:</td>
-            <td class="headerCovTableEntry">63</td>
-            <td class="headerCovTableEntry">171</td>
-            <td class="headerCovTableEntryLo">36.8 %</td>
+            <td class="headerCovTableEntry">62</td>
+            <td class="headerCovTableEntry">170</td>
+            <td class="headerCovTableEntryLo">36.5 %</td>
           </tr>
           <tr><td><img src="../../../../glass.png" width=3 height=3 alt=""></td></tr>
         </table>
@@ -1539,12 +1539,12 @@
 <span class="lineNum">    1477 </span>            :  public:
 <a name="1478"><span class="lineNum">    1478 </span>            :   // This templatized version is for the general case.</a>
 <span class="lineNum">    1479 </span>            :   template &lt;typename T1, typename T2&gt;
-<span class="lineNum">    1480 </span><span class="lineCov">       2722 :   static AssertionResult Compare(const char* expected_expression,</span>
+<span class="lineNum">    1480 </span><span class="lineCov">       2723 :   static AssertionResult Compare(const char* expected_expression,</span>
 <span class="lineNum">    1481 </span>            :                                  const char* actual_expression,
 <span class="lineNum">    1482 </span>            :                                  const T1&amp; expected,
 <span class="lineNum">    1483 </span>            :                                  const T2&amp; actual) {
 <span class="lineNum">    1484 </span>            :     return CmpHelperEQ(expected_expression, actual_expression, expected,
-<span class="lineNum">    1485 </span><span class="lineCov">       2722 :                        actual);</span>
+<span class="lineNum">    1485 </span><span class="lineCov">       2723 :                        actual);</span>
 <span class="lineNum">    1486 </span>            :   }
 <span class="lineNum">    1487 </span>            : 
 <span class="lineNum">    1488 </span>            :   // With this overloaded version, we allow anonymous enums to be used
@@ -1572,7 +1572,7 @@
 <span class="lineNum">    1510 </span>            :   // NOT a pointer, e.g. ASSERT_EQ(0, AnIntFunction()) or
 <a name="1511"><span class="lineNum">    1511 </span>            :   // EXPECT_EQ(false, a_bool).</a>
 <span class="lineNum">    1512 </span>            :   template &lt;typename T1, typename T2&gt;
-<span class="lineNum">    1513 </span><span class="lineCov">          4 :   static AssertionResult Compare(</span>
+<span class="lineNum">    1513 </span><span class="lineCov">          3 :   static AssertionResult Compare(</span>
 <span class="lineNum">    1514 </span>            :       const char* expected_expression,
 <span class="lineNum">    1515 </span>            :       const char* actual_expression,
 <span class="lineNum">    1516 </span>            :       const T1&amp; expected,
@@ -1584,7 +1584,7 @@
 <span class="lineNum">    1522 </span>            :       // this template match better.
 <span class="lineNum">    1523 </span>            :       typename EnableIf&lt;!is_pointer&lt;T2&gt;::value&gt;::type* = 0) {
 <span class="lineNum">    1524 </span>            :     return CmpHelperEQ(expected_expression, actual_expression, expected,
-<span class="lineNum">    1525 </span><span class="lineCov">          4 :                        actual);</span>
+<span class="lineNum">    1525 </span><span class="lineCov">          3 :                        actual);</span>
 <span class="lineNum">    1526 </span>            :   }
 <span class="lineNum">    1527 </span>            : 
 <span class="lineNum">    1528 </span>            :   // This version will be picked when the second argument to ASSERT_EQ() is a

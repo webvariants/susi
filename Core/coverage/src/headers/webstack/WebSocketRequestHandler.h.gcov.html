@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-19 09:48:32</td>
+            <td class="headerValue">2014-09-22 09:03:23</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">0</td>
@@ -89,10 +89,10 @@
 <span class="lineNum">      27 </span>            : 
 <span class="lineNum">      28 </span><span class="lineNoCov">          0 :         class WebSocketRequestHandler: public Poco::Net::HTTPRequestHandler {</span>
 <span class="lineNum">      29 </span>            :                 protected:
-<span class="lineNum">      30 </span>            :                         Susi::Api::ApiServerComponent *apiServer;
+<span class="lineNum">      30 </span>            :         std::shared_ptr&lt;Susi::Api::ApiServerComponent&gt; _apiServer;
 <span class="lineNum">      31 </span>            :                 public:
 <span class="lineNum">      32 </span>            :                 void handleRequest(Poco::Net::HTTPServerRequest&amp; request, Poco::Net::HTTPServerResponse&amp; response);
-<span class="lineNum">      33 </span>            :                 WebSocketRequestHandler(Susi::Api::ApiServerComponent* server);
+<span class="lineNum">      33 </span>            :                 WebSocketRequestHandler(std::shared_ptr&lt;Susi::Api::ApiServerComponent&gt; apiServer);
 <span class="lineNum">      34 </span>            :         };
 <span class="lineNum">      35 </span>            : 
 <span class="lineNum">      36 </span>            : }

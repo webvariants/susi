@@ -1,0 +1,238 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info.cleaned - sources/sessions/SessionManager.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">sources/sessions</a> - SessionManager.cpp<span style="font-size: 80%;"> (source / <a href="SessionManager.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">65</td>
+            <td class="headerCovTableEntry">82</td>
+            <td class="headerCovTableEntryMed">79.3 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2014-09-22 09:33:38</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">12</td>
+            <td class="headerCovTableEntry">13</td>
+            <td class="headerCovTableEntryHi">92.3 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :  * Copyright (c) 2014, webvariants GmbH, http://www.webvariants.de
+<span class="lineNum">       3 </span>            :  *
+<span class="lineNum">       4 </span>            :  * This file is released under the terms of the MIT license. You can find the
+<span class="lineNum">       5 </span>            :  * complete text in the attached LICENSE file or online at:
+<span class="lineNum">       6 </span>            :  *
+<span class="lineNum">       7 </span>            :  * http://www.opensource.org/licenses/mit-license.php
+<span class="lineNum">       8 </span>            :  *
+<span class="lineNum">       9 </span>            :  * @authors: Tino Rusch (tino.rusch@webvariants.de), Christian Sonderfeld (christian.sondefeld@webvariants.de), Thomas Krause (thomas.krause@webvariants.de)
+<span class="lineNum">      10 </span>            :  */
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #include &quot;sessions/SessionManager.h&quot;
+<span class="lineNum">      13 </span>            : #include &quot;logger/Logger.h&quot;
+<span class="lineNum">      14 </span>            : 
+<a name="15"><span class="lineNum">      15 </span>            : using namespace Susi::Sessions;</a>
+<span class="lineNum">      16 </span>            : 
+<span class="lineNum">      17 </span><span class="lineCov">         15 : bool SessionManager::init(std::chrono::milliseconds stdSessionLifetime) {</span>
+<span class="lineNum">      18 </span><span class="lineCov">         15 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
+<span class="lineNum">      19 </span><span class="lineCov">         15 :         Susi::Logger::debug(&quot;init session manager. inited: &quot;+std::to_string(initialized));</span>
+<span class="lineNum">      20 </span>            :         // Causes problem in tests, since we have a world object which does all the init stuff
+<span class="lineNum">      21 </span>            :         // Second init fails...
+<span class="lineNum">      22 </span><span class="lineCov">         15 :         if(initialized) {               </span>
+<span class="lineNum">      23 </span><span class="lineNoCov">          0 :                 return false;</span>
+<span class="lineNum">      24 </span>            :         }
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span><span class="lineCov">         15 :         initialized = true;</span>
+<span class="lineNum">      27 </span><span class="lineCov">         15 :         if(stdSessionLifetime.count() &lt;= 0) {</span>
+<span class="lineNum">      28 </span><span class="lineNoCov">          0 :                 stdLifetime = std::chrono::milliseconds(10000);</span>
+<span class="lineNum">      29 </span>            :         } else {
+<span class="lineNum">      30 </span><span class="lineCov">         15 :                 this-&gt;stdLifetime = stdSessionLifetime;</span>
+<span class="lineNum">      31 </span>            :         }
+<span class="lineNum">      32 </span>            :         
+<span class="lineNum">      33 </span><span class="lineCov">         15 :         return true;</span>
+<a name="34"><span class="lineNum">      34 </span>            : }</a>
+<span class="lineNum">      35 </span>            : 
+<a name="36"><span class="lineNum">      36 </span><span class="lineCov">         21 : SessionManager::~SessionManager(){}</span></a>
+<span class="lineNum">      37 </span>            : 
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 : int SessionManager::checkSessions(){</span>
+<span class="lineNum">      39 </span>            :         //std::cout&lt;&lt;&quot;aquiere sessions mutex&quot;&lt;&lt;std::endl;
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
+<span class="lineNum">      41 </span>            :         //std::cout&lt;&lt;&quot;got sessions mutex&quot;&lt;&lt;std::endl;
+<span class="lineNum">      42 </span><span class="lineNoCov">          0 :         int deleted = 0;        </span>
+<span class="lineNum">      43 </span><span class="lineNoCov">          0 :         for(auto it = std::begin(sessions); it!=std::end(sessions); ){</span>
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 :                 if(it-&gt;second.isDead()){</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :                         Susi::Logger::debug(&quot;delete session &quot;+it-&gt;first);</span>
+<span class="lineNum">      46 </span><span class="lineNoCov">          0 :                         sessions.erase(it++);</span>
+<span class="lineNum">      47 </span><span class="lineNoCov">          0 :                         deleted++;</span>
+<span class="lineNum">      48 </span>            :                 }else{
+<span class="lineNum">      49 </span><span class="lineNoCov">          0 :                         ++it;</span>
+<span class="lineNum">      50 </span>            :                 }
+<span class="lineNum">      51 </span>            :         }
+<span class="lineNum">      52 </span>            : 
+<span class="lineNum">      53 </span>            :         //std::cout&lt;&lt;&quot;release sessions mutex&quot;&lt;&lt;std::endl;
+<span class="lineNum">      54 </span>            : 
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            :         /*std::map&lt;std::string, Session&gt; newSessions;
+<span class="lineNum">      57 </span>            :         int deleted = 0;
+<span class="lineNum">      58 </span>            :         for(auto &amp; kv : sessions){
+<span class="lineNum">      59 </span>            :                 if(!kv.second.isDead()){
+<span class="lineNum">      60 </span>            :                         newSessions.emplace(kv.first,std::move(kv.second));
+<span class="lineNum">      61 </span>            :                 }else{
+<span class="lineNum">      62 </span>            :                         deleted++;
+<span class="lineNum">      63 </span>            :                 }
+<span class="lineNum">      64 </span>            :         }
+<span class="lineNum">      65 </span>            :         sessions = std::move(newSessions);*/
+<span class="lineNum">      66 </span><span class="lineNoCov">          0 :         return deleted;</span>
+<a name="67"><span class="lineNum">      67 </span>            : }</a>
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span><span class="lineCov">          4 : bool SessionManager::checkSession(std::string id){</span>
+<span class="lineNum">      70 </span><span class="lineCov">          4 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
+<span class="lineNum">      71 </span>            :         try{
+<span class="lineNum">      72 </span><span class="lineCov">          4 :                 bool alive = !sessions.at(id).isDead();</span>
+<span class="lineNum">      73 </span><span class="lineCov">          3 :                 Susi::Logger::debug(&quot;session is alive: &quot;+std::to_string(alive));</span>
+<span class="lineNum">      74 </span><span class="lineCov">          3 :                 return alive;</span>
+<span class="lineNum">      75 </span><span class="lineCov">          1 :         }catch(const std::exception &amp; e){</span>
+<span class="lineNum">      76 </span><span class="lineCov">          1 :                 Susi::Logger::debug(&quot;session is not known&quot;);</span>
+<span class="lineNum">      77 </span><span class="lineCov">          1 :                 return false;</span>
+<span class="lineNum">      78 </span><span class="lineCov">          4 :         }</span>
+<a name="79"><span class="lineNum">      79 </span>            : }</a>
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span><span class="lineCov">          6 : bool SessionManager::setSessionAttribute(std::string sessionID, std::string key, Susi::Util::Any value) {</span>
+<span class="lineNum">      82 </span><span class="lineCov">          6 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
+<span class="lineNum">      83 </span><span class="lineCov">          6 :         if (sessionID.length() &gt; 0)</span>
+<span class="lineNum">      84 </span>            :         {
+<span class="lineNum">      85 </span><span class="lineCov">          6 :                 if(sessions.count(sessionID) &gt; 0) {</span>
+<span class="lineNum">      86 </span><span class="lineCov">          2 :                         this-&gt;sessions[sessionID].setAttribute(key, value);</span>
+<span class="lineNum">      87 </span>            :                 }
+<span class="lineNum">      88 </span>            :                 else {
+<span class="lineNum">      89 </span><span class="lineCov">          4 :                         Session session = Session(this-&gt;stdLifetime);</span>
+<span class="lineNum">      90 </span><span class="lineCov">          4 :                         session.setAttribute(key, value);</span>
+<span class="lineNum">      91 </span><span class="lineCov">          4 :                         sessions[sessionID] = session;</span>
+<span class="lineNum">      92 </span>            :                 }
+<span class="lineNum">      93 </span><span class="lineCov">          6 :                 return true;</span>
+<span class="lineNum">      94 </span>            :         }
+<span class="lineNum">      95 </span><span class="lineNoCov">          0 :         return false;</span>
+<a name="96"><span class="lineNum">      96 </span>            : }</a>
+<span class="lineNum">      97 </span>            : 
+<span class="lineNum">      98 </span><span class="lineCov">          3 : bool SessionManager::pushSessionAttribute(std::string sessionID, std::string key, Susi::Util::Any value) {</span>
+<span class="lineNum">      99 </span><span class="lineCov">          3 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
+<span class="lineNum">     100 </span><span class="lineCov">          3 :         if (sessionID.length() &gt; 0)</span>
+<span class="lineNum">     101 </span>            :         {
+<span class="lineNum">     102 </span><span class="lineCov">          3 :                 if(sessions.count(sessionID) &gt; 0) {</span>
+<span class="lineNum">     103 </span><span class="lineCov">          2 :                         this-&gt;sessions[sessionID].pushAttribute(key, value);</span>
+<span class="lineNum">     104 </span>            :                 }
+<span class="lineNum">     105 </span>            :                 else {
+<span class="lineNum">     106 </span><span class="lineCov">          1 :                         Session session = Session(this-&gt;stdLifetime);</span>
+<span class="lineNum">     107 </span><span class="lineCov">          1 :                         session.setAttribute(key, value);</span>
+<span class="lineNum">     108 </span><span class="lineCov">          1 :                         sessions[sessionID] = session;</span>
+<span class="lineNum">     109 </span>            :                 }
+<span class="lineNum">     110 </span><span class="lineCov">          3 :                 return true;</span>
+<span class="lineNum">     111 </span>            :         }
+<span class="lineNum">     112 </span><span class="lineNoCov">          0 :         return false; </span>
+<a name="113"><span class="lineNum">     113 </span>            : }</a>
+<span class="lineNum">     114 </span>            : 
+<span class="lineNum">     115 </span><span class="lineCov">          4 : bool SessionManager::removeSessionAttribute(std::string sessionID, std::string key) {</span>
+<span class="lineNum">     116 </span><span class="lineCov">          4 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
+<span class="lineNum">     117 </span><span class="lineCov">          4 :         if (sessionID.length() &gt; 0)</span>
+<span class="lineNum">     118 </span>            :         {
+<span class="lineNum">     119 </span><span class="lineCov">          4 :                 if(sessions.count(sessionID) &gt; 0) {</span>
+<span class="lineNum">     120 </span><span class="lineCov">          3 :                         return this-&gt;sessions[sessionID].removeAttribute(key);</span>
+<span class="lineNum">     121 </span>            :                 }
+<span class="lineNum">     122 </span>            :         }
+<span class="lineNum">     123 </span><span class="lineCov">          1 :         return false;</span>
+<a name="124"><span class="lineNum">     124 </span>            : }</a>
+<span class="lineNum">     125 </span>            : 
+<span class="lineNum">     126 </span><span class="lineCov">         22 : Susi::Util::Any SessionManager::getSessionAttribute(std::string sessionID, std::string key) {</span>
+<span class="lineNum">     127 </span><span class="lineCov">         22 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
+<span class="lineNum">     128 </span><span class="lineCov">         22 :         if (sessionID.length() &gt; 0 &amp;&amp; sessions.count(sessionID) &gt; 0)</span>
+<span class="lineNum">     129 </span>            :         {               
+<span class="lineNum">     130 </span><span class="lineCov">         15 :                 return sessions[sessionID].getAttribute(key);</span>
+<span class="lineNum">     131 </span>            :         }
+<span class="lineNum">     132 </span><span class="lineCov">          7 :         return Susi::Util::Any{};</span>
+<a name="133"><span class="lineNum">     133 </span>            : }</a>
+<span class="lineNum">     134 </span>            : 
+<span class="lineNum">     135 </span><span class="lineCov">          5 : void SessionManager::updateSession(std::string id){</span>
+<span class="lineNum">     136 </span><span class="lineCov">          5 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
+<span class="lineNum">     137 </span><span class="lineCov">          5 :         if(sessions.count(id) &gt; 0 &amp;&amp; !sessions[id].isDead()) {</span>
+<span class="lineNum">     138 </span><span class="lineNoCov">          0 :                 sessions[id].addTime(stdLifetime);</span>
+<span class="lineNum">     139 </span>            :         }
+<span class="lineNum">     140 </span>            :         else {
+<span class="lineNum">     141 </span><span class="lineCov">          5 :                 Susi::Logger::debug(&quot;create new session with &quot;+std::to_string(this-&gt;stdLifetime.count()));</span>
+<span class="lineNum">     142 </span><span class="lineCov">          5 :                 sessions[id] = Session(this-&gt;stdLifetime);</span>
+<span class="lineNum">     143 </span><span class="lineCov">          5 :         }</span>
+<a name="144"><span class="lineNum">     144 </span><span class="lineCov">          5 : }</span></a>
+<span class="lineNum">     145 </span>            : 
+<span class="lineNum">     146 </span><span class="lineCov">          5 : void SessionManager::updateSession(std::string id, std::chrono::milliseconds lifetime){</span>
+<span class="lineNum">     147 </span><span class="lineCov">          5 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
+<span class="lineNum">     148 </span><span class="lineCov">          5 :         if(sessions.count(id) &gt; 0) {</span>
+<span class="lineNum">     149 </span><span class="lineNoCov">          0 :                 sessions[id].addTime(lifetime);</span>
+<span class="lineNum">     150 </span>            :         }
+<span class="lineNum">     151 </span>            :         else {
+<span class="lineNum">     152 </span><span class="lineCov">          5 :                 sessions[id] = Session(lifetime);</span>
+<span class="lineNum">     153 </span><span class="lineCov">          5 :         }</span>
+<a name="154"><span class="lineNum">     154 </span><span class="lineCov">          5 : }</span></a>
+<span class="lineNum">     155 </span>            : 
+<span class="lineNum">     156 </span><span class="lineCov">          2 : bool SessionManager::killSession(std::string id) {</span>
+<span class="lineNum">     157 </span><span class="lineCov">          2 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
+<span class="lineNum">     158 </span><span class="lineCov">          2 :         if(sessions.count(id) &gt; 0) {</span>
+<span class="lineNum">     159 </span><span class="lineCov">          2 :                 return sessions[id].die();</span>
+<a name="160"><span class="lineNum">     160 </span>            :         }</a>
+<span class="lineNum">     161 </span><span class="lineNoCov">          0 :         return false;</span>
+<span class="lineNum">     162 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.11</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

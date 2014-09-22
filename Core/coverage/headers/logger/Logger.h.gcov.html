@@ -1,0 +1,145 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info.cleaned - headers/logger/Logger.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">headers/logger</a> - Logger.h<span style="font-size: 80%;"> (source / <a href="Logger.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntry">23</td>
+            <td class="headerCovTableEntryLo">65.2 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2014-09-22 09:33:38</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntry">5</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :  * Copyright (c) 2014, webvariants GmbH, http://www.webvariants.de
+<span class="lineNum">       3 </span>            :  *
+<span class="lineNum">       4 </span>            :  * This file is released under the terms of the MIT license. You can find the
+<span class="lineNum">       5 </span>            :  * complete text in the attached LICENSE file or online at:
+<span class="lineNum">       6 </span>            :  *
+<span class="lineNum">       7 </span>            :  * http://www.opensource.org/licenses/mit-license.php
+<span class="lineNum">       8 </span>            :  * 
+<span class="lineNum">       9 </span>            :  * @author: Tino Rusch (tino.rusch@webvariants.de)
+<span class="lineNum">      10 </span>            :  */
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #ifndef __LOGGER__
+<span class="lineNum">      13 </span>            : #define __LOGGER__
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : #include &lt;iostream&gt;
+<span class="lineNum">      16 </span>            : #include &lt;Poco/LocalDateTime.h&gt;
+<span class="lineNum">      17 </span>            : #include &lt;Poco/DateTimeFormatter.h&gt;
+<span class="lineNum">      18 </span>            : #include &lt;Poco/DateTimeFormat.h&gt;
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : namespace Susi {
+<span class="lineNum">      21 </span>            : 
+<span class="lineNum">      22 </span>            : extern unsigned char logLevel;
+<span class="lineNum">      23 </span>            : 
+<a name="24"><span class="lineNum">      24 </span>            : class Logger {</a>
+<span class="lineNum">      25 </span>            : protected:
+<span class="lineNum">      26 </span><span class="lineCov">        685 :         static void log(std::string message,unsigned char level){</span>
+<span class="lineNum">      27 </span><span class="lineCov">        685 :                 if(level &amp; logLevel){</span>
+<span class="lineNum">      28 </span><span class="lineNoCov">          0 :                         Poco::LocalDateTime now;</span>
+<span class="lineNum">      29 </span><span class="lineNoCov">          0 :                         std::string prefix = &quot;&quot;;</span>
+<span class="lineNum">      30 </span><span class="lineNoCov">          0 :                         if(level &amp; INFO) prefix = &quot;INFO&quot;;</span>
+<span class="lineNum">      31 </span><span class="lineNoCov">          0 :                         if(level &amp; WARN) prefix = &quot;WARN&quot;;</span>
+<span class="lineNum">      32 </span><span class="lineNoCov">          0 :                         if(level &amp; ERROR) prefix = &quot;ERROR&quot;;</span>
+<span class="lineNum">      33 </span><span class="lineNoCov">          0 :                         if(level &amp; DEBUG) prefix = &quot;DEBUG&quot;;</span>
+<span class="lineNum">      34 </span><span class="lineNoCov">          0 :                         std::string date = Poco::DateTimeFormatter::format(now,Poco::DateTimeFormat::HTTP_FORMAT);</span>
+<span class="lineNum">      35 </span><span class="lineNoCov">          0 :                         std::cerr&lt;&lt;prefix&lt;&lt;&quot; : &quot;&lt;&lt;date&lt;&lt;&quot; : &quot;&lt;&lt;message&lt;&lt;std::endl;</span>
+<span class="lineNum">      36 </span>            :                 }
+<span class="lineNum">      37 </span><span class="lineCov">        685 :         }</span>
+<span class="lineNum">      38 </span>            : public:
+<span class="lineNum">      39 </span>            :         static const unsigned char NOTHING = 0;
+<span class="lineNum">      40 </span>            :         static const unsigned char INFO = 1;
+<span class="lineNum">      41 </span>            :         static const unsigned char WARN = 2;
+<span class="lineNum">      42 </span>            :         static const unsigned char ERROR = 4;
+<span class="lineNum">      43 </span>            :         static const unsigned char DEBUG = 8;
+<span class="lineNum">      44 </span>            :         static const unsigned char ALL = INFO | WARN | ERROR | DEBUG;
+<span class="lineNum">      45 </span>            : 
+<span class="lineNum">      46 </span>            :         static void log(std::string msg){
+<a name="47"><span class="lineNum">      47 </span>            :                 info(msg);</a>
+<span class="lineNum">      48 </span>            :         }
+<span class="lineNum">      49 </span><span class="lineCov">         64 :         static void info(std::string msg){</span>
+<span class="lineNum">      50 </span><span class="lineCov">         64 :                 log(msg,INFO);</span>
+<span class="lineNum">      51 </span><span class="lineCov">         64 :         }</span>
+<span class="lineNum">      52 </span>            :         static void warn(std::string msg){
+<a name="53"><span class="lineNum">      53 </span>            :                 log(msg,WARN);</a>
+<span class="lineNum">      54 </span>            :         }
+<span class="lineNum">      55 </span><span class="lineCov">        603 :         static void debug(std::string msg){</span>
+<a name="56"><span class="lineNum">      56 </span><span class="lineCov">        603 :                 log(msg,DEBUG);</span></a>
+<span class="lineNum">      57 </span><span class="lineCov">        603 :         }</span>
+<span class="lineNum">      58 </span><span class="lineCov">         18 :         static void error(std::string msg){</span>
+<a name="59"><span class="lineNum">      59 </span><span class="lineCov">         18 :                 log(msg,ERROR);</span></a>
+<span class="lineNum">      60 </span><span class="lineCov">         18 :         }</span>
+<span class="lineNum">      61 </span><span class="lineCov">         50 :         static void setLevel(unsigned char level){</span>
+<span class="lineNum">      62 </span><span class="lineCov">         50 :                 logLevel = level;</span>
+<span class="lineNum">      63 </span><span class="lineCov">         50 :         }</span>
+<span class="lineNum">      64 </span>            : };
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            : }
+<span class="lineNum">      68 </span>            : 
+<span class="lineNum">      69 </span>            : #endif // __LOGGER__
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.11</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

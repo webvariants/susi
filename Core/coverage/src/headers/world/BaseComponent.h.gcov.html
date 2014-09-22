@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-19 09:48:32</td>
+            <td class="headerValue">2014-09-22 09:03:23</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">7</td>
@@ -83,16 +83,16 @@
 <span class="lineNum">      21 </span>            : namespace Susi {
 <a name="22"><span class="lineNum">      22 </span>            : namespace System {</a>
 <span class="lineNum">      23 </span>            : 
-<span class="lineNum">      24 </span><span class="lineCov">         66 : class BaseComponent : public Component {</span>
+<span class="lineNum">      24 </span><span class="lineCov">         71 : class BaseComponent : public Component {</span>
 <span class="lineNum">      25 </span>            : protected:
 <span class="lineNum">      26 </span>            :         ComponentManager * componentManager;
 <span class="lineNum">      27 </span>            :         std::shared_ptr&lt;Susi::Events::ManagerComponent&gt; eventManager;
 <span class="lineNum">      28 </span>            :         std::vector&lt;long&gt; evtIdPool;
 <a name="29"><span class="lineNum">      29 </span>            : </a>
 <span class="lineNum">      30 </span>            : public:
-<span class="lineNum">      31 </span><span class="lineCov">         66 :         BaseComponent(ComponentManager * manager) : componentManager{manager} {</span>
-<a name="32"><span class="lineNum">      32 </span><span class="lineCov">         66 :                 eventManager = componentManager-&gt;getComponent&lt;Susi::Events::ManagerComponent&gt;(&quot;eventsystem&quot;);</span></a>
-<span class="lineNum">      33 </span><span class="lineCov">         66 :         }</span>
+<span class="lineNum">      31 </span><span class="lineCov">         71 :         BaseComponent(ComponentManager * manager) : componentManager{manager} {</span>
+<a name="32"><span class="lineNum">      32 </span><span class="lineCov">         71 :                 eventManager = componentManager-&gt;getComponent&lt;Susi::Events::ManagerComponent&gt;(&quot;eventsystem&quot;);</span></a>
+<span class="lineNum">      33 </span><span class="lineCov">         71 :         }</span>
 <span class="lineNum">      34 </span><span class="lineCov">        240 :         long subscribe(std::string topic, Susi::Events::Processor processor){</span>
 <span class="lineNum">      35 </span><span class="lineCov">        240 :                 long id = eventManager-&gt;subscribe(topic,std::move(processor));</span>
 <span class="lineNum">      36 </span><span class="lineCov">        240 :                 evtIdPool.push_back(id);</span>
@@ -116,28 +116,28 @@
 <span class="lineNum">      54 </span>            :         bool unsubscribe(long id){
 <a name="55"><span class="lineNum">      55 </span>            :                 return eventManager-&gt;unsubscribe(id);</a>
 <span class="lineNum">      56 </span>            :         }
-<span class="lineNum">      57 </span><span class="lineCov">          8 :         void publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer{}){</span>
-<a name="58"><span class="lineNum">      58 </span><span class="lineCov">          8 :                 eventManager-&gt;publish(std::move(event),finishCallback);</span></a>
-<span class="lineNum">      59 </span><span class="lineCov">          8 :         }</span>
-<span class="lineNum">      60 </span><span class="lineCov">          8 :         Susi::Events::EventPtr createEvent(std::string topic){</span>
-<span class="lineNum">      61 </span><span class="lineCov">          8 :                 return eventManager-&gt;createEvent(topic);</span>
+<span class="lineNum">      57 </span><span class="lineCov">          7 :         void publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer{}){</span>
+<a name="58"><span class="lineNum">      58 </span><span class="lineCov">          7 :                 eventManager-&gt;publish(std::move(event),finishCallback);</span></a>
+<span class="lineNum">      59 </span><span class="lineCov">          7 :         }</span>
+<span class="lineNum">      60 </span><span class="lineCov">          7 :         Susi::Events::EventPtr createEvent(std::string topic){</span>
+<span class="lineNum">      61 </span><span class="lineCov">          7 :                 return eventManager-&gt;createEvent(topic);</span>
 <span class="lineNum">      62 </span>            :         }
 <a name="63"><span class="lineNum">      63 </span>            : </a>
 <span class="lineNum">      64 </span>            : 
-<span class="lineNum">      65 </span><span class="lineCov">         86 :         bool unsubscribeAll(){</span>
+<span class="lineNum">      65 </span><span class="lineCov">         88 :         bool unsubscribeAll(){</span>
 <span class="lineNum">      66 </span>            : 
-<span class="lineNum">      67 </span><span class="lineCov">         86 :                 bool result = true;</span>
+<span class="lineNum">      67 </span><span class="lineCov">         88 :                 bool result = true;</span>
 <span class="lineNum">      68 </span>            : 
-<span class="lineNum">      69 </span><span class="lineCov">        341 :                 for (auto id : evtIdPool)</span>
+<span class="lineNum">      69 </span><span class="lineCov">        343 :                 for (auto id : evtIdPool)</span>
 <span class="lineNum">      70 </span>            :                 {
 <span class="lineNum">      71 </span><span class="lineCov">        255 :                         if(eventManager-&gt;unsubscribe(id) == false) {</span>
 <span class="lineNum">      72 </span><span class="lineNoCov">          0 :                                 result = false;</span>
 <span class="lineNum">      73 </span>            :                         }
 <span class="lineNum">      74 </span>            :                 }
 <span class="lineNum">      75 </span>            : 
-<span class="lineNum">      76 </span><span class="lineCov">         86 :                 evtIdPool.clear();</span>
+<span class="lineNum">      76 </span><span class="lineCov">         88 :                 evtIdPool.clear();</span>
 <span class="lineNum">      77 </span>            : 
-<span class="lineNum">      78 </span><span class="lineCov">         86 :                 return result;</span>
+<span class="lineNum">      78 </span><span class="lineCov">         88 :                 return result;</span>
 <span class="lineNum">      79 </span>            :         }
 <span class="lineNum">      80 </span>            : 
 <span class="lineNum">      81 </span>            : };

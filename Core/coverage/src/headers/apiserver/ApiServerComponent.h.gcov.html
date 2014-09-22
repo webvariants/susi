@@ -31,17 +31,17 @@
             <td class="headerValue">coverage.info.cleaned</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">15</td>
-            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntry">18</td>
+            <td class="headerCovTableEntry">18</td>
             <td class="headerCovTableEntryHi">100.0 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-19 09:48:32</td>
+            <td class="headerValue">2014-09-22 09:03:23</td>
             <td></td>
             <td class="headerItem">Functions:</td>
-            <td class="headerCovTableEntry">4</td>
-            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">6</td>
+            <td class="headerCovTableEntry">6</td>
             <td class="headerCovTableEntryHi">100.0 %</td>
           </tr>
           <tr><td><img src="../../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -80,64 +80,70 @@
 <span class="lineNum">      18 </span>            : #include &quot;events/EventManagerComponent.h&quot;
 <span class="lineNum">      19 </span>            : #include &quot;sessions/SessionManagerComponent.h&quot;
 <span class="lineNum">      20 </span>            : 
-<span class="lineNum">      21 </span>            : namespace Susi {
-<a name="22"><span class="lineNum">      22 </span>            : namespace Api {</a>
-<span class="lineNum">      23 </span>            : 
-<span class="lineNum">      24 </span><span class="lineCov">          4 : class ApiServerComponent {</span>
-<span class="lineNum">      25 </span>            : protected:
-<span class="lineNum">      26 </span>            :         std::shared_ptr&lt;Susi::Events::ManagerComponent&gt; eventManager;
-<span class="lineNum">      27 </span>            :         std::shared_ptr&lt;Susi::Sessions::SessionManagerComponent&gt; sessionManager;
-<span class="lineNum">      28 </span>            : 
-<span class="lineNum">      29 </span>            :         std::map&lt;std::string,std::function&lt;void(Susi::Util::Any&amp;)&gt;&gt; senders;
-<span class="lineNum">      30 </span>            :         std::map&lt;std::string,std::map&lt;std::string,long&gt;&gt; consumerSubscriptions;
-<span class="lineNum">      31 </span>            :         std::map&lt;std::string,std::map&lt;std::string,long&gt;&gt; processorSubscriptions;
-<span class="lineNum">      32 </span>            :         std::map&lt;std::string,std::map&lt;long,Susi::Events::EventPtr&gt;&gt; eventsToAck;
-<span class="lineNum">      33 </span>            :         
-<span class="lineNum">      34 </span>            :         std::mutex mutex;
+<span class="lineNum">      21 </span>            : #include &quot;world/BaseComponent.h&quot;
+<span class="lineNum">      22 </span>            : 
+<span class="lineNum">      23 </span>            : namespace Susi {
+<a name="24"><span class="lineNum">      24 </span>            : namespace Api {</a>
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span><span class="lineCov">          5 : class ApiServerComponent : public Susi::System::BaseComponent {</span>
+<span class="lineNum">      27 </span>            : protected:
+<span class="lineNum">      28 </span>            :         std::shared_ptr&lt;Susi::Events::ManagerComponent&gt; eventManager;
+<span class="lineNum">      29 </span>            :         std::shared_ptr&lt;Susi::Sessions::SessionManagerComponent&gt; sessionManager;
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span>            :         std::map&lt;std::string,std::function&lt;void(Susi::Util::Any&amp;)&gt;&gt; senders;
+<span class="lineNum">      32 </span>            :         std::map&lt;std::string,std::map&lt;std::string,long&gt;&gt; consumerSubscriptions;
+<span class="lineNum">      33 </span>            :         std::map&lt;std::string,std::map&lt;std::string,long&gt;&gt; processorSubscriptions;
+<span class="lineNum">      34 </span>            :         std::map&lt;std::string,std::map&lt;long,Susi::Events::EventPtr&gt;&gt; eventsToAck;
 <span class="lineNum">      35 </span>            :         
-<span class="lineNum">      36 </span>            :         void handleRegisterConsumer(std::string &amp; id, Susi::Util::Any &amp; packet);
-<span class="lineNum">      37 </span>            :         void handleRegisterProcessor(std::string &amp; id, Susi::Util::Any &amp; packet);
-<span class="lineNum">      38 </span>            :         void handleUnregisterConsumer(std::string &amp; id, Susi::Util::Any &amp; packet);
-<span class="lineNum">      39 </span>            :         void handleUnregisterProcessor(std::string &amp; id, Susi::Util::Any &amp; packet);
-<span class="lineNum">      40 </span>            :         void handlePublish(std::string &amp; id, Susi::Util::Any &amp; packet);
-<span class="lineNum">      41 </span>            :         void handleAck(std::string &amp; id, Susi::Util::Any &amp; packet);
-<span class="lineNum">      42 </span>            : 
-<span class="lineNum">      43 </span>            :         void sendOk(std::string &amp; id);
-<a name="44"><span class="lineNum">      44 </span>            :         void sendFail(std::string &amp; id,std::string error = &quot;&quot;);</a>
-<span class="lineNum">      45 </span>            :         
-<span class="lineNum">      46 </span><span class="lineCov">          2 :         void send(std::string &amp; id, Susi::Util::Any &amp; msg){</span>
-<span class="lineNum">      47 </span><span class="lineCov">          2 :                 std::lock_guard&lt;std::mutex&gt; lock{mutex};</span>
-<span class="lineNum">      48 </span><span class="lineCov">          2 :                 auto &amp; sender = senders[id];</span>
-<span class="lineNum">      49 </span><span class="lineCov">          2 :                 if(sender)sender(msg);</span>
-<span class="lineNum">      50 </span><span class="lineCov">          2 :         }</span>
-<span class="lineNum">      51 </span>            : 
-<a name="52"><span class="lineNum">      52 </span>            : public:</a>
-<span class="lineNum">      53 </span>            :         
-<span class="lineNum">      54 </span><span class="lineCov">          4 :         ApiServerComponent(std::shared_ptr&lt;Susi::Events::ManagerComponent&gt; _eventManager,</span>
-<span class="lineNum">      55 </span><span class="lineCov">          4 :                                                   std::shared_ptr&lt;Susi::Sessions::SessionManagerComponent&gt; _sessionManager) {</span>
-<span class="lineNum">      56 </span><span class="lineCov">          4 :                 eventManager = _eventManager;</span>
-<span class="lineNum">      57 </span><span class="lineCov">          4 :                 sessionManager = _sessionManager;</span>
-<span class="lineNum">      58 </span><span class="lineCov">          4 :         }</span>
-<span class="lineNum">      59 </span>            : 
-<span class="lineNum">      60 </span>            :         void onConnect(std::string &amp; id);
-<span class="lineNum">      61 </span>            :         void onMessage(std::string &amp; id, Susi::Util::Any &amp; packet);
-<a name="62"><span class="lineNum">      62 </span>            :         void onClose(std::string &amp; id);</a>
-<span class="lineNum">      63 </span>            : 
-<span class="lineNum">      64 </span><span class="lineCov">          2 :         inline void registerSender(std::string id , std::function&lt;void(Susi::Util::Any&amp;)&gt; sender){</span>
-<span class="lineNum">      65 </span><span class="lineCov">          2 :                 std::lock_guard&lt;std::mutex&gt; lock{mutex};</span>
-<span class="lineNum">      66 </span><span class="lineCov">          2 :                 senders[id] = sender;</span>
-<span class="lineNum">      67 </span><span class="lineCov">          2 :         }</span>
-<span class="lineNum">      68 </span>            :         inline void unregisterSender(std::string id){
-<span class="lineNum">      69 </span>            :                 std::lock_guard&lt;std::mutex&gt; lock{mutex};
-<span class="lineNum">      70 </span>            :                 senders.erase(id);
-<span class="lineNum">      71 </span>            :         }
-<span class="lineNum">      72 </span>            : 
-<span class="lineNum">      73 </span>            : };
-<span class="lineNum">      74 </span>            : 
-<span class="lineNum">      75 </span>            : }
-<span class="lineNum">      76 </span>            : }
-<span class="lineNum">      77 </span>            : 
-<span class="lineNum">      78 </span>            : #endif // __API_SERVER_COMPONENT__
+<span class="lineNum">      36 </span>            :         std::mutex mutex;
+<span class="lineNum">      37 </span>            :         
+<span class="lineNum">      38 </span>            :         void handleRegisterConsumer(std::string &amp; id, Susi::Util::Any &amp; packet);
+<span class="lineNum">      39 </span>            :         void handleRegisterProcessor(std::string &amp; id, Susi::Util::Any &amp; packet);
+<span class="lineNum">      40 </span>            :         void handleUnregisterConsumer(std::string &amp; id, Susi::Util::Any &amp; packet);
+<span class="lineNum">      41 </span>            :         void handleUnregisterProcessor(std::string &amp; id, Susi::Util::Any &amp; packet);
+<span class="lineNum">      42 </span>            :         void handlePublish(std::string &amp; id, Susi::Util::Any &amp; packet);
+<span class="lineNum">      43 </span>            :         void handleAck(std::string &amp; id, Susi::Util::Any &amp; packet);
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            :         void sendOk(std::string &amp; id);
+<a name="46"><span class="lineNum">      46 </span>            :         void sendFail(std::string &amp; id,std::string error = &quot;&quot;);</a>
+<span class="lineNum">      47 </span>            :         
+<span class="lineNum">      48 </span><span class="lineCov">          2 :         void send(std::string &amp; id, Susi::Util::Any &amp; msg){</span>
+<span class="lineNum">      49 </span><span class="lineCov">          2 :                 std::lock_guard&lt;std::mutex&gt; lock{mutex};</span>
+<span class="lineNum">      50 </span><span class="lineCov">          2 :                 auto &amp; sender = senders[id];</span>
+<span class="lineNum">      51 </span><span class="lineCov">          2 :                 if(sender)sender(msg);</span>
+<span class="lineNum">      52 </span><span class="lineCov">          2 :         }</span>
+<span class="lineNum">      53 </span>            : 
+<a name="54"><span class="lineNum">      54 </span>            : public:</a>
+<span class="lineNum">      55 </span>            :         
+<span class="lineNum">      56 </span><span class="lineCov">          5 :         ApiServerComponent(Susi::System::ComponentManager * mgr) : Susi::System::BaseComponent{mgr} {</span>
+<span class="lineNum">      57 </span><span class="lineCov">          5 :                 eventManager   = mgr-&gt;getComponent&lt;Susi::Events::ManagerComponent&gt;(&quot;eventsystem&quot;);</span>
+<span class="lineNum">      58 </span><span class="lineCov">          5 :                 sessionManager = mgr-&gt;getComponent&lt;Susi::Sessions::SessionManagerComponent&gt;(&quot;sessionmanager&quot;);</span>
+<a name="59"><span class="lineNum">      59 </span><span class="lineCov">          5 :         }</span></a>
+<a name="60"><span class="lineNum">      60 </span>            : </a>
+<span class="lineNum">      61 </span><span class="lineCov">          5 :         virtual void start() override {}</span>
+<span class="lineNum">      62 </span><span class="lineCov">          2 :         virtual void stop() override {</span>
+<span class="lineNum">      63 </span><span class="lineCov">          2 :                 unsubscribeAll();</span>
+<span class="lineNum">      64 </span><span class="lineCov">          2 :         }</span>
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            :         void onConnect(std::string &amp; id);
+<span class="lineNum">      67 </span>            :         void onMessage(std::string &amp; id, Susi::Util::Any &amp; packet);
+<a name="68"><span class="lineNum">      68 </span>            :         void onClose(std::string &amp; id);</a>
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span><span class="lineCov">          2 :         inline void registerSender(std::string id , std::function&lt;void(Susi::Util::Any&amp;)&gt; sender){</span>
+<span class="lineNum">      71 </span><span class="lineCov">          2 :                 std::lock_guard&lt;std::mutex&gt; lock{mutex};</span>
+<span class="lineNum">      72 </span><span class="lineCov">          2 :                 senders[id] = sender;</span>
+<span class="lineNum">      73 </span><span class="lineCov">          2 :         }</span>
+<span class="lineNum">      74 </span>            :         inline void unregisterSender(std::string id){
+<span class="lineNum">      75 </span>            :                 std::lock_guard&lt;std::mutex&gt; lock{mutex};
+<span class="lineNum">      76 </span>            :                 senders.erase(id);
+<span class="lineNum">      77 </span>            :         }
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span>            : };
+<span class="lineNum">      80 </span>            : 
+<span class="lineNum">      81 </span>            : }
+<span class="lineNum">      82 </span>            : }
+<span class="lineNum">      83 </span>            : 
+<span class="lineNum">      84 </span>            : #endif // __API_SERVER_COMPONENT__
 </pre>
       </td>
     </tr>

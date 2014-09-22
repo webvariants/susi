@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-19 09:48:32</td>
+            <td class="headerValue">2014-09-22 09:03:23</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">59</td>
@@ -74,9 +74,9 @@
 <span class="lineNum">      12 </span>            : 
 <a name="13"><span class="lineNum">      13 </span>            : using namespace Susi::Util;</a>
 <span class="lineNum">      14 </span>            : 
-<span class="lineNum">      15 </span><span class="lineCov">       6211 : Any::Any() {</span>
-<span class="lineNum">      16 </span><span class="lineCov">       6211 :         this-&gt;type = UNDEFINED;</span>
-<span class="lineNum">      17 </span><span class="lineCov">       6211 : }</span>
+<span class="lineNum">      15 </span><span class="lineCov">       6360 : Any::Any() {</span>
+<span class="lineNum">      16 </span><span class="lineCov">       6360 :         this-&gt;type = UNDEFINED;</span>
+<span class="lineNum">      17 </span><span class="lineCov">       6360 : }</span>
 <a name="18"><span class="lineNum">      18 </span>            : </a>
 <span class="lineNum">      19 </span>            : // copy ctor's
 <span class="lineNum">      20 </span><span class="lineNoCov">          0 : Any::Any(const bool &amp; value) {</span>
@@ -119,10 +119,10 @@
 <span class="lineNum">      57 </span><span class="lineCov">         13 :         this-&gt;objectValue = value;</span>
 <a name="58"><span class="lineNum">      58 </span><span class="lineCov">         13 : }</span></a>
 <span class="lineNum">      59 </span>            : 
-<span class="lineNum">      60 </span><span class="lineCov">      11287 : Any::Any(const Any &amp; value) {</span>
-<span class="lineNum">      61 </span><span class="lineCov">      11287 :         this-&gt;type = value.type;</span>
+<span class="lineNum">      60 </span><span class="lineCov">      11491 : Any::Any(const Any &amp; value) {</span>
+<span class="lineNum">      61 </span><span class="lineCov">      11491 :         this-&gt;type = value.type;</span>
 <span class="lineNum">      62 </span>            : 
-<span class="lineNum">      63 </span><span class="lineCov">      11287 :         switch(this-&gt;type) {</span>
+<span class="lineNum">      63 </span><span class="lineCov">      11491 :         switch(this-&gt;type) {</span>
 <span class="lineNum">      64 </span>            :                 case UNDEFINED:
 <span class="lineNum">      65 </span><span class="lineCov">         14 :                         break;</span>
 <span class="lineNum">      66 </span>            :                 case BOOL:
@@ -141,20 +141,20 @@
 <span class="lineNum">      79 </span><span class="lineCov">        245 :                         this-&gt;arrayValue = value.arrayValue;</span>
 <span class="lineNum">      80 </span><span class="lineCov">        245 :                         break;</span>
 <span class="lineNum">      81 </span>            :                 case OBJECT:
-<span class="lineNum">      82 </span><span class="lineCov">       3305 :                         this-&gt;objectValue = value.objectValue;</span>
-<span class="lineNum">      83 </span><span class="lineCov">       3305 :                         break;</span>
+<span class="lineNum">      82 </span><span class="lineCov">       3509 :                         this-&gt;objectValue = value.objectValue;</span>
+<span class="lineNum">      83 </span><span class="lineCov">       3509 :                         break;</span>
 <span class="lineNum">      84 </span>            :         }
-<span class="lineNum">      85 </span><span class="lineCov">      11287 : }</span>
+<span class="lineNum">      85 </span><span class="lineCov">      11491 : }</span>
 <a name="86"><span class="lineNum">      86 </span>            : </a>
 <span class="lineNum">      87 </span>            : // move ctor's
 <span class="lineNum">      88 </span><span class="lineCov">         67 : Any::Any(Any &amp;&amp; value) {</span>
 <span class="lineNum">      89 </span><span class="lineCov">         67 :         *this = std::move(value);</span>
 <a name="90"><span class="lineNum">      90 </span><span class="lineCov">         67 : }</span></a>
 <span class="lineNum">      91 </span>            : 
-<span class="lineNum">      92 </span><span class="lineCov">         10 : Any::Any(bool &amp;&amp; value) {</span>
-<span class="lineNum">      93 </span><span class="lineCov">         10 :         type = BOOL;</span>
-<a name="94"><span class="lineNum">      94 </span><span class="lineCov">         10 :         std::swap(this-&gt;boolValue,value);</span></a>
-<span class="lineNum">      95 </span><span class="lineCov">         10 : }</span>
+<span class="lineNum">      92 </span><span class="lineCov">         11 : Any::Any(bool &amp;&amp; value) {</span>
+<span class="lineNum">      93 </span><span class="lineCov">         11 :         type = BOOL;</span>
+<a name="94"><span class="lineNum">      94 </span><span class="lineCov">         11 :         std::swap(this-&gt;boolValue,value);</span></a>
+<span class="lineNum">      95 </span><span class="lineCov">         11 : }</span>
 <span class="lineNum">      96 </span><span class="lineCov">         57 : Any::Any(int &amp;&amp; value) {</span>
 <span class="lineNum">      97 </span><span class="lineCov">         57 :         type = INTEGER;</span>
 <span class="lineNum">      98 </span><span class="lineCov">         57 :         this-&gt;integerValue = value;</span>
@@ -274,13 +274,13 @@
 <span class="lineNum">     212 </span><span class="lineCov">         54 :         type = ARRAY;</span>
 <a name="213"><span class="lineNum">     213 </span><span class="lineCov">         54 :         std::swap(this-&gt;arrayValue,value);</span></a>
 <span class="lineNum">     214 </span><span class="lineCov">         54 : }</span>
-<span class="lineNum">     215 </span><span class="lineCov">        745 : void Any::operator=(std::map&lt;std::string,Any&gt; &amp;&amp; value) {</span>
-<span class="lineNum">     216 </span><span class="lineCov">        745 :         if(this-&gt;type != UNDEFINED &amp;&amp; this-&gt;type != OBJECT){</span>
+<span class="lineNum">     215 </span><span class="lineCov">        795 : void Any::operator=(std::map&lt;std::string,Any&gt; &amp;&amp; value) {</span>
+<span class="lineNum">     216 </span><span class="lineCov">        795 :         if(this-&gt;type != UNDEFINED &amp;&amp; this-&gt;type != OBJECT){</span>
 <span class="lineNum">     217 </span><span class="lineCov">          5 :                 throw WrongTypeException(OBJECT, this-&gt;type);</span>
 <span class="lineNum">     218 </span>            :         }
-<span class="lineNum">     219 </span><span class="lineCov">        740 :         type = OBJECT;</span>
-<span class="lineNum">     220 </span><span class="lineCov">        740 :         std::swap(this-&gt;objectValue,value);</span>
-<span class="lineNum">     221 </span><span class="lineCov">        740 : }</span>
+<span class="lineNum">     219 </span><span class="lineCov">        790 :         type = OBJECT;</span>
+<span class="lineNum">     220 </span><span class="lineCov">        790 :         std::swap(this-&gt;objectValue,value);</span>
+<span class="lineNum">     221 </span><span class="lineCov">        790 : }</span>
 <a name="222"><span class="lineNum">     222 </span>            : </a>
 <span class="lineNum">     223 </span>            : // copy asignment operators;
 <span class="lineNum">     224 </span><span class="lineNoCov">          0 : void Any::operator=(const bool &amp; value) {</span>
@@ -323,13 +323,13 @@
 <span class="lineNum">     261 </span><span class="lineNoCov">          0 :         this-&gt;doubleValue = value;</span>
 <a name="262"><span class="lineNum">     262 </span><span class="lineNoCov">          0 : }</span></a>
 <span class="lineNum">     263 </span>            : 
-<span class="lineNum">     264 </span><span class="lineCov">       2823 : void Any::operator=(const std::string &amp; value) {</span>
-<span class="lineNum">     265 </span><span class="lineCov">       2823 :         if(this-&gt;type != UNDEFINED &amp;&amp; this-&gt;type != STRING){</span>
+<span class="lineNum">     264 </span><span class="lineCov">       2873 : void Any::operator=(const std::string &amp; value) {</span>
+<span class="lineNum">     265 </span><span class="lineCov">       2873 :         if(this-&gt;type != UNDEFINED &amp;&amp; this-&gt;type != STRING){</span>
 <span class="lineNum">     266 </span><span class="lineCov">          6 :                 throw WrongTypeException(STRING, this-&gt;type);</span>
 <span class="lineNum">     267 </span>            :         }
-<span class="lineNum">     268 </span><span class="lineCov">       2817 :         this-&gt;type = STRING;</span>
-<span class="lineNum">     269 </span><span class="lineCov">       2817 :         this-&gt;stringValue = value;</span>
-<a name="270"><span class="lineNum">     270 </span><span class="lineCov">       2817 : }</span></a>
+<span class="lineNum">     268 </span><span class="lineCov">       2867 :         this-&gt;type = STRING;</span>
+<span class="lineNum">     269 </span><span class="lineCov">       2867 :         this-&gt;stringValue = value;</span>
+<a name="270"><span class="lineNum">     270 </span><span class="lineCov">       2867 : }</span></a>
 <span class="lineNum">     271 </span>            : 
 <span class="lineNum">     272 </span><span class="lineCov">         82 : void Any::operator=(const char * value) {</span>
 <span class="lineNum">     273 </span><span class="lineCov">         82 :         std::string v{value};</span>
@@ -352,10 +352,10 @@
 <span class="lineNum">     290 </span><span class="lineNoCov">          0 :         this-&gt;objectValue = value;</span>
 <a name="291"><span class="lineNum">     291 </span><span class="lineNoCov">          0 : }</span></a>
 <span class="lineNum">     292 </span>            : 
-<span class="lineNum">     293 </span><span class="lineCov">       2034 : void Any::operator=(const Any &amp; value) {</span>
-<span class="lineNum">     294 </span><span class="lineCov">       2034 :         this-&gt;type = value.type;</span>
+<span class="lineNum">     293 </span><span class="lineCov">       2084 : void Any::operator=(const Any &amp; value) {</span>
+<span class="lineNum">     294 </span><span class="lineCov">       2084 :         this-&gt;type = value.type;</span>
 <span class="lineNum">     295 </span>            : 
-<span class="lineNum">     296 </span><span class="lineCov">       2034 :         switch(this-&gt;type) {</span>
+<span class="lineNum">     296 </span><span class="lineCov">       2084 :         switch(this-&gt;type) {</span>
 <span class="lineNum">     297 </span>            :                 case UNDEFINED:
 <span class="lineNum">     298 </span><span class="lineCov">          9 :                         break;</span>
 <span class="lineNum">     299 </span>            :                 case BOOL:
@@ -374,14 +374,14 @@
 <span class="lineNum">     312 </span><span class="lineCov">         74 :                         this-&gt;arrayValue = value.arrayValue;</span>
 <span class="lineNum">     313 </span><span class="lineCov">         74 :                         break;</span>
 <span class="lineNum">     314 </span>            :                 case OBJECT:
-<span class="lineNum">     315 </span><span class="lineCov">        628 :                         this-&gt;objectValue = value.objectValue;</span>
-<span class="lineNum">     316 </span><span class="lineCov">        628 :                         break;</span>
+<span class="lineNum">     315 </span><span class="lineCov">        678 :                         this-&gt;objectValue = value.objectValue;</span>
+<span class="lineNum">     316 </span><span class="lineCov">        678 :                         break;</span>
 <span class="lineNum">     317 </span>            :         }
-<span class="lineNum">     318 </span><span class="lineCov">       2034 : }</span>
+<span class="lineNum">     318 </span><span class="lineCov">       2084 : }</span>
 <a name="319"><span class="lineNum">     319 </span>            : </a>
 <span class="lineNum">     320 </span>            : // type test operators
-<span class="lineNum">     321 </span><span class="lineCov">        227 : bool Any::isNull() {</span>
-<a name="322"><span class="lineNum">     322 </span><span class="lineCov">        227 :         return type == UNDEFINED;</span></a>
+<span class="lineNum">     321 </span><span class="lineCov">        232 : bool Any::isNull() {</span>
+<a name="322"><span class="lineNum">     322 </span><span class="lineCov">        232 :         return type == UNDEFINED;</span></a>
 <span class="lineNum">     323 </span>            : }
 <span class="lineNum">     324 </span><span class="lineCov">          5 : bool Any::isBool() {</span>
 <a name="325"><span class="lineNum">     325 </span><span class="lineCov">          5 :         return type == BOOL;</span></a>
@@ -532,14 +532,14 @@
 <span class="lineNum">     470 </span><span class="lineCov">         41 :         return this-&gt;arrayValue[pos];</span>
 <a name="471"><span class="lineNum">     471 </span>            : }</a>
 <span class="lineNum">     472 </span>            : 
-<span class="lineNum">     473 </span><span class="lineCov">       2754 : Any&amp; Any::operator[](std::string key){</span>
-<span class="lineNum">     474 </span><span class="lineCov">       2754 :         if(type == UNDEFINED){</span>
+<span class="lineNum">     473 </span><span class="lineCov">       2804 : Any&amp; Any::operator[](std::string key){</span>
+<span class="lineNum">     474 </span><span class="lineCov">       2804 :         if(type == UNDEFINED){</span>
 <span class="lineNum">     475 </span><span class="lineCov">         93 :                 type = OBJECT;</span>
 <span class="lineNum">     476 </span>            :         }
-<span class="lineNum">     477 </span><span class="lineCov">       2754 :         if(type != OBJECT) {</span>
+<span class="lineNum">     477 </span><span class="lineCov">       2804 :         if(type != OBJECT) {</span>
 <span class="lineNum">     478 </span><span class="lineCov">          1 :                 throw WrongTypeException(OBJECT, type);</span>
 <span class="lineNum">     479 </span>            :         }
-<span class="lineNum">     480 </span><span class="lineCov">       2753 :         return this-&gt;objectValue[key];</span>
+<span class="lineNum">     480 </span><span class="lineCov">       2803 :         return this-&gt;objectValue[key];</span>
 <a name="481"><span class="lineNum">     481 </span>            : }</a>
 <span class="lineNum">     482 </span>            : 
 <span class="lineNum">     483 </span><span class="lineCov">        816 : Any&amp; Any::operator[](const char * key){</span>
@@ -548,12 +548,12 @@
 <span class="lineNum">     486 </span>            : }
 <a name="487"><span class="lineNum">     487 </span>            : </a>
 <span class="lineNum">     488 </span>            : //reference conversion operators
-<span class="lineNum">     489 </span><span class="lineCov">         64 : Any::operator bool&amp;() {</span>
-<span class="lineNum">     490 </span><span class="lineCov">         64 :         if(this-&gt;type != BOOL) {</span>
+<span class="lineNum">     489 </span><span class="lineCov">         63 : Any::operator bool&amp;() {</span>
+<span class="lineNum">     490 </span><span class="lineCov">         63 :         if(this-&gt;type != BOOL) {</span>
 <span class="lineNum">     491 </span><span class="lineCov">          6 :                 throw WrongTypeException(BOOL, type);</span>
 <span class="lineNum">     492 </span>            :         }
 <span class="lineNum">     493 </span>            : 
-<span class="lineNum">     494 </span><span class="lineCov">         58 :         return this-&gt;boolValue;</span>
+<span class="lineNum">     494 </span><span class="lineCov">         57 :         return this-&gt;boolValue;</span>
 <a name="495"><span class="lineNum">     495 </span>            : }</a>
 <span class="lineNum">     496 </span>            : 
 <span class="lineNum">     497 </span><span class="lineCov">         12 : Any::operator long long&amp;() {</span>
@@ -570,12 +570,12 @@
 <span class="lineNum">     508 </span>            : 
 <a name="509"><span class="lineNum">     509 </span><span class="lineCov">          6 :         return this-&gt;doubleValue;</span></a>
 <span class="lineNum">     510 </span>            : }
-<span class="lineNum">     511 </span><span class="lineCov">       2096 : Any::operator std::string&amp;() {</span>
-<span class="lineNum">     512 </span><span class="lineCov">       2096 :         if(this-&gt;type != STRING) {</span>
+<span class="lineNum">     511 </span><span class="lineCov">       2146 : Any::operator std::string&amp;() {</span>
+<span class="lineNum">     512 </span><span class="lineCov">       2146 :         if(this-&gt;type != STRING) {</span>
 <span class="lineNum">     513 </span><span class="lineCov">         17 :                 throw WrongTypeException(STRING, type);</span>
 <span class="lineNum">     514 </span>            :         }
 <span class="lineNum">     515 </span>            : 
-<a name="516"><span class="lineNum">     516 </span><span class="lineCov">       2079 :         return this-&gt;stringValue;</span></a>
+<a name="516"><span class="lineNum">     516 </span><span class="lineCov">       2129 :         return this-&gt;stringValue;</span></a>
 <span class="lineNum">     517 </span>            : }
 <span class="lineNum">     518 </span><span class="lineCov">         13 : Any::operator std::deque&lt;Any&gt;&amp;() {</span>
 <span class="lineNum">     519 </span><span class="lineCov">         13 :         if(this-&gt;type != ARRAY) {</span>
@@ -628,12 +628,12 @@
 <span class="lineNum">     566 </span>            : 
 <a name="567"><span class="lineNum">     567 </span>            : </a>
 <span class="lineNum">     568 </span>            : 
-<span class="lineNum">     569 </span><span class="lineCov">         73 : bool Any::operator==(const Any &amp; other) const {</span>
-<span class="lineNum">     570 </span><span class="lineCov">         73 :         if(type != other.type)return false;</span>
+<span class="lineNum">     569 </span><span class="lineCov">         74 : bool Any::operator==(const Any &amp; other) const {</span>
+<span class="lineNum">     570 </span><span class="lineCov">         74 :         if(type != other.type)return false;</span>
 <span class="lineNum">     571 </span>            :         try{
-<span class="lineNum">     572 </span><span class="lineCov">         73 :                 switch(type){</span>
+<span class="lineNum">     572 </span><span class="lineCov">         74 :                 switch(type){</span>
 <span class="lineNum">     573 </span><span class="lineCov">          1 :                         case UNDEFINED: return true;</span>
-<span class="lineNum">     574 </span><span class="lineCov">          2 :                         case BOOL: return boolValue==other.boolValue;</span>
+<span class="lineNum">     574 </span><span class="lineCov">          3 :                         case BOOL: return boolValue==other.boolValue;</span>
 <span class="lineNum">     575 </span><span class="lineCov">         29 :                         case INTEGER: return integerValue==other.integerValue;</span>
 <span class="lineNum">     576 </span><span class="lineCov">          7 :                         case DOUBLE: return doubleValue==other.doubleValue;</span>
 <span class="lineNum">     577 </span><span class="lineCov">         22 :                         case STRING: return stringValue==other.stringValue;</span>
@@ -764,19 +764,19 @@
 <span class="lineNum">     702 </span>            : }
 <a name="703"><span class="lineNum">     703 </span>            : </a>
 <span class="lineNum">     704 </span>            : 
-<span class="lineNum">     705 </span><span class="lineCov">       3868 : Any Any::tokenToAny(jsmntok_t * &amp; t, const  char *js){</span>
-<span class="lineNum">     706 </span><span class="lineCov">       3868 :         Any result;</span>
-<span class="lineNum">     707 </span><span class="lineCov">       3868 :         switch(t-&gt;type){</span>
+<span class="lineNum">     705 </span><span class="lineCov">       3968 : Any Any::tokenToAny(jsmntok_t * &amp; t, const  char *js){</span>
+<span class="lineNum">     706 </span><span class="lineCov">       3968 :         Any result;</span>
+<span class="lineNum">     707 </span><span class="lineCov">       3968 :         switch(t-&gt;type){</span>
 <span class="lineNum">     708 </span>            :                 case JSMN_OBJECT: {
-<span class="lineNum">     709 </span><span class="lineCov">        731 :                         int objectSize = t-&gt;size;</span>
-<span class="lineNum">     710 </span><span class="lineCov">        731 :                         t++;</span>
-<span class="lineNum">     711 </span><span class="lineCov">        731 :                         result = Any::Object{};</span>
-<span class="lineNum">     712 </span><span class="lineCov">       2577 :                         for(int i=0; i&lt;objectSize; i+=2){</span>
-<span class="lineNum">     713 </span><span class="lineCov">       1846 :                                 std::string key = tokenToAny(t,js);</span>
-<span class="lineNum">     714 </span><span class="lineCov">       3692 :                                 Any value = tokenToAny(t,js);</span>
-<span class="lineNum">     715 </span><span class="lineCov">       1846 :                                 result[key] = value;</span>
-<span class="lineNum">     716 </span><span class="lineCov">       1846 :                         }</span>
-<span class="lineNum">     717 </span><span class="lineCov">        731 :                         break;</span>
+<span class="lineNum">     709 </span><span class="lineCov">        781 :                         int objectSize = t-&gt;size;</span>
+<span class="lineNum">     710 </span><span class="lineCov">        781 :                         t++;</span>
+<span class="lineNum">     711 </span><span class="lineCov">        781 :                         result = Any::Object{};</span>
+<span class="lineNum">     712 </span><span class="lineCov">       2677 :                         for(int i=0; i&lt;objectSize; i+=2){</span>
+<span class="lineNum">     713 </span><span class="lineCov">       1896 :                                 std::string key = tokenToAny(t,js);</span>
+<span class="lineNum">     714 </span><span class="lineCov">       3792 :                                 Any value = tokenToAny(t,js);</span>
+<span class="lineNum">     715 </span><span class="lineCov">       1896 :                                 result[key] = value;</span>
+<span class="lineNum">     716 </span><span class="lineCov">       1896 :                         }</span>
+<span class="lineNum">     717 </span><span class="lineCov">        781 :                         break;</span>
 <span class="lineNum">     718 </span>            :                 }
 <span class="lineNum">     719 </span>            :                 case JSMN_ARRAY: {
 <span class="lineNum">     720 </span><span class="lineCov">         53 :                         int arraySize = t-&gt;size;</span>
@@ -789,10 +789,10 @@
 <span class="lineNum">     727 </span><span class="lineCov">         53 :                         break;</span>
 <span class="lineNum">     728 </span>            :                 }
 <span class="lineNum">     729 </span>            :                 case JSMN_STRING: {
-<span class="lineNum">     730 </span><span class="lineCov">       2717 :                         std::string value{js+(t-&gt;start),js+(t-&gt;end)};</span>
-<span class="lineNum">     731 </span><span class="lineCov">       2717 :                         result = value;</span>
-<span class="lineNum">     732 </span><span class="lineCov">       2717 :                         t++;</span>
-<span class="lineNum">     733 </span><span class="lineCov">       2717 :                         break;</span>
+<span class="lineNum">     730 </span><span class="lineCov">       2767 :                         std::string value{js+(t-&gt;start),js+(t-&gt;end)};</span>
+<span class="lineNum">     731 </span><span class="lineCov">       2767 :                         result = value;</span>
+<span class="lineNum">     732 </span><span class="lineCov">       2767 :                         t++;</span>
+<span class="lineNum">     733 </span><span class="lineCov">       2767 :                         break;</span>
 <span class="lineNum">     734 </span>            :                 }
 <span class="lineNum">     735 </span>            :                 case JSMN_PRIMITIVE: {
 <span class="lineNum">     736 </span><span class="lineCov">        367 :                         std::string str{js+(t-&gt;start),js+(t-&gt;end)};</span>
@@ -811,22 +811,22 @@
 <span class="lineNum">     749 </span><span class="lineCov">        367 :                         break;</span>
 <span class="lineNum">     750 </span>            :                 }
 <span class="lineNum">     751 </span>            :         }
-<span class="lineNum">     752 </span><span class="lineCov">       3868 :         return result;</span>
+<span class="lineNum">     752 </span><span class="lineCov">       3968 :         return result;</span>
 <a name="753"><span class="lineNum">     753 </span>            : }</a>
 <span class="lineNum">     754 </span>            : 
 <span class="lineNum">     755 </span><span class="lineCov">        224 : std::string Any::escapeJSON(const std::string&amp; input) {</span>
 <span class="lineNum">     756 </span><span class="lineCov">        224 :     std::string output;</span>
 <span class="lineNum">     757 </span><span class="lineCov">        224 :     output.reserve(input.length());</span>
 <span class="lineNum">     758 </span>            : 
-<span class="lineNum">     759 </span><span class="lineCov">       2485 :     for (std::string::size_type i = 0; i &lt; input.length(); ++i)</span>
+<span class="lineNum">     759 </span><span class="lineCov">       2467 :     for (std::string::size_type i = 0; i &lt; input.length(); ++i)</span>
 <span class="lineNum">     760 </span>            :     {
-<span class="lineNum">     761 </span><span class="lineCov">       2261 :         switch (input[i]) {</span>
+<span class="lineNum">     761 </span><span class="lineCov">       2243 :         switch (input[i]) {</span>
 <span class="lineNum">     762 </span>            :             case '&quot;':
 <span class="lineNum">     763 </span><span class="lineCov">          1 :                 output += &quot;\\\&quot;&quot;;</span>
 <span class="lineNum">     764 </span><span class="lineCov">          1 :                 break;</span>
 <span class="lineNum">     765 </span>            :             case '/':
-<span class="lineNum">     766 </span><span class="lineCov">        165 :                 output += &quot;\\/&quot;;</span>
-<span class="lineNum">     767 </span><span class="lineCov">        165 :                 break;</span>
+<span class="lineNum">     766 </span><span class="lineCov">        147 :                 output += &quot;\\/&quot;;</span>
+<span class="lineNum">     767 </span><span class="lineCov">        147 :                 break;</span>
 <span class="lineNum">     768 </span>            :             case '\b':
 <span class="lineNum">     769 </span><span class="lineCov">          1 :                 output += &quot;\\b&quot;;</span>
 <span class="lineNum">     770 </span><span class="lineCov">          1 :                 break;</span>

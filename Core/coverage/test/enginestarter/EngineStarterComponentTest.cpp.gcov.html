@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-19 09:48:32</td>
+            <td class="headerValue">2014-09-22 09:03:23</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">21</td>
@@ -70,8 +70,8 @@
 <a name="8"><span class="lineNum">       8 </span>            : protected:</a>
 <span class="lineNum">       9 </span>            :         
 <span class="lineNum">      10 </span><span class="lineCov">          3 :         virtual void SetUp() override {         </span>
-<span class="lineNum">      11 </span><span class="lineCov">          3 :                 script = base_path+&quot;test.sh&quot;;</span>
-<span class="lineNum">      12 </span><span class="lineCov">          3 :                 output = base_path+&quot;test.out&quot;;</span>
+<span class="lineNum">      11 </span><span class="lineCov">          3 :                 script = base_path+&quot;/test.sh&quot;;</span>
+<span class="lineNum">      12 </span><span class="lineCov">          3 :                 output = base_path+&quot;/test.out&quot;;</span>
 <span class="lineNum">      13 </span>            : 
 <span class="lineNum">      14 </span><span class="lineCov">          3 :                 io.writeFile(script,&quot;#!/bin/bash\nfor i in $(seq 1 10); do echo -n foobar &gt;&gt; &quot;+output+&quot;\nsleep 0.1; done; exit 0\n&quot;);</span>
 <span class="lineNum">      15 </span><span class="lineCov">          3 :                 io.setExecutable(script,true);</span>
@@ -86,7 +86,7 @@
 <span class="lineNum">      24 </span><span class="lineCov">          1 :         virtual void GoodCases() override {</span>
 <span class="lineNum">      25 </span><span class="lineCov">          1 :                 std::string content;</span>
 <span class="lineNum">      26 </span>            : 
-<span class="lineNum">      27 </span><span class="lineCov">          1 :                 std::cout&lt;&lt;&quot;OUTPUT PATH:&quot;&lt;&lt;output&lt;&lt;std::endl;</span>
+<span class="lineNum">      27 </span><span class="lineCov">          1 :                 Susi::Logger::debug(&quot;OUTPUT PATH:&quot;+output);</span>
 <span class="lineNum">      28 </span>            : 
 <span class="lineNum">      29 </span>            :                 //create event
 <span class="lineNum">      30 </span><span class="lineCov">          2 :                 auto evt = createEvent(&quot;enginestarter::start&quot;);       </span>

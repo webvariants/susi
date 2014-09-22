@@ -1,0 +1,141 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info.cleaned - headers/sessions/SessionManagerComponent.h</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">headers/sessions</a> - SessionManagerComponent.h<span style="font-size: 80%;"> (source / <a href="SessionManagerComponent.h.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">21</td>
+            <td class="headerCovTableEntry">21</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2014-09-22 09:33:38</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntry">11</td>
+            <td class="headerCovTableEntryHi">90.9 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :  * Copyright (c) 2014, webvariants GmbH, http://www.webvariants.de
+<span class="lineNum">       3 </span>            :  *
+<span class="lineNum">       4 </span>            :  * This file is released under the terms of the MIT license. You can find the
+<span class="lineNum">       5 </span>            :  * complete text in the attached LICENSE file or online at:
+<span class="lineNum">       6 </span>            :  *
+<span class="lineNum">       7 </span>            :  * http://www.opensource.org/licenses/mit-license.php
+<span class="lineNum">       8 </span>            :  *
+<span class="lineNum">       9 </span>            :  * @author: Thomas Krause (thomas.krause@webvariants.de)
+<span class="lineNum">      10 </span>            :  */
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #ifndef __SESSION_MANAGER_COMPONENT__
+<span class="lineNum">      13 </span>            : #define __SESSION_MANAGER_COMPONENT__
+<span class="lineNum">      14 </span>            : 
+<span class="lineNum">      15 </span>            : #include &quot;world/BaseComponent.h&quot;
+<span class="lineNum">      16 </span>            : #include &quot;sessions/SessionManager.h&quot;
+<span class="lineNum">      17 </span>            : 
+<span class="lineNum">      18 </span>            : namespace Susi {
+<span class="lineNum">      19 </span>            :         namespace Sessions {
+<a name="20"><span class="lineNum">      20 </span>            :                 class SessionManagerComponent : public Susi::System::BaseComponent , public SessionManager {</a>
+<span class="lineNum">      21 </span>            :                 public:
+<span class="lineNum">      22 </span><span class="lineCov">         21 :                         SessionManagerComponent (Susi::System::ComponentManager * mgr, std::chrono::milliseconds stdSessionLifetime) :</span>
+<span class="lineNum">      23 </span><span class="lineCov">         21 :                                 Susi::System::BaseComponent{mgr}, SessionManager{} {</span>
+<span class="lineNum">      24 </span><span class="lineCov">         21 :                                         _stdSessionLifetime = stdSessionLifetime;                                       </span>
+<a name="25"><span class="lineNum">      25 </span><span class="lineCov">         21 :                                 }</span></a>
+<span class="lineNum">      26 </span>            : 
+<span class="lineNum">      27 </span><span class="lineCov">         42 :                         ~SessionManagerComponent() {</span>
+<span class="lineNum">      28 </span><span class="lineCov">         21 :                                 stop();</span>
+<a name="29"><span class="lineNum">      29 </span><span class="lineCov">         21 :                         }</span></a>
+<span class="lineNum">      30 </span>            : 
+<span class="lineNum">      31 </span><span class="lineCov">         15 :                         virtual void start() override {</span>
+<span class="lineNum">      32 </span><span class="lineCov">         15 :                                 init(_stdSessionLifetime);</span>
+<a name="33"><span class="lineNum">      33 </span>            : </a>
+<span class="lineNum">      34 </span>            :                                 // Consumer
+<span class="lineNum">      35 </span><span class="lineCov">         15 :                                 Susi::Events::Consumer handler = [this](::Susi::Events::SharedEventPtr evt){handleCheckSessions(std::move(evt));};</span>
+<span class="lineNum">      36 </span><span class="lineCov">         15 :                                 subscribe(&quot;heartbeat::one&quot;, handler);</span>
+<a name="37"><span class="lineNum">      37 </span>            : </a>
+<a name="38"><span class="lineNum">      38 </span>            :                                 // Processor</a>
+<a name="39"><span class="lineNum">      39 </span><span class="lineCov">         17 :                                 subscribe(&quot;session::setAttribute&quot;, [this](::Susi::Events::EventPtr evt){handleSetAttribute(std::move(evt));});</span></a>
+<a name="40"><span class="lineNum">      40 </span><span class="lineCov">         18 :                                 subscribe(&quot;session::getAttribute&quot;, [this](::Susi::Events::EventPtr evt){handleGetAttribute(std::move(evt));});</span></a>
+<a name="41"><span class="lineNum">      41 </span><span class="lineCov">         16 :                                 subscribe(&quot;session::pushAttribute&quot;, [this](::Susi::Events::EventPtr evt){handlePushAttribute(std::move(evt));});</span></a>
+<a name="42"><span class="lineNum">      42 </span><span class="lineCov">         17 :                                 subscribe(&quot;session::removeAttribute&quot;, [this](::Susi::Events::EventPtr evt){handleRemoveAttribute(std::move(evt));});</span></a>
+<span class="lineNum">      43 </span><span class="lineCov">         16 :                                 subscribe(&quot;session::update&quot;, [this](::Susi::Events::EventPtr evt){handleUpdate(std::move(evt));});</span>
+<span class="lineNum">      44 </span><span class="lineCov">         16 :                                 subscribe(&quot;session::check&quot;, [this](::Susi::Events::EventPtr evt){handleCheck(std::move(evt));});</span>
+<a name="45"><span class="lineNum">      45 </span><span class="lineCov">         15 :                         }</span></a>
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span><span class="lineCov">         33 :                         virtual void stop() override {</span>
+<span class="lineNum">      48 </span><span class="lineCov">         33 :                                 unsubscribeAll();</span>
+<span class="lineNum">      49 </span><span class="lineCov">         33 :                         }</span>
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            :                 protected:
+<span class="lineNum">      52 </span>            :                         std::chrono::milliseconds _stdSessionLifetime;                  
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            :                         void handleCheckSessions(Susi::Events::SharedEventPtr event);
+<span class="lineNum">      55 </span>            :                         void handleGetAttribute(Susi::Events::EventPtr event);
+<span class="lineNum">      56 </span>            :                         void handleSetAttribute(Susi::Events::EventPtr event);
+<span class="lineNum">      57 </span>            :                         void handlePushAttribute(Susi::Events::EventPtr event);
+<span class="lineNum">      58 </span>            :                         void handleRemoveAttribute(Susi::Events::EventPtr event);
+<span class="lineNum">      59 </span>            :                         void handleUpdate(Susi::Events::EventPtr event);
+<span class="lineNum">      60 </span>            :                         void handleCheck(Susi::Events::EventPtr event);
+<span class="lineNum">      61 </span>            :                 };
+<span class="lineNum">      62 </span>            :         }
+<span class="lineNum">      63 </span>            : }
+<span class="lineNum">      64 </span>            : 
+<span class="lineNum">      65 </span>            : #endif // __SESSION_MANAGER_COMPONENT__
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.11</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

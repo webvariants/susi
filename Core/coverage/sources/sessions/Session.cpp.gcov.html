@@ -1,0 +1,147 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>LCOV - coverage.info.cleaned - sources/sessions/Session.cpp</title>
+  <link rel="stylesheet" type="text/css" href="../../gcov.css">
+</head>
+
+<body>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="title">LCOV - code coverage report</td></tr>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+
+    <tr>
+      <td width="100%">
+        <table cellpadding=1 border=0 width="100%">
+          <tr>
+            <td width="10%" class="headerItem">Current view:</td>
+            <td width="35%" class="headerValue"><a href="../../index.html">top level</a> - <a href="index.html">sources/sessions</a> - Session.cpp<span style="font-size: 80%;"> (source / <a href="Session.cpp.func-sort-c.html">functions</a>)</span></td>
+            <td width="5%"></td>
+            <td width="15%"></td>
+            <td width="10%" class="headerCovTableHead">Hit</td>
+            <td width="10%" class="headerCovTableHead">Total</td>
+            <td width="15%" class="headerCovTableHead">Coverage</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Test:</td>
+            <td class="headerValue">coverage.info.cleaned</td>
+            <td></td>
+            <td class="headerItem">Lines:</td>
+            <td class="headerCovTableEntry">38</td>
+            <td class="headerCovTableEntry">43</td>
+            <td class="headerCovTableEntryMed">88.4 %</td>
+          </tr>
+          <tr>
+            <td class="headerItem">Date:</td>
+            <td class="headerValue">2014-09-22 09:33:38</td>
+            <td></td>
+            <td class="headerItem">Functions:</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
+          </tr>
+          <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+        </table>
+      </td>
+    </tr>
+
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+  </table>
+
+  <table cellpadding=0 cellspacing=0 border=0>
+    <tr>
+      <td><br></td>
+    </tr>
+    <tr>
+      <td>
+<pre class="sourceHeading">          Line data    Source code</pre>
+<pre class="source">
+<a name="1"><span class="lineNum">       1 </span>            : /*</a>
+<span class="lineNum">       2 </span>            :  * Copyright (c) 2014, webvariants GmbH, http://www.webvariants.de
+<span class="lineNum">       3 </span>            :  *
+<span class="lineNum">       4 </span>            :  * This file is released under the terms of the MIT license. You can find the
+<span class="lineNum">       5 </span>            :  * complete text in the attached LICENSE file or online at:
+<span class="lineNum">       6 </span>            :  *
+<span class="lineNum">       7 </span>            :  * http://www.opensource.org/licenses/mit-license.php
+<span class="lineNum">       8 </span>            :  *
+<span class="lineNum">       9 </span>            :  * @author: Christian Sonderfeld (christian.sonderfeld@webvariants.de)
+<span class="lineNum">      10 </span>            :  */
+<span class="lineNum">      11 </span>            : 
+<span class="lineNum">      12 </span>            : #include &quot;sessions/Session.h&quot;
+<a name="13"><span class="lineNum">      13 </span>            : </a>
+<span class="lineNum">      14 </span>            : namespace Susi {
+<span class="lineNum">      15 </span><span class="lineCov">         34 :         Session::Session(std::chrono::milliseconds milliseconds) {</span>
+<a name="16"><span class="lineNum">      16 </span><span class="lineCov">         34 :                 addTime(milliseconds);</span></a>
+<span class="lineNum">      17 </span><span class="lineCov">         34 :         }</span>
+<span class="lineNum">      18 </span><span class="lineCov">          5 :         bool Session::isDead() {</span>
+<span class="lineNum">      19 </span><span class="lineCov">          5 :                 Poco::Timestamp now;</span>
+<span class="lineNum">      20 </span>            :                 //std::cout&lt;&lt;deadline.epochTime()&lt;&lt;&quot; : &quot;&lt;&lt;now.epochTime()&lt;&lt;std::endl;
+<span class="lineNum">      21 </span><span class="lineCov">          5 :                 if(deadline &lt;= now) return true;</span>
+<a name="22"><span class="lineNum">      22 </span><span class="lineCov">          3 :                 return false;</span></a>
+<span class="lineNum">      23 </span>            :         }
+<span class="lineNum">      24 </span><span class="lineCov">         34 :         void Session::addTime(std::chrono::milliseconds milliseconds) {</span>
+<a name="25"><span class="lineNum">      25 </span><span class="lineCov">         34 :                 deadline += std::chrono::duration_cast&lt;std::chrono::microseconds&gt;(milliseconds).count();</span></a>
+<span class="lineNum">      26 </span><span class="lineCov">         34 :         }</span>
+<span class="lineNum">      27 </span><span class="lineCov">          4 :         void Session::pushAttribute(std::string key, Susi::Util::Any value) {</span>
+<span class="lineNum">      28 </span><span class="lineCov">          4 :                 if(attributes.count(key) &gt; 0) {</span>
+<span class="lineNum">      29 </span><span class="lineCov">          3 :                         multiAttributes[key].push_back(attributes[key]);</span>
+<span class="lineNum">      30 </span><span class="lineCov">          3 :                         multiAttributes[key].push_back(value);</span>
+<span class="lineNum">      31 </span><span class="lineCov">          3 :                         attributes.erase(key);</span>
+<span class="lineNum">      32 </span><span class="lineCov">          1 :                 } else if(multiAttributes.count(key) &gt; 0) {</span>
+<span class="lineNum">      33 </span><span class="lineNoCov">          0 :                         multiAttributes[key].push_back(value);</span>
+<span class="lineNum">      34 </span>            :                 } else {
+<span class="lineNum">      35 </span><span class="lineCov">          1 :                         attributes[key] = Susi::Util::Any(value);</span>
+<a name="36"><span class="lineNum">      36 </span>            :                 }</a>
+<span class="lineNum">      37 </span><span class="lineCov">          4 :         }</span>
+<span class="lineNum">      38 </span><span class="lineCov">          3 :         bool Session::removeAttribute(std::string key) {</span>
+<span class="lineNum">      39 </span><span class="lineCov">          3 :                 if(attributes.count(key) &gt; 0) {</span>
+<span class="lineNum">      40 </span><span class="lineCov">          3 :                         attributes.erase(key);</span>
+<span class="lineNum">      41 </span><span class="lineCov">          3 :                         return true;</span>
+<span class="lineNum">      42 </span>            :                 }
+<span class="lineNum">      43 </span><span class="lineNoCov">          0 :                 if(multiAttributes.count(key) &gt; 0) {</span>
+<span class="lineNum">      44 </span><span class="lineNoCov">          0 :                         multiAttributes.erase(key);</span>
+<span class="lineNum">      45 </span><span class="lineNoCov">          0 :                         return true;</span>
+<span class="lineNum">      46 </span>            :                 }
+<a name="47"><span class="lineNum">      47 </span><span class="lineNoCov">          0 :                 return false;</span></a>
+<span class="lineNum">      48 </span>            :         }
+<span class="lineNum">      49 </span><span class="lineCov">         23 :         Susi::Util::Any Session::getAttribute(std::string key) {</span>
+<span class="lineNum">      50 </span><span class="lineCov">         23 :                 if(key.length() &gt; 0) {</span>
+<span class="lineNum">      51 </span><span class="lineCov">         22 :                         if(attributes.count(key) &gt; 0) {</span>
+<span class="lineNum">      52 </span><span class="lineCov">         12 :                                 return attributes[key];</span>
+<span class="lineNum">      53 </span>            :                         }
+<span class="lineNum">      54 </span><span class="lineCov">         10 :                         if(multiAttributes.count(key) &gt; 0) {</span>
+<span class="lineNum">      55 </span><span class="lineCov">          5 :                                 return multiAttributes[key];</span>
+<span class="lineNum">      56 </span>            :                         }
+<span class="lineNum">      57 </span>            :                 }
+<a name="58"><span class="lineNum">      58 </span><span class="lineCov">          6 :                 return Susi::Util::Any();</span></a>
+<span class="lineNum">      59 </span>            :         }
+<span class="lineNum">      60 </span><span class="lineCov">         12 :         bool Session::setAttribute(std::string key, Susi::Util::Any value) {</span>
+<span class="lineNum">      61 </span><span class="lineCov">         12 :                 if(key.length() &gt; 0) {</span>
+<span class="lineNum">      62 </span><span class="lineCov">         11 :                         attributes[key] = value;</span>
+<span class="lineNum">      63 </span><span class="lineCov">         11 :                         return true;</span>
+<span class="lineNum">      64 </span>            :                 }
+<a name="65"><span class="lineNum">      65 </span><span class="lineCov">          1 :                 return false;</span></a>
+<span class="lineNum">      66 </span>            :         }
+<span class="lineNum">      67 </span><span class="lineCov">          3 :         bool Session::die() {</span>
+<span class="lineNum">      68 </span><span class="lineCov">          3 :                 deadline = Poco::Timestamp();</span>
+<a name="69"><span class="lineNum">      69 </span><span class="lineCov">          3 :                 return true;</span></a>
+<span class="lineNum">      70 </span>            :         }
+<span class="lineNum">      71 </span><span class="lineCov">          3 : }</span>
+</pre>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <table width="100%" border=0 cellspacing=0 cellpadding=0>
+    <tr><td class="ruler"><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
+    <tr><td class="versionInfo">Generated by: <a href="http://ltp.sourceforge.net/coverage/lcov.php" target="_parent">LCOV version 1.11</a></td></tr>
+  </table>
+  <br>
+
+</body>
+</html>

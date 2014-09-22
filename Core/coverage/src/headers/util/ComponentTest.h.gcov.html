@@ -31,13 +31,13 @@
             <td class="headerValue">coverage.info.cleaned</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">83</td>
-            <td class="headerCovTableEntry">83</td>
+            <td class="headerCovTableEntry">84</td>
+            <td class="headerCovTableEntry">84</td>
             <td class="headerCovTableEntryHi">100.0 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-19 09:48:32</td>
+            <td class="headerValue">2014-09-22 09:03:23</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">20</td>
@@ -86,9 +86,9 @@
 <a name="24"><span class="lineNum">      24 </span>            :         std::string base_path;</a>
 <span class="lineNum">      25 </span>            : 
 <span class="lineNum">      26 </span><span class="lineCov">         50 :         ComponentTest(){</span>
-<span class="lineNum">      27 </span><span class="lineCov">         50 :                 Susi::Logger::setLevel(7);</span>
+<span class="lineNum">      27 </span><span class="lineCov">         50 :                 Susi::Logger::setLevel(0);</span>
 <span class="lineNum">      28 </span>            : 
-<span class="lineNum">      29 </span><span class="lineCov">         50 :                 base_path = Poco::Path(Poco::Path::current()).toString() + &quot;component_test/&quot;;</span>
+<span class="lineNum">      29 </span><span class="lineCov">         50 :                 base_path = Poco::Path(Poco::Path::current()).toString() + &quot;component_test&quot;;</span>
 <span class="lineNum">      30 </span>            : 
 <span class="lineNum">      31 </span><span class="lineCov">         50 :                 Susi::Util::Any::Object cfg = Susi::Util::Any::fromString(getConfigString(base_path));</span>
 <span class="lineNum">      32 </span><span class="lineCov">         50 :                 componentManager = Susi::System::createSusiComponentManager(cfg);</span>
@@ -98,7 +98,7 @@
 <span class="lineNum">      36 </span><span class="lineCov">         50 :                 io.makeDir(base_path);</span>
 <a name="37"><span class="lineNum">      37 </span><span class="lineCov">         50 :         }</span></a>
 <span class="lineNum">      38 </span>            : 
-<span class="lineNum">      39 </span><span class="lineCov">        100 :         ~ComponentTest(){</span>
+<span class="lineNum">      39 </span><span class="lineCov">        100 :         virtual ~ComponentTest(){</span>
 <span class="lineNum">      40 </span><span class="lineCov">         50 :                 io.deletePath(base_path);</span>
 <span class="lineNum">      41 </span><span class="lineCov">         50 :         }</span>
 <span class="lineNum">      42 </span>            : 
@@ -146,7 +146,7 @@
 <span class="lineNum">      84 </span>            :                                 &quot;},&quot;
 <span class="lineNum">      85 </span>            :                                 &quot;\&quot;iocontroller\&quot;: {},&quot;
 <span class="lineNum">      86 </span>            :                                 &quot;\&quot;sessionmanager\&quot;: {&quot;
-<span class="lineNum">      87 </span>            :                                         &quot;\&quot;lifetime\&quot;: 600000&quot;
+<span class="lineNum">      87 </span>            :                                         &quot;\&quot;lifetime\&quot;: 1000&quot;
 <span class="lineNum">      88 </span>            :                                 &quot;},&quot;
 <span class="lineNum">      89 </span>            :                                 &quot;\&quot;statecontroller\&quot;: {&quot;
 <span class="lineNum">      90 </span><span class="lineCov">        100 :                                         &quot;\&quot;file\&quot;: \&quot;&quot;+path+&quot;/states.json\&quot;&quot;</span>
@@ -163,127 +163,128 @@
 <span class="lineNum">     101 </span>            :                                 &quot;},&quot;
 <span class="lineNum">     102 </span>            :                                 &quot;\&quot;httpserver\&quot;: {&quot;
 <span class="lineNum">     103 </span>            :                                         &quot;\&quot;address\&quot;: \&quot;[::1]:8080\&quot;,&quot;
-<span class="lineNum">     104 </span>            :                                         &quot;\&quot;assets\&quot;: \&quot;/tmp/assets\&quot;&quot;
-<span class="lineNum">     105 </span>            :                                 &quot;}&quot;
-<span class="lineNum">     106 </span><span class="lineCov">        100 :                         &quot;}&quot;;</span>
-<span class="lineNum">     107 </span>            : 
-<span class="lineNum">     108 </span><span class="lineCov">         50 :                 return configString;                                            </span>
-<a name="109"><span class="lineNum">     109 </span>            :         }</a>
-<span class="lineNum">     110 </span>            : 
-<span class="lineNum">     111 </span><span class="lineCov">          1 :         long subscribe(std::string topic, Susi::Events::Processor processor){</span>
-<span class="lineNum">     112 </span><span class="lineCov">          1 :                 long id = eventManager-&gt;subscribe(topic,std::move(processor));</span>
-<span class="lineNum">     113 </span><span class="lineCov">          1 :                 return id;</span>
-<span class="lineNum">     114 </span>            :         }
-<span class="lineNum">     115 </span>            :         long subscribe(Susi::Events::Predicate pred, Susi::Events::Processor processor){
-<span class="lineNum">     116 </span>            :                 long id = eventManager-&gt;subscribe(pred,std::move(processor));
-<a name="117"><span class="lineNum">     117 </span>            :                 return id;</a>
-<span class="lineNum">     118 </span>            :         }
-<span class="lineNum">     119 </span><span class="lineCov">          4 :         long subscribe(std::string topic, Susi::Events::Consumer consumer){</span>
-<span class="lineNum">     120 </span><span class="lineCov">          4 :                 long id = eventManager-&gt;subscribe(topic,std::move(consumer));</span>
-<span class="lineNum">     121 </span><span class="lineCov">          4 :                 return id;</span>
-<span class="lineNum">     122 </span>            :         }
-<span class="lineNum">     123 </span>            :         long subscribe(Susi::Events::Predicate pred, Susi::Events::Consumer consumer){
-<span class="lineNum">     124 </span>            :                 long id = eventManager-&gt;subscribe(pred,std::move(consumer));
-<a name="125"><span class="lineNum">     125 </span>            :                 return id;</a>
-<span class="lineNum">     126 </span>            :         }
-<span class="lineNum">     127 </span><span class="lineCov">          3 :         bool unsubscribe(long id){</span>
-<a name="128"><span class="lineNum">     128 </span><span class="lineCov">          3 :                 return eventManager-&gt;unsubscribe(id);</span></a>
-<span class="lineNum">     129 </span>            :         }
-<span class="lineNum">     130 </span><span class="lineCov">         89 :         void publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer{}){</span>
-<a name="131"><span class="lineNum">     131 </span><span class="lineCov">         89 :                 eventManager-&gt;publish(std::move(event),finishCallback);</span></a>
-<span class="lineNum">     132 </span><span class="lineCov">         89 :         }</span>
-<span class="lineNum">     133 </span><span class="lineCov">         89 :         Susi::Events::EventPtr createEvent(std::string topic){</span>
-<span class="lineNum">     134 </span><span class="lineCov">         89 :                 return eventManager-&gt;createEvent(topic);</span>
-<a name="135"><span class="lineNum">     135 </span>            :         }</a>
-<span class="lineNum">     136 </span>            :         
-<span class="lineNum">     137 </span><span class="lineCov">          2 :         Susi::Events::SharedEventPtr waitForConsumerEvent(std::string topic,std::chrono::milliseconds timeout){</span>
-<a name="138"><span class="lineNum">     138 </span><span class="lineCov">          2 :                 callbackCalled = false;</span></a>
-<span class="lineNum">     139 </span><span class="lineCov">          2 :                 sharedEvent.reset();</span>
-<span class="lineNum">     140 </span><span class="lineCov">          1 :                 Susi::Events::Consumer consumer = [this](Susi::Events::SharedEventPtr event){</span>
-<span class="lineNum">     141 </span><span class="lineCov">          1 :                         onConsumerEvent(event);</span>
-<span class="lineNum">     142 </span><span class="lineCov">          3 :                 };</span>
-<span class="lineNum">     143 </span><span class="lineCov">          2 :                 long id = subscribe(topic,consumer);</span>
-<a name="144"><span class="lineNum">     144 </span>            :                 {</a>
-<span class="lineNum">     145 </span><span class="lineCov">          2 :                         std::unique_lock&lt;std::mutex&gt; lock{mutex};</span>
-<span class="lineNum">     146 </span><span class="lineCov">          6 :                         cv.wait_for(lock,timeout,[this](){return callbackCalled;});</span>
-<span class="lineNum">     147 </span>            :                 }
-<span class="lineNum">     148 </span><span class="lineCov">          2 :                 unsubscribe(id);</span>
-<span class="lineNum">     149 </span><span class="lineCov">          2 :                 return sharedEvent;</span>
-<span class="lineNum">     150 </span>            :         }
-<a name="151"><span class="lineNum">     151 </span>            : </a>
-<span class="lineNum">     152 </span>            : 
-<span class="lineNum">     153 </span><span class="lineCov">          1 :         Susi::Events::EventPtr waitForProcessorEvent(std::string topic,std::chrono::milliseconds timeout){</span>
-<a name="154"><span class="lineNum">     154 </span><span class="lineCov">          1 :                 callbackCalled = false;</span></a>
-<span class="lineNum">     155 </span><span class="lineCov">          1 :                 event.reset();</span>
-<span class="lineNum">     156 </span><span class="lineCov">          1 :                 Susi::Events::Processor processor = [this](Susi::Events::EventPtr event){</span>
-<span class="lineNum">     157 </span><span class="lineCov">          1 :                         onProcessorEvent(std::move(event));</span>
-<span class="lineNum">     158 </span><span class="lineCov">          2 :                 };</span>
-<span class="lineNum">     159 </span><span class="lineCov">          1 :                 long id = subscribe(topic,processor);</span>
-<a name="160"><span class="lineNum">     160 </span>            :                 {</a>
-<span class="lineNum">     161 </span><span class="lineCov">          1 :                         std::unique_lock&lt;std::mutex&gt; lock{mutex};</span>
-<span class="lineNum">     162 </span><span class="lineCov">          3 :                         cv.wait_for(lock,timeout,[this](){return callbackCalled;});</span>
-<span class="lineNum">     163 </span>            :                 }
-<span class="lineNum">     164 </span><span class="lineCov">          1 :                 unsubscribe(id);</span>
-<span class="lineNum">     165 </span><span class="lineCov">          1 :                 return std::move(event);</span>
-<a name="166"><span class="lineNum">     166 </span>            :         }</a>
-<span class="lineNum">     167 </span>            : 
-<span class="lineNum">     168 </span><span class="lineCov">         88 :         Susi::Events::SharedEventPtr publish_sync(Susi::Events::EventPtr event){</span>
-<span class="lineNum">     169 </span><span class="lineCov">         88 :                 Susi::Events::SharedEventPtr result;</span>
-<span class="lineNum">     170 </span><span class="lineCov">        176 :                 std::condition_variable cv;</span>
-<a name="171"><span class="lineNum">     171 </span><span class="lineCov">         88 :                 bool called = false;</span></a>
-<span class="lineNum">     172 </span><span class="lineCov">         88 :                 std::mutex mutex;</span>
-<span class="lineNum">     173 </span><span class="lineCov">        176 :                 publish(std::move(event),[&amp;cv, &amp;called, &amp;result](Susi::Events::SharedEventPtr evt){</span>
-<span class="lineNum">     174 </span><span class="lineCov">         88 :                         result = evt;</span>
-<span class="lineNum">     175 </span><span class="lineCov">         88 :                         called = true;</span>
-<span class="lineNum">     176 </span><span class="lineCov">         88 :                         cv.notify_one();</span>
-<span class="lineNum">     177 </span><span class="lineCov">        264 :                 });</span>
-<a name="178"><span class="lineNum">     178 </span>            :                 {</a>
-<span class="lineNum">     179 </span><span class="lineCov">         88 :                         std::unique_lock&lt;std::mutex&gt; lock{mutex};</span>
-<span class="lineNum">     180 </span><span class="lineCov">        263 :                         cv.wait(lock,[&amp;called](){return called;});</span>
-<span class="lineNum">     181 </span>            :                 }
-<span class="lineNum">     182 </span><span class="lineCov">        176 :                 return result;</span>
-<span class="lineNum">     183 </span>            :         }
-<a name="184"><span class="lineNum">     184 </span>            : </a>
-<span class="lineNum">     185 </span>            : 
-<span class="lineNum">     186 </span><span class="lineCov">         19 :         bool hasErrorHeader(Susi::Events::SharedEventPtr event) {</span>
-<span class="lineNum">     187 </span><span class="lineCov">         19 :                 auto headers = event-&gt;getHeaders();</span>
-<span class="lineNum">     188 </span><span class="lineCov">         19 :                 bool error_found = false;</span>
-<span class="lineNum">     189 </span>            : 
-<span class="lineNum">     190 </span><span class="lineCov">         19 :                 for(size_t i=0; i&lt;headers.size(); ++i) {</span>
-<span class="lineNum">     191 </span><span class="lineCov">         19 :                         if(headers[i].first == &quot;error&quot;) {</span>
-<span class="lineNum">     192 </span><span class="lineCov">         19 :                                 error_found = true;</span>
-<span class="lineNum">     193 </span><span class="lineCov">         19 :                                 break;</span>
-<span class="lineNum">     194 </span>            :                         }                       
-<span class="lineNum">     195 </span>            :                 }
-<span class="lineNum">     196 </span>            : 
-<span class="lineNum">     197 </span><span class="lineCov">         19 :                 return error_found;</span>
-<span class="lineNum">     198 </span>            :         }
-<span class="lineNum">     199 </span>            : 
-<span class="lineNum">     200 </span>            : private:
-<span class="lineNum">     201 </span>            :         Susi::Events::EventPtr event;
-<span class="lineNum">     202 </span>            :         Susi::Events::SharedEventPtr sharedEvent;
-<span class="lineNum">     203 </span>            :         std::condition_variable cv;
-<span class="lineNum">     204 </span>            :         std::mutex mutex;
-<a name="205"><span class="lineNum">     205 </span>            :         bool callbackCalled;</a>
-<span class="lineNum">     206 </span>            : 
-<span class="lineNum">     207 </span><span class="lineCov">          1 :         void onConsumerEvent(Susi::Events::SharedEventPtr evt){</span>
-<span class="lineNum">     208 </span><span class="lineCov">          1 :                 sharedEvent = evt;</span>
-<span class="lineNum">     209 </span><span class="lineCov">          1 :                 callbackCalled = true;</span>
-<a name="210"><span class="lineNum">     210 </span><span class="lineCov">          1 :                 cv.notify_one();</span></a>
-<span class="lineNum">     211 </span><span class="lineCov">          1 :         }</span>
-<span class="lineNum">     212 </span><span class="lineCov">          1 :         void onProcessorEvent(Susi::Events::EventPtr evt){</span>
-<span class="lineNum">     213 </span><span class="lineCov">          1 :                 event = std::move(evt);</span>
-<span class="lineNum">     214 </span><span class="lineCov">          1 :                 callbackCalled = true;</span>
-<span class="lineNum">     215 </span><span class="lineCov">          1 :                 cv.notify_one();</span>
-<span class="lineNum">     216 </span><span class="lineCov">          1 :         }</span>
-<span class="lineNum">     217 </span>            : 
+<span class="lineNum">     104 </span><span class="lineCov">        100 :                                         &quot;\&quot;assets\&quot;: \&quot;&quot;+path+&quot;/assets\&quot;&quot;</span>
+<span class="lineNum">     105 </span>            :                                 &quot;},&quot;
+<span class="lineNum">     106 </span>            :                                 &quot;\&quot;apiserver\&quot;: {}&quot;
+<span class="lineNum">     107 </span><span class="lineCov">        100 :                         &quot;}&quot;;</span>
+<span class="lineNum">     108 </span>            : 
+<span class="lineNum">     109 </span><span class="lineCov">         50 :                 return configString;                                            </span>
+<a name="110"><span class="lineNum">     110 </span>            :         }</a>
+<span class="lineNum">     111 </span>            : 
+<span class="lineNum">     112 </span><span class="lineCov">          1 :         long subscribe(std::string topic, Susi::Events::Processor processor){</span>
+<span class="lineNum">     113 </span><span class="lineCov">          1 :                 long id = eventManager-&gt;subscribe(topic,std::move(processor));</span>
+<span class="lineNum">     114 </span><span class="lineCov">          1 :                 return id;</span>
+<span class="lineNum">     115 </span>            :         }
+<span class="lineNum">     116 </span>            :         long subscribe(Susi::Events::Predicate pred, Susi::Events::Processor processor){
+<span class="lineNum">     117 </span>            :                 long id = eventManager-&gt;subscribe(pred,std::move(processor));
+<a name="118"><span class="lineNum">     118 </span>            :                 return id;</a>
+<span class="lineNum">     119 </span>            :         }
+<span class="lineNum">     120 </span><span class="lineCov">          4 :         long subscribe(std::string topic, Susi::Events::Consumer consumer){</span>
+<span class="lineNum">     121 </span><span class="lineCov">          4 :                 long id = eventManager-&gt;subscribe(topic,std::move(consumer));</span>
+<span class="lineNum">     122 </span><span class="lineCov">          4 :                 return id;</span>
+<span class="lineNum">     123 </span>            :         }
+<span class="lineNum">     124 </span>            :         long subscribe(Susi::Events::Predicate pred, Susi::Events::Consumer consumer){
+<span class="lineNum">     125 </span>            :                 long id = eventManager-&gt;subscribe(pred,std::move(consumer));
+<a name="126"><span class="lineNum">     126 </span>            :                 return id;</a>
+<span class="lineNum">     127 </span>            :         }
+<span class="lineNum">     128 </span><span class="lineCov">          3 :         bool unsubscribe(long id){</span>
+<a name="129"><span class="lineNum">     129 </span><span class="lineCov">          3 :                 return eventManager-&gt;unsubscribe(id);</span></a>
+<span class="lineNum">     130 </span>            :         }
+<span class="lineNum">     131 </span><span class="lineCov">         89 :         void publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer{}){</span>
+<a name="132"><span class="lineNum">     132 </span><span class="lineCov">         89 :                 eventManager-&gt;publish(std::move(event),finishCallback);</span></a>
+<span class="lineNum">     133 </span><span class="lineCov">         89 :         }</span>
+<span class="lineNum">     134 </span><span class="lineCov">         89 :         Susi::Events::EventPtr createEvent(std::string topic){</span>
+<span class="lineNum">     135 </span><span class="lineCov">         89 :                 return eventManager-&gt;createEvent(topic);</span>
+<a name="136"><span class="lineNum">     136 </span>            :         }</a>
+<span class="lineNum">     137 </span>            :         
+<span class="lineNum">     138 </span><span class="lineCov">          2 :         Susi::Events::SharedEventPtr waitForConsumerEvent(std::string topic,std::chrono::milliseconds timeout){</span>
+<a name="139"><span class="lineNum">     139 </span><span class="lineCov">          2 :                 callbackCalled = false;</span></a>
+<span class="lineNum">     140 </span><span class="lineCov">          2 :                 sharedEvent.reset();</span>
+<span class="lineNum">     141 </span><span class="lineCov">          1 :                 Susi::Events::Consumer consumer = [this](Susi::Events::SharedEventPtr event){</span>
+<span class="lineNum">     142 </span><span class="lineCov">          1 :                         onConsumerEvent(event);</span>
+<span class="lineNum">     143 </span><span class="lineCov">          3 :                 };</span>
+<span class="lineNum">     144 </span><span class="lineCov">          2 :                 long id = subscribe(topic,consumer);</span>
+<a name="145"><span class="lineNum">     145 </span>            :                 {</a>
+<span class="lineNum">     146 </span><span class="lineCov">          2 :                         std::unique_lock&lt;std::mutex&gt; lock{mutex};</span>
+<span class="lineNum">     147 </span><span class="lineCov">          6 :                         cv.wait_for(lock,timeout,[this](){return callbackCalled;});</span>
+<span class="lineNum">     148 </span>            :                 }
+<span class="lineNum">     149 </span><span class="lineCov">          2 :                 unsubscribe(id);</span>
+<span class="lineNum">     150 </span><span class="lineCov">          2 :                 return sharedEvent;</span>
+<span class="lineNum">     151 </span>            :         }
+<a name="152"><span class="lineNum">     152 </span>            : </a>
+<span class="lineNum">     153 </span>            : 
+<span class="lineNum">     154 </span><span class="lineCov">          1 :         Susi::Events::EventPtr waitForProcessorEvent(std::string topic,std::chrono::milliseconds timeout){</span>
+<a name="155"><span class="lineNum">     155 </span><span class="lineCov">          1 :                 callbackCalled = false;</span></a>
+<span class="lineNum">     156 </span><span class="lineCov">          1 :                 event.reset();</span>
+<span class="lineNum">     157 </span><span class="lineCov">          1 :                 Susi::Events::Processor processor = [this](Susi::Events::EventPtr event){</span>
+<span class="lineNum">     158 </span><span class="lineCov">          1 :                         onProcessorEvent(std::move(event));</span>
+<span class="lineNum">     159 </span><span class="lineCov">          2 :                 };</span>
+<span class="lineNum">     160 </span><span class="lineCov">          1 :                 long id = subscribe(topic,processor);</span>
+<a name="161"><span class="lineNum">     161 </span>            :                 {</a>
+<span class="lineNum">     162 </span><span class="lineCov">          1 :                         std::unique_lock&lt;std::mutex&gt; lock{mutex};</span>
+<span class="lineNum">     163 </span><span class="lineCov">          3 :                         cv.wait_for(lock,timeout,[this](){return callbackCalled;});</span>
+<span class="lineNum">     164 </span>            :                 }
+<span class="lineNum">     165 </span><span class="lineCov">          1 :                 unsubscribe(id);</span>
+<span class="lineNum">     166 </span><span class="lineCov">          1 :                 return std::move(event);</span>
+<a name="167"><span class="lineNum">     167 </span>            :         }</a>
+<span class="lineNum">     168 </span>            : 
+<span class="lineNum">     169 </span><span class="lineCov">         88 :         Susi::Events::SharedEventPtr publish_sync(Susi::Events::EventPtr event){</span>
+<span class="lineNum">     170 </span><span class="lineCov">         88 :                 Susi::Events::SharedEventPtr result;</span>
+<span class="lineNum">     171 </span><span class="lineCov">        176 :                 std::condition_variable cv;</span>
+<a name="172"><span class="lineNum">     172 </span><span class="lineCov">         88 :                 bool called = false;</span></a>
+<span class="lineNum">     173 </span><span class="lineCov">         88 :                 std::mutex mutex;</span>
+<span class="lineNum">     174 </span><span class="lineCov">        176 :                 publish(std::move(event),[&amp;cv, &amp;called, &amp;result](Susi::Events::SharedEventPtr evt){</span>
+<span class="lineNum">     175 </span><span class="lineCov">         88 :                         result = evt;</span>
+<span class="lineNum">     176 </span><span class="lineCov">         88 :                         called = true;</span>
+<span class="lineNum">     177 </span><span class="lineCov">         88 :                         cv.notify_one();</span>
+<span class="lineNum">     178 </span><span class="lineCov">        264 :                 });</span>
+<a name="179"><span class="lineNum">     179 </span>            :                 {</a>
+<span class="lineNum">     180 </span><span class="lineCov">         88 :                         std::unique_lock&lt;std::mutex&gt; lock{mutex};</span>
+<span class="lineNum">     181 </span><span class="lineCov">        263 :                         cv.wait(lock,[&amp;called](){return called;});</span>
+<span class="lineNum">     182 </span>            :                 }
+<span class="lineNum">     183 </span><span class="lineCov">        176 :                 return result;</span>
+<span class="lineNum">     184 </span>            :         }
+<a name="185"><span class="lineNum">     185 </span>            : </a>
+<span class="lineNum">     186 </span>            : 
+<span class="lineNum">     187 </span><span class="lineCov">         19 :         bool hasErrorHeader(Susi::Events::SharedEventPtr event) {</span>
+<span class="lineNum">     188 </span><span class="lineCov">         19 :                 auto headers = event-&gt;getHeaders();</span>
+<span class="lineNum">     189 </span><span class="lineCov">         19 :                 bool error_found = false;</span>
+<span class="lineNum">     190 </span>            : 
+<span class="lineNum">     191 </span><span class="lineCov">         19 :                 for(size_t i=0; i&lt;headers.size(); ++i) {</span>
+<span class="lineNum">     192 </span><span class="lineCov">         19 :                         if(headers[i].first == &quot;error&quot;) {</span>
+<span class="lineNum">     193 </span><span class="lineCov">         19 :                                 error_found = true;</span>
+<span class="lineNum">     194 </span><span class="lineCov">         19 :                                 break;</span>
+<span class="lineNum">     195 </span>            :                         }                       
+<span class="lineNum">     196 </span>            :                 }
+<span class="lineNum">     197 </span>            : 
+<span class="lineNum">     198 </span><span class="lineCov">         19 :                 return error_found;</span>
+<span class="lineNum">     199 </span>            :         }
+<span class="lineNum">     200 </span>            : 
+<span class="lineNum">     201 </span>            : private:
+<span class="lineNum">     202 </span>            :         Susi::Events::EventPtr event;
+<span class="lineNum">     203 </span>            :         Susi::Events::SharedEventPtr sharedEvent;
+<span class="lineNum">     204 </span>            :         std::condition_variable cv;
+<span class="lineNum">     205 </span>            :         std::mutex mutex;
+<a name="206"><span class="lineNum">     206 </span>            :         bool callbackCalled;</a>
+<span class="lineNum">     207 </span>            : 
+<span class="lineNum">     208 </span><span class="lineCov">          1 :         void onConsumerEvent(Susi::Events::SharedEventPtr evt){</span>
+<span class="lineNum">     209 </span><span class="lineCov">          1 :                 sharedEvent = evt;</span>
+<span class="lineNum">     210 </span><span class="lineCov">          1 :                 callbackCalled = true;</span>
+<a name="211"><span class="lineNum">     211 </span><span class="lineCov">          1 :                 cv.notify_one();</span></a>
+<span class="lineNum">     212 </span><span class="lineCov">          1 :         }</span>
+<span class="lineNum">     213 </span><span class="lineCov">          1 :         void onProcessorEvent(Susi::Events::EventPtr evt){</span>
+<span class="lineNum">     214 </span><span class="lineCov">          1 :                 event = std::move(evt);</span>
+<span class="lineNum">     215 </span><span class="lineCov">          1 :                 callbackCalled = true;</span>
+<span class="lineNum">     216 </span><span class="lineCov">          1 :                 cv.notify_one();</span>
+<span class="lineNum">     217 </span><span class="lineCov">          1 :         }</span>
 <span class="lineNum">     218 </span>            : 
-<span class="lineNum">     219 </span>            : };
-<span class="lineNum">     220 </span>            : 
+<span class="lineNum">     219 </span>            : 
+<span class="lineNum">     220 </span>            : };
 <span class="lineNum">     221 </span>            : 
-<span class="lineNum">     222 </span>            :  
-<span class="lineNum">     223 </span>            : #endif // __COMPONENTTEST__
-<span class="lineNum">     224 </span>            :   
+<span class="lineNum">     222 </span>            : 
+<span class="lineNum">     223 </span>            :  
+<span class="lineNum">     224 </span>            : #endif // __COMPONENTTEST__
+<span class="lineNum">     225 </span>            :   
 </pre>
       </td>
     </tr>
