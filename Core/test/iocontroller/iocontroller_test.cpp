@@ -120,6 +120,24 @@ TEST_F(IOControllerTest,MakeDir){
 	EXPECT_TRUE(result);
 }
 
+TEST_F(IOControllerTest,MakeDirNoPermissions){
+	bool result = false;
+	std::string path = current_path +"/IOTESTS/TEST_MAKE_DIR";
+
+	result = controller.makeDir(path);
+	EXPECT_TRUE(result);
+
+	chmod((char*)path.c_str(), 0111);
+
+	EXPECT_THROW ({
+		result = controller.makeDir(path+ "/SUB");
+	}, std::exception);
+
+	chmod((char*)path.c_str(), 0777);	
+
+	
+}
+
 TEST_F(IOControllerTest, SetAndGetExecutable){
 	controller.writeFile(current_path + "/IOTESTS/script.sh","foobar");
 
