@@ -72,6 +72,22 @@ TEST_F(SessionTest, Attribs) {
 	// try to get value of empty string as key
 	auto result6 = session.getAttribute("");
 	EXPECT_TRUE(result6.isNull());
+
+	// set multi atrribute
+	session.pushAttribute("multi", 1);
+	session.pushAttribute("multi", 2);
+	session.pushAttribute("multi", 3);
+	auto result7 = session.getAttribute("multi");
+	EXPECT_EQ("[1,2,3]",result7.toJSONString());
+
+	// remove multi attribute
+	session.removeAttribute("multi");
+	auto result8 = session.getAttribute("multi");
+	EXPECT_TRUE(result8.isNull());
+
+	// remove multi atrribute again
+	auto result9 = session.removeAttribute("multi");	 
+	EXPECT_FALSE(result9);
 }
 
 TEST_F(SessionTest, Die) {
