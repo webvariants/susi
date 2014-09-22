@@ -43,35 +43,25 @@ std::string Susi::IOController::readFile(std::string filename) {
 
 	if(this->checkFile(this->getAbsPathFromString(filename))) {
 		std::string result = "";
-		char * buffer;
-		int length = 0;
+		int length = 1024;
 		std::ifstream s((char*)filename.c_str());
 
 		if(s) {
-			// get length of file:
-	    	s.seekg (0, s.end);
-			length = s.tellg();
-		    s.seekg (0, s.beg);
 
-	    	buffer = new char [length];
-			// read data as a block:
-		    s.read(buffer,length);
+			char buff[length];	
+			u_long bs = length;
+			while(s.good() && bs > 0){
+				bs = s.readsome(buff,length);
+				result += std::string{buff,bs};
 
-		    if (!s) {
-		    	std::string msg = "error: only ";
-				msg += std::to_string(s.gcount());
-				msg += " could be read";
-				Susi::Logger::error(msg);
-		    }
+				std::cout<<"IS GOOD: Read:"<< bs<<std::endl;
+			}
 
-		    s.close();
+			 s.close();
 
-		    result += std::string(buffer,length);
-
-		    if(buffer)delete[] buffer;
-
-		    return result;
+			return result;
 		}
+
 		throw std::runtime_error{"ReadFile: can't read file!"};
 	} else {
 		std::string msg = "ReadFile: ";
