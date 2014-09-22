@@ -93,6 +93,14 @@ TEST_F(IOControllerTest,DeletePath_DIR){
 	EXPECT_FALSE(result);
 }
 
+TEST_F(IOControllerTest,DeletePath_DEVICE){
+	
+	// delete first time
+	bool result = false;
+	result = controller.deletePath("/dev0");
+	EXPECT_FALSE(result);
+}
+
 TEST_F(IOControllerTest,DeletePath_FILE){
 	// create File
 	controller.writeFile(current_path + "/IOTESTS/foobar_to_be_deleted.dat",data);
@@ -294,4 +302,18 @@ TEST_F(IOControllerTest,CopyPath_FILE_TO_FILE){
 	// check new location
 	result = controller.checkFile(Poco::Path(current_path + "/IOTESTS/copied_file.dat"));
 	EXPECT_TRUE(result);
+}
+
+TEST_F(IOControllerTest,CheckFileExtension){
+	
+	bool result = false;
+
+	// wrong extension
+	result = controller.checkFileExtension("file.dat", "txt");
+	EXPECT_FALSE(result);
+
+	// file too short
+	result = controller.checkFileExtension("dat", "dat");
+	EXPECT_FALSE(result);
+
 }

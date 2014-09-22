@@ -52,9 +52,7 @@ std::string Susi::IOController::readFile(std::string filename) {
 			u_long bs = length;
 			while(s.good() && bs > 0){
 				bs = s.readsome(buff,length);
-				result += std::string{buff,bs};
-
-				std::cout<<"IS GOOD: Read:"<< bs<<std::endl;
+				result += std::string{buff,bs};				
 			}
 
 			 s.close();
