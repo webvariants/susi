@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-22 09:33:38</td>
+            <td class="headerValue">2014-09-22 13:25:57</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">12</td>
@@ -76,26 +76,26 @@
 <span class="lineNum">      14 </span>            : 
 <a name="15"><span class="lineNum">      15 </span>            : using namespace Susi::Sessions;</a>
 <span class="lineNum">      16 </span>            : 
-<span class="lineNum">      17 </span><span class="lineCov">         15 : bool SessionManager::init(std::chrono::milliseconds stdSessionLifetime) {</span>
-<span class="lineNum">      18 </span><span class="lineCov">         15 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
-<span class="lineNum">      19 </span><span class="lineCov">         15 :         Susi::Logger::debug(&quot;init session manager. inited: &quot;+std::to_string(initialized));</span>
+<span class="lineNum">      17 </span><span class="lineCov">         20 : bool SessionManager::init(std::chrono::milliseconds stdSessionLifetime) {</span>
+<span class="lineNum">      18 </span><span class="lineCov">         20 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
+<span class="lineNum">      19 </span><span class="lineCov">         20 :         Susi::Logger::debug(&quot;init session manager. inited: &quot;+std::to_string(initialized));</span>
 <span class="lineNum">      20 </span>            :         // Causes problem in tests, since we have a world object which does all the init stuff
 <span class="lineNum">      21 </span>            :         // Second init fails...
-<span class="lineNum">      22 </span><span class="lineCov">         15 :         if(initialized) {               </span>
+<span class="lineNum">      22 </span><span class="lineCov">         20 :         if(initialized) {               </span>
 <span class="lineNum">      23 </span><span class="lineNoCov">          0 :                 return false;</span>
 <span class="lineNum">      24 </span>            :         }
 <span class="lineNum">      25 </span>            : 
-<span class="lineNum">      26 </span><span class="lineCov">         15 :         initialized = true;</span>
-<span class="lineNum">      27 </span><span class="lineCov">         15 :         if(stdSessionLifetime.count() &lt;= 0) {</span>
+<span class="lineNum">      26 </span><span class="lineCov">         20 :         initialized = true;</span>
+<span class="lineNum">      27 </span><span class="lineCov">         20 :         if(stdSessionLifetime.count() &lt;= 0) {</span>
 <span class="lineNum">      28 </span><span class="lineNoCov">          0 :                 stdLifetime = std::chrono::milliseconds(10000);</span>
 <span class="lineNum">      29 </span>            :         } else {
-<span class="lineNum">      30 </span><span class="lineCov">         15 :                 this-&gt;stdLifetime = stdSessionLifetime;</span>
+<span class="lineNum">      30 </span><span class="lineCov">         20 :                 this-&gt;stdLifetime = stdSessionLifetime;</span>
 <span class="lineNum">      31 </span>            :         }
 <span class="lineNum">      32 </span>            :         
-<span class="lineNum">      33 </span><span class="lineCov">         15 :         return true;</span>
+<span class="lineNum">      33 </span><span class="lineCov">         20 :         return true;</span>
 <a name="34"><span class="lineNum">      34 </span>            : }</a>
 <span class="lineNum">      35 </span>            : 
-<a name="36"><span class="lineNum">      36 </span><span class="lineCov">         21 : SessionManager::~SessionManager(){}</span></a>
+<a name="36"><span class="lineNum">      36 </span><span class="lineCov">         26 : SessionManager::~SessionManager(){}</span></a>
 <span class="lineNum">      37 </span>            : 
 <span class="lineNum">      38 </span><span class="lineNoCov">          0 : int SessionManager::checkSessions(){</span>
 <span class="lineNum">      39 </span>            :         //std::cout&lt;&lt;&quot;aquiere sessions mutex&quot;&lt;&lt;std::endl;
@@ -194,16 +194,16 @@
 <span class="lineNum">     132 </span><span class="lineCov">          7 :         return Susi::Util::Any{};</span>
 <a name="133"><span class="lineNum">     133 </span>            : }</a>
 <span class="lineNum">     134 </span>            : 
-<span class="lineNum">     135 </span><span class="lineCov">          5 : void SessionManager::updateSession(std::string id){</span>
-<span class="lineNum">     136 </span><span class="lineCov">          5 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
-<span class="lineNum">     137 </span><span class="lineCov">          5 :         if(sessions.count(id) &gt; 0 &amp;&amp; !sessions[id].isDead()) {</span>
+<span class="lineNum">     135 </span><span class="lineCov">          8 : void SessionManager::updateSession(std::string id){</span>
+<span class="lineNum">     136 </span><span class="lineCov">          8 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
+<span class="lineNum">     137 </span><span class="lineCov">          8 :         if(sessions.count(id) &gt; 0 &amp;&amp; !sessions[id].isDead()) {</span>
 <span class="lineNum">     138 </span><span class="lineNoCov">          0 :                 sessions[id].addTime(stdLifetime);</span>
 <span class="lineNum">     139 </span>            :         }
 <span class="lineNum">     140 </span>            :         else {
-<span class="lineNum">     141 </span><span class="lineCov">          5 :                 Susi::Logger::debug(&quot;create new session with &quot;+std::to_string(this-&gt;stdLifetime.count()));</span>
-<span class="lineNum">     142 </span><span class="lineCov">          5 :                 sessions[id] = Session(this-&gt;stdLifetime);</span>
-<span class="lineNum">     143 </span><span class="lineCov">          5 :         }</span>
-<a name="144"><span class="lineNum">     144 </span><span class="lineCov">          5 : }</span></a>
+<span class="lineNum">     141 </span><span class="lineCov">          8 :                 Susi::Logger::debug(&quot;create new session with &quot;+std::to_string(this-&gt;stdLifetime.count()));</span>
+<span class="lineNum">     142 </span><span class="lineCov">          8 :                 sessions[id] = Session(this-&gt;stdLifetime);</span>
+<span class="lineNum">     143 </span><span class="lineCov">          8 :         }</span>
+<a name="144"><span class="lineNum">     144 </span><span class="lineCov">          8 : }</span></a>
 <span class="lineNum">     145 </span>            : 
 <span class="lineNum">     146 </span><span class="lineCov">          5 : void SessionManager::updateSession(std::string id, std::chrono::milliseconds lifetime){</span>
 <span class="lineNum">     147 </span><span class="lineCov">          5 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
@@ -215,10 +215,10 @@
 <span class="lineNum">     153 </span><span class="lineCov">          5 :         }</span>
 <a name="154"><span class="lineNum">     154 </span><span class="lineCov">          5 : }</span></a>
 <span class="lineNum">     155 </span>            : 
-<span class="lineNum">     156 </span><span class="lineCov">          2 : bool SessionManager::killSession(std::string id) {</span>
-<span class="lineNum">     157 </span><span class="lineCov">          2 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
-<span class="lineNum">     158 </span><span class="lineCov">          2 :         if(sessions.count(id) &gt; 0) {</span>
-<span class="lineNum">     159 </span><span class="lineCov">          2 :                 return sessions[id].die();</span>
+<span class="lineNum">     156 </span><span class="lineCov">          3 : bool SessionManager::killSession(std::string id) {</span>
+<span class="lineNum">     157 </span><span class="lineCov">          3 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
+<span class="lineNum">     158 </span><span class="lineCov">          3 :         if(sessions.count(id) &gt; 0) {</span>
+<span class="lineNum">     159 </span><span class="lineCov">          3 :                 return sessions[id].die();</span>
 <a name="160"><span class="lineNum">     160 </span>            :         }</a>
 <span class="lineNum">     161 </span><span class="lineNoCov">          0 :         return false;</span>
 <span class="lineNum">     162 </span><span class="lineCov">          3 : }</span>

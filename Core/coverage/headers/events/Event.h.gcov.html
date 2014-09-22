@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-22 09:33:38</td>
+            <td class="headerValue">2014-09-22 13:25:57</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">15</td>
@@ -82,7 +82,7 @@
 <span class="lineNum">      20 </span>            : 
 <a name="21"><span class="lineNum">      21 </span>            : typedef std::pair&lt;std::string,std::string&gt; Header;</a>
 <span class="lineNum">      22 </span>            : 
-<span class="lineNum">      23 </span><span class="lineCov">        108 : class Event {</span>
+<span class="lineNum">      23 </span><span class="lineCov">        109 : class Event {</span>
 <span class="lineNum">      24 </span>            : protected:
 <span class="lineNum">      25 </span>            : public:
 <span class="lineNum">      26 </span>            :         long id = 0;
@@ -93,10 +93,10 @@
 <span class="lineNum">      31 </span>            :         Event(){
 <a name="32"><span class="lineNum">      32 </span>            :                 id = std::chrono::system_clock::now().time_since_epoch().count();</a>
 <span class="lineNum">      33 </span>            :         }
-<span class="lineNum">      34 </span><span class="lineCov">        107 :         Event(std::string topic_) {</span>
-<span class="lineNum">      35 </span><span class="lineCov">        107 :                 id = std::chrono::system_clock::now().time_since_epoch().count();</span>
-<a name="36"><span class="lineNum">      36 </span><span class="lineCov">        107 :                 topic = topic_;</span></a>
-<span class="lineNum">      37 </span><span class="lineCov">        107 :         }</span>
+<span class="lineNum">      34 </span><span class="lineCov">        108 :         Event(std::string topic_) {</span>
+<span class="lineNum">      35 </span><span class="lineCov">        108 :                 id = std::chrono::system_clock::now().time_since_epoch().count();</span>
+<a name="36"><span class="lineNum">      36 </span><span class="lineCov">        108 :                 topic = topic_;</span></a>
+<span class="lineNum">      37 </span><span class="lineCov">        108 :         }</span>
 <span class="lineNum">      38 </span><span class="lineNoCov">          0 :         Event(const Event &amp; other){</span>
 <span class="lineNum">      39 </span><span class="lineNoCov">          0 :                 id = other.id;</span>
 <span class="lineNum">      40 </span><span class="lineNoCov">          0 :                 topic = other.topic;</span>

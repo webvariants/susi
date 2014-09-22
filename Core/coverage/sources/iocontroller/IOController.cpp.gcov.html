@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-22 09:33:38</td>
+            <td class="headerValue">2014-09-22 13:25:57</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">17</td>
@@ -74,31 +74,31 @@
 <span class="lineNum">      12 </span>            : #include &quot;iocontroller/IOController.h&quot;
 <a name="13"><span class="lineNum">      13 </span>            : </a>
 <span class="lineNum">      14 </span>            : //Constructor
-<span class="lineNum">      15 </span><span class="lineCov">        131 : Susi::IOController::IOController() {}</span>
+<span class="lineNum">      15 </span><span class="lineCov">        138 : Susi::IOController::IOController() {}</span>
 <a name="16"><span class="lineNum">      16 </span>            : </a>
 <span class="lineNum">      17 </span>            :  //high level
-<span class="lineNum">      18 </span><span class="lineCov">         33 : std::size_t Susi::IOController::writeFile(std::string filename,char* ptr, std::size_t len) {</span>
+<span class="lineNum">      18 </span><span class="lineCov">         39 : std::size_t Susi::IOController::writeFile(std::string filename,char* ptr, std::size_t len) {</span>
 <span class="lineNum">      19 </span>            : 
-<span class="lineNum">      20 </span><span class="lineCov">         33 :         Poco::Path dir = this-&gt;getAbsDirFromString(filename);</span>
+<span class="lineNum">      20 </span><span class="lineCov">         39 :         Poco::Path dir = this-&gt;getAbsDirFromString(filename);</span>
 <span class="lineNum">      21 </span>            : 
-<span class="lineNum">      22 </span><span class="lineCov">         33 :         if(this-&gt;checkDir(dir)) {</span>
+<span class="lineNum">      22 </span><span class="lineCov">         39 :         if(this-&gt;checkDir(dir)) {</span>
 <span class="lineNum">      23 </span>            :                 // write File
-<span class="lineNum">      24 </span><span class="lineCov">         31 :                 std::ofstream s((char*)filename.c_str());</span>
-<span class="lineNum">      25 </span><span class="lineCov">         31 :                 s&lt;&lt;ptr;</span>
-<span class="lineNum">      26 </span><span class="lineCov">         31 :                 s.close();</span>
+<span class="lineNum">      24 </span><span class="lineCov">         37 :                 std::ofstream s((char*)filename.c_str());</span>
+<span class="lineNum">      25 </span><span class="lineCov">         37 :                 s&lt;&lt;ptr;</span>
+<span class="lineNum">      26 </span><span class="lineCov">         37 :                 s.close();</span>
 <span class="lineNum">      27 </span>            : 
-<span class="lineNum">      28 </span><span class="lineCov">         62 :                 return len;</span>
+<span class="lineNum">      28 </span><span class="lineCov">         74 :                 return len;</span>
 <span class="lineNum">      29 </span>            :         } else {
 <span class="lineNum">      30 </span><span class="lineCov">          2 :                 std::string msg = &quot;WriteFile: Dir &quot;;</span>
 <span class="lineNum">      31 </span><span class="lineCov">          2 :                 msg += dir.current();</span>
 <span class="lineNum">      32 </span><span class="lineCov">          2 :                 msg += &quot; don't exists!&quot;;</span>
 <span class="lineNum">      33 </span><span class="lineCov">          2 :                 Susi::Logger::error(msg);</span>
 <span class="lineNum">      34 </span><span class="lineCov">          2 :                 throw std::runtime_error{&quot;WriteFile: Dir don't exists!&quot;+filename};</span>
-<span class="lineNum">      35 </span><span class="lineCov">         33 :         }</span>
+<span class="lineNum">      35 </span><span class="lineCov">         39 :         }</span>
 <a name="36"><span class="lineNum">      36 </span>            : }</a>
 <span class="lineNum">      37 </span>            : 
-<span class="lineNum">      38 </span><span class="lineCov">         33 : std::size_t Susi::IOController::writeFile(std::string filename,std::string content) {</span>
-<span class="lineNum">      39 </span><span class="lineCov">         33 :         return this-&gt;writeFile(filename, (char*)content.c_str(), content.size());</span>
+<span class="lineNum">      38 </span><span class="lineCov">         39 : std::size_t Susi::IOController::writeFile(std::string filename,std::string content) {</span>
+<span class="lineNum">      39 </span><span class="lineCov">         39 :         return this-&gt;writeFile(filename, (char*)content.c_str(), content.size());</span>
 <a name="40"><span class="lineNum">      40 </span>            : }</a>
 <span class="lineNum">      41 </span>            : 
 <span class="lineNum">      42 </span><span class="lineCov">         28 : std::string Susi::IOController::readFile(std::string filename) {</span>
@@ -176,18 +176,18 @@
 <span class="lineNum">     114 </span><span class="lineCov">          5 :         }</span>
 <a name="115"><span class="lineNum">     115 </span>            : }</a>
 <span class="lineNum">     116 </span>            : 
-<span class="lineNum">     117 </span><span class="lineCov">        105 : bool Susi::IOController::deletePath(std::string path) {</span>
+<span class="lineNum">     117 </span><span class="lineCov">        110 : bool Susi::IOController::deletePath(std::string path) {</span>
 <span class="lineNum">     118 </span>            : 
-<span class="lineNum">     119 </span><span class="lineCov">        105 :         Poco::File f(this-&gt;getAbsPathFromString(path));</span>
+<span class="lineNum">     119 </span><span class="lineCov">        110 :         Poco::File f(this-&gt;getAbsPathFromString(path));</span>
 <span class="lineNum">     120 </span>            : 
-<span class="lineNum">     121 </span><span class="lineCov">        105 :         if(f.exists()) {</span>
-<span class="lineNum">     122 </span><span class="lineCov">        102 :                 if(f.isFile() || f.isDirectory()) {</span>
-<span class="lineNum">     123 </span><span class="lineCov">        102 :                         if(f.isFile()) {</span>
+<span class="lineNum">     121 </span><span class="lineCov">        110 :         if(f.exists()) {</span>
+<span class="lineNum">     122 </span><span class="lineCov">        107 :                 if(f.isFile() || f.isDirectory()) {</span>
+<span class="lineNum">     123 </span><span class="lineCov">        107 :                         if(f.isFile()) {</span>
 <span class="lineNum">     124 </span><span class="lineCov">          6 :                                 f.remove(false);</span>
 <span class="lineNum">     125 </span><span class="lineCov">          6 :                                 return true;</span>
 <span class="lineNum">     126 </span>            :                         } else {
-<span class="lineNum">     127 </span><span class="lineCov">         96 :                                 f.remove(true); // deletes recursive</span>
-<span class="lineNum">     128 </span><span class="lineCov">         96 :                                 return true;</span>
+<span class="lineNum">     127 </span><span class="lineCov">        101 :                                 f.remove(true); // deletes recursive</span>
+<span class="lineNum">     128 </span><span class="lineCov">        101 :                                 return true;</span>
 <span class="lineNum">     129 </span>            :                         }
 <span class="lineNum">     130 </span>            :                 } else {
 <span class="lineNum">     131 </span><span class="lineNoCov">          0 :                         std::string msg = &quot;Delete: PATH &quot;;</span>
@@ -198,20 +198,20 @@
 <span class="lineNum">     136 </span>            :                 }
 <span class="lineNum">     137 </span>            :         } else {
 <span class="lineNum">     138 </span><span class="lineCov">          3 :                 return false;</span>
-<span class="lineNum">     139 </span><span class="lineCov">        105 :         }</span>
+<span class="lineNum">     139 </span><span class="lineCov">        110 :         }</span>
 <span class="lineNum">     140 </span>            : }
 <a name="141"><span class="lineNum">     141 </span>            : </a>
 <span class="lineNum">     142 </span>            : // low level
-<span class="lineNum">     143 </span><span class="lineCov">        101 : bool Susi::IOController::makeDir(std::string dir) {</span>
+<span class="lineNum">     143 </span><span class="lineCov">        108 : bool Susi::IOController::makeDir(std::string dir) {</span>
 <span class="lineNum">     144 </span>            : 
-<span class="lineNum">     145 </span><span class="lineCov">        101 :         Poco::Path p(true);</span>
+<span class="lineNum">     145 </span><span class="lineCov">        108 :         Poco::Path p(true);</span>
 <span class="lineNum">     146 </span>            : 
-<span class="lineNum">     147 </span><span class="lineCov">        101 :         p.append(dir);</span>
+<span class="lineNum">     147 </span><span class="lineCov">        108 :         p.append(dir);</span>
 <span class="lineNum">     148 </span>            : 
-<span class="lineNum">     149 </span><span class="lineCov">        202 :         Poco::File f(p);</span>
-<span class="lineNum">     150 </span><span class="lineCov">        101 :         f.createDirectories();</span>
+<span class="lineNum">     149 </span><span class="lineCov">        216 :         Poco::File f(p);</span>
+<span class="lineNum">     150 </span><span class="lineCov">        108 :         f.createDirectories();</span>
 <span class="lineNum">     151 </span>            : 
-<span class="lineNum">     152 </span><span class="lineCov">        202 :         return true;</span>
+<span class="lineNum">     152 </span><span class="lineCov">        216 :         return true;</span>
 <a name="153"><span class="lineNum">     153 </span>            : }</a>
 <span class="lineNum">     154 </span>            : 
 <span class="lineNum">     155 </span><span class="lineCov">         10 : bool Susi::IOController::setExecutable(std::string path, bool isExecutable) {</span>
@@ -244,32 +244,32 @@
 <span class="lineNum">     182 </span>            : }
 <a name="183"><span class="lineNum">     183 </span>            : </a>
 <span class="lineNum">     184 </span>            : // helper function
-<span class="lineNum">     185 </span><span class="lineCov">        210 : Poco::Path Susi::IOController::getAbsPathFromString(std::string path) {</span>
-<span class="lineNum">     186 </span><span class="lineCov">        210 :         Poco::Path p(path);</span>
-<span class="lineNum">     187 </span><span class="lineCov">        210 :         if(p.isRelative())</span>
+<span class="lineNum">     185 </span><span class="lineCov">        221 : Poco::Path Susi::IOController::getAbsPathFromString(std::string path) {</span>
+<span class="lineNum">     186 </span><span class="lineCov">        221 :         Poco::Path p(path);</span>
+<span class="lineNum">     187 </span><span class="lineCov">        221 :         if(p.isRelative())</span>
 <span class="lineNum">     188 </span><span class="lineCov">          3 :                 p.makeAbsolute(this-&gt;base_path);</span>
-<span class="lineNum">     189 </span><span class="lineCov">        210 :         return p;</span>
+<span class="lineNum">     189 </span><span class="lineCov">        221 :         return p;</span>
 <a name="190"><span class="lineNum">     190 </span>            : }</a>
 <span class="lineNum">     191 </span>            : 
-<span class="lineNum">     192 </span><span class="lineCov">         33 : Poco::Path Susi::IOController::getAbsDirFromString(std::string path) {</span>
-<span class="lineNum">     193 </span><span class="lineCov">         33 :         Poco::Path p = this-&gt;getAbsPathFromString(path);</span>
-<span class="lineNum">     194 </span><span class="lineCov">         33 :         p.makeParent();</span>
-<span class="lineNum">     195 </span><span class="lineCov">         33 :         return p;</span>
+<span class="lineNum">     192 </span><span class="lineCov">         39 : Poco::Path Susi::IOController::getAbsDirFromString(std::string path) {</span>
+<span class="lineNum">     193 </span><span class="lineCov">         39 :         Poco::Path p = this-&gt;getAbsPathFromString(path);</span>
+<span class="lineNum">     194 </span><span class="lineCov">         39 :         p.makeParent();</span>
+<span class="lineNum">     195 </span><span class="lineCov">         39 :         return p;</span>
 <a name="196"><span class="lineNum">     196 </span>            : }</a>
 <span class="lineNum">     197 </span>            : 
-<span class="lineNum">     198 </span><span class="lineCov">         58 : bool Susi::IOController::checkDir(Poco::Path dir) {</span>
+<span class="lineNum">     198 </span><span class="lineCov">         64 : bool Susi::IOController::checkDir(Poco::Path dir) {</span>
 <span class="lineNum">     199 </span>            : 
-<span class="lineNum">     200 </span><span class="lineCov">         58 :         Poco::File f(dir);</span>
+<span class="lineNum">     200 </span><span class="lineCov">         64 :         Poco::File f(dir);</span>
 <span class="lineNum">     201 </span>            : 
-<span class="lineNum">     202 </span><span class="lineCov">         58 :         if(f.exists()) {</span>
-<span class="lineNum">     203 </span><span class="lineCov">         52 :                 if(f.isDirectory()) {</span>
-<span class="lineNum">     204 </span><span class="lineCov">         39 :                         return true;</span>
+<span class="lineNum">     202 </span><span class="lineCov">         64 :         if(f.exists()) {</span>
+<span class="lineNum">     203 </span><span class="lineCov">         58 :                 if(f.isDirectory()) {</span>
+<span class="lineNum">     204 </span><span class="lineCov">         45 :                         return true;</span>
 <span class="lineNum">     205 </span>            :                 } else {
 <span class="lineNum">     206 </span><span class="lineCov">         13 :                         return false;</span>
 <span class="lineNum">     207 </span>            :                 }
 <span class="lineNum">     208 </span>            :         } else {
 <span class="lineNum">     209 </span><span class="lineCov">          6 :                 return false;</span>
-<span class="lineNum">     210 </span><span class="lineCov">         58 :         }</span>
+<span class="lineNum">     210 </span><span class="lineCov">         64 :         }</span>
 <a name="211"><span class="lineNum">     211 </span>            : }</a>
 <span class="lineNum">     212 </span>            : 
 <span class="lineNum">     213 </span><span class="lineCov">         69 : bool Susi::IOController::checkFile(Poco::Path dir) {</span>

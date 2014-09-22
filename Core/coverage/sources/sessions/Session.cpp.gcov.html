@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-22 09:33:38</td>
+            <td class="headerValue">2014-09-22 13:25:57</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">10</td>
@@ -74,18 +74,18 @@
 <span class="lineNum">      12 </span>            : #include &quot;sessions/Session.h&quot;
 <a name="13"><span class="lineNum">      13 </span>            : </a>
 <span class="lineNum">      14 </span>            : namespace Susi {
-<span class="lineNum">      15 </span><span class="lineCov">         34 :         Session::Session(std::chrono::milliseconds milliseconds) {</span>
-<a name="16"><span class="lineNum">      16 </span><span class="lineCov">         34 :                 addTime(milliseconds);</span></a>
-<span class="lineNum">      17 </span><span class="lineCov">         34 :         }</span>
+<span class="lineNum">      15 </span><span class="lineCov">         40 :         Session::Session(std::chrono::milliseconds milliseconds) {</span>
+<a name="16"><span class="lineNum">      16 </span><span class="lineCov">         40 :                 addTime(milliseconds);</span></a>
+<span class="lineNum">      17 </span><span class="lineCov">         40 :         }</span>
 <span class="lineNum">      18 </span><span class="lineCov">          5 :         bool Session::isDead() {</span>
 <span class="lineNum">      19 </span><span class="lineCov">          5 :                 Poco::Timestamp now;</span>
 <span class="lineNum">      20 </span>            :                 //std::cout&lt;&lt;deadline.epochTime()&lt;&lt;&quot; : &quot;&lt;&lt;now.epochTime()&lt;&lt;std::endl;
 <span class="lineNum">      21 </span><span class="lineCov">          5 :                 if(deadline &lt;= now) return true;</span>
 <a name="22"><span class="lineNum">      22 </span><span class="lineCov">          3 :                 return false;</span></a>
 <span class="lineNum">      23 </span>            :         }
-<span class="lineNum">      24 </span><span class="lineCov">         34 :         void Session::addTime(std::chrono::milliseconds milliseconds) {</span>
-<a name="25"><span class="lineNum">      25 </span><span class="lineCov">         34 :                 deadline += std::chrono::duration_cast&lt;std::chrono::microseconds&gt;(milliseconds).count();</span></a>
-<span class="lineNum">      26 </span><span class="lineCov">         34 :         }</span>
+<span class="lineNum">      24 </span><span class="lineCov">         40 :         void Session::addTime(std::chrono::milliseconds milliseconds) {</span>
+<a name="25"><span class="lineNum">      25 </span><span class="lineCov">         40 :                 deadline += std::chrono::duration_cast&lt;std::chrono::microseconds&gt;(milliseconds).count();</span></a>
+<span class="lineNum">      26 </span><span class="lineCov">         40 :         }</span>
 <span class="lineNum">      27 </span><span class="lineCov">          4 :         void Session::pushAttribute(std::string key, Susi::Util::Any value) {</span>
 <span class="lineNum">      28 </span><span class="lineCov">          4 :                 if(attributes.count(key) &gt; 0) {</span>
 <span class="lineNum">      29 </span><span class="lineCov">          3 :                         multiAttributes[key].push_back(attributes[key]);</span>
@@ -126,9 +126,9 @@
 <span class="lineNum">      64 </span>            :                 }
 <a name="65"><span class="lineNum">      65 </span><span class="lineCov">          1 :                 return false;</span></a>
 <span class="lineNum">      66 </span>            :         }
-<span class="lineNum">      67 </span><span class="lineCov">          3 :         bool Session::die() {</span>
-<span class="lineNum">      68 </span><span class="lineCov">          3 :                 deadline = Poco::Timestamp();</span>
-<a name="69"><span class="lineNum">      69 </span><span class="lineCov">          3 :                 return true;</span></a>
+<span class="lineNum">      67 </span><span class="lineCov">          4 :         bool Session::die() {</span>
+<span class="lineNum">      68 </span><span class="lineCov">          4 :                 deadline = Poco::Timestamp();</span>
+<a name="69"><span class="lineNum">      69 </span><span class="lineCov">          4 :                 return true;</span></a>
 <span class="lineNum">      70 </span>            :         }
 <span class="lineNum">      71 </span><span class="lineCov">          3 : }</span>
 </pre>

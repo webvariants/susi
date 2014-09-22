@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-22 09:33:38</td>
+            <td class="headerValue">2014-09-22 13:25:57</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">3</td>
@@ -62,14 +62,14 @@
 <pre class="source">
 <a name="1"><span class="lineNum">       1 </span>            : #include &quot;webstack/SessionRequestHandler.h&quot;</a>
 <span class="lineNum">       2 </span>            : 
-<span class="lineNum">       3 </span><span class="lineCov">          2 : void Susi::SessionRequestHandler::handleRequest(Poco::Net::HTTPServerRequest&amp; request,</span>
+<span class="lineNum">       3 </span><span class="lineCov">          4 : void Susi::SessionRequestHandler::handleRequest(Poco::Net::HTTPServerRequest&amp; request,</span>
 <span class="lineNum">       4 </span>            :                        Poco::Net::HTTPServerResponse&amp; response){
-<span class="lineNum">       5 </span><span class="lineCov">          2 :         std::string id = &quot;&quot;;</span>
-<span class="lineNum">       6 </span><span class="lineCov">          2 :         Susi::Logger::debug(&quot;starting SessionRequestHandler&quot;);</span>
+<span class="lineNum">       5 </span><span class="lineCov">          4 :         std::string id = &quot;&quot;;</span>
+<span class="lineNum">       6 </span><span class="lineCov">          4 :         Susi::Logger::debug(&quot;starting SessionRequestHandler&quot;);</span>
 <span class="lineNum">       7 </span>            :         try{
-<span class="lineNum">       8 </span><span class="lineCov">          2 :                 Poco::Net::NameValueCollection cookies;</span>
-<span class="lineNum">       9 </span><span class="lineCov">          2 :                 request.getCookies(cookies);</span>
-<span class="lineNum">      10 </span><span class="lineCov">          4 :                 id = cookies[&quot;susisession&quot;];</span>
+<span class="lineNum">       8 </span><span class="lineCov">          4 :                 Poco::Net::NameValueCollection cookies;</span>
+<span class="lineNum">       9 </span><span class="lineCov">          4 :                 request.getCookies(cookies);</span>
+<span class="lineNum">      10 </span><span class="lineCov">          8 :                 id = cookies[&quot;susisession&quot;];</span>
 <span class="lineNum">      11 </span><span class="lineNoCov">          0 :                 Susi::Logger::info(&quot;sessionid: &quot;+id);</span>
 <span class="lineNum">      12 </span><span class="lineNoCov">          0 :                 if(!_sessionManager-&gt;checkSession(id)){</span>
 <span class="lineNum">      13 </span><span class="lineNoCov">          0 :                         Susi::Logger::info(&quot;No valid session&quot;);</span>
@@ -82,25 +82,25 @@
 <span class="lineNum">      20 </span><span class="lineNoCov">          0 :                         auto cookie = Poco::Net::HTTPCookie{&quot;susisession&quot;,id};</span>
 <span class="lineNum">      21 </span><span class="lineNoCov">          0 :                         cookie.setPath(&quot;/&quot;);</span>
 <span class="lineNum">      22 </span><span class="lineNoCov">          0 :                         response.addCookie(cookie);</span>
-<span class="lineNum">      23 </span><span class="lineCov">          2 :                 }</span>
-<span class="lineNum">      24 </span><span class="lineCov">          2 :         }catch(const std::exception &amp; e){</span>
-<span class="lineNum">      25 </span><span class="lineCov">          2 :                 Susi::Logger::debug(&quot;no session found, add new one&quot;);</span>
-<span class="lineNum">      26 </span><span class="lineCov">          2 :                 Poco::Timestamp now;</span>
-<span class="lineNum">      27 </span><span class="lineCov">          2 :                 id = std::to_string(now.epochMicroseconds());</span>
-<span class="lineNum">      28 </span><span class="lineCov">          2 :                 _sessionManager-&gt;updateSession(id);</span>
-<span class="lineNum">      29 </span><span class="lineCov">          4 :                 auto cookie = Poco::Net::HTTPCookie{&quot;susisession&quot;,id};</span>
-<span class="lineNum">      30 </span><span class="lineCov">          2 :                 cookie.setPath(&quot;/&quot;);</span>
-<span class="lineNum">      31 </span><span class="lineCov">          4 :                 response.addCookie(cookie);</span>
+<span class="lineNum">      23 </span><span class="lineCov">          4 :                 }</span>
+<span class="lineNum">      24 </span><span class="lineCov">          4 :         }catch(const std::exception &amp; e){</span>
+<span class="lineNum">      25 </span><span class="lineCov">          4 :                 Susi::Logger::debug(&quot;no session found, add new one&quot;);</span>
+<span class="lineNum">      26 </span><span class="lineCov">          4 :                 Poco::Timestamp now;</span>
+<span class="lineNum">      27 </span><span class="lineCov">          4 :                 id = std::to_string(now.epochMicroseconds());</span>
+<span class="lineNum">      28 </span><span class="lineCov">          4 :                 _sessionManager-&gt;updateSession(id);</span>
+<span class="lineNum">      29 </span><span class="lineCov">          8 :                 auto cookie = Poco::Net::HTTPCookie{&quot;susisession&quot;,id};</span>
+<span class="lineNum">      30 </span><span class="lineCov">          4 :                 cookie.setPath(&quot;/&quot;);</span>
+<span class="lineNum">      31 </span><span class="lineCov">          8 :                 response.addCookie(cookie);</span>
 <span class="lineNum">      32 </span>            :         }
 <span class="lineNum">      33 </span>            :         try{
-<span class="lineNum">      34 </span><span class="lineCov">          2 :                 defaultHandler-&gt;handleRequest(request,response);</span>
+<span class="lineNum">      34 </span><span class="lineCov">          4 :                 defaultHandler-&gt;handleRequest(request,response);</span>
 <span class="lineNum">      35 </span><span class="lineNoCov">          0 :         }catch(const std::exception &amp; e){</span>
 <span class="lineNum">      36 </span><span class="lineNoCov">          0 :                 std::string msg = &quot;error in http handler: &quot;;</span>
 <span class="lineNum">      37 </span><span class="lineNoCov">          0 :                 msg += e.what();</span>
 <span class="lineNum">      38 </span><span class="lineNoCov">          0 :                 Susi::Logger::error(msg);</span>
 <a name="39"><span class="lineNum">      39 </span>            :         }</a>
-<span class="lineNum">      40 </span><span class="lineCov">          2 :         Susi::Logger::debug(&quot;finished in SessionRequestHandler&quot;);</span>
-<span class="lineNum">      41 </span><span class="lineCov">          5 : }</span>
+<span class="lineNum">      40 </span><span class="lineCov">          4 :         Susi::Logger::debug(&quot;finished in SessionRequestHandler&quot;);</span>
+<span class="lineNum">      41 </span><span class="lineCov">          7 : }</span>
 </pre>
       </td>
     </tr>
