@@ -10,16 +10,16 @@ protected:
 	std::string output2;
 
 	virtual void SetUp() override {
-		script1 = base_path+"test.sh";
-		output1 = base_path+"test.out";
+		script1 = base_path+"/test.sh";
+		output1 = base_path+"/test.out";
 
 		io.writeFile(script1,"#!/bin/bash\nfor i in $(seq 1 10); do echo -n foobar >> "+output1+"\nsleep 0.1; done; exit 0\n");
 		io.setExecutable(script1,true);
 
-		io.makeDir(base_path+"sub/");
+		io.makeDir(base_path+"/sub");
 
-		script2 = base_path+"sub/test.sh";
-		output2 = base_path+"sub/test.out";		
+		script2 = base_path+"/sub/test.sh";
+		output2 = base_path+"/sub/test.out";		
 
 		io.writeFile(script2,"#!/bin/bash\nfor i in $(seq 1 10); do echo -n foobar >> "+output2+"\nsleep 0.1; done; exit 0\n");
 		io.setExecutable(script2,true);
