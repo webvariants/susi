@@ -93,12 +93,10 @@ TEST_F(IOControllerTest,DeletePath_DIR){
 	EXPECT_FALSE(result);
 }
 
-TEST_F(IOControllerTest,DeletePath_DEVICE){
-	
-	// delete first time
-	bool result = false;
-	result = controller.deletePath("/dev0");
-	EXPECT_FALSE(result);
+TEST_F(IOControllerTest,DeletePath_DEVICE){	
+	EXPECT_THROW ({
+		controller.deletePath("/dev/null");
+	}, std::exception);
 }
 
 TEST_F(IOControllerTest,DeletePath_FILE){

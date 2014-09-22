@@ -185,6 +185,15 @@ protected:
 		auto result7 = publish_sync(std::move(evt7));
 		EXPECT_FALSE(static_cast<bool>(result7->payload["success"]));
 		EXPECT_TRUE(hasErrorHeader(result7));
+	
+
+		auto evt8 = createEvent("io::makeDir");
+		chmod((char*)base_path.c_str(), 0111);
+		evt8->payload["dir"] = base_path + "/test_dir";
+		auto result8 = publish_sync(std::move(evt8));		
+		EXPECT_FALSE(static_cast<bool>(result8->payload["success"]));
+		EXPECT_TRUE(hasErrorHeader(result8));
+		chmod((char*)base_path.c_str(), 0777);		
 	}
 
 };
