@@ -31,18 +31,18 @@
             <td class="headerValue">coverage.info.cleaned</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">56</td>
+            <td class="headerCovTableEntry">131</td>
             <td class="headerCovTableEntry">190</td>
-            <td class="headerCovTableEntryLo">29.5 %</td>
+            <td class="headerCovTableEntryLo">68.9 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-22 09:33:38</td>
+            <td class="headerValue">2014-09-22 13:25:57</td>
             <td></td>
             <td class="headerItem">Functions:</td>
-            <td class="headerCovTableEntry">11</td>
+            <td class="headerCovTableEntry">22</td>
             <td class="headerCovTableEntry">25</td>
-            <td class="headerCovTableEntryLo">44.0 %</td>
+            <td class="headerCovTableEntryMed">88.0 %</td>
           </tr>
           <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
         </table>
@@ -62,124 +62,124 @@
 <pre class="source">
 <a name="1"><span class="lineNum">       1 </span>            : #include &quot;apiserver/ApiServerComponent.h&quot;</a>
 <span class="lineNum">       2 </span>            : 
-<span class="lineNum">       3 </span><span class="lineCov">          2 : void Susi::Api::ApiServerComponent::onConnect(std::string &amp; id){</span>
-<span class="lineNum">       4 </span><span class="lineCov">          2 :         Susi::Logger::info(&quot;got new connection!&quot;);</span>
-<span class="lineNum">       5 </span><span class="lineCov">          2 :         sessionManager-&gt;updateSession(id);</span>
-<a name="6"><span class="lineNum">       6 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">       3 </span><span class="lineCov">          3 : void Susi::Api::ApiServerComponent::onConnect(std::string &amp; id){</span>
+<span class="lineNum">       4 </span><span class="lineCov">          3 :         Susi::Logger::info(&quot;got new connection!&quot;);</span>
+<span class="lineNum">       5 </span><span class="lineCov">          3 :         sessionManager-&gt;updateSession(id);</span>
+<a name="6"><span class="lineNum">       6 </span><span class="lineCov">          3 : }</span></a>
 <span class="lineNum">       7 </span>            : 
-<span class="lineNum">       8 </span><span class="lineCov">          2 : void Susi::Api::ApiServerComponent::onClose(std::string &amp; id) {</span>
-<span class="lineNum">       9 </span><span class="lineCov">          2 :         Susi::Logger::info(&quot;lost connection...&quot;);</span>
-<span class="lineNum">      10 </span><span class="lineCov">          2 :         sessionManager-&gt;killSession(id);</span>
-<span class="lineNum">      11 </span><span class="lineCov">          2 :         senders.erase(id);</span>
-<span class="lineNum">      12 </span><span class="lineCov">          2 :         eventsToAck.erase(id);</span>
+<span class="lineNum">       8 </span><span class="lineCov">          3 : void Susi::Api::ApiServerComponent::onClose(std::string &amp; id) {</span>
+<span class="lineNum">       9 </span><span class="lineCov">          3 :         Susi::Logger::info(&quot;lost connection...&quot;);</span>
+<span class="lineNum">      10 </span><span class="lineCov">          3 :         sessionManager-&gt;killSession(id);</span>
+<span class="lineNum">      11 </span><span class="lineCov">          3 :         senders.erase(id);</span>
+<span class="lineNum">      12 </span><span class="lineCov">          3 :         eventsToAck.erase(id);</span>
 <span class="lineNum">      13 </span>            : 
-<span class="lineNum">      14 </span><span class="lineCov">          2 :         auto &amp; subs = consumerSubscriptions[id];</span>
-<span class="lineNum">      15 </span><span class="lineCov">          2 :         for(auto &amp; kv : subs) {</span>
-<span class="lineNum">      16 </span><span class="lineNoCov">          0 :                 eventManager-&gt;unsubscribe(kv.second);</span>
+<span class="lineNum">      14 </span><span class="lineCov">          3 :         auto &amp; subs = consumerSubscriptions[id];</span>
+<span class="lineNum">      15 </span><span class="lineCov">          4 :         for(auto &amp; kv : subs) {</span>
+<span class="lineNum">      16 </span><span class="lineCov">          1 :                 eventManager-&gt;unsubscribe(kv.second);</span>
 <span class="lineNum">      17 </span>            :         }
-<span class="lineNum">      18 </span><span class="lineCov">          2 :         consumerSubscriptions.erase(id);</span>
-<span class="lineNum">      19 </span><span class="lineCov">          2 :         auto &amp; subs2 = processorSubscriptions[id];</span>
-<span class="lineNum">      20 </span><span class="lineCov">          3 :         for(auto &amp; kv : subs2) {</span>
-<span class="lineNum">      21 </span><span class="lineCov">          1 :                 eventManager-&gt;unsubscribe(kv.second);</span>
+<span class="lineNum">      18 </span><span class="lineCov">          3 :         consumerSubscriptions.erase(id);</span>
+<span class="lineNum">      19 </span><span class="lineCov">          3 :         auto &amp; subs2 = processorSubscriptions[id];</span>
+<span class="lineNum">      20 </span><span class="lineCov">          5 :         for(auto &amp; kv : subs2) {</span>
+<span class="lineNum">      21 </span><span class="lineCov">          2 :                 eventManager-&gt;unsubscribe(kv.second);</span>
 <span class="lineNum">      22 </span>            :         }
-<span class="lineNum">      23 </span><span class="lineCov">          2 :         processorSubscriptions.erase(id);</span>
-<a name="24"><span class="lineNum">      24 </span><span class="lineCov">          2 : }</span></a>
+<span class="lineNum">      23 </span><span class="lineCov">          3 :         processorSubscriptions.erase(id);</span>
+<a name="24"><span class="lineNum">      24 </span><span class="lineCov">          3 : }</span></a>
 <span class="lineNum">      25 </span>            : 
-<span class="lineNum">      26 </span><span class="lineCov">          1 : void Susi::Api::ApiServerComponent::onMessage(std::string &amp; id, Susi::Util::Any &amp; packet) {</span>
+<span class="lineNum">      26 </span><span class="lineCov">          5 : void Susi::Api::ApiServerComponent::onMessage(std::string &amp; id, Susi::Util::Any &amp; packet) {</span>
 <span class="lineNum">      27 </span>            :         try{
 <span class="lineNum">      28 </span>            :                 //std::cout&lt;&lt;&quot;onMessage:&quot;&lt;&lt;packet.toJSONString()&lt;&lt;std::endl;
-<span class="lineNum">      29 </span><span class="lineCov">          1 :                 auto type = packet[&quot;type&quot;];</span>
-<span class="lineNum">      30 </span><span class="lineCov">          1 :                 if(type.isString()){</span>
-<span class="lineNum">      31 </span><span class="lineCov">          1 :                         if(type==&quot;registerConsumer&quot;){</span>
-<span class="lineNum">      32 </span><span class="lineNoCov">          0 :                                 handleRegisterConsumer(id,packet);</span>
-<span class="lineNum">      33 </span><span class="lineCov">          1 :                         }else if(type==&quot;registerProcessor&quot;){</span>
-<span class="lineNum">      34 </span><span class="lineCov">          1 :                                 handleRegisterProcessor(id,packet);</span>
-<span class="lineNum">      35 </span><span class="lineNoCov">          0 :                         }else if(type==&quot;unregisterConsumer&quot;){</span>
+<span class="lineNum">      29 </span><span class="lineCov">          5 :                 auto type = packet[&quot;type&quot;];</span>
+<span class="lineNum">      30 </span><span class="lineCov">          5 :                 if(type.isString()){</span>
+<span class="lineNum">      31 </span><span class="lineCov">          5 :                         if(type==&quot;registerConsumer&quot;){</span>
+<span class="lineNum">      32 </span><span class="lineCov">          1 :                                 handleRegisterConsumer(id,packet);</span>
+<span class="lineNum">      33 </span><span class="lineCov">          4 :                         }else if(type==&quot;registerProcessor&quot;){</span>
+<span class="lineNum">      34 </span><span class="lineCov">          2 :                                 handleRegisterProcessor(id,packet);</span>
+<span class="lineNum">      35 </span><span class="lineCov">          2 :                         }else if(type==&quot;unregisterConsumer&quot;){</span>
 <span class="lineNum">      36 </span><span class="lineNoCov">          0 :                                 handleUnregisterConsumer(id,packet);</span>
-<span class="lineNum">      37 </span><span class="lineNoCov">          0 :                         }else if(type==&quot;unregisterProcessor&quot;){</span>
+<span class="lineNum">      37 </span><span class="lineCov">          2 :                         }else if(type==&quot;unregisterProcessor&quot;){</span>
 <span class="lineNum">      38 </span><span class="lineNoCov">          0 :                                 handleUnregisterProcessor(id,packet);</span>
-<span class="lineNum">      39 </span><span class="lineNoCov">          0 :                         }else if(type==&quot;publish&quot;){</span>
-<span class="lineNum">      40 </span><span class="lineNoCov">          0 :                                 handlePublish(id,packet);</span>
-<span class="lineNum">      41 </span><span class="lineNoCov">          0 :                         }else if(type==&quot;ack&quot;){</span>
-<span class="lineNum">      42 </span><span class="lineNoCov">          0 :                                 handleAck(id,packet);</span>
+<span class="lineNum">      39 </span><span class="lineCov">          2 :                         }else if(type==&quot;publish&quot;){</span>
+<span class="lineNum">      40 </span><span class="lineCov">          1 :                                 handlePublish(id,packet);</span>
+<span class="lineNum">      41 </span><span class="lineCov">          1 :                         }else if(type==&quot;ack&quot;){</span>
+<span class="lineNum">      42 </span><span class="lineCov">          1 :                                 handleAck(id,packet);</span>
 <span class="lineNum">      43 </span>            :                         }else {
 <span class="lineNum">      44 </span><span class="lineNoCov">          0 :                                 sendFail(id,&quot;type not known&quot;);</span>
 <span class="lineNum">      45 </span>            :                         }
 <span class="lineNum">      46 </span>            :                 }else{
 <span class="lineNum">      47 </span><span class="lineNoCov">          0 :                         sendFail(id,&quot;type is not a string&quot;);</span>
-<span class="lineNum">      48 </span><span class="lineCov">          1 :                 }</span>
+<span class="lineNum">      48 </span><span class="lineCov">          5 :                 }</span>
 <span class="lineNum">      49 </span><span class="lineNoCov">          0 :         }catch(const std::exception &amp; e){</span>
 <span class="lineNum">      50 </span><span class="lineNoCov">          0 :                 std::string msg = &quot;exception while processing: &quot;;</span>
 <span class="lineNum">      51 </span><span class="lineNoCov">          0 :                 msg += e.what();</span>
 <span class="lineNum">      52 </span><span class="lineNoCov">          0 :                 sendFail(id,msg);</span>
 <span class="lineNum">      53 </span>            :         }
-<a name="54"><span class="lineNum">      54 </span><span class="lineCov">          1 : }</span></a>
+<a name="54"><span class="lineNum">      54 </span><span class="lineCov">          5 : }</span></a>
 <span class="lineNum">      55 </span>            : 
-<span class="lineNum">      56 </span><span class="lineNoCov">          0 : void Susi::Api::ApiServerComponent::handleRegisterConsumer(std::string &amp; id, Susi::Util::Any &amp; packet){</span>
-<span class="lineNum">      57 </span><span class="lineNoCov">          0 :         auto &amp; data = packet[&quot;data&quot;];</span>
+<span class="lineNum">      56 </span><span class="lineCov">          1 : void Susi::Api::ApiServerComponent::handleRegisterConsumer(std::string &amp; id, Susi::Util::Any &amp; packet){</span>
+<span class="lineNum">      57 </span><span class="lineCov">          1 :         auto &amp; data = packet[&quot;data&quot;];</span>
 <span class="lineNum">      58 </span>            : 
-<span class="lineNum">      59 </span><span class="lineNoCov">          0 :         if(data.isString()){</span>
-<span class="lineNum">      60 </span><span class="lineNoCov">          0 :                 std::string topic = data;</span>
-<span class="lineNum">      61 </span><span class="lineNoCov">          0 :                 auto &amp; subs = consumerSubscriptions[id];</span>
-<span class="lineNum">      62 </span><span class="lineNoCov">          0 :                 if(subs.find(topic) != subs.end()){</span>
+<span class="lineNum">      59 </span><span class="lineCov">          1 :         if(data.isString()){</span>
+<span class="lineNum">      60 </span><span class="lineCov">          1 :                 std::string topic = data;</span>
+<span class="lineNum">      61 </span><span class="lineCov">          1 :                 auto &amp; subs = consumerSubscriptions[id];</span>
+<span class="lineNum">      62 </span><span class="lineCov">          1 :                 if(subs.find(topic) != subs.end()){</span>
 <span class="lineNum">      63 </span><span class="lineNoCov">          0 :                         sendFail(id,&quot;you are allready subscribed to &quot;+topic);</span>
-<a name="64"><span class="lineNum">      64 </span><span class="lineNoCov">          0 :                         return;</span></a>
+<a name="64"><span class="lineNum">      64 </span><span class="lineCov">          1 :                         return;</span></a>
 <span class="lineNum">      65 </span>            :                 }
-<span class="lineNum">      66 </span><span class="lineNoCov">          0 :                 Susi::Events::Consumer callback = [this,id](Susi::Events::SharedEventPtr event){</span>
-<span class="lineNum">      67 </span><span class="lineNoCov">          0 :                         Susi::Util::Any::Array headers;</span>
-<span class="lineNum">      68 </span><span class="lineNoCov">          0 :                         for(auto &amp; kv : event-&gt;headers){</span>
+<span class="lineNum">      66 </span><span class="lineCov">         18 :                 Susi::Events::Consumer callback = [this,id](Susi::Events::SharedEventPtr event){</span>
+<span class="lineNum">      67 </span><span class="lineCov">          1 :                         Susi::Util::Any::Array headers;</span>
+<span class="lineNum">      68 </span><span class="lineCov">          1 :                         for(auto &amp; kv : event-&gt;headers){</span>
 <span class="lineNum">      69 </span><span class="lineNoCov">          0 :                                 headers.push_back(Susi::Util::Any::Object{{kv.first,kv.second}});</span>
 <span class="lineNum">      70 </span>            :                         }
-<span class="lineNum">      71 </span><span class="lineNoCov">          0 :                         Susi::Util::Any packet;</span>
-<span class="lineNum">      72 </span><span class="lineNoCov">          0 :                         packet[&quot;type&quot;] = &quot;consumerEvent&quot;;</span>
-<span class="lineNum">      73 </span><span class="lineNoCov">          0 :                         packet[&quot;data&quot;] = Susi::Util::Any::Object{</span>
-<span class="lineNum">      74 </span><span class="lineNoCov">          0 :                                 {&quot;id&quot;,event-&gt;id},</span>
-<span class="lineNum">      75 </span><span class="lineNoCov">          0 :                                 {&quot;topic&quot;,event-&gt;topic},</span>
+<span class="lineNum">      71 </span><span class="lineCov">          2 :                         Susi::Util::Any packet;</span>
+<span class="lineNum">      72 </span><span class="lineCov">          1 :                         packet[&quot;type&quot;] = &quot;consumerEvent&quot;;</span>
+<span class="lineNum">      73 </span><span class="lineCov">         16 :                         packet[&quot;data&quot;] = Susi::Util::Any::Object{</span>
+<span class="lineNum">      74 </span><span class="lineCov">          1 :                                 {&quot;id&quot;,event-&gt;id},</span>
+<span class="lineNum">      75 </span><span class="lineCov">          1 :                                 {&quot;topic&quot;,event-&gt;topic},</span>
 <span class="lineNum">      76 </span>            :                                 {&quot;headers&quot;,headers},
-<span class="lineNum">      77 </span><span class="lineNoCov">          0 :                                 {&quot;payload&quot;,event-&gt;payload},</span>
-<span class="lineNum">      78 </span><span class="lineNoCov">          0 :                                 {&quot;sessionid&quot;,event-&gt;sessionID}</span>
-<span class="lineNum">      79 </span><span class="lineNoCov">          0 :                         };</span>
-<span class="lineNum">      80 </span><span class="lineNoCov">          0 :                         std::string _id = id;</span>
+<span class="lineNum">      77 </span><span class="lineCov">          1 :                                 {&quot;payload&quot;,event-&gt;payload},</span>
+<span class="lineNum">      78 </span><span class="lineCov">          1 :                                 {&quot;sessionid&quot;,event-&gt;sessionID}</span>
+<span class="lineNum">      79 </span><span class="lineCov">         12 :                         };</span>
+<span class="lineNum">      80 </span><span class="lineCov">          2 :                         std::string _id = id;</span>
 <span class="lineNum">      81 </span>            :                         //std::cout&lt;&lt;&quot;got consumer event, try to send it &quot;+packet.toJSONString()&lt;&lt;std::endl;
-<span class="lineNum">      82 </span><span class="lineNoCov">          0 :                         send(_id,packet);</span>
-<span class="lineNum">      83 </span><span class="lineNoCov">          0 :                 };</span>
-<span class="lineNum">      84 </span><span class="lineNoCov">          0 :                 long subid = eventManager-&gt;subscribe(topic,callback);</span>
-<span class="lineNum">      85 </span><span class="lineNoCov">          0 :                 subs[topic] = subid;</span>
-<span class="lineNum">      86 </span><span class="lineNoCov">          0 :                 sendOk(id);</span>
+<span class="lineNum">      82 </span><span class="lineCov">          1 :                         send(_id,packet);</span>
+<span class="lineNum">      83 </span><span class="lineCov">          3 :                 };</span>
+<span class="lineNum">      84 </span><span class="lineCov">          1 :                 long subid = eventManager-&gt;subscribe(topic,callback);</span>
+<span class="lineNum">      85 </span><span class="lineCov">          1 :                 subs[topic] = subid;</span>
+<span class="lineNum">      86 </span><span class="lineCov">          2 :                 sendOk(id);</span>
 <span class="lineNum">      87 </span>            :         }else{
 <span class="lineNum">      88 </span><span class="lineNoCov">          0 :                 std::cout&lt;&lt;&quot;handleRegisterConsumer-&gt; data is not a string:&quot;&lt;&lt;std::endl;</span>
 <span class="lineNum">      89 </span><span class="lineNoCov">          0 :                 sendFail(id,&quot;data is not a string&quot;);</span>
 <a name="90"><span class="lineNum">      90 </span>            :         }</a>
 <span class="lineNum">      91 </span>            : }
-<span class="lineNum">      92 </span><span class="lineCov">          1 : void Susi::Api::ApiServerComponent::handleRegisterProcessor(std::string &amp; id, Susi::Util::Any &amp; packet){</span>
-<span class="lineNum">      93 </span><span class="lineCov">          1 :         auto &amp; data = packet[&quot;data&quot;];</span>
-<span class="lineNum">      94 </span><span class="lineCov">          1 :         if(data.isString()){</span>
-<span class="lineNum">      95 </span><span class="lineCov">          1 :                 std::string topic = data;</span>
-<span class="lineNum">      96 </span><span class="lineCov">          1 :                 auto &amp; subs = processorSubscriptions[id];</span>
-<span class="lineNum">      97 </span><span class="lineCov">          1 :                 if(subs.find(topic) != subs.end()){</span>
+<span class="lineNum">      92 </span><span class="lineCov">          2 : void Susi::Api::ApiServerComponent::handleRegisterProcessor(std::string &amp; id, Susi::Util::Any &amp; packet){</span>
+<span class="lineNum">      93 </span><span class="lineCov">          2 :         auto &amp; data = packet[&quot;data&quot;];</span>
+<span class="lineNum">      94 </span><span class="lineCov">          2 :         if(data.isString()){</span>
+<span class="lineNum">      95 </span><span class="lineCov">          2 :                 std::string topic = data;</span>
+<span class="lineNum">      96 </span><span class="lineCov">          2 :                 auto &amp; subs = processorSubscriptions[id];</span>
+<span class="lineNum">      97 </span><span class="lineCov">          2 :                 if(subs.find(topic) != subs.end()){</span>
 <span class="lineNum">      98 </span><span class="lineNoCov">          0 :                         sendFail(id,&quot;you are allready subscribed to &quot;+topic);</span>
-<a name="99"><span class="lineNum">      99 </span><span class="lineCov">          1 :                         return;</span></a>
+<a name="99"><span class="lineNum">      99 </span><span class="lineCov">          2 :                         return;</span></a>
 <span class="lineNum">     100 </span>            :                 }
-<span class="lineNum">     101 </span><span class="lineCov">         13 :                 long subid = eventManager-&gt;subscribe(topic,[this,id](Susi::Events::EventPtr event){</span>
-<span class="lineNum">     102 </span><span class="lineCov">          1 :                         Susi::Util::Any::Array headers;</span>
-<span class="lineNum">     103 </span><span class="lineCov">          1 :                         for(auto &amp; kv : event-&gt;headers){</span>
+<span class="lineNum">     101 </span><span class="lineCov">         24 :                 long subid = eventManager-&gt;subscribe(topic,[this,id](Susi::Events::EventPtr event){</span>
+<span class="lineNum">     102 </span><span class="lineCov">          2 :                         Susi::Util::Any::Array headers;</span>
+<span class="lineNum">     103 </span><span class="lineCov">          2 :                         for(auto &amp; kv : event-&gt;headers){</span>
 <span class="lineNum">     104 </span><span class="lineNoCov">          0 :                                 headers.push_back(Susi::Util::Any::Object{{kv.first,kv.second}});</span>
 <span class="lineNum">     105 </span>            :                         }
-<span class="lineNum">     106 </span><span class="lineCov">          2 :                         Susi::Util::Any packet;</span>
-<span class="lineNum">     107 </span><span class="lineCov">          1 :                         packet[&quot;type&quot;] = &quot;processorEvent&quot;;</span>
-<span class="lineNum">     108 </span><span class="lineCov">         16 :                         packet[&quot;data&quot;] = Susi::Util::Any::Object{</span>
-<span class="lineNum">     109 </span><span class="lineCov">          1 :                                 {&quot;id&quot;,event-&gt;id},</span>
-<span class="lineNum">     110 </span><span class="lineCov">          1 :                                 {&quot;topic&quot;,event-&gt;topic},</span>
+<span class="lineNum">     106 </span><span class="lineCov">          4 :                         Susi::Util::Any packet;</span>
+<span class="lineNum">     107 </span><span class="lineCov">          2 :                         packet[&quot;type&quot;] = &quot;processorEvent&quot;;</span>
+<span class="lineNum">     108 </span><span class="lineCov">         32 :                         packet[&quot;data&quot;] = Susi::Util::Any::Object{</span>
+<span class="lineNum">     109 </span><span class="lineCov">          2 :                                 {&quot;id&quot;,event-&gt;id},</span>
+<span class="lineNum">     110 </span><span class="lineCov">          2 :                                 {&quot;topic&quot;,event-&gt;topic},</span>
 <span class="lineNum">     111 </span>            :                                 {&quot;headers&quot;,headers},
-<span class="lineNum">     112 </span><span class="lineCov">          1 :                                 {&quot;payload&quot;,event-&gt;payload},</span>
-<span class="lineNum">     113 </span><span class="lineCov">          1 :                                 {&quot;sessionid&quot;,event-&gt;sessionID}</span>
-<span class="lineNum">     114 </span><span class="lineCov">         12 :                         };</span>
-<span class="lineNum">     115 </span><span class="lineCov">          2 :                         std::string _id = id;</span>
-<span class="lineNum">     116 </span><span class="lineCov">          1 :                         eventsToAck[_id][event-&gt;id] = std::move(event);</span>
-<span class="lineNum">     117 </span><span class="lineCov">          1 :                         send(_id,packet);</span>
-<span class="lineNum">     118 </span><span class="lineCov">          3 :                 });</span>
-<span class="lineNum">     119 </span><span class="lineCov">          1 :                 subs[topic] = subid;</span>
-<span class="lineNum">     120 </span><span class="lineCov">          1 :                 sendOk(id);</span>
+<span class="lineNum">     112 </span><span class="lineCov">          2 :                                 {&quot;payload&quot;,event-&gt;payload},</span>
+<span class="lineNum">     113 </span><span class="lineCov">          2 :                                 {&quot;sessionid&quot;,event-&gt;sessionID}</span>
+<span class="lineNum">     114 </span><span class="lineCov">         24 :                         };</span>
+<span class="lineNum">     115 </span><span class="lineCov">          4 :                         std::string _id = id;</span>
+<span class="lineNum">     116 </span><span class="lineCov">          2 :                         eventsToAck[_id][event-&gt;id] = std::move(event);</span>
+<span class="lineNum">     117 </span><span class="lineCov">          2 :                         send(_id,packet);</span>
+<span class="lineNum">     118 </span><span class="lineCov">          6 :                 });</span>
+<span class="lineNum">     119 </span><span class="lineCov">          2 :                 subs[topic] = subid;</span>
+<span class="lineNum">     120 </span><span class="lineCov">          2 :                 sendOk(id);</span>
 <span class="lineNum">     121 </span>            :         }else{
 <span class="lineNum">     122 </span><span class="lineNoCov">          0 :                 sendFail(id,&quot;data is not a string&quot;);</span>
 <a name="123"><span class="lineNum">     123 </span>            :         }</a>
@@ -217,22 +217,22 @@
 <span class="lineNum">     155 </span><span class="lineNoCov">          0 :                 sendFail(id,&quot;data is not a string&quot;);</span>
 <a name="156"><span class="lineNum">     156 </span>            :         }</a>
 <span class="lineNum">     157 </span><span class="lineNoCov">          0 : }</span>
-<span class="lineNum">     158 </span><span class="lineNoCov">          0 : void Susi::Api::ApiServerComponent::handlePublish(std::string &amp; id, Susi::Util::Any &amp; packet){</span>
-<span class="lineNum">     159 </span><span class="lineNoCov">          0 :         auto &amp; eventData = packet[&quot;data&quot;];</span>
-<span class="lineNum">     160 </span><span class="lineNoCov">          0 :         if(!eventData.isObject() || !eventData[&quot;topic&quot;].isString()){</span>
+<span class="lineNum">     158 </span><span class="lineCov">          1 : void Susi::Api::ApiServerComponent::handlePublish(std::string &amp; id, Susi::Util::Any &amp; packet){</span>
+<span class="lineNum">     159 </span><span class="lineCov">          1 :         auto &amp; eventData = packet[&quot;data&quot;];</span>
+<span class="lineNum">     160 </span><span class="lineCov">          1 :         if(!eventData.isObject() || !eventData[&quot;topic&quot;].isString()){</span>
 <span class="lineNum">     161 </span><span class="lineNoCov">          0 :                 sendFail(id,&quot;data is not an object or topic is not set correctly&quot;);</span>
-<span class="lineNum">     162 </span><span class="lineNoCov">          0 :                 return;</span>
+<span class="lineNum">     162 </span><span class="lineCov">          1 :                 return;</span>
 <span class="lineNum">     163 </span>            :         }
-<span class="lineNum">     164 </span><span class="lineNoCov">          0 :         auto event = eventManager-&gt;createEvent(eventData[&quot;topic&quot;]);</span>
-<span class="lineNum">     165 </span><span class="lineNoCov">          0 :         event-&gt;sessionID = id;</span>
-<span class="lineNum">     166 </span><span class="lineNoCov">          0 :         auto eventID = eventData[&quot;id&quot;];</span>
-<span class="lineNum">     167 </span><span class="lineNoCov">          0 :         if(eventID.isNull()){</span>
-<span class="lineNum">     168 </span><span class="lineNoCov">          0 :                 eventID = std::chrono::system_clock::now().time_since_epoch().count();</span>
+<span class="lineNum">     164 </span><span class="lineCov">          1 :         auto event = eventManager-&gt;createEvent(eventData[&quot;topic&quot;]);</span>
+<span class="lineNum">     165 </span><span class="lineCov">          1 :         event-&gt;sessionID = id;</span>
+<span class="lineNum">     166 </span><span class="lineCov">          2 :         auto eventID = eventData[&quot;id&quot;];</span>
+<span class="lineNum">     167 </span><span class="lineCov">          1 :         if(eventID.isNull()){</span>
+<span class="lineNum">     168 </span><span class="lineCov">          1 :                 eventID = std::chrono::system_clock::now().time_since_epoch().count();</span>
 <span class="lineNum">     169 </span>            :         }
 <span class="lineNum">     170 </span>            : 
-<span class="lineNum">     171 </span><span class="lineNoCov">          0 :         event-&gt;id = eventID;</span>
+<span class="lineNum">     171 </span><span class="lineCov">          1 :         event-&gt;id = eventID;</span>
 <span class="lineNum">     172 </span>            : 
-<span class="lineNum">     173 </span><span class="lineNoCov">          0 :         if(eventData[&quot;headers&quot;].isArray()){</span>
+<span class="lineNum">     173 </span><span class="lineCov">          1 :         if(eventData[&quot;headers&quot;].isArray()){</span>
 <span class="lineNum">     174 </span><span class="lineNoCov">          0 :                 Susi::Util::Any::Array arr = eventData[&quot;headers&quot;];</span>
 <span class="lineNum">     175 </span><span class="lineNoCov">          0 :                 for(Susi::Util::Any::Object &amp; val : arr){</span>
 <span class="lineNum">     176 </span><span class="lineNoCov">          0 :                         for(auto &amp; kv : val){</span>
@@ -240,63 +240,63 @@
 <span class="lineNum">     178 </span>            :                         }
 <span class="lineNum">     179 </span><span class="lineNoCov">          0 :                 }</span>
 <span class="lineNum">     180 </span>            :         }
-<span class="lineNum">     181 </span><span class="lineNoCov">          0 :         if(!eventData[&quot;payload&quot;].isNull()){</span>
+<span class="lineNum">     181 </span><span class="lineCov">          1 :         if(!eventData[&quot;payload&quot;].isNull()){</span>
 <span class="lineNum">     182 </span><span class="lineNoCov">          0 :                 event-&gt;payload = eventData[&quot;payload&quot;];</span>
 <a name="183"><span class="lineNum">     183 </span>            :         }</a>
 <span class="lineNum">     184 </span>            : 
-<span class="lineNum">     185 </span><span class="lineNoCov">          0 :         eventManager-&gt;publish(std::move(event),[this,id](Susi::Events::SharedEventPtr event){</span>
-<span class="lineNum">     186 </span><span class="lineNoCov">          0 :                 Susi::Util::Any::Array headers;</span>
-<span class="lineNum">     187 </span><span class="lineNoCov">          0 :                 for(auto &amp; kv : event-&gt;headers){</span>
+<span class="lineNum">     185 </span><span class="lineCov">         13 :         eventManager-&gt;publish(std::move(event),[this,id](Susi::Events::SharedEventPtr event){</span>
+<span class="lineNum">     186 </span><span class="lineCov">          1 :                 Susi::Util::Any::Array headers;</span>
+<span class="lineNum">     187 </span><span class="lineCov">          1 :                 for(auto &amp; kv : event-&gt;headers){</span>
 <span class="lineNum">     188 </span><span class="lineNoCov">          0 :                         headers.push_back(Susi::Util::Any::Object{{kv.first,kv.second}});</span>
 <span class="lineNum">     189 </span>            :                 }
-<span class="lineNum">     190 </span><span class="lineNoCov">          0 :                 Susi::Util::Any packet;</span>
-<span class="lineNum">     191 </span><span class="lineNoCov">          0 :                 packet[&quot;type&quot;] = &quot;ack&quot;;</span>
-<span class="lineNum">     192 </span><span class="lineNoCov">          0 :                 packet[&quot;data&quot;] = Susi::Util::Any::Object{</span>
-<span class="lineNum">     193 </span><span class="lineNoCov">          0 :                         {&quot;id&quot;,event-&gt;id},</span>
-<span class="lineNum">     194 </span><span class="lineNoCov">          0 :                         {&quot;topic&quot;,event-&gt;topic},</span>
+<span class="lineNum">     190 </span><span class="lineCov">          2 :                 Susi::Util::Any packet;</span>
+<span class="lineNum">     191 </span><span class="lineCov">          1 :                 packet[&quot;type&quot;] = &quot;ack&quot;;</span>
+<span class="lineNum">     192 </span><span class="lineCov">         16 :                 packet[&quot;data&quot;] = Susi::Util::Any::Object{</span>
+<span class="lineNum">     193 </span><span class="lineCov">          1 :                         {&quot;id&quot;,event-&gt;id},</span>
+<span class="lineNum">     194 </span><span class="lineCov">          1 :                         {&quot;topic&quot;,event-&gt;topic},</span>
 <span class="lineNum">     195 </span>            :                         {&quot;headers&quot;,headers},
-<span class="lineNum">     196 </span><span class="lineNoCov">          0 :                         {&quot;payload&quot;,event-&gt;payload},</span>
-<span class="lineNum">     197 </span><span class="lineNoCov">          0 :                         {&quot;sessionid&quot;,event-&gt;sessionID}</span>
-<span class="lineNum">     198 </span><span class="lineNoCov">          0 :                 };</span>
-<span class="lineNum">     199 </span><span class="lineNoCov">          0 :                 std::string _id = id;</span>
-<span class="lineNum">     200 </span><span class="lineNoCov">          0 :                 send(_id,packet);</span>
-<span class="lineNum">     201 </span><span class="lineNoCov">          0 :         });</span>
+<span class="lineNum">     196 </span><span class="lineCov">          1 :                         {&quot;payload&quot;,event-&gt;payload},</span>
+<span class="lineNum">     197 </span><span class="lineCov">          1 :                         {&quot;sessionid&quot;,event-&gt;sessionID}</span>
+<span class="lineNum">     198 </span><span class="lineCov">         12 :                 };</span>
+<span class="lineNum">     199 </span><span class="lineCov">          2 :                 std::string _id = id;</span>
+<span class="lineNum">     200 </span><span class="lineCov">          1 :                 send(_id,packet);</span>
+<span class="lineNum">     201 </span><span class="lineCov">          3 :         });</span>
 <span class="lineNum">     202 </span>            : 
-<span class="lineNum">     203 </span><span class="lineNoCov">          0 :         sendOk(id);</span>
+<span class="lineNum">     203 </span><span class="lineCov">          2 :         sendOk(id);</span>
 <a name="204"><span class="lineNum">     204 </span>            : }</a>
 <span class="lineNum">     205 </span>            : 
-<span class="lineNum">     206 </span><span class="lineNoCov">          0 : void Susi::Api::ApiServerComponent::handleAck(std::string &amp; id, Susi::Util::Any &amp; packet){</span>
-<span class="lineNum">     207 </span><span class="lineNoCov">          0 :         auto &amp; eventData = packet[&quot;data&quot;];</span>
-<span class="lineNum">     208 </span><span class="lineNoCov">          0 :         if(!eventData.isObject() || !eventData[&quot;topic&quot;].isString()){</span>
+<span class="lineNum">     206 </span><span class="lineCov">          1 : void Susi::Api::ApiServerComponent::handleAck(std::string &amp; id, Susi::Util::Any &amp; packet){</span>
+<span class="lineNum">     207 </span><span class="lineCov">          1 :         auto &amp; eventData = packet[&quot;data&quot;];</span>
+<span class="lineNum">     208 </span><span class="lineCov">          1 :         if(!eventData.isObject() || !eventData[&quot;topic&quot;].isString()){</span>
 <span class="lineNum">     209 </span><span class="lineNoCov">          0 :                 sendFail(id,&quot;data is not an object or topic is not set correctly&quot;);</span>
-<span class="lineNum">     210 </span><span class="lineNoCov">          0 :                 return;</span>
+<span class="lineNum">     210 </span><span class="lineCov">          1 :                 return;</span>
 <span class="lineNum">     211 </span>            :         }
-<span class="lineNum">     212 </span><span class="lineNoCov">          0 :         long eventID = eventData[&quot;id&quot;];</span>
-<span class="lineNum">     213 </span><span class="lineNoCov">          0 :         auto event = std::move(eventsToAck[id][eventID]);</span>
-<span class="lineNum">     214 </span><span class="lineNoCov">          0 :         eventsToAck[id].erase(eventID);</span>
-<span class="lineNum">     215 </span><span class="lineNoCov">          0 :         event-&gt;headers.clear();</span>
-<span class="lineNum">     216 </span><span class="lineNoCov">          0 :         event-&gt;id = eventID;</span>
-<span class="lineNum">     217 </span><span class="lineNoCov">          0 :         if(eventData[&quot;headers&quot;].isArray()){</span>
-<span class="lineNum">     218 </span><span class="lineNoCov">          0 :                 Susi::Util::Any::Array arr = eventData[&quot;headers&quot;];</span>
-<span class="lineNum">     219 </span><span class="lineNoCov">          0 :                 for(Susi::Util::Any::Object &amp; val : arr){</span>
+<span class="lineNum">     212 </span><span class="lineCov">          1 :         long eventID = eventData[&quot;id&quot;];</span>
+<span class="lineNum">     213 </span><span class="lineCov">          1 :         auto event = std::move(eventsToAck[id][eventID]);</span>
+<span class="lineNum">     214 </span><span class="lineCov">          1 :         eventsToAck[id].erase(eventID);</span>
+<span class="lineNum">     215 </span><span class="lineCov">          1 :         event-&gt;headers.clear();</span>
+<span class="lineNum">     216 </span><span class="lineCov">          1 :         event-&gt;id = eventID;</span>
+<span class="lineNum">     217 </span><span class="lineCov">          1 :         if(eventData[&quot;headers&quot;].isArray()){</span>
+<span class="lineNum">     218 </span><span class="lineCov">          1 :                 Susi::Util::Any::Array arr = eventData[&quot;headers&quot;];</span>
+<span class="lineNum">     219 </span><span class="lineCov">          1 :                 for(Susi::Util::Any::Object &amp; val : arr){</span>
 <span class="lineNum">     220 </span><span class="lineNoCov">          0 :                         for(auto &amp; kv : val){</span>
 <span class="lineNum">     221 </span><span class="lineNoCov">          0 :                                 event-&gt;headers.push_back(std::make_pair(kv.first,(std::string)kv.second));</span>
 <span class="lineNum">     222 </span>            :                         }
-<span class="lineNum">     223 </span><span class="lineNoCov">          0 :                 }</span>
+<span class="lineNum">     223 </span><span class="lineCov">          1 :                 }</span>
 <span class="lineNum">     224 </span>            :         }
-<span class="lineNum">     225 </span><span class="lineNoCov">          0 :         if(!eventData[&quot;payload&quot;].isNull()){</span>
+<span class="lineNum">     225 </span><span class="lineCov">          1 :         if(!eventData[&quot;payload&quot;].isNull()){</span>
 <span class="lineNum">     226 </span><span class="lineNoCov">          0 :                 event-&gt;payload = eventData[&quot;payload&quot;];</span>
 <span class="lineNum">     227 </span>            :         }
-<span class="lineNum">     228 </span><span class="lineNoCov">          0 :         eventManager-&gt;ack(std::move(event));</span>
-<span class="lineNum">     229 </span><span class="lineNoCov">          0 :         sendOk(id);</span>
+<span class="lineNum">     228 </span><span class="lineCov">          1 :         eventManager-&gt;ack(std::move(event));</span>
+<span class="lineNum">     229 </span><span class="lineCov">          1 :         sendOk(id);</span>
 <a name="230"><span class="lineNum">     230 </span>            : }</a>
 <span class="lineNum">     231 </span>            : 
-<span class="lineNum">     232 </span><span class="lineCov">          1 : void Susi::Api::ApiServerComponent::sendOk(std::string &amp; id){</span>
-<span class="lineNum">     233 </span><span class="lineCov">          1 :         Susi::Util::Any response;</span>
-<span class="lineNum">     234 </span><span class="lineCov">          1 :         response[&quot;type&quot;] = &quot;status&quot;;</span>
-<span class="lineNum">     235 </span><span class="lineCov">          1 :         response[&quot;error&quot;] = false;</span>
-<span class="lineNum">     236 </span><span class="lineCov">          1 :         send(id,response);</span>
-<a name="237"><span class="lineNum">     237 </span><span class="lineCov">          1 : }</span></a>
+<span class="lineNum">     232 </span><span class="lineCov">          5 : void Susi::Api::ApiServerComponent::sendOk(std::string &amp; id){</span>
+<span class="lineNum">     233 </span><span class="lineCov">          5 :         Susi::Util::Any response;</span>
+<span class="lineNum">     234 </span><span class="lineCov">          5 :         response[&quot;type&quot;] = &quot;status&quot;;</span>
+<span class="lineNum">     235 </span><span class="lineCov">          5 :         response[&quot;error&quot;] = false;</span>
+<span class="lineNum">     236 </span><span class="lineCov">          5 :         send(id,response);</span>
+<a name="237"><span class="lineNum">     237 </span><span class="lineCov">          5 : }</span></a>
 <span class="lineNum">     238 </span>            : 
 <span class="lineNum">     239 </span><span class="lineNoCov">          0 : void Susi::Api::ApiServerComponent::sendFail(std::string &amp; id,std::string error){</span>
 <span class="lineNum">     240 </span><span class="lineNoCov">          0 :         Susi::Util::Any response;</span>

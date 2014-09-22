@@ -31,13 +31,13 @@
             <td class="headerValue">coverage.info.cleaned</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">14</td>
-            <td class="headerCovTableEntry">24</td>
-            <td class="headerCovTableEntryLo">58.3 %</td>
+            <td class="headerCovTableEntry">15</td>
+            <td class="headerCovTableEntry">25</td>
+            <td class="headerCovTableEntryLo">60.0 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-22 09:33:38</td>
+            <td class="headerValue">2014-09-22 13:25:57</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">3</td>
@@ -71,30 +71,32 @@
 <span class="lineNum">       9 </span><span class="lineCov">          1 :                 response.setContentType(&quot;text/html&quot;);</span>
 <span class="lineNum">      10 </span>            : 
 <span class="lineNum">      11 </span><span class="lineCov">          1 :                 std::ostream&amp; ostr = response.send();</span>
-<span class="lineNum">      12 </span>            :                 
-<span class="lineNum">      13 </span><span class="lineCov">          1 :                 if (!partHandler.name().empty())</span>
-<span class="lineNum">      14 </span>            :                 {
-<span class="lineNum">      15 </span><span class="lineNoCov">          0 :                         response.setStatus(Poco::Net::HTTPServerResponse::HTTPStatus::HTTP_OK);                 </span>
-<span class="lineNum">      16 </span>            :                         
-<span class="lineNum">      17 </span><span class="lineNoCov">          0 :                         ostr &lt;&lt; &quot;&lt;html&gt;&lt;head&gt;&lt;title&gt;SUSI&lt;/title&gt;&lt;/head&gt; &quot;;</span>
-<span class="lineNum">      18 </span><span class="lineNoCov">          0 :                         ostr &lt;&lt; &quot;&lt;body&gt;&quot;;</span>
-<span class="lineNum">      19 </span><span class="lineNoCov">          0 :                         ostr &lt;&lt; &quot;&lt;h2&gt;Upload&lt;/h2&gt;\n&quot;;</span>
-<span class="lineNum">      20 </span><span class="lineNoCov">          0 :                         ostr &lt;&lt; &quot;&lt;p style=\&quot;text-align: center;font-size: 48px;\&quot;&gt;&lt;/br&gt;&lt;/br&gt;&lt;/br&gt;&quot;;                                   </span>
-<span class="lineNum">      21 </span><span class="lineNoCov">          0 :                         ostr &lt;&lt; &quot;Name: &quot; &lt;&lt; partHandler.name() &lt;&lt; &quot;&lt;br&gt;\n&quot;;</span>
-<span class="lineNum">      22 </span><span class="lineNoCov">          0 :                         ostr &lt;&lt; &quot;File Name: &quot; &lt;&lt; partHandler.fileName() &lt;&lt; &quot;&lt;br&gt;\n&quot;;</span>
-<span class="lineNum">      23 </span><span class="lineNoCov">          0 :                         ostr &lt;&lt; &quot;Type: &quot; &lt;&lt; partHandler.contentType() &lt;&lt; &quot;&lt;br&gt;\n&quot;;</span>
-<span class="lineNum">      24 </span><span class="lineNoCov">          0 :                         ostr &lt;&lt; &quot;Size: &quot; &lt;&lt; partHandler.length() &lt;&lt; &quot;&lt;br&gt;\n&quot;;</span>
-<span class="lineNum">      25 </span><span class="lineNoCov">          0 :                         ostr &lt;&lt; &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</span>
-<span class="lineNum">      26 </span>            : 
-<span class="lineNum">      27 </span>            :                 } else {
-<span class="lineNum">      28 </span><span class="lineCov">          1 :                         response.setStatus(Poco::Net::HTTPServerResponse::HTTPStatus::HTTP_NOT_FOUND);                  </span>
-<span class="lineNum">      29 </span>            : 
-<span class="lineNum">      30 </span><span class="lineCov">          1 :                         ostr &lt;&lt; &quot;&lt;html&gt;&lt;head&gt;&lt;title&gt;SUSI&lt;/title&gt;&lt;/head&gt; &quot;;</span>
-<span class="lineNum">      31 </span><span class="lineCov">          1 :                         ostr &lt;&lt; &quot;&lt;body&gt;&lt;p style=\&quot;text-align: center;font-size: 48px;\&quot;&gt;&lt;/br&gt;&lt;/br&gt;&lt;/br&gt;&quot;;</span>
-<span class="lineNum">      32 </span><span class="lineCov">          1 :                         ostr &lt;&lt; &quot;(404) Upload Failed&quot;;</span>
-<a name="33"><span class="lineNum">      33 </span><span class="lineCov">          1 :                         ostr &lt;&lt; &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;                 </span></a>
-<span class="lineNum">      34 </span><span class="lineCov">          1 :                 }               </span>
-<span class="lineNum">      35 </span><span class="lineCov">          4 : }</span>
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span><span class="lineCov">          1 :                 std::cout&lt;&lt;&quot;Susi::FormRequestHandler::handleRequest:&quot;&lt;&lt;std::endl;</span>
+<span class="lineNum">      14 </span>            :                 
+<span class="lineNum">      15 </span><span class="lineCov">          1 :                 if (!partHandler.name().empty())</span>
+<span class="lineNum">      16 </span>            :                 {
+<span class="lineNum">      17 </span><span class="lineNoCov">          0 :                         response.setStatus(Poco::Net::HTTPServerResponse::HTTPStatus::HTTP_OK);                 </span>
+<span class="lineNum">      18 </span>            :                         
+<span class="lineNum">      19 </span><span class="lineNoCov">          0 :                         ostr &lt;&lt; &quot;&lt;html&gt;&lt;head&gt;&lt;title&gt;SUSI&lt;/title&gt;&lt;/head&gt; &quot;;</span>
+<span class="lineNum">      20 </span><span class="lineNoCov">          0 :                         ostr &lt;&lt; &quot;&lt;body&gt;&quot;;</span>
+<span class="lineNum">      21 </span><span class="lineNoCov">          0 :                         ostr &lt;&lt; &quot;&lt;h2&gt;Upload&lt;/h2&gt;\n&quot;;</span>
+<span class="lineNum">      22 </span><span class="lineNoCov">          0 :                         ostr &lt;&lt; &quot;&lt;p style=\&quot;text-align: center;font-size: 48px;\&quot;&gt;&lt;/br&gt;&lt;/br&gt;&lt;/br&gt;&quot;;                                   </span>
+<span class="lineNum">      23 </span><span class="lineNoCov">          0 :                         ostr &lt;&lt; &quot;Name: &quot; &lt;&lt; partHandler.name() &lt;&lt; &quot;&lt;br&gt;\n&quot;;</span>
+<span class="lineNum">      24 </span><span class="lineNoCov">          0 :                         ostr &lt;&lt; &quot;File Name: &quot; &lt;&lt; partHandler.fileName() &lt;&lt; &quot;&lt;br&gt;\n&quot;;</span>
+<span class="lineNum">      25 </span><span class="lineNoCov">          0 :                         ostr &lt;&lt; &quot;Type: &quot; &lt;&lt; partHandler.contentType() &lt;&lt; &quot;&lt;br&gt;\n&quot;;</span>
+<span class="lineNum">      26 </span><span class="lineNoCov">          0 :                         ostr &lt;&lt; &quot;Size: &quot; &lt;&lt; partHandler.length() &lt;&lt; &quot;&lt;br&gt;\n&quot;;</span>
+<span class="lineNum">      27 </span><span class="lineNoCov">          0 :                         ostr &lt;&lt; &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</span>
+<span class="lineNum">      28 </span>            : 
+<span class="lineNum">      29 </span>            :                 } else {
+<span class="lineNum">      30 </span><span class="lineCov">          1 :                         response.setStatus(Poco::Net::HTTPServerResponse::HTTPStatus::HTTP_NOT_FOUND);                  </span>
+<span class="lineNum">      31 </span>            : 
+<span class="lineNum">      32 </span><span class="lineCov">          1 :                         ostr &lt;&lt; &quot;&lt;html&gt;&lt;head&gt;&lt;title&gt;SUSI&lt;/title&gt;&lt;/head&gt; &quot;;</span>
+<span class="lineNum">      33 </span><span class="lineCov">          1 :                         ostr &lt;&lt; &quot;&lt;body&gt;&lt;p style=\&quot;text-align: center;font-size: 48px;\&quot;&gt;&lt;/br&gt;&lt;/br&gt;&lt;/br&gt;&quot;;</span>
+<span class="lineNum">      34 </span><span class="lineCov">          1 :                         ostr &lt;&lt; &quot;(404) Upload Failed&quot;;</span>
+<a name="35"><span class="lineNum">      35 </span><span class="lineCov">          1 :                         ostr &lt;&lt; &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;                 </span></a>
+<span class="lineNum">      36 </span><span class="lineCov">          1 :                 }               </span>
+<span class="lineNum">      37 </span><span class="lineCov">          4 : }</span>
 </pre>
       </td>
     </tr>
