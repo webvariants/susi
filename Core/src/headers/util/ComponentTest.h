@@ -24,9 +24,9 @@ public:
 	std::string base_path;
 
 	ComponentTest(){
-		Susi::Logger::setLevel(7);
+		Susi::Logger::setLevel(0);
 
-		base_path = Poco::Path(Poco::Path::current()).toString() + "component_test/";
+		base_path = Poco::Path(Poco::Path::current()).toString() + "component_test";
 
 		Susi::Util::Any::Object cfg = Susi::Util::Any::fromString(getConfigString(base_path));
 		componentManager = Susi::System::createSusiComponentManager(cfg);
@@ -36,7 +36,7 @@ public:
 		io.makeDir(base_path);
 	}
 
-	~ComponentTest(){
+	virtual ~ComponentTest(){
 		io.deletePath(base_path);
 	}
 
@@ -84,7 +84,7 @@ protected:
 				"},"
 				"\"iocontroller\": {},"
 				"\"sessionmanager\": {"
-					"\"lifetime\": 600000"
+					"\"lifetime\": 1000"
 				"},"
 				"\"statecontroller\": {"
 					"\"file\": \""+path+"/states.json\""
@@ -101,8 +101,9 @@ protected:
 				"},"
 				"\"httpserver\": {"
 					"\"address\": \"[::1]:8080\","
-					"\"assets\": \"/tmp/assets\""
-				"}"
+					"\"assets\": \""+path+"/assets\""
+				"},"
+				"\"apiserver\": {}"
 			"}";
 
 		return configString;						

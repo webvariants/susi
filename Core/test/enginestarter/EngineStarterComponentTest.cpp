@@ -8,8 +8,8 @@ public:
 protected:
 	
 	virtual void SetUp() override {		
-		script = base_path+"test.sh";
-		output = base_path+"test.out";
+		script = base_path+"/test.sh";
+		output = base_path+"/test.out";
 
 		io.writeFile(script,"#!/bin/bash\nfor i in $(seq 1 10); do echo -n foobar >> "+output+"\nsleep 0.1; done; exit 0\n");
 		io.setExecutable(script,true);
@@ -24,7 +24,7 @@ protected:
 	virtual void GoodCases() override {
 		std::string content;
 
-		std::cout<<"OUTPUT PATH:"<<output<<std::endl;
+		Susi::Logger::debug("OUTPUT PATH:"+output);
 
 		//create event
 		auto evt = createEvent("enginestarter::start");	

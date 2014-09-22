@@ -80,8 +80,7 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 		}
 		return std::shared_ptr<Component>{new Susi::Api::TCPApiServerComponent{mgr, address, threads, backlog}};
 	});
-	manager->registerDependency("tcpapiserver","eventsystem");
-	manager->registerDependency("tcpapiserver","sessionmanager");
+	manager->registerDependency("tcpapiserver","apiserver");
 
 	/**
 	 * Declare enginestarter
@@ -158,9 +157,8 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 			assetRoot = static_cast<std::string>(config["assets"]);
 		}
 		return std::shared_ptr<Component>{new Susi::HttpServerComponent{mgr, address, assetRoot}};
-	});
-	manager->registerDependency("httpserver","eventsystem");
-	manager->registerDependency("httpserver","sessionmanager");
+	});	
+	manager->registerDependency("httpserver","apiserver");
 	
 	/**
 	 * Declare Autodiscovery
@@ -177,6 +175,15 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 		return std::shared_ptr<Component>{new Susi::Autodiscovery::AutoDiscoveryComponent{mcast,ownName,mgr}};
 	});
 	manager->registerDependency("autodiscovery","eventsystem");
+
+	/**
+	 * Declare apiserver
+	 */
+	manager->registerComponent("apiserver", [](ComponentManager * mgr, Any & config) {			
+		return std::shared_ptr<Component>{new Susi::Api::ApiServerComponent{mgr}};
+	});
+	manager->registerDependency("apiserver","eventsystem");
+	manager->registerDependency("apiserver","sessionmanager");
 
 	return manager;
 }

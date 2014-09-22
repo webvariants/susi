@@ -18,10 +18,12 @@
 #include "events/EventManagerComponent.h"
 #include "sessions/SessionManagerComponent.h"
 
+#include "world/BaseComponent.h"
+
 namespace Susi {
 namespace Api {
 
-class ApiServerComponent {
+class ApiServerComponent : public Susi::System::BaseComponent {
 protected:
 	std::shared_ptr<Susi::Events::ManagerComponent> eventManager;
 	std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager;
@@ -51,10 +53,14 @@ protected:
 
 public:
 	
-	ApiServerComponent(std::shared_ptr<Susi::Events::ManagerComponent> _eventManager,
-						  std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager) {
-		eventManager = _eventManager;
-		sessionManager = _sessionManager;
+	ApiServerComponent(Susi::System::ComponentManager * mgr) : Susi::System::BaseComponent{mgr} {
+		eventManager   = mgr->getComponent<Susi::Events::ManagerComponent>("eventsystem");
+		sessionManager = mgr->getComponent<Susi::Sessions::SessionManagerComponent>("sessionmanager");
+	}
+
+	virtual void start() override {}
+	virtual void stop() override {
+		unsubscribeAll();
 	}
 
 	void onConnect(std::string & id);

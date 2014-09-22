@@ -82,7 +82,7 @@ protected:
 		//fire event
 		auto result = publish_sync(std::move(evt));
 		//check event
-		EXPECT_EQ(false, static_cast<bool>(result->payload["success"]));
+		EXPECT_EQ(Susi::Util::Any{false}, result->payload["success"]);
 	}
 
 	virtual void EdgeCases() override {

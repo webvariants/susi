@@ -11,8 +11,8 @@
 
 #include "webstack/WebSocketRequestHandler.h"
 
-Susi::WebSocketRequestHandler::WebSocketRequestHandler(Susi::Api::ApiServerComponent* server) {
-	apiServer = server;
+Susi::WebSocketRequestHandler::WebSocketRequestHandler(std::shared_ptr<Susi::Api::ApiServerComponent> apiServer) {
+	_apiServer = apiServer;
 }
 
 void Susi::WebSocketRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request,
@@ -22,13 +22,13 @@ void Susi::WebSocketRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& 
 	request.getCookies(cookies);
 	std::string id = cookies["susisession"];
     Susi::Logger::debug("register sender in ws");
-    apiServer->registerSender(id,[&socket](Susi::Util::Any & arg){
+    _apiServer->registerSender(id,[&socket](Susi::Util::Any & arg){
     	std::string msg = arg.toJSONString();
     	Susi::Logger::debug("send frame to websocket");
     	socket.sendFrame(msg.data(), msg.length(), Poco::Net::WebSocket::FRAME_TEXT);
     });
 
-    apiServer->onConnect(id);
+    _apiServer->onConnect(id);
 
     char buffer[4096];
 	int flags;
@@ -43,8 +43,8 @@ void Susi::WebSocketRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& 
 		}
 		std::string str(buffer, n);
 		Susi::Util::Any packet = Susi::Util::Any::fromString(str);
-		apiServer->onMessage(id,packet);
+		_apiServer->onMessage(id,packet);
 	}
 	Susi::Logger::debug("closing websocket");
-	apiServer->onClose(id);
+	_apiServer->onClose(id);
 }

@@ -38,7 +38,6 @@ bool Susi::System::ComponentManager::unloadComponent(std::string name){
 }
 
 bool Susi::System::ComponentManager::startComponent(std::string name){
-
 	Susi::Logger::debug("starting component "+name+"...");
 	if(components.find(name) == components.end() && !loadComponent(name)){
 		Susi::Logger::debug("can't start component "+name+", component is not loadable.");
@@ -59,7 +58,7 @@ bool Susi::System::ComponentManager::startComponent(std::string name){
 	}
 	data.component->start();
 	data.running = true;
-	Susi::Logger::info("started component "+name+"!");
+	Susi::Logger::debug("started component "+name+"!");
 	return true;
 }
 
