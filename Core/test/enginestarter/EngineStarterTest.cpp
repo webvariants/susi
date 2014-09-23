@@ -45,7 +45,7 @@ protected:
 		EXPECT_EQ("foobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobar",data);
 
 		io.deletePath(output1);
-
+		
 		engineStarter->execute(base_path);
 		std::this_thread::sleep_for(std::chrono::milliseconds(300));
 		engineStarter->killall();		
@@ -54,13 +54,8 @@ protected:
 		EXPECT_NE("foobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobar",data);		
 	}
 
-	virtual void BadCases() override {
-
-	}
-
-	virtual void EdgeCases() override {
-
-	}
+	virtual void BadCases() override {}
+	virtual void EdgeCases() override {}
 
 };
 
