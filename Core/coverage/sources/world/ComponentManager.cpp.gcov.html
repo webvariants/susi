@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-22 15:15:52</td>
+            <td class="headerValue">2014-09-23 11:42:00</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">10</td>
@@ -62,27 +62,27 @@
 <pre class="source">
 <a name="1"><span class="lineNum">       1 </span>            : #include &quot;world/ComponentManager.h&quot;</a>
 <span class="lineNum">       2 </span>            : 
-<span class="lineNum">       3 </span><span class="lineCov">        730 : void Susi::System::ComponentManager::registerComponent(std::string name, RegisterFunction func){</span>
-<a name="4"><span class="lineNum">       4 </span><span class="lineCov">        730 :         registerFunctions.emplace(name,std::move(func));</span></a>
-<span class="lineNum">       5 </span><span class="lineCov">        730 : }</span>
-<span class="lineNum">       6 </span><span class="lineCov">        940 : void Susi::System::ComponentManager::registerDependency(std::string subject, std::string dependency){</span>
-<span class="lineNum">       7 </span><span class="lineCov">        940 :         auto &amp; deps = dependencies[subject];</span>
-<span class="lineNum">       8 </span><span class="lineCov">        940 :         deps.push_back(dependency);</span>
-<span class="lineNum">       9 </span><span class="lineCov">        940 :         auto &amp; iDeps = inverseDependencies[dependency];</span>
-<span class="lineNum">      10 </span><span class="lineCov">        940 :         iDeps.push_back(subject);</span>
-<a name="11"><span class="lineNum">      11 </span><span class="lineCov">        940 : }</span></a>
+<span class="lineNum">       3 </span><span class="lineCov">        782 : void Susi::System::ComponentManager::registerComponent(std::string name, RegisterFunction func){</span>
+<a name="4"><span class="lineNum">       4 </span><span class="lineCov">        782 :         registerFunctions.emplace(name,std::move(func));</span></a>
+<span class="lineNum">       5 </span><span class="lineCov">        782 : }</span>
+<span class="lineNum">       6 </span><span class="lineCov">       1008 : void Susi::System::ComponentManager::registerDependency(std::string subject, std::string dependency){</span>
+<span class="lineNum">       7 </span><span class="lineCov">       1008 :         auto &amp; deps = dependencies[subject];</span>
+<span class="lineNum">       8 </span><span class="lineCov">       1008 :         deps.push_back(dependency);</span>
+<span class="lineNum">       9 </span><span class="lineCov">       1008 :         auto &amp; iDeps = inverseDependencies[dependency];</span>
+<span class="lineNum">      10 </span><span class="lineCov">       1008 :         iDeps.push_back(subject);</span>
+<a name="11"><span class="lineNum">      11 </span><span class="lineCov">       1008 : }</span></a>
 <span class="lineNum">      12 </span>            : 
-<span class="lineNum">      13 </span><span class="lineCov">        154 : bool Susi::System::ComponentManager::loadComponent(std::string name){</span>
-<span class="lineNum">      14 </span><span class="lineCov">        154 :         if(components.find(name) == components.end() &amp;&amp; registerFunctions[name]){</span>
-<span class="lineNum">      15 </span><span class="lineCov">        153 :                 ComponentData data;</span>
-<span class="lineNum">      16 </span><span class="lineCov">        153 :                 if(config[name].isNull()){</span>
+<span class="lineNum">      13 </span><span class="lineCov">        162 : bool Susi::System::ComponentManager::loadComponent(std::string name){</span>
+<span class="lineNum">      14 </span><span class="lineCov">        162 :         if(components.find(name) == components.end() &amp;&amp; registerFunctions[name]){</span>
+<span class="lineNum">      15 </span><span class="lineCov">        161 :                 ComponentData data;</span>
+<span class="lineNum">      16 </span><span class="lineCov">        161 :                 if(config[name].isNull()){</span>
 <span class="lineNum">      17 </span><span class="lineCov">          2 :                         Susi::Logger::debug(&quot;cant find config for component &quot;+name);</span>
 <span class="lineNum">      18 </span><span class="lineCov">          2 :                         return false;</span>
 <span class="lineNum">      19 </span>            :                 }
-<span class="lineNum">      20 </span><span class="lineCov">        151 :                 data.component = registerFunctions[name](this,config[name]);</span>
-<span class="lineNum">      21 </span><span class="lineCov">        151 :                 components[name] = data;</span>
-<span class="lineNum">      22 </span><span class="lineCov">        151 :                 Susi::Logger::debug(&quot;loaded component &quot;+name+&quot;!&quot;);</span>
-<span class="lineNum">      23 </span><span class="lineCov">        151 :                 return true;</span>
+<span class="lineNum">      20 </span><span class="lineCov">        159 :                 data.component = registerFunctions[name](this,config[name]);</span>
+<span class="lineNum">      21 </span><span class="lineCov">        159 :                 components[name] = data;</span>
+<span class="lineNum">      22 </span><span class="lineCov">        159 :                 Susi::Logger::debug(&quot;loaded component &quot;+name+&quot;!&quot;);</span>
+<span class="lineNum">      23 </span><span class="lineCov">        159 :                 return true;</span>
 <span class="lineNum">      24 </span>            :         }else{
 <span class="lineNum">      25 </span>            :                 //Susi::Logger::debug(&quot;cant find register-function for component &quot;+name);
 <span class="lineNum">      26 </span>            :         }
@@ -99,42 +99,42 @@
 <span class="lineNum">      37 </span><span class="lineCov">          1 :         return true;</span>
 <a name="38"><span class="lineNum">      38 </span>            : }</a>
 <span class="lineNum">      39 </span>            : 
-<span class="lineNum">      40 </span><span class="lineCov">        176 : bool Susi::System::ComponentManager::startComponent(std::string name){</span>
-<span class="lineNum">      41 </span><span class="lineCov">        176 :         Susi::Logger::debug(&quot;starting component &quot;+name+&quot;...&quot;);</span>
-<span class="lineNum">      42 </span><span class="lineCov">        176 :         if(components.find(name) == components.end() &amp;&amp; !loadComponent(name)){</span>
+<span class="lineNum">      40 </span><span class="lineCov">        184 : bool Susi::System::ComponentManager::startComponent(std::string name){</span>
+<span class="lineNum">      41 </span><span class="lineCov">        184 :         Susi::Logger::debug(&quot;starting component &quot;+name+&quot;...&quot;);</span>
+<span class="lineNum">      42 </span><span class="lineCov">        184 :         if(components.find(name) == components.end() &amp;&amp; !loadComponent(name)){</span>
 <span class="lineNum">      43 </span><span class="lineCov">          2 :                 Susi::Logger::debug(&quot;can't start component &quot;+name+&quot;, component is not loadable.&quot;);</span>
 <span class="lineNum">      44 </span><span class="lineCov">          2 :                 return false;</span>
 <span class="lineNum">      45 </span>            :         }
-<span class="lineNum">      46 </span><span class="lineCov">        174 :         auto &amp; data = components[name];</span>
-<span class="lineNum">      47 </span><span class="lineCov">        174 :         if(data.running){</span>
+<span class="lineNum">      46 </span><span class="lineCov">        182 :         auto &amp; data = components[name];</span>
+<span class="lineNum">      47 </span><span class="lineCov">        182 :         if(data.running){</span>
 <span class="lineNum">      48 </span><span class="lineCov">         29 :                 Susi::Logger::debug(&quot;can't start component &quot;+name+&quot;, component is allready ruuning.&quot;);</span>
 <span class="lineNum">      49 </span><span class="lineCov">         29 :                 return false;</span>
 <span class="lineNum">      50 </span>            :         }
-<span class="lineNum">      51 </span><span class="lineCov">        251 :         for(std::string &amp; dep : dependencies[name]){</span>
-<span class="lineNum">      52 </span><span class="lineCov">        107 :                 Susi::Logger::debug(&quot;need dependency &quot;+dep);</span>
-<span class="lineNum">      53 </span><span class="lineCov">        107 :                 startComponent(dep);</span>
-<span class="lineNum">      54 </span><span class="lineCov">        107 :                 if(components.find(dep) == components.end() || !components[dep].running){</span>
+<span class="lineNum">      51 </span><span class="lineCov">        263 :         for(std::string &amp; dep : dependencies[name]){</span>
+<span class="lineNum">      52 </span><span class="lineCov">        111 :                 Susi::Logger::debug(&quot;need dependency &quot;+dep);</span>
+<span class="lineNum">      53 </span><span class="lineCov">        111 :                 startComponent(dep);</span>
+<span class="lineNum">      54 </span><span class="lineCov">        111 :                 if(components.find(dep) == components.end() || !components[dep].running){</span>
 <span class="lineNum">      55 </span><span class="lineCov">          1 :                         Susi::Logger::debug(&quot;can't start component &quot;+name+&quot;, dependency &quot;+dep+&quot; is not startable.&quot;);</span>
 <span class="lineNum">      56 </span><span class="lineCov">          1 :                         return false;</span>
 <span class="lineNum">      57 </span>            :                 }
 <span class="lineNum">      58 </span>            :         }
-<span class="lineNum">      59 </span><span class="lineCov">        144 :         data.component-&gt;start();</span>
-<span class="lineNum">      60 </span><span class="lineCov">        144 :         data.running = true;</span>
-<span class="lineNum">      61 </span><span class="lineCov">        144 :         Susi::Logger::debug(&quot;started component &quot;+name+&quot;!&quot;);</span>
-<span class="lineNum">      62 </span><span class="lineCov">        144 :         return true;</span>
+<span class="lineNum">      59 </span><span class="lineCov">        152 :         data.component-&gt;start();</span>
+<span class="lineNum">      60 </span><span class="lineCov">        152 :         data.running = true;</span>
+<span class="lineNum">      61 </span><span class="lineCov">        152 :         Susi::Logger::debug(&quot;started component &quot;+name+&quot;!&quot;);</span>
+<span class="lineNum">      62 </span><span class="lineCov">        152 :         return true;</span>
 <a name="63"><span class="lineNum">      63 </span>            : }</a>
 <span class="lineNum">      64 </span>            : 
-<span class="lineNum">      65 </span><span class="lineCov">        288 : bool Susi::System::ComponentManager::stopComponent(std::string name){</span>
-<span class="lineNum">      66 </span><span class="lineCov">        288 :         if(components.find(name) == components.end() || components[name].running == false) {</span>
-<span class="lineNum">      67 </span><span class="lineCov">        215 :                 return false;</span>
+<span class="lineNum">      65 </span><span class="lineCov">        296 : bool Susi::System::ComponentManager::stopComponent(std::string name){</span>
+<span class="lineNum">      66 </span><span class="lineCov">        296 :         if(components.find(name) == components.end() || components[name].running == false) {</span>
+<span class="lineNum">      67 </span><span class="lineCov">        219 :                 return false;</span>
 <span class="lineNum">      68 </span>            :         }
-<span class="lineNum">      69 </span><span class="lineCov">        254 :         for(std::string &amp; iDep : inverseDependencies[name]){</span>
-<span class="lineNum">      70 </span><span class="lineCov">        181 :                 stopComponent(iDep);</span>
+<span class="lineNum">      69 </span><span class="lineCov">        262 :         for(std::string &amp; iDep : inverseDependencies[name]){</span>
+<span class="lineNum">      70 </span><span class="lineCov">        185 :                 stopComponent(iDep);</span>
 <span class="lineNum">      71 </span>            :         }
-<span class="lineNum">      72 </span><span class="lineCov">         73 :         components[name].component-&gt;stop();</span>
-<span class="lineNum">      73 </span><span class="lineCov">         73 :         components[name].running = false;</span>
+<span class="lineNum">      72 </span><span class="lineCov">         77 :         components[name].component-&gt;stop();</span>
+<span class="lineNum">      73 </span><span class="lineCov">         77 :         components[name].running = false;</span>
 <span class="lineNum">      74 </span>            : 
-<span class="lineNum">      75 </span><span class="lineCov">         73 :         return true;</span>
+<span class="lineNum">      75 </span><span class="lineCov">         77 :         return true;</span>
 <span class="lineNum">      76 </span>            : }
 <a name="77"><span class="lineNum">      77 </span>            : </a>
 <span class="lineNum">      78 </span>            : 

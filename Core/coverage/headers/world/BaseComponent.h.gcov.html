@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-22 15:15:52</td>
+            <td class="headerValue">2014-09-23 11:42:00</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">7</td>
@@ -83,30 +83,30 @@
 <span class="lineNum">      21 </span>            : namespace Susi {
 <a name="22"><span class="lineNum">      22 </span>            : namespace System {</a>
 <span class="lineNum">      23 </span>            : 
-<span class="lineNum">      24 </span><span class="lineCov">         83 : class BaseComponent : public Component {</span>
+<span class="lineNum">      24 </span><span class="lineCov">         87 : class BaseComponent : public Component {</span>
 <span class="lineNum">      25 </span>            : protected:
 <span class="lineNum">      26 </span>            :         ComponentManager * componentManager;
 <span class="lineNum">      27 </span>            :         std::shared_ptr&lt;Susi::Events::ManagerComponent&gt; eventManager;
 <span class="lineNum">      28 </span>            :         std::vector&lt;long&gt; evtIdPool;
 <a name="29"><span class="lineNum">      29 </span>            : </a>
 <span class="lineNum">      30 </span>            : public:
-<span class="lineNum">      31 </span><span class="lineCov">         83 :         BaseComponent(ComponentManager * manager) : componentManager{manager} {</span>
-<a name="32"><span class="lineNum">      32 </span><span class="lineCov">         83 :                 eventManager = componentManager-&gt;getComponent&lt;Susi::Events::ManagerComponent&gt;(&quot;eventsystem&quot;);</span></a>
-<span class="lineNum">      33 </span><span class="lineCov">         83 :         }</span>
-<span class="lineNum">      34 </span><span class="lineCov">        270 :         long subscribe(std::string topic, Susi::Events::Processor processor){</span>
-<span class="lineNum">      35 </span><span class="lineCov">        270 :                 long id = eventManager-&gt;subscribe(topic,std::move(processor));</span>
-<span class="lineNum">      36 </span><span class="lineCov">        270 :                 evtIdPool.push_back(id);</span>
-<span class="lineNum">      37 </span><span class="lineCov">        270 :                 return id;</span>
+<span class="lineNum">      31 </span><span class="lineCov">         87 :         BaseComponent(ComponentManager * manager) : componentManager{manager} {</span>
+<a name="32"><span class="lineNum">      32 </span><span class="lineCov">         87 :                 eventManager = componentManager-&gt;getComponent&lt;Susi::Events::ManagerComponent&gt;(&quot;eventsystem&quot;);</span></a>
+<span class="lineNum">      33 </span><span class="lineCov">         87 :         }</span>
+<span class="lineNum">      34 </span><span class="lineCov">        294 :         long subscribe(std::string topic, Susi::Events::Processor processor){</span>
+<span class="lineNum">      35 </span><span class="lineCov">        294 :                 long id = eventManager-&gt;subscribe(topic,std::move(processor));</span>
+<span class="lineNum">      36 </span><span class="lineCov">        294 :                 evtIdPool.push_back(id);</span>
+<span class="lineNum">      37 </span><span class="lineCov">        294 :                 return id;</span>
 <span class="lineNum">      38 </span>            :         }
 <span class="lineNum">      39 </span>            :         long subscribe(Susi::Events::Predicate pred, Susi::Events::Processor processor){
 <span class="lineNum">      40 </span>            :                 long id = eventManager-&gt;subscribe(pred,std::move(processor));
 <span class="lineNum">      41 </span>            :                 evtIdPool.push_back(id);
 <a name="42"><span class="lineNum">      42 </span>            :                 return id;</a>
 <span class="lineNum">      43 </span>            :         }
-<span class="lineNum">      44 </span><span class="lineCov">         20 :         long subscribe(std::string topic, Susi::Events::Consumer consumer){</span>
-<span class="lineNum">      45 </span><span class="lineCov">         20 :                 long id = eventManager-&gt;subscribe(topic,std::move(consumer));</span>
-<span class="lineNum">      46 </span><span class="lineCov">         20 :                 evtIdPool.push_back(id);</span>
-<span class="lineNum">      47 </span><span class="lineCov">         20 :                 return id;</span>
+<span class="lineNum">      44 </span><span class="lineCov">         24 :         long subscribe(std::string topic, Susi::Events::Consumer consumer){</span>
+<span class="lineNum">      45 </span><span class="lineCov">         24 :                 long id = eventManager-&gt;subscribe(topic,std::move(consumer));</span>
+<span class="lineNum">      46 </span><span class="lineCov">         24 :                 evtIdPool.push_back(id);</span>
+<span class="lineNum">      47 </span><span class="lineCov">         24 :                 return id;</span>
 <span class="lineNum">      48 </span>            :         }
 <span class="lineNum">      49 </span>            :         long subscribe(Susi::Events::Predicate pred, Susi::Events::Consumer consumer){
 <span class="lineNum">      50 </span>            :                 long id = eventManager-&gt;subscribe(pred,std::move(consumer));
@@ -124,20 +124,20 @@
 <span class="lineNum">      62 </span>            :         }
 <a name="63"><span class="lineNum">      63 </span>            : </a>
 <span class="lineNum">      64 </span>            : 
-<span class="lineNum">      65 </span><span class="lineCov">        100 :         bool unsubscribeAll(){</span>
+<span class="lineNum">      65 </span><span class="lineCov">        108 :         bool unsubscribeAll(){</span>
 <span class="lineNum">      66 </span>            : 
-<span class="lineNum">      67 </span><span class="lineCov">        100 :                 bool result = true;</span>
+<span class="lineNum">      67 </span><span class="lineCov">        108 :                 bool result = true;</span>
 <span class="lineNum">      68 </span>            : 
-<span class="lineNum">      69 </span><span class="lineCov">        390 :                 for (auto id : evtIdPool)</span>
+<span class="lineNum">      69 </span><span class="lineCov">        426 :                 for (auto id : evtIdPool)</span>
 <span class="lineNum">      70 </span>            :                 {
-<span class="lineNum">      71 </span><span class="lineCov">        290 :                         if(eventManager-&gt;unsubscribe(id) == false) {</span>
+<span class="lineNum">      71 </span><span class="lineCov">        318 :                         if(eventManager-&gt;unsubscribe(id) == false) {</span>
 <span class="lineNum">      72 </span><span class="lineNoCov">          0 :                                 result = false;</span>
 <span class="lineNum">      73 </span>            :                         }
 <span class="lineNum">      74 </span>            :                 }
 <span class="lineNum">      75 </span>            : 
-<span class="lineNum">      76 </span><span class="lineCov">        100 :                 evtIdPool.clear();</span>
+<span class="lineNum">      76 </span><span class="lineCov">        108 :                 evtIdPool.clear();</span>
 <span class="lineNum">      77 </span>            : 
-<span class="lineNum">      78 </span><span class="lineCov">        100 :                 return result;</span>
+<span class="lineNum">      78 </span><span class="lineCov">        108 :                 return result;</span>
 <span class="lineNum">      79 </span>            :         }
 <span class="lineNum">      80 </span>            : 
 <span class="lineNum">      81 </span>            : };

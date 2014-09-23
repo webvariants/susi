@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-22 15:15:52</td>
+            <td class="headerValue">2014-09-23 11:42:00</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">15</td>
@@ -82,7 +82,7 @@
 <span class="lineNum">      20 </span>            : 
 <a name="21"><span class="lineNum">      21 </span>            : typedef std::pair&lt;std::string,std::string&gt; Header;</a>
 <span class="lineNum">      22 </span>            : 
-<span class="lineNum">      23 </span><span class="lineCov">        109 : class Event {</span>
+<span class="lineNum">      23 </span><span class="lineCov">        110 : class Event {</span>
 <span class="lineNum">      24 </span>            : protected:
 <span class="lineNum">      25 </span>            : public:
 <span class="lineNum">      26 </span>            :         long id = 0;
@@ -93,10 +93,10 @@
 <span class="lineNum">      31 </span>            :         Event(){
 <a name="32"><span class="lineNum">      32 </span>            :                 id = std::chrono::system_clock::now().time_since_epoch().count();</a>
 <span class="lineNum">      33 </span>            :         }
-<span class="lineNum">      34 </span><span class="lineCov">        108 :         Event(std::string topic_) {</span>
-<span class="lineNum">      35 </span><span class="lineCov">        108 :                 id = std::chrono::system_clock::now().time_since_epoch().count();</span>
-<a name="36"><span class="lineNum">      36 </span><span class="lineCov">        108 :                 topic = topic_;</span></a>
-<span class="lineNum">      37 </span><span class="lineCov">        108 :         }</span>
+<span class="lineNum">      34 </span><span class="lineCov">        109 :         Event(std::string topic_) {</span>
+<span class="lineNum">      35 </span><span class="lineCov">        109 :                 id = std::chrono::system_clock::now().time_since_epoch().count();</span>
+<a name="36"><span class="lineNum">      36 </span><span class="lineCov">        109 :                 topic = topic_;</span></a>
+<span class="lineNum">      37 </span><span class="lineCov">        109 :         }</span>
 <span class="lineNum">      38 </span><span class="lineNoCov">          0 :         Event(const Event &amp; other){</span>
 <span class="lineNum">      39 </span><span class="lineNoCov">          0 :                 id = other.id;</span>
 <span class="lineNum">      40 </span><span class="lineNoCov">          0 :                 topic = other.topic;</span>
@@ -155,8 +155,8 @@
 <span class="lineNum">      93 </span><span class="lineCov">          1 :         inline std::string getTopic(){</span>
 <a name="94"><span class="lineNum">      94 </span><span class="lineCov">          1 :                 return topic;</span></a>
 <span class="lineNum">      95 </span>            :         }
-<span class="lineNum">      96 </span><span class="lineCov">         20 :         inline std::vector&lt;Header&gt; &amp; getHeaders(){</span>
-<a name="97"><span class="lineNum">      97 </span><span class="lineCov">         20 :                 return headers;</span></a>
+<span class="lineNum">      96 </span><span class="lineCov">         21 :         inline std::vector&lt;Header&gt; &amp; getHeaders(){</span>
+<a name="97"><span class="lineNum">      97 </span><span class="lineCov">         21 :                 return headers;</span></a>
 <span class="lineNum">      98 </span>            :         }
 <span class="lineNum">      99 </span><span class="lineCov">         17 :         inline Susi::Util::Any &amp; getPayload(){</span>
 <span class="lineNum">     100 </span><span class="lineCov">         17 :                 return payload;</span>
