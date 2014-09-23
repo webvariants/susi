@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-23 11:42:00</td>
+            <td class="headerValue">2014-09-23 14:29:58</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">7</td>
@@ -62,45 +62,45 @@
 <pre class="source">
 <a name="1"><span class="lineNum">       1 </span>            : #include &quot;util/ThreadPool.h&quot;</a>
 <span class="lineNum">       2 </span>            : 
-<span class="lineNum">       3 </span><span class="lineCov">         63 : Susi::Util::ThreadPool::ThreadPool(size_t workers, size_t buffsize) : _workChannel{buffsize} {</span>
-<span class="lineNum">       4 </span><span class="lineCov">        315 :         for(size_t i=0; (i&lt;workers); ++i){</span>
-<span class="lineNum">       5 </span><span class="lineCov">        252 :                 startThread();</span>
+<span class="lineNum">       3 </span><span class="lineCov">         68 : Susi::Util::ThreadPool::ThreadPool(size_t workers, size_t buffsize) : _workChannel{buffsize} {</span>
+<span class="lineNum">       4 </span><span class="lineCov">        340 :         for(size_t i=0; (i&lt;workers); ++i){</span>
+<span class="lineNum">       5 </span><span class="lineCov">        272 :                 startThread();</span>
 <span class="lineNum">       6 </span>            :         }
-<a name="7"><span class="lineNum">       7 </span><span class="lineCov">         63 : }</span></a>
+<a name="7"><span class="lineNum">       7 </span><span class="lineCov">         68 : }</span></a>
 <a name="8"><span class="lineNum">       8 </span>            : </a>
-<span class="lineNum">       9 </span><span class="lineCov">        252 : void Susi::Util::ThreadPool::startThread(){</span>
-<span class="lineNum">      10 </span><span class="lineCov">       1565 :         std::thread t{[this](){</span>
+<span class="lineNum">       9 </span><span class="lineCov">        272 : void Susi::Util::ThreadPool::startThread(){</span>
+<span class="lineNum">      10 </span><span class="lineCov">       1680 :         std::thread t{[this](){</span>
 <span class="lineNum">      11 </span>            :                 while(true){
-<span class="lineNum">      12 </span><span class="lineCov">       1565 :                         Work work;</span>
+<span class="lineNum">      12 </span><span class="lineCov">       1680 :                         Work work;</span>
 <span class="lineNum">      13 </span>            :                         try{
-<span class="lineNum">      14 </span><span class="lineCov">       1568 :                                 work = this-&gt;_workChannel.get();</span>
-<span class="lineNum">      15 </span><span class="lineCov">        504 :                         }catch(const std::exception &amp; e){</span>
+<span class="lineNum">      14 </span><span class="lineCov">       1682 :                                 work = this-&gt;_workChannel.get();</span>
+<span class="lineNum">      15 </span><span class="lineCov">        544 :                         }catch(const std::exception &amp; e){</span>
 <span class="lineNum">      16 </span>            :                                 //std::cout&lt;&lt;&quot;error in worker: &quot;&lt;&lt;e.what()&lt;&lt;std::endl;
-<span class="lineNum">      17 </span><span class="lineCov">        504 :                                 return;</span>
+<span class="lineNum">      17 </span><span class="lineCov">        544 :                                 return;</span>
 <span class="lineNum">      18 </span>            :                         }
 <span class="lineNum">      19 </span>            :                         try{
-<span class="lineNum">      20 </span><span class="lineCov">       1318 :                                 work.work();</span>
+<span class="lineNum">      20 </span><span class="lineCov">       1412 :                                 work.work();</span>
 <span class="lineNum">      21 </span><span class="lineCov">          1 :                         }catch(const std::exception &amp; e){</span>
 <span class="lineNum">      22 </span><span class="lineCov">          1 :                                 if(work.error) {</span>
 <span class="lineNum">      23 </span><span class="lineNoCov">          0 :                                         work.error(e.what());</span>
 <span class="lineNum">      24 </span>            :                                 }
 <span class="lineNum">      25 </span>            :                         }
-<span class="lineNum">      26 </span><span class="lineCov">       1317 :                 }</span>
-<span class="lineNum">      27 </span><span class="lineCov">       1569 :         }};</span>
-<span class="lineNum">      28 </span><span class="lineCov">        252 :         _threads.push_back(std::move(t));</span>
-<a name="29"><span class="lineNum">      29 </span><span class="lineCov">        252 : }</span></a>
+<span class="lineNum">      26 </span><span class="lineCov">       1412 :                 }</span>
+<span class="lineNum">      27 </span><span class="lineCov">       1684 :         }};</span>
+<span class="lineNum">      28 </span><span class="lineCov">        272 :         _threads.push_back(std::move(t));</span>
+<a name="29"><span class="lineNum">      29 </span><span class="lineCov">        272 : }</span></a>
 <span class="lineNum">      30 </span>            : 
-<span class="lineNum">      31 </span><span class="lineCov">       1318 : void Susi::Util::ThreadPool::add(std::function&lt;void()&gt; work,</span>
+<span class="lineNum">      31 </span><span class="lineCov">       1412 : void Susi::Util::ThreadPool::add(std::function&lt;void()&gt; work,</span>
 <span class="lineNum">      32 </span>            :                                                                  std::function&lt;void(std::string)&gt; error){
-<span class="lineNum">      33 </span><span class="lineCov">       1318 :         _workChannel.put(Work{work,error});</span>
-<a name="34"><span class="lineNum">      34 </span><span class="lineCov">       1318 : }</span></a>
+<span class="lineNum">      33 </span><span class="lineCov">       1412 :         _workChannel.put(Work{work,error});</span>
+<a name="34"><span class="lineNum">      34 </span><span class="lineCov">       1412 : }</span></a>
 <span class="lineNum">      35 </span>            : 
-<span class="lineNum">      36 </span><span class="lineCov">        126 : Susi::Util::ThreadPool::~ThreadPool(){</span>
-<span class="lineNum">      37 </span><span class="lineCov">         63 :         _workChannel.close();</span>
-<span class="lineNum">      38 </span><span class="lineCov">        315 :         for(auto &amp; t : _threads){</span>
-<a name="39"><span class="lineNum">      39 </span><span class="lineCov">        252 :                 t.join();</span></a>
+<span class="lineNum">      36 </span><span class="lineCov">        136 : Susi::Util::ThreadPool::~ThreadPool(){</span>
+<span class="lineNum">      37 </span><span class="lineCov">         68 :         _workChannel.close();</span>
+<span class="lineNum">      38 </span><span class="lineCov">        340 :         for(auto &amp; t : _threads){</span>
+<a name="39"><span class="lineNum">      39 </span><span class="lineCov">        272 :                 t.join();</span></a>
 <span class="lineNum">      40 </span>            :         }
-<span class="lineNum">      41 </span><span class="lineCov">         66 : }</span>
+<span class="lineNum">      41 </span><span class="lineCov">         71 : }</span>
 </pre>
       </td>
     </tr>

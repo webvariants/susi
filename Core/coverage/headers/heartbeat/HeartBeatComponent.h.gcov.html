@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-23 11:42:00</td>
+            <td class="headerValue">2014-09-23 14:29:58</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">5</td>
@@ -84,44 +84,44 @@
 <span class="lineNum">      22 </span>            :                 std::atomic&lt;bool&gt; stopVar;
 <a name="23"><span class="lineNum">      23 </span>            :                 std::thread t;</a>
 <span class="lineNum">      24 </span>            :         public:
-<span class="lineNum">      25 </span><span class="lineCov">          6 :                 HeartBeatComponent(System::ComponentManager * mgr) :</span>
+<span class="lineNum">      25 </span><span class="lineCov">         35 :                 HeartBeatComponent(System::ComponentManager * mgr) :</span>
 <span class="lineNum">      26 </span>            :                         System::BaseComponent{mgr},
-<a name="27"><span class="lineNum">      27 </span><span class="lineCov">          6 :                         stopVar{false} {}</span></a>
+<a name="27"><span class="lineNum">      27 </span><span class="lineCov">         35 :                         stopVar{false} {}</span></a>
 <span class="lineNum">      28 </span>            : 
-<span class="lineNum">      29 </span><span class="lineCov">         12 :                 ~HeartBeatComponent() {</span>
-<span class="lineNum">      30 </span><span class="lineCov">          6 :                         stop();</span>
-<a name="31"><span class="lineNum">      31 </span><span class="lineCov">          6 :                 }</span></a>
+<span class="lineNum">      29 </span><span class="lineCov">         70 :                 ~HeartBeatComponent() {</span>
+<span class="lineNum">      30 </span><span class="lineCov">         35 :                         stop();</span>
+<a name="31"><span class="lineNum">      31 </span><span class="lineCov">         35 :                 }</span></a>
 <span class="lineNum">      32 </span>            : 
-<a name="33"><span class="lineNum">      33 </span><span class="lineCov">          6 :                 virtual void start() override {</span></a>
-<span class="lineNum">      34 </span><span class="lineCov">          6 :                         t = std::move(std::thread{</span>
-<span class="lineNum">      35 </span><span class="lineCov">          6 :                                 [this](){</span>
-<span class="lineNum">      36 </span><span class="lineCov">          6 :                                         int count = 0;</span>
-<span class="lineNum">      37 </span><span class="lineCov">          6 :                                         std::chrono::seconds interval(1);</span>
-<span class="lineNum">      38 </span><span class="lineCov">         19 :                                         while(!this-&gt;stopVar.load()){</span>
-<span class="lineNum">      39 </span><span class="lineCov">          7 :                                                 ++count %= 300;</span>
-<span class="lineNum">      40 </span><span class="lineCov">          7 :                                                 publish(createEvent(&quot;heartbeat::one&quot;));</span>
-<span class="lineNum">      41 </span><span class="lineCov">          7 :                                                 if(count % 5 == 0){</span>
+<a name="33"><span class="lineNum">      33 </span><span class="lineCov">         35 :                 virtual void start() override {</span></a>
+<span class="lineNum">      34 </span><span class="lineCov">         35 :                         t = std::move(std::thread{</span>
+<span class="lineNum">      35 </span><span class="lineCov">         35 :                                 [this](){</span>
+<span class="lineNum">      36 </span><span class="lineCov">         35 :                                         int count = 0;</span>
+<span class="lineNum">      37 </span><span class="lineCov">         35 :                                         std::chrono::seconds interval(1);</span>
+<span class="lineNum">      38 </span><span class="lineCov">        108 :                                         while(!this-&gt;stopVar.load()){</span>
+<span class="lineNum">      39 </span><span class="lineCov">         38 :                                                 ++count %= 300;</span>
+<span class="lineNum">      40 </span><span class="lineCov">         38 :                                                 publish(createEvent(&quot;heartbeat::one&quot;));</span>
+<span class="lineNum">      41 </span><span class="lineCov">         38 :                                                 if(count % 5 == 0){</span>
 <span class="lineNum">      42 </span><span class="lineNoCov">          0 :                                                         publish(createEvent(&quot;heartbeat::five&quot;));</span>
 <span class="lineNum">      43 </span>            :                                                 }
-<span class="lineNum">      44 </span><span class="lineCov">          7 :                                                 if(count % 10 == 0){</span>
+<span class="lineNum">      44 </span><span class="lineCov">         38 :                                                 if(count % 10 == 0){</span>
 <span class="lineNum">      45 </span><span class="lineNoCov">          0 :                                                         publish(createEvent(&quot;heartbeat::ten&quot;));</span>
 <span class="lineNum">      46 </span>            :                                                 }
-<span class="lineNum">      47 </span><span class="lineCov">          7 :                                                 if(count % 60 == 0){</span>
+<span class="lineNum">      47 </span><span class="lineCov">         38 :                                                 if(count % 60 == 0){</span>
 <span class="lineNum">      48 </span><span class="lineNoCov">          0 :                                                         publish(createEvent(&quot;heartbeat::minute&quot;));</span>
 <span class="lineNum">      49 </span>            :                                                 }
-<span class="lineNum">      50 </span><span class="lineCov">          7 :                                                 if(count % 300 == 0){</span>
+<span class="lineNum">      50 </span><span class="lineCov">         38 :                                                 if(count % 300 == 0){</span>
 <span class="lineNum">      51 </span><span class="lineNoCov">          0 :                                                         publish(createEvent(&quot;heartbeat::fiveMinute&quot;));</span>
 <span class="lineNum">      52 </span>            :                                                 }
-<span class="lineNum">      53 </span><span class="lineCov">          7 :                                                 std::this_thread::sleep_for(interval);</span>
+<span class="lineNum">      53 </span><span class="lineCov">         38 :                                                 std::this_thread::sleep_for(interval);</span>
 <span class="lineNum">      54 </span>            :                                         }
-<span class="lineNum">      55 </span><span class="lineCov">          6 :                                 }</span>
-<span class="lineNum">      56 </span><span class="lineCov">         12 :                         });</span>
-<a name="57"><span class="lineNum">      57 </span><span class="lineCov">          6 :                 }</span></a>
+<span class="lineNum">      55 </span><span class="lineCov">         35 :                                 }</span>
+<span class="lineNum">      56 </span><span class="lineCov">         70 :                         });</span>
+<a name="57"><span class="lineNum">      57 </span><span class="lineCov">         35 :                 }</span></a>
 <span class="lineNum">      58 </span>            : 
-<span class="lineNum">      59 </span><span class="lineCov">          9 :                 virtual void stop() override {</span>
-<span class="lineNum">      60 </span><span class="lineCov">          9 :                         stopVar.store(true);</span>
-<span class="lineNum">      61 </span><span class="lineCov">          9 :                         if(t.joinable())t.join();</span>
-<span class="lineNum">      62 </span><span class="lineCov">          9 :                 }</span>
+<span class="lineNum">      59 </span><span class="lineCov">         43 :                 virtual void stop() override {</span>
+<span class="lineNum">      60 </span><span class="lineCov">         43 :                         stopVar.store(true);</span>
+<span class="lineNum">      61 </span><span class="lineCov">         43 :                         if(t.joinable())t.join();</span>
+<span class="lineNum">      62 </span><span class="lineCov">         43 :                 }</span>
 <span class="lineNum">      63 </span>            :         };
 <span class="lineNum">      64 </span>            : }
 <span class="lineNum">      65 </span>            : 

@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-23 11:42:00</td>
+            <td class="headerValue">2014-09-23 14:29:58</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">4</td>
@@ -94,27 +94,27 @@
 <span class="lineNum">      32 </span>            : 
 <a name="33"><span class="lineNum">      33 </span>            :         std::string _addr;</a>
 <span class="lineNum">      34 </span>            : public:
-<span class="lineNum">      35 </span><span class="lineCov">          4 :         HttpServerComponent (Susi::System::ComponentManager * mgr, std::string addr,std::string assetRoot) :</span>
+<span class="lineNum">      35 </span><span class="lineCov">          5 :         HttpServerComponent (Susi::System::ComponentManager * mgr, std::string addr,std::string assetRoot,std::string uploadDirectory) :</span>
 <span class="lineNum">      36 </span>            :                 Susi::System::BaseComponent{mgr},
 <span class="lineNum">      37 </span>            :                 _api{mgr-&gt;getComponent&lt;Susi::Api::ApiServerComponent&gt;(&quot;apiserver&quot;)},
 <span class="lineNum">      38 </span>            :                 address(addr),
 <span class="lineNum">      39 </span>            :                 serverSocket(address),
-<span class="lineNum">      40 </span><span class="lineCov">          4 :                 server(new RequestHandlerFactory(assetRoot, _api, mgr-&gt;getComponent&lt;Susi::Sessions::SessionManagerComponent&gt;(&quot;sessionmanager&quot;)),serverSocket,new Poco::Net::HTTPServerParams)</span>
+<span class="lineNum">      40 </span><span class="lineCov">          5 :                 server(new RequestHandlerFactory(assetRoot, uploadDirectory, _api, mgr-&gt;getComponent&lt;Susi::Sessions::SessionManagerComponent&gt;(&quot;sessionmanager&quot;)),serverSocket,new Poco::Net::HTTPServerParams)</span>
 <span class="lineNum">      41 </span>            :         {
-<span class="lineNum">      42 </span><span class="lineCov">          4 :                         _addr = addr;</span>
-<a name="43"><span class="lineNum">      43 </span><span class="lineCov">          4 :         }</span></a>
+<span class="lineNum">      42 </span><span class="lineCov">          5 :                         _addr = addr;</span>
+<a name="43"><span class="lineNum">      43 </span><span class="lineCov">          5 :         }</span></a>
 <span class="lineNum">      44 </span>            : 
-<span class="lineNum">      45 </span><span class="lineCov">          4 :         virtual void start() override {</span>
-<span class="lineNum">      46 </span><span class="lineCov">          4 :                 server.start();</span>
-<span class="lineNum">      47 </span><span class="lineCov">          4 :                 Susi::Logger::info(&quot;started HTTP server on addr &quot;+_addr);</span>
-<a name="48"><span class="lineNum">      48 </span><span class="lineCov">          4 :         }</span></a>
+<span class="lineNum">      45 </span><span class="lineCov">          5 :         virtual void start() override {</span>
+<span class="lineNum">      46 </span><span class="lineCov">          5 :                 server.start();</span>
+<span class="lineNum">      47 </span><span class="lineCov">          5 :                 Susi::Logger::info(&quot;started HTTP server on addr &quot;+_addr);</span>
+<a name="48"><span class="lineNum">      48 </span><span class="lineCov">          5 :         }</span></a>
 <span class="lineNum">      49 </span>            : 
-<span class="lineNum">      50 </span><span class="lineCov">          8 :         virtual void stop() override {</span>
-<a name="51"><span class="lineNum">      51 </span><span class="lineCov">          8 :                 server.stop();</span></a>
-<span class="lineNum">      52 </span><span class="lineCov">          8 :         }</span>
-<span class="lineNum">      53 </span><span class="lineCov">          8 :         ~HttpServerComponent() {</span>
-<span class="lineNum">      54 </span><span class="lineCov">          4 :                 stop();</span>
-<span class="lineNum">      55 </span><span class="lineCov">          4 :         }</span>
+<span class="lineNum">      50 </span><span class="lineCov">         10 :         virtual void stop() override {</span>
+<a name="51"><span class="lineNum">      51 </span><span class="lineCov">         10 :                 server.stop();</span></a>
+<span class="lineNum">      52 </span><span class="lineCov">         10 :         }</span>
+<span class="lineNum">      53 </span><span class="lineCov">         10 :         ~HttpServerComponent() {</span>
+<span class="lineNum">      54 </span><span class="lineCov">          5 :                 stop();</span>
+<span class="lineNum">      55 </span><span class="lineCov">          5 :         }</span>
 <span class="lineNum">      56 </span>            : };
 <span class="lineNum">      57 </span>            : 
 <span class="lineNum">      58 </span>            : }

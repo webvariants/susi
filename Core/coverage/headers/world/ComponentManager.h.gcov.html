@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-23 11:42:00</td>
+            <td class="headerValue">2014-09-23 14:29:58</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">17</td>
@@ -83,10 +83,10 @@
 <span class="lineNum">      21 </span>            : namespace Susi {
 <a name="22"><span class="lineNum">      22 </span>            : namespace System {</a>
 <span class="lineNum">      23 </span>            : 
-<span class="lineNum">      24 </span><span class="lineCov">         67 :         class ComponentManager {</span>
+<span class="lineNum">      24 </span><span class="lineCov">         72 :         class ComponentManager {</span>
 <a name="25"><span class="lineNum">      25 </span>            :         protected:</a>
 <span class="lineNum">      26 </span>            :                 typedef std::function&lt;std::shared_ptr&lt;Component&gt;(ComponentManager * mgr, Susi::Util::Any &amp; config)&gt; RegisterFunction;
-<span class="lineNum">      27 </span><span class="lineCov">        869 :                 struct ComponentData {</span>
+<span class="lineNum">      27 </span><span class="lineCov">       1080 :                 struct ComponentData {</span>
 <span class="lineNum">      28 </span>            :                         std::shared_ptr&lt;Component&gt; component{nullptr};
 <span class="lineNum">      29 </span>            :                         bool running = false;
 <span class="lineNum">      30 </span>            :                 };
@@ -97,7 +97,7 @@
 <span class="lineNum">      35 </span>            :                 std::map&lt;std::string,std::vector&lt;std::string&gt;&gt; inverseDependencies;
 <a name="36"><span class="lineNum">      36 </span>            :         public:</a>
 <span class="lineNum">      37 </span>            : 
-<span class="lineNum">      38 </span><span class="lineCov">         67 :                 ComponentManager(Susi::Util::Any::Object config) : config{config} {}</span>
+<span class="lineNum">      38 </span><span class="lineCov">         72 :                 ComponentManager(Susi::Util::Any::Object config) : config{config} {}</span>
 <span class="lineNum">      39 </span>            : 
 <span class="lineNum">      40 </span>            :                 void registerComponent(std::string name, RegisterFunction func);
 <span class="lineNum">      41 </span>            :                 void registerDependency(std::string subject, std::string dependency);
@@ -111,11 +111,11 @@
 <span class="lineNum">      49 </span>            :                 bool stopAll();
 <a name="50"><span class="lineNum">      50 </span>            : </a>
 <span class="lineNum">      51 </span>            :                 template&lt;class T=Component&gt;
-<span class="lineNum">      52 </span><span class="lineCov">        218 :                 std::shared_ptr&lt;T&gt; getComponent(std::string name){</span>
-<span class="lineNum">      53 </span><span class="lineCov">        218 :                         if(components.find(name) == components.end() &amp;&amp; !loadComponent(name)){</span>
+<span class="lineNum">      52 </span><span class="lineCov">        263 :                 std::shared_ptr&lt;T&gt; getComponent(std::string name){</span>
+<span class="lineNum">      53 </span><span class="lineCov">        263 :                         if(components.find(name) == components.end() &amp;&amp; !loadComponent(name)){</span>
 <span class="lineNum">      54 </span><span class="lineNoCov">          0 :                                 return std::shared_ptr&lt;T&gt;{};</span>
 <span class="lineNum">      55 </span>            :                         }
-<span class="lineNum">      56 </span><span class="lineCov">        218 :                         return std::dynamic_pointer_cast&lt;T&gt;(components[name].component);</span>
+<span class="lineNum">      56 </span><span class="lineCov">        263 :                         return std::dynamic_pointer_cast&lt;T&gt;(components[name].component);</span>
 <span class="lineNum">      57 </span>            :                 }
 <span class="lineNum">      58 </span>            :         };
 <span class="lineNum">      59 </span>            : }
