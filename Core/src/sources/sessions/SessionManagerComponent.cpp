@@ -1,7 +1,7 @@
 #include "sessions/SessionManagerComponent.h"
 
 
-void Susi::Sessions::SessionManagerComponent::handleCheckSessions(Susi::Events::SharedEventPtr event) {
+void Susi::Sessions::SessionManagerComponent::handleCheckSessions(Susi::Events::SharedEventPtr event) {	
 	checkSessions();
 }
 
@@ -25,6 +25,7 @@ void Susi::Sessions::SessionManagerComponent::handleSetAttribute(Susi::Events::E
 
 		event->payload["success"] = setSessionAttribute(sessionID, key, value);
 	}catch(const std::exception & e){
+		event->payload["success"] = false;
 		std::string msg = "Error in handleSessionSetAttribute(): ";
 		msg += e.what();
 		throw std::runtime_error(msg);
@@ -38,6 +39,7 @@ void Susi::Sessions::SessionManagerComponent::handlePushAttribute(Susi::Events::
 
 		event->payload["success"] = pushSessionAttribute(sessionID, key, value);
 	}catch(const std::exception & e){
+		event->payload["success"] = false;
 		std::string msg = "Error in handleSessionPushAttribute(): ";
 		msg += e.what();
 		throw std::runtime_error(msg);
@@ -50,6 +52,7 @@ void Susi::Sessions::SessionManagerComponent::handleRemoveAttribute(Susi::Events
 
 		event->payload["success"] = removeSessionAttribute(sessionID, key);
 	}catch(const std::exception & e){
+		event->payload["success"] = false;
 		std::string msg = "Error in handleSessionRemoveAttribute(): ";
 		msg += e.what();
 		throw std::runtime_error(msg);
@@ -72,6 +75,7 @@ void Susi::Sessions::SessionManagerComponent::handleUpdate(Susi::Events::EventPt
 
 		event->payload["success"] = true;
 	}catch(const std::exception & e){
+		event->payload["success"] = false;
 		std::string msg = "Error in handleUpdateSession(): ";
 		msg += e.what();
 		throw std::runtime_error(msg);
@@ -82,6 +86,7 @@ void Susi::Sessions::SessionManagerComponent::handleCheck(Susi::Events::EventPtr
 		std::string sessionID = event->payload["id"];
 		event->payload["success"] = checkSession(sessionID);
 	}catch(const std::exception & e){
+		event->payload["success"] = false;
 		std::string msg = "Error in handleCheckSession(): ";
 		msg += e.what();
 		throw std::runtime_error(msg);
