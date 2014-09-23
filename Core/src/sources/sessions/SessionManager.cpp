@@ -14,23 +14,14 @@
 
 using namespace Susi::Sessions;
 
-bool SessionManager::init(std::chrono::milliseconds stdSessionLifetime) {
+void SessionManager::init(std::chrono::milliseconds stdSessionLifetime) {
 	std::lock_guard<std::mutex> lock(mutex);
-	Susi::Logger::debug("init session manager. inited: "+std::to_string(initialized));
-	// Causes problem in tests, since we have a world object which does all the init stuff
-	// Second init fails...
-	if(initialized) {		
-		return false;
-	}
-
-	initialized = true;
+	
 	if(stdSessionLifetime.count() <= 0) {
 		stdLifetime = std::chrono::milliseconds(10000);
 	} else {
 		this->stdLifetime = stdSessionLifetime;
 	}
-	
-	return true;
 }
 
 SessionManager::~SessionManager(){}

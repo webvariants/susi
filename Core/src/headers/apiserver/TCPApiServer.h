@@ -38,7 +38,7 @@ protected:
 				collector{[this](std::string & msg){
 					std::cout<<"got message in server! "<<msg<<std::endl;
 					std::string s = sessionID;
-					auto message = Susi::Util::Any::fromString(msg);
+					auto message = Susi::Util::Any::fromJSONString(msg);
 					api.onMessage(s,message);
 				}} {
 			api.onConnect(sessionID);

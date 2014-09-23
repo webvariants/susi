@@ -232,7 +232,7 @@ TEST_F(ConfigTest, LoadAllStartStop){
 		"		\"c3\" : {}"
 		"	}";
 
-	Susi::Util::Any::Object config = Susi::Util::Any::fromString(test_config);
+	Susi::Util::Any::Object config = Susi::Util::Any::fromJSONString(test_config);
 
 	auto manager = std::make_shared<Susi::System::ComponentManager>(config);
 

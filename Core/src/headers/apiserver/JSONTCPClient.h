@@ -23,7 +23,7 @@ public:
 	JSONTCPClient(std::string addr) :
 		TCPClient{addr},
 		collector{[this](std::string & msg){
-			auto message = Susi::Util::Any::fromString(msg);
+			auto message = Susi::Util::Any::fromJSONString(msg);
 			//std::cout<<"got message in json client"<<std::endl;
 			this->onMessage(message);
 		}} {}
