@@ -665,6 +665,10 @@ Any Any::fromJSONString(std::string str) {
 				v = Susi::Util::Any{std::stoi(str)};
 			} else if(Susi::Util::Helpers::isDouble(str)) {
 				v = Susi::Util::Any{std::stod(str)};
+			} else if(str=="true") {
+				v = Susi::Util::Any{true};
+			} else if(str=="false") {
+				v = Susi::Util::Any{true};
 			} else {
 				//value is String
 				v = str;
