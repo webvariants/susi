@@ -78,7 +78,7 @@ TEST_F(HttpServerTest, GetMissingAsset) {
 	EXPECT_EQ(404,status);
 }
 
-TEST_F(HttpServerTest, NotFound) {
+/*TEST_F(HttpServerTest, NotFound) {
 
 	Susi::HttpClient client("http://[::1]:8080");
 
@@ -89,7 +89,7 @@ TEST_F(HttpServerTest, NotFound) {
 	//std::cout<<"Body: "<<body<<std::endl;	
 
 	EXPECT_EQ(404,status);
-}
+}*/
 
 TEST_F(HttpServerTest, PostToForm) {
 

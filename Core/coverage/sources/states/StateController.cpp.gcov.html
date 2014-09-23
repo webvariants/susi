@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-22 15:15:52</td>
+            <td class="headerValue">2014-09-23 11:42:00</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">10</td>
@@ -92,7 +92,7 @@
 <span class="lineNum">      30 </span><span class="lineCov">          1 :         Susi::IOController io;</span>
 <span class="lineNum">      31 </span><span class="lineCov">          2 :         std::string fileContent = io.readFile(fileLocation);</span>
 <span class="lineNum">      32 </span>            : 
-<span class="lineNum">      33 </span><span class="lineCov">          1 :         persistentStates = Susi::Util::Any::fromString(fileContent);</span>
+<span class="lineNum">      33 </span><span class="lineCov">          1 :         persistentStates = Susi::Util::Any::fromJSONString(fileContent);</span>
 <span class="lineNum">      34 </span><span class="lineCov">          2 :         return true;</span>
 <a name="35"><span class="lineNum">      35 </span>            : }</a>
 <span class="lineNum">      36 </span>            : 

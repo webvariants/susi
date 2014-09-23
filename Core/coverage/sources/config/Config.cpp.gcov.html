@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-22 15:15:52</td>
+            <td class="headerValue">2014-09-23 11:42:00</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">12</td>
@@ -96,7 +96,7 @@
 <span class="lineNum">      34 </span>            :                 }
 <span class="lineNum">      35 </span>            : 
 <span class="lineNum">      36 </span>            :                 try {
-<span class="lineNum">      37 </span><span class="lineCov">         13 :                         configVar = Susi::Util::Any::fromString(content);</span>
+<span class="lineNum">      37 </span><span class="lineCov">         13 :                         configVar = Susi::Util::Any::fromJSONString(content);</span>
 <span class="lineNum">      38 </span><span class="lineNoCov">          0 :                 } catch(const std::exception &amp; e){</span>
 <span class="lineNum">      39 </span><span class="lineNoCov">          0 :                         std::string msg = &quot;Susi::Config::loadConfig &quot;;</span>
 <span class="lineNum">      40 </span><span class="lineNoCov">          0 :                         msg += (&quot;File: &quot; + path + &quot; file cant be parsed as json!&quot;);</span>
@@ -217,7 +217,7 @@
 <span class="lineNum">     155 </span><span class="lineCov">         14 :                         Susi::Util::Helpers::split(key, '=', elems);</span>
 <span class="lineNum">     156 </span><span class="lineCov">         14 :                         if(elems.size() == 2) {</span>
 <span class="lineNum">     157 </span><span class="lineCov">          4 :                                 key = elems[0];</span>
-<span class="lineNum">     158 </span><span class="lineCov">          4 :                                 v   = Susi::Util::Any::fromString(elems[1]);</span>
+<span class="lineNum">     158 </span><span class="lineCov">          4 :                                 v   = Susi::Util::Any::fromJSONString(elems[1]);</span>
 <span class="lineNum">     159 </span><span class="lineCov">          4 :                                 set(key,v);</span>
 <span class="lineNum">     160 </span>            :                         } else {
 <span class="lineNum">     161 </span><span class="lineCov">         10 :                                 it = _knownCommandLineOptions.find(key);</span>
@@ -227,7 +227,7 @@
 <span class="lineNum">     165 </span>            : 
 <span class="lineNum">     166 </span><span class="lineCov">          3 :                                         if(i &lt; (argc-1) &amp;&amp; argv[i+1][0]!='-') {</span>
 <span class="lineNum">     167 </span><span class="lineCov">          3 :                                                 std::string value = argv[(i+1)];</span>
-<span class="lineNum">     168 </span><span class="lineCov">          3 :                                                 v = Susi::Util::Any::fromString(value);</span>
+<span class="lineNum">     168 </span><span class="lineCov">          3 :                                                 v = Susi::Util::Any::fromJSONString(value);</span>
 <span class="lineNum">     169 </span><span class="lineCov">          3 :                                                 i++;</span>
 <span class="lineNum">     170 </span>            :                                         }else{
 <span class="lineNum">     171 </span><span class="lineNoCov">          0 :                                                 v = Susi::Util::Any::Object{};</span>
@@ -238,7 +238,7 @@
 <span class="lineNum">     176 </span>            :                                 else {
 <span class="lineNum">     177 </span><span class="lineCov">          7 :                                         if(i &lt; (argc-1) &amp;&amp; argv[i+1][0]!='-') {</span>
 <span class="lineNum">     178 </span><span class="lineCov">          4 :                                                 std::string value = argv[(i+1)];</span>
-<span class="lineNum">     179 </span><span class="lineCov">          4 :                                                 v = Susi::Util::Any::fromString(value);</span>
+<span class="lineNum">     179 </span><span class="lineCov">          4 :                                                 v = Susi::Util::Any::fromJSONString(value);</span>
 <span class="lineNum">     180 </span><span class="lineCov">          4 :                                                 i++;</span>
 <span class="lineNum">     181 </span>            :                                         }else{
 <span class="lineNum">     182 </span><span class="lineCov">          3 :                                                 v = Susi::Util::Any::Object{};</span>

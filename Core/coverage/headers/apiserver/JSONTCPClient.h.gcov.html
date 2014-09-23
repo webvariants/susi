@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-22 15:15:52</td>
+            <td class="headerValue">2014-09-23 11:42:00</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">6</td>
@@ -85,7 +85,7 @@
 <a name="23"><span class="lineNum">      23 </span><span class="lineCov">          3 :         JSONTCPClient(std::string addr) :</span></a>
 <span class="lineNum">      24 </span>            :                 TCPClient{addr},
 <span class="lineNum">      25 </span><span class="lineCov">          2 :                 collector{[this](std::string &amp; msg){</span>
-<span class="lineNum">      26 </span><span class="lineCov">          2 :                         auto message = Susi::Util::Any::fromString(msg);</span>
+<span class="lineNum">      26 </span><span class="lineCov">          2 :                         auto message = Susi::Util::Any::fromJSONString(msg);</span>
 <span class="lineNum">      27 </span>            :                         //std::cout&lt;&lt;&quot;got message in json client&quot;&lt;&lt;std::endl;
 <a name="28"><span class="lineNum">      28 </span><span class="lineCov">          2 :                         this-&gt;onMessage(message);</span></a>
 <span class="lineNum">      29 </span><span class="lineCov">          5 :                 }} {}</span>
