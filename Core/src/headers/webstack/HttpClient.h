@@ -35,8 +35,12 @@ namespace Susi {
 			Poco::Net::HTTPClientSession _session;
 			//Poco::Net::NameValueCollection _cookies;
 			Poco::Net::HTTPResponse::HTTPStatus _status;
+			std::shared_ptr<Poco::Net::WebSocket> _websocket;
 			std::vector<std::pair<std::string,std::string>> _headers;
 		
+			Poco::Net::HTTPRequest ws_req{Poco::Net::HTTPRequest::HTTP_GET, "/ws", Poco::Net::HTTPMessage::HTTP_1_1};
+			Poco::Net::HTTPResponse ws_resp;
+
 			void parseResponse(Poco::Net::HTTPResponse & resp){
 				_status = resp.getStatus();
 				/*std::vector<Poco::Net::HTTPCookie> cookies;
@@ -80,7 +84,7 @@ namespace Susi {
 			}
 
 			std::string post(std::string path, std::string data){
-				Poco::Net::HTTPRequest req(Poco::Net::HTTPRequest::HTTP_GET, path, Poco::Net::HTTPMessage::HTTP_1_1);
+				Poco::Net::HTTPRequest req(Poco::Net::HTTPRequest::HTTP_POST, path, Poco::Net::HTTPMessage::HTTP_1_1);
 				//req.setCookies(_cookies);
 				for(auto & kv : _headers){
 					req.add(kv.first,kv.second);
@@ -95,9 +99,19 @@ namespace Susi {
 				return body;
 			}
 
-			void connectWebSocket(std::string socket);
-			void send(std::string data);
-			std::string recv();
+			void connectWebSocket(){
+				_websocket = std::make_shared<Poco::Net::WebSocket>(_session,ws_req,ws_resp);
+				parseResponse(ws_resp);
+			}
+			void send(std::string data){
+				_websocket->sendFrame(data.c_str(),data.size());
+			}
+			std::string recv(){
+				char buff[4096];
+				int flags;
+				size_t bs = _websocket->receiveFrame(buff,4096,flags);
+				return std::string{buff,bs};
+			}
 	};
 }
 

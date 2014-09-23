@@ -29,6 +29,10 @@ void Susi::SessionRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& re
 		auto cookie = Poco::Net::HTTPCookie{"susisession",id};
 		cookie.setPath("/");
 		response.addCookie(cookie);
+		Poco::Net::NameValueCollection cookies;
+		request.getCookies(cookies);
+		cookies.add("susisession",id);
+		request.setCookies(cookies);
 	}
 	try{
 		defaultHandler->handleRequest(request,response);

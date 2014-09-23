@@ -42,8 +42,6 @@ namespace Susi {
 					_name = params.get("name", "(unnamed)");
 					_fileName = params.get("filename", "(unnamed)");
 				}
-
-				std::cout<<"NAME:"<<_name<<" FILE:"<<_fileName<<std::endl;
 				
 				Poco::CountingInputStream istr(stream);
 

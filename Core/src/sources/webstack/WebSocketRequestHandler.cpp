@@ -17,6 +17,7 @@ Susi::WebSocketRequestHandler::WebSocketRequestHandler(std::shared_ptr<Susi::Api
 
 void Susi::WebSocketRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request,
                        							Poco::Net::HTTPServerResponse& response) {
+	Susi::Logger::debug("in ws handler");
 	Poco::Net::WebSocket socket(request,response);
 	Poco::Net::NameValueCollection cookies;
 	request.getCookies(cookies);

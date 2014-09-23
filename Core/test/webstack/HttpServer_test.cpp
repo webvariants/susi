@@ -44,9 +44,6 @@ TEST_F(HttpServerTest, GetAsset) {
 	auto body = client.get("/assets/test.txt");
 	int status = client.getStatus();
 
-	//std::cout<<"Status: "<<status<<std::endl;
-	//std::cout<<"Body: "<<body<<std::endl;
-
 	EXPECT_EQ(200,status);
 	EXPECT_EQ("foobar",body);
 }
@@ -57,9 +54,6 @@ TEST_F(HttpServerTest, GetSVGAsset) {
 
 	auto body = client.get("/assets/test.svg");
 	int status = client.getStatus();
-
-	//std::cout<<"Status: "<<status<<std::endl;
-	//std::cout<<"Body: "<<body<<std::endl;
 
 	EXPECT_EQ(200,status);
 	EXPECT_EQ("<?xml version=\"1.0\" encoding=\"UTF-8\"?>",body);
@@ -72,9 +66,6 @@ TEST_F(HttpServerTest, GetMissingAsset) {
 	auto body = client.get("/assets/wrong_test.txt");
 	status = client.getStatus();
 
-	//std::cout<<"Status: "<<status<<std::endl;
-	//std::cout<<"Body: "<<body<<std::endl;	
-
 	EXPECT_EQ(404,status);
 }
 
@@ -84,9 +75,6 @@ TEST_F(HttpServerTest, NotFound) {
 
 	auto body = client.get("/not/found");
 	status = client.getStatus();
-
-	//std::cout<<"Status: "<<status<<std::endl;
-	//std::cout<<"Body: "<<body<<std::endl;	
 
 	EXPECT_EQ(404,status);
 }
@@ -101,11 +89,33 @@ TEST_F(HttpServerTest, PostToForm) {
 							"\n"
 							"foobar\n"
 							"------WebKitFormBoundaryePkpFF7tjBAqx29L--\n";
-	std::cout<<postData<<std::endl;
 	auto body = client.post("/form",postData);
-
-	std::cout<<"Status: "<<client.getStatus()<<std::endl;
-	std::cout<<"Body: "<<body<<std::endl;
-
+	std::string expectedBody = "<html><head><title>SUSI</title></head> <body><h2>Upload</h2>\n<p style=\"text-align: center;font-size: 48px;\"></br></br></br>Name: uploadedfile<br>\nFile Name: hello.txt<br>\nType: application/x-object<br>\nSize: 6<br>\n</p></body></html>";
+	EXPECT_EQ(200,client.getStatus());
+	EXPECT_EQ(expectedBody,body);
 	
+}
+
+TEST_F(HttpServerTest, WebSocket) {
+	Susi::HttpClient client("http://[::1]:8080");
+	client.connectWebSocket();
+	EXPECT_EQ(101,client.getStatus());
+	Susi::Util::Any packet = Susi::Util::Any::Object{
+		{"type","publish"},
+		{"data",Susi::Util::Any::Object{
+			{"topic","foobar"}
+		}}
+	};
+	client.send(packet.toJSONString());
+	Susi::Util::Any resp1 = Susi::Util::Any::fromJSONString(client.recv());
+	Susi::Util::Any resp2 = Susi::Util::Any::fromJSONString(client.recv());
+	if(resp1["type"] == "ack"){
+		EXPECT_EQ(Susi::Util::Any{"foobar"},resp1["data"]["topic"]);
+		EXPECT_EQ(Susi::Util::Any{false},resp2["error"]);
+	}else{
+		EXPECT_EQ(Susi::Util::Any{false},resp1["error"]);
+		EXPECT_EQ(Susi::Util::Any{"status"},resp1["type"]);
+		EXPECT_EQ(Susi::Util::Any{"foobar"},resp2["data"]["topic"]);
+		EXPECT_EQ(Susi::Util::Any{"ack"},resp2["type"]);
+	}
 }

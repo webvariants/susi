@@ -101,7 +101,8 @@ protected:
 				"},"
 				"\"httpserver\": {"
 					"\"address\": \"[::1]:8080\","
-					"\"assets\": \""+path+"/assets\""
+					"\"assets\": \""+path+"/assets\","
+					"\"upload\": \""+path+"/uploads\""
 				"},"
 				"\"apiserver\": {}"
 			"}";
