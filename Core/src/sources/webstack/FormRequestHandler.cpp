@@ -9,8 +9,6 @@ void Susi::FormRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& reque
 		response.setContentType("text/html");
 
 		std::ostream& ostr = response.send();
-
-		std::cout<<"Susi::FormRequestHandler::handleRequest:"<<std::endl;
 		
 		if (!partHandler.name().empty())
 		{

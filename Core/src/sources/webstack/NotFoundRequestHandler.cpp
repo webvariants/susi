@@ -13,8 +13,6 @@
 
 void Susi::NotFoundRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request,
                        							Poco::Net::HTTPServerResponse& response) {
-	Poco::Util::Application& app = Poco::Util::Application::instance();
-	app.logger().information("Request from " + request.clientAddress().toString()+" "+request.getURI());
 	response.setChunkedTransferEncoding(true);
 	response.setContentType("text/html");
 	response.setStatus(Poco::Net::HTTPServerResponse::HTTPStatus::HTTP_NOT_FOUND);
