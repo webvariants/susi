@@ -56,7 +56,7 @@ public:
                 return new SessionRequestHandler(new CompabilityRequestHandler());
             }*/else if(request.getURI() == "/form"){
                 Susi::Logger::debug("using form handler");
-                return new SessionRequestHandler(new FormRequestHandler("./uploads/"), _sessionManager);
+                return new SessionRequestHandler(new FormRequestHandler(_uploadDirectory), _sessionManager);
             }else if(request.getURI() == "/"){
                 Susi::Logger::debug("using redirect handler");
             	return new SessionRequestHandler(new RedirectRequestHandler(), _sessionManager);

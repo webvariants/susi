@@ -102,7 +102,7 @@ protected:
 				"\"httpserver\": {"
 					"\"address\": \"[::1]:8080\","
 					"\"assets\": \""+path+"/assets\","
-					"\"upload\": \""+path+"/uploads\""
+					"\"upload\": \""+path+"/upload\""
 				"},"
 				"\"apiserver\": {}"
 			"}";

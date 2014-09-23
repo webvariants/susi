@@ -16,6 +16,7 @@ protected:
 	int status;
 	virtual void SetUp() override {
 		io.makeDir(base_path+"/assets");
+		io.makeDir(base_path+"/upload");
 		io.writeFile(base_path+"/assets/test.txt","foobar");
 		io.writeFile(base_path+"/assets/test.svg", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		componentManager->startComponent("httpserver");
