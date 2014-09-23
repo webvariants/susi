@@ -26,10 +26,7 @@ namespace Susi {
 
 	class MyPartHandler: public Poco::Net::PartHandler {
 		public:
-			MyPartHandler(std::string uploadDirectory): _length(0), _uploadDirectory(uploadDirectory) {
-
-
-			};
+			MyPartHandler(std::string uploadDirectory): _length(0), _uploadDirectory(uploadDirectory) {};
 		
 			void handlePart(const Poco::Net::MessageHeader& header, std::istream& stream)
 			{
@@ -42,12 +39,13 @@ namespace Susi {
 					_name = params.get("name", "(unnamed)");
 					_fileName = params.get("filename", "(unnamed)");
 				}
-
-				std::cout<<"NAME:"<<_name<<" FILE:"<<_fileName<<std::endl;
 				
+				Susi::Logger::debug("in part handler: name: "+_fileName);
+
 				Poco::CountingInputStream istr(stream);
 
 				if(_fileName != "") {
+					Susi::Logger::debug("target filepath: "+_uploadDirectory + _fileName);
 					Poco::FileOutputStream fos(_uploadDirectory + _fileName, std::ios::binary);
 					Poco::StreamCopier::copyStream(istr, fos);					
 					fos.close();

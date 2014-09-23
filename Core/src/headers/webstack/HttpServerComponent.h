@@ -32,12 +32,12 @@ protected:
 
 	std::string _addr;
 public:
-	HttpServerComponent (Susi::System::ComponentManager * mgr, std::string addr,std::string assetRoot) :
+	HttpServerComponent (Susi::System::ComponentManager * mgr, std::string addr,std::string assetRoot,std::string uploadDirectory) :
 		Susi::System::BaseComponent{mgr},
 		_api{mgr->getComponent<Susi::Api::ApiServerComponent>("apiserver")},
 		address(addr),
 		serverSocket(address),
-		server(new RequestHandlerFactory(assetRoot, _api, mgr->getComponent<Susi::Sessions::SessionManagerComponent>("sessionmanager")),serverSocket,new Poco::Net::HTTPServerParams)
+		server(new RequestHandlerFactory(assetRoot, uploadDirectory, _api, mgr->getComponent<Susi::Sessions::SessionManagerComponent>("sessionmanager")),serverSocket,new Poco::Net::HTTPServerParams)
 	{
 			_addr = addr;
 	}
