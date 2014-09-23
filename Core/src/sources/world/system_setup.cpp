@@ -109,6 +109,7 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 		return std::shared_ptr<Component>{new Susi::Sessions::SessionManagerComponent{mgr, lifetime}};
 	});
 	manager->registerDependency("sessionmanager","eventsystem");
+	manager->registerDependency("sessionmanager","heartbeat");
 
 	/**
 	 * Declare statecontroller
