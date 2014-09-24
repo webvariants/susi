@@ -26,15 +26,9 @@ protected:
 		componentManager->stopAll();
 	}
 
-	virtual void GoodCases() override {
-
-	}
-	virtual void BadCases() override {
-		
-	}
-	virtual void EdgeCases() override {
-		
-	}
+	virtual void GoodCases() override {}
+	virtual void BadCases() override {}
+	virtual void EdgeCases() override {}
 
 };
 
@@ -74,10 +68,10 @@ TEST_F(HttpServerTest, NotFound) {
 
 	Susi::HttpClient client("http://[::1]:8080");
 
-	auto body = client.get("/not/found");
+	client.get("/not/found");
 	status = client.getStatus();
 
-	EXPECT_EQ(404,status);
+	EXPECT_EQ(404,status);	
 }
 
 TEST_F(HttpServerTest, PostToForm) {
