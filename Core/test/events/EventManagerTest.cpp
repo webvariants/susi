@@ -380,3 +380,50 @@ TEST_F(EventManagerTest,StressTest){
 		EXPECT_TRUE(callbackCalledOne);
 	}
 }
+
+TEST_F(EventManagerTest, GlobTest){
+	long id = eventManager->subscribe("*",[this](EventPtr event){
+		callbackCalledOne = true;
+		condOne.notify_all();
+		eventManager->ack(std::move(event));
+	});
+	auto event = eventManager->createEvent("test");
+	eventManager->publish(std::move(event),[this](SharedEventPtr event){
+		callbackCalledTwo = true;
+		condTwo.notify_all();
+	});
+	{
+		// wait for handler callback
+		std::unique_lock<std::mutex> lk(mutex);
+		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		EXPECT_TRUE(callbackCalledOne);
+	}
+	{
+		// wait for finish callback
+		std::unique_lock<std::mutex> lk(mutex);
+		condTwo.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledTwo;});
+		EXPECT_TRUE(callbackCalledTwo);
+	}
+
+	eventManager->unsubscribe(id);
+	callbackCalledOne = false;
+	callbackCalledTwo = false;
+	
+	event = eventManager->createEvent("test");
+	eventManager->publish(std::move(event),[this](SharedEventPtr event){
+		callbackCalledTwo = true;
+		condTwo.notify_all();
+	});
+	{
+		// wait for handler callback
+		std::unique_lock<std::mutex> lk(mutex);
+		condOne.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		EXPECT_FALSE(callbackCalledOne);
+	}
+	{
+		// wait for finish callback
+		std::unique_lock<std::mutex> lk(mutex);
+		condTwo.wait_for(lk,std::chrono::milliseconds{100},[this](){return callbackCalledTwo;});
+		EXPECT_TRUE(callbackCalledTwo);
+	}
+}

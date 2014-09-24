@@ -1010,6 +1010,9 @@ TEST (Any, FromJSONString){
 	Any b = Any::fromJSONString("true");
 	EXPECT_EQ(Any{true}.toJSONString(), b.toJSONString());
 
+	Any c = Any::fromJSONString("false");
+	EXPECT_EQ(Any{false}.toJSONString(), c.toJSONString());
+
 	Any i = Any::fromJSONString("123");
 	EXPECT_EQ(Any{123}.toJSONString(), i.toJSONString());
 
@@ -1029,6 +1032,10 @@ TEST (Any, FromJSONString){
 	Any o = Any::fromJSONString("{\"first\": 1, \"second\": 2, \"third\": 3}");
 	Any o_test{Any::Object{{"first", 1},{"second", 2},{"third", 3}}};
 	EXPECT_EQ(o_test.toJSONString(), o.toJSONString());
+
+	Any x = Any::fromJSONString("{\"first\": 1, \"second\": 2, \"third\": 3");
+	EXPECT_TRUE(x.isNull());
+
 }
 
 TEST (Any, CopyConversionOperators){

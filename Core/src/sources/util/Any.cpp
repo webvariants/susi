@@ -668,7 +668,7 @@ Any Any::fromJSONString(std::string str) {
 			} else if(str=="true") {
 				v = Susi::Util::Any{true};
 			} else if(str=="false") {
-				v = Susi::Util::Any{true};
+				v = Susi::Util::Any{false};
 			} else {
 				//value is String
 				v = str;
