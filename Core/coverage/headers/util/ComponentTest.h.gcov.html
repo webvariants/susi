@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-23 14:29:58</td>
+            <td class="headerValue">2014-09-24 09:32:35</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">20</td>
@@ -191,11 +191,11 @@
 <span class="lineNum">     129 </span><span class="lineCov">          3 :         bool unsubscribe(long id){</span>
 <a name="130"><span class="lineNum">     130 </span><span class="lineCov">          3 :                 return eventManager-&gt;unsubscribe(id);</span></a>
 <span class="lineNum">     131 </span>            :         }
-<span class="lineNum">     132 </span><span class="lineCov">        100 :         void publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer{}){</span>
-<a name="133"><span class="lineNum">     133 </span><span class="lineCov">        100 :                 eventManager-&gt;publish(std::move(event),finishCallback);</span></a>
-<span class="lineNum">     134 </span><span class="lineCov">        100 :         }</span>
-<span class="lineNum">     135 </span><span class="lineCov">        100 :         Susi::Events::EventPtr createEvent(std::string topic){</span>
-<span class="lineNum">     136 </span><span class="lineCov">        100 :                 return eventManager-&gt;createEvent(topic);</span>
+<span class="lineNum">     132 </span><span class="lineCov">        107 :         void publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer{}){</span>
+<a name="133"><span class="lineNum">     133 </span><span class="lineCov">        107 :                 eventManager-&gt;publish(std::move(event),finishCallback);</span></a>
+<span class="lineNum">     134 </span><span class="lineCov">        107 :         }</span>
+<span class="lineNum">     135 </span><span class="lineCov">        107 :         Susi::Events::EventPtr createEvent(std::string topic){</span>
+<span class="lineNum">     136 </span><span class="lineCov">        107 :                 return eventManager-&gt;createEvent(topic);</span>
 <a name="137"><span class="lineNum">     137 </span>            :         }</a>
 <span class="lineNum">     138 </span>            : 
 <span class="lineNum">     139 </span><span class="lineCov">          2 :         Susi::Events::SharedEventPtr waitForConsumerEvent(std::string topic,std::chrono::milliseconds timeout){</span>
@@ -229,36 +229,36 @@
 <span class="lineNum">     167 </span><span class="lineCov">          1 :                 return std::move(event);</span>
 <a name="168"><span class="lineNum">     168 </span>            :         }</a>
 <span class="lineNum">     169 </span>            : 
-<span class="lineNum">     170 </span><span class="lineCov">         99 :         Susi::Events::SharedEventPtr publish_sync(Susi::Events::EventPtr event){</span>
-<span class="lineNum">     171 </span><span class="lineCov">         99 :                 Susi::Events::SharedEventPtr result;</span>
-<span class="lineNum">     172 </span><span class="lineCov">        198 :                 std::condition_variable cv;</span>
-<a name="173"><span class="lineNum">     173 </span><span class="lineCov">         99 :                 bool called = false;</span></a>
-<span class="lineNum">     174 </span><span class="lineCov">         99 :                 std::mutex mutex;</span>
-<span class="lineNum">     175 </span><span class="lineCov">        198 :                 publish(std::move(event),[&amp;cv, &amp;called, &amp;result](Susi::Events::SharedEventPtr evt){</span>
-<span class="lineNum">     176 </span><span class="lineCov">         99 :                         result = evt;</span>
-<span class="lineNum">     177 </span><span class="lineCov">         99 :                         called = true;</span>
-<span class="lineNum">     178 </span><span class="lineCov">         99 :                         cv.notify_one();</span>
-<span class="lineNum">     179 </span><span class="lineCov">        297 :                 });</span>
+<span class="lineNum">     170 </span><span class="lineCov">        106 :         Susi::Events::SharedEventPtr publish_sync(Susi::Events::EventPtr event){</span>
+<span class="lineNum">     171 </span><span class="lineCov">        106 :                 Susi::Events::SharedEventPtr result;</span>
+<span class="lineNum">     172 </span><span class="lineCov">        212 :                 std::condition_variable cv;</span>
+<a name="173"><span class="lineNum">     173 </span><span class="lineCov">        106 :                 bool called = false;</span></a>
+<span class="lineNum">     174 </span><span class="lineCov">        106 :                 std::mutex mutex;</span>
+<span class="lineNum">     175 </span><span class="lineCov">        212 :                 publish(std::move(event),[&amp;cv, &amp;called, &amp;result](Susi::Events::SharedEventPtr evt){</span>
+<span class="lineNum">     176 </span><span class="lineCov">        106 :                         result = evt;</span>
+<span class="lineNum">     177 </span><span class="lineCov">        106 :                         called = true;</span>
+<span class="lineNum">     178 </span><span class="lineCov">        106 :                         cv.notify_one();</span>
+<span class="lineNum">     179 </span><span class="lineCov">        318 :                 });</span>
 <a name="180"><span class="lineNum">     180 </span>            :                 {</a>
-<span class="lineNum">     181 </span><span class="lineCov">         99 :                         std::unique_lock&lt;std::mutex&gt; lock{mutex};</span>
-<span class="lineNum">     182 </span><span class="lineCov">        296 :                         cv.wait(lock,[&amp;called](){return called;});</span>
+<span class="lineNum">     181 </span><span class="lineCov">        106 :                         std::unique_lock&lt;std::mutex&gt; lock{mutex};</span>
+<span class="lineNum">     182 </span><span class="lineCov">        317 :                         cv.wait(lock,[&amp;called](){return called;});</span>
 <span class="lineNum">     183 </span>            :                 }
-<span class="lineNum">     184 </span><span class="lineCov">        198 :                 return result;</span>
+<span class="lineNum">     184 </span><span class="lineCov">        212 :                 return result;</span>
 <span class="lineNum">     185 </span>            :         }
 <a name="186"><span class="lineNum">     186 </span>            : </a>
 <span class="lineNum">     187 </span>            : 
-<span class="lineNum">     188 </span><span class="lineCov">         25 :         bool hasErrorHeader(Susi::Events::SharedEventPtr event) {</span>
-<span class="lineNum">     189 </span><span class="lineCov">         25 :                 auto headers = event-&gt;getHeaders();</span>
-<span class="lineNum">     190 </span><span class="lineCov">         25 :                 bool error_found = false;</span>
+<span class="lineNum">     188 </span><span class="lineCov">         27 :         bool hasErrorHeader(Susi::Events::SharedEventPtr event) {</span>
+<span class="lineNum">     189 </span><span class="lineCov">         27 :                 auto headers = event-&gt;getHeaders();</span>
+<span class="lineNum">     190 </span><span class="lineCov">         27 :                 bool error_found = false;</span>
 <span class="lineNum">     191 </span>            : 
-<span class="lineNum">     192 </span><span class="lineCov">         25 :                 for(size_t i=0; i&lt;headers.size(); ++i) {</span>
-<span class="lineNum">     193 </span><span class="lineCov">         25 :                         if(headers[i].first == &quot;error&quot;) {</span>
-<span class="lineNum">     194 </span><span class="lineCov">         25 :                                 error_found = true;</span>
-<span class="lineNum">     195 </span><span class="lineCov">         25 :                                 break;</span>
+<span class="lineNum">     192 </span><span class="lineCov">         27 :                 for(size_t i=0; i&lt;headers.size(); ++i) {</span>
+<span class="lineNum">     193 </span><span class="lineCov">         27 :                         if(headers[i].first == &quot;error&quot;) {</span>
+<span class="lineNum">     194 </span><span class="lineCov">         27 :                                 error_found = true;</span>
+<span class="lineNum">     195 </span><span class="lineCov">         27 :                                 break;</span>
 <span class="lineNum">     196 </span>            :                         }
 <span class="lineNum">     197 </span>            :                 }
 <span class="lineNum">     198 </span>            : 
-<span class="lineNum">     199 </span><span class="lineCov">         25 :                 return error_found;</span>
+<span class="lineNum">     199 </span><span class="lineCov">         27 :                 return error_found;</span>
 <span class="lineNum">     200 </span>            :         }
 <span class="lineNum">     201 </span>            : 
 <span class="lineNum">     202 </span>            : private:

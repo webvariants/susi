@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-23 14:29:58</td>
+            <td class="headerValue">2014-09-24 09:32:35</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">8</td>
@@ -106,16 +106,16 @@
 <span class="lineNum">      44 </span><span class="lineCov">         23 :         this-&gt;dbMap[identifier] = Susi::DB::ManagerItem{dbtype,connectURI};</span>
 <a name="45"><span class="lineNum">      45 </span><span class="lineCov">         23 : }</span></a>
 <span class="lineNum">      46 </span>            : 
-<span class="lineNum">      47 </span><span class="lineCov">         29 : std::shared_ptr&lt;Susi::DB::Database&gt; Susi::DB::Manager::getDatabase(std::string identifier) {</span>
-<span class="lineNum">      48 </span><span class="lineCov">         29 :         if(this-&gt;dbMap.count(identifier) &gt; 0) {</span>
-<span class="lineNum">      49 </span><span class="lineCov">         28 :                 Susi::DB::ManagerItem item = this-&gt;dbMap[identifier];</span>
+<span class="lineNum">      47 </span><span class="lineCov">         30 : std::shared_ptr&lt;Susi::DB::Database&gt; Susi::DB::Manager::getDatabase(std::string identifier) {</span>
+<span class="lineNum">      48 </span><span class="lineCov">         30 :         if(this-&gt;dbMap.count(identifier) &gt; 0) {</span>
+<span class="lineNum">      49 </span><span class="lineCov">         29 :                 Susi::DB::ManagerItem item = this-&gt;dbMap[identifier];</span>
 <span class="lineNum">      50 </span>            : 
-<span class="lineNum">      51 </span><span class="lineCov">         28 :                 if(item.connected == false) {</span>
-<span class="lineNum">      52 </span><span class="lineCov">         28 :                         item.db = std::shared_ptr&lt;Susi::DB::Database&gt;(new Susi::DB::Database(item.dbtype, item.connectURI));</span>
-<span class="lineNum">      53 </span><span class="lineCov">         28 :                         item.connected = true;</span>
+<span class="lineNum">      51 </span><span class="lineCov">         29 :                 if(item.connected == false) {</span>
+<span class="lineNum">      52 </span><span class="lineCov">         29 :                         item.db = std::shared_ptr&lt;Susi::DB::Database&gt;(new Susi::DB::Database(item.dbtype, item.connectURI));</span>
+<span class="lineNum">      53 </span><span class="lineCov">         29 :                         item.connected = true;</span>
 <span class="lineNum">      54 </span>            :                 }
 <span class="lineNum">      55 </span>            : 
-<span class="lineNum">      56 </span><span class="lineCov">         28 :                 return item.db;</span>
+<span class="lineNum">      56 </span><span class="lineCov">         29 :                 return item.db;</span>
 <span class="lineNum">      57 </span>            : 
 <span class="lineNum">      58 </span>            :         } else {
 <span class="lineNum">      59 </span><span class="lineCov">          1 :                 std::string msg = &quot;DB not found: &quot;;</span>

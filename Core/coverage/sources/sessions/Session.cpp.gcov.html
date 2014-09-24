@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-23 14:29:58</td>
+            <td class="headerValue">2014-09-24 09:32:35</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">10</td>
@@ -74,18 +74,18 @@
 <span class="lineNum">      12 </span>            : #include &quot;sessions/Session.h&quot;
 <a name="13"><span class="lineNum">      13 </span>            : </a>
 <span class="lineNum">      14 </span>            : namespace Susi {
-<span class="lineNum">      15 </span><span class="lineCov">         54 :         Session::Session(std::chrono::milliseconds milliseconds) {</span>
-<a name="16"><span class="lineNum">      16 </span><span class="lineCov">         54 :                 addTime(milliseconds);</span></a>
-<span class="lineNum">      17 </span><span class="lineCov">         54 :         }</span>
-<span class="lineNum">      18 </span><span class="lineCov">         18 :         bool Session::isDead() {</span>
-<span class="lineNum">      19 </span><span class="lineCov">         18 :                 Poco::Timestamp now;</span>
+<span class="lineNum">      15 </span><span class="lineCov">         56 :         Session::Session(std::chrono::milliseconds milliseconds) {</span>
+<a name="16"><span class="lineNum">      16 </span><span class="lineCov">         56 :                 addTime(milliseconds);</span></a>
+<span class="lineNum">      17 </span><span class="lineCov">         56 :         }</span>
+<span class="lineNum">      18 </span><span class="lineCov">         19 :         bool Session::isDead() {</span>
+<span class="lineNum">      19 </span><span class="lineCov">         19 :                 Poco::Timestamp now;</span>
 <span class="lineNum">      20 </span>            :                 //std::cout&lt;&lt;deadline.epochTime()&lt;&lt;&quot; : &quot;&lt;&lt;now.epochTime()&lt;&lt;std::endl;
-<span class="lineNum">      21 </span><span class="lineCov">         18 :                 if(deadline &lt;= now) return true;</span>
-<a name="22"><span class="lineNum">      22 </span><span class="lineCov">         13 :                 return false;</span></a>
+<span class="lineNum">      21 </span><span class="lineCov">         19 :                 if(deadline &lt;= now) return true;</span>
+<a name="22"><span class="lineNum">      22 </span><span class="lineCov">         14 :                 return false;</span></a>
 <span class="lineNum">      23 </span>            :         }
-<span class="lineNum">      24 </span><span class="lineCov">         58 :         void Session::addTime(std::chrono::milliseconds milliseconds) {</span>
-<a name="25"><span class="lineNum">      25 </span><span class="lineCov">         58 :                 deadline += std::chrono::duration_cast&lt;std::chrono::microseconds&gt;(milliseconds).count();</span></a>
-<span class="lineNum">      26 </span><span class="lineCov">         58 :         }</span>
+<span class="lineNum">      24 </span><span class="lineCov">         60 :         void Session::addTime(std::chrono::milliseconds milliseconds) {</span>
+<a name="25"><span class="lineNum">      25 </span><span class="lineCov">         60 :                 deadline += std::chrono::duration_cast&lt;std::chrono::microseconds&gt;(milliseconds).count();</span></a>
+<span class="lineNum">      26 </span><span class="lineCov">         60 :         }</span>
 <span class="lineNum">      27 </span><span class="lineCov">          7 :         void Session::pushAttribute(std::string key, Susi::Util::Any value) {</span>
 <span class="lineNum">      28 </span><span class="lineCov">          7 :                 if(attributes.count(key) &gt; 0) {</span>
 <span class="lineNum">      29 </span><span class="lineCov">          4 :                         multiAttributes[key].push_back(attributes[key]);</span>
@@ -108,10 +108,10 @@
 <span class="lineNum">      46 </span>            :                 }
 <a name="47"><span class="lineNum">      47 </span><span class="lineCov">          1 :                 return false;</span></a>
 <span class="lineNum">      48 </span>            :         }
-<span class="lineNum">      49 </span><span class="lineCov">         25 :         Susi::Util::Any Session::getAttribute(std::string key) {</span>
-<span class="lineNum">      50 </span><span class="lineCov">         25 :                 if(key.length() &gt; 0) {</span>
-<span class="lineNum">      51 </span><span class="lineCov">         24 :                         if(attributes.count(key) &gt; 0) {</span>
-<span class="lineNum">      52 </span><span class="lineCov">         12 :                                 return attributes[key];</span>
+<span class="lineNum">      49 </span><span class="lineCov">         27 :         Susi::Util::Any Session::getAttribute(std::string key) {</span>
+<span class="lineNum">      50 </span><span class="lineCov">         27 :                 if(key.length() &gt; 0) {</span>
+<span class="lineNum">      51 </span><span class="lineCov">         26 :                         if(attributes.count(key) &gt; 0) {</span>
+<span class="lineNum">      52 </span><span class="lineCov">         14 :                                 return attributes[key];</span>
 <span class="lineNum">      53 </span>            :                         }
 <span class="lineNum">      54 </span><span class="lineCov">         12 :                         if(multiAttributes.count(key) &gt; 0) {</span>
 <span class="lineNum">      55 </span><span class="lineCov">          6 :                                 return multiAttributes[key];</span>
@@ -119,10 +119,10 @@
 <span class="lineNum">      57 </span>            :                 }
 <a name="58"><span class="lineNum">      58 </span><span class="lineCov">          7 :                 return Susi::Util::Any();</span></a>
 <span class="lineNum">      59 </span>            :         }
-<span class="lineNum">      60 </span><span class="lineCov">         13 :         bool Session::setAttribute(std::string key, Susi::Util::Any value) {</span>
-<span class="lineNum">      61 </span><span class="lineCov">         13 :                 if(key.length() &gt; 0) {</span>
-<span class="lineNum">      62 </span><span class="lineCov">         12 :                         attributes[key] = value;</span>
-<span class="lineNum">      63 </span><span class="lineCov">         12 :                         return true;</span>
+<span class="lineNum">      60 </span><span class="lineCov">         14 :         bool Session::setAttribute(std::string key, Susi::Util::Any value) {</span>
+<span class="lineNum">      61 </span><span class="lineCov">         14 :                 if(key.length() &gt; 0) {</span>
+<span class="lineNum">      62 </span><span class="lineCov">         13 :                         attributes[key] = value;</span>
+<span class="lineNum">      63 </span><span class="lineCov">         13 :                         return true;</span>
 <span class="lineNum">      64 </span>            :                 }
 <a name="65"><span class="lineNum">      65 </span><span class="lineCov">          1 :                 return false;</span></a>
 <span class="lineNum">      66 </span>            :         }

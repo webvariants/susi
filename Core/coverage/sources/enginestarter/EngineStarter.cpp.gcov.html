@@ -31,13 +31,13 @@
             <td class="headerValue">coverage.info.cleaned</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">19</td>
-            <td class="headerCovTableEntry">27</td>
-            <td class="headerCovTableEntryLo">70.4 %</td>
+            <td class="headerCovTableEntry">21</td>
+            <td class="headerCovTableEntry">21</td>
+            <td class="headerCovTableEntryHi">100.0 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-23 14:29:58</td>
+            <td class="headerValue">2014-09-24 09:32:35</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">6</td>
@@ -64,42 +64,32 @@
 <span class="lineNum">       2 </span>            : 
 <a name="3"><span class="lineNum">       3 </span><span class="lineCov">          4 : Susi::EngineStarter::Starter::Starter() {}</span></a>
 <span class="lineNum">       4 </span>            : 
-<span class="lineNum">       5 </span><span class="lineCov">         12 : void Susi::EngineStarter::Starter::killall() {</span>
-<span class="lineNum">       6 </span>            :         try{
-<span class="lineNum">       7 </span><span class="lineCov">         40 :                 for(auto &amp; ph : phs){</span>
-<span class="lineNum">       8 </span><span class="lineCov">         28 :                         Poco::Process::kill(ph);</span>
-<span class="lineNum">       9 </span>            :                 }
-<span class="lineNum">      10 </span><span class="lineNoCov">          0 :         }catch(const std::exception &amp; e){</span>
-<span class="lineNum">      11 </span><span class="lineNoCov">          0 :                 std::string msg = &quot;Error in EngineStarter::killall : &quot;;</span>
-<span class="lineNum">      12 </span><span class="lineNoCov">          0 :                 msg += e.what();</span>
-<span class="lineNum">      13 </span><span class="lineNoCov">          0 :                 Susi::Logger::error(msg);</span>
-<span class="lineNum">      14 </span>            :         }
-<span class="lineNum">      15 </span>            : 
-<a name="16"><span class="lineNum">      16 </span><span class="lineCov">         12 : }</span></a>
+<span class="lineNum">       5 </span><span class="lineCov">         13 : void Susi::EngineStarter::Starter::killall() {</span>
+<span class="lineNum">       6 </span><span class="lineCov">         34 :         while (!phs.empty())</span>
+<span class="lineNum">       7 </span>            :         {
+<span class="lineNum">       8 </span><span class="lineCov">          8 :                 auto &amp; ph =phs.back();</span>
+<span class="lineNum">       9 </span><span class="lineCov">          8 :                 Poco::Process::kill(ph);</span>
+<span class="lineNum">      10 </span><span class="lineCov">          8 :                 phs.pop_back();</span>
+<span class="lineNum">      11 </span>            :         }
+<a name="12"><span class="lineNum">      12 </span><span class="lineCov">         13 : }</span></a>
+<span class="lineNum">      13 </span>            : 
+<span class="lineNum">      14 </span><span class="lineCov">          8 : void Susi::EngineStarter::Starter::execute(std::string path) {</span>
+<span class="lineNum">      15 </span><span class="lineCov">          8 :         this-&gt;rec_dir(path);</span>
+<a name="16"><span class="lineNum">      16 </span><span class="lineCov">          6 : }</span></a>
 <span class="lineNum">      17 </span>            : 
-<span class="lineNum">      18 </span><span class="lineCov">          6 : void Susi::EngineStarter::Starter::execute(std::string path) {</span>
-<span class="lineNum">      19 </span>            :         try{
-<span class="lineNum">      20 </span><span class="lineCov">          6 :                 this-&gt;rec_dir(path);</span>
-<span class="lineNum">      21 </span><span class="lineNoCov">          0 :         }catch(const std::exception &amp; e){</span>
-<span class="lineNum">      22 </span><span class="lineNoCov">          0 :                 std::string msg = &quot;Error in EngineStarter::execute : &quot;;</span>
-<span class="lineNum">      23 </span><span class="lineNoCov">          0 :                 msg += e.what();</span>
-<span class="lineNum">      24 </span><span class="lineNoCov">          0 :                 Susi::Logger::error(msg);</span>
-<span class="lineNum">      25 </span>            :         }
-<a name="26"><span class="lineNum">      26 </span><span class="lineCov">          6 : }</span></a>
-<span class="lineNum">      27 </span>            : 
-<span class="lineNum">      28 </span><span class="lineCov">          8 : void Susi::EngineStarter::Starter::rec_dir(const std::string &amp; path)</span>
-<span class="lineNum">      29 </span>            : {
-<span class="lineNum">      30 </span><span class="lineCov">          8 :   Poco::DirectoryIterator end;</span>
-<span class="lineNum">      31 </span><span class="lineCov">         20 :   for (Poco::DirectoryIterator it(path); it != end; ++it) {</span>
-<span class="lineNum">      32 </span><span class="lineCov">         12 :         if(!it-&gt;isDirectory() &amp;&amp; it-&gt;canExecute()) {</span>
-<span class="lineNum">      33 </span><span class="lineCov">          8 :                 std::vector&lt;std::string&gt; args;</span>
-<span class="lineNum">      34 </span><span class="lineCov">         16 :                 Poco::ProcessHandle ph = Poco::Process::launch(it-&gt;path(), args);</span>
-<span class="lineNum">      35 </span><span class="lineCov">         16 :                 this-&gt;phs.push_back(ph);</span>
-<span class="lineNum">      36 </span><span class="lineCov">          4 :         }else if (it-&gt;isDirectory()) {</span>
-<span class="lineNum">      37 </span><span class="lineCov">          2 :                 rec_dir(it-&gt;path());</span>
-<a name="38"><span class="lineNum">      38 </span>            :         }</a>
-<span class="lineNum">      39 </span><span class="lineCov">          8 :   }</span>
-<span class="lineNum">      40 </span><span class="lineCov">         11 : }</span>
+<span class="lineNum">      18 </span><span class="lineCov">         10 : void Susi::EngineStarter::Starter::rec_dir(const std::string &amp; path)</span>
+<span class="lineNum">      19 </span>            : {
+<span class="lineNum">      20 </span><span class="lineCov">         10 :   Poco::DirectoryIterator end;</span>
+<span class="lineNum">      21 </span><span class="lineCov">         22 :   for (Poco::DirectoryIterator it(path); it != end; ++it) {</span>
+<span class="lineNum">      22 </span><span class="lineCov">         12 :         if(!it-&gt;isDirectory() &amp;&amp; it-&gt;canExecute()) {</span>
+<span class="lineNum">      23 </span><span class="lineCov">          8 :                 std::vector&lt;std::string&gt; args;</span>
+<span class="lineNum">      24 </span><span class="lineCov">         16 :                 Poco::ProcessHandle ph = Poco::Process::launch(it-&gt;path(), args);</span>
+<span class="lineNum">      25 </span><span class="lineCov">         16 :                 this-&gt;phs.push_back(ph);</span>
+<span class="lineNum">      26 </span><span class="lineCov">          4 :         }else if (it-&gt;isDirectory()) {</span>
+<span class="lineNum">      27 </span><span class="lineCov">          2 :                 rec_dir(it-&gt;path());</span>
+<a name="28"><span class="lineNum">      28 </span>            :         }</a>
+<span class="lineNum">      29 </span><span class="lineCov">          8 :   }</span>
+<span class="lineNum">      30 </span><span class="lineCov">         11 : }</span>
 </pre>
       </td>
     </tr>

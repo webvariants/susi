@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-23 14:29:58</td>
+            <td class="headerValue">2014-09-24 09:32:35</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">4</td>
@@ -79,14 +79,14 @@
 <span class="lineNum">      17 </span>            : #include &quot;util/Any.h&quot;
 <a name="18"><span class="lineNum">      18 </span>            : </a>
 <span class="lineNum">      19 </span>            : namespace Susi {
-<span class="lineNum">      20 </span><span class="lineCov">         54 :         class Session {</span>
+<span class="lineNum">      20 </span><span class="lineCov">         56 :         class Session {</span>
 <span class="lineNum">      21 </span>            :         protected:
 <span class="lineNum">      22 </span>            :                 Poco::Timestamp deadline;
 <span class="lineNum">      23 </span>            :                 std::map&lt;std::string, Susi::Util::Any&gt; attributes;
 <span class="lineNum">      24 </span>            :                 std::map&lt;std::string, std::deque&lt;Susi::Util::Any&gt;&gt; multiAttributes;
 <a name="25"><span class="lineNum">      25 </span>            : </a>
 <span class="lineNum">      26 </span>            :         public:
-<span class="lineNum">      27 </span><span class="lineCov">         29 :                 Session() : Session(std::chrono::milliseconds(10000)) {}</span>
+<span class="lineNum">      27 </span><span class="lineCov">         30 :                 Session() : Session(std::chrono::milliseconds(10000)) {}</span>
 <span class="lineNum">      28 </span>            :                 Session(std::chrono::milliseconds milliseconds);
 <span class="lineNum">      29 </span>            :                 Session(const Session &amp; other) : 
 <span class="lineNum">      30 </span>            :                         deadline{other.deadline}, 
@@ -95,11 +95,11 @@
 <span class="lineNum">      33 </span>            :                 Session(Session &amp;&amp; other){
 <a name="34"><span class="lineNum">      34 </span>            :                         *this = std::move(other);</a>
 <span class="lineNum">      35 </span>            :                 }
-<span class="lineNum">      36 </span><span class="lineCov">          6 :                 Susi::Session&amp; operator=(const Susi::Session &amp; other){</span>
-<span class="lineNum">      37 </span><span class="lineCov">          6 :                         deadline = other.deadline;</span>
-<span class="lineNum">      38 </span><span class="lineCov">          6 :                         attributes = other.attributes;</span>
-<span class="lineNum">      39 </span><span class="lineCov">          6 :                         multiAttributes = other.multiAttributes;</span>
-<span class="lineNum">      40 </span><span class="lineCov">          6 :                         return *this;</span>
+<span class="lineNum">      36 </span><span class="lineCov">          7 :                 Susi::Session&amp; operator=(const Susi::Session &amp; other){</span>
+<span class="lineNum">      37 </span><span class="lineCov">          7 :                         deadline = other.deadline;</span>
+<span class="lineNum">      38 </span><span class="lineCov">          7 :                         attributes = other.attributes;</span>
+<span class="lineNum">      39 </span><span class="lineCov">          7 :                         multiAttributes = other.multiAttributes;</span>
+<span class="lineNum">      40 </span><span class="lineCov">          7 :                         return *this;</span>
 <a name="41"><span class="lineNum">      41 </span>            :                 }</a>
 <span class="lineNum">      42 </span>            : 
 <span class="lineNum">      43 </span><span class="lineCov">         19 :                 Susi::Session&amp; operator=(Susi::Session &amp;&amp; other){</span>

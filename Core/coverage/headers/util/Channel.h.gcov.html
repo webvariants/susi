@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-23 14:29:58</td>
+            <td class="headerValue">2014-09-24 09:32:35</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">19</td>
@@ -101,26 +101,26 @@
 <span class="lineNum">      39 </span><span class="lineCov">          2 :         Channel() : capacity(1) {}</span>
 <a name="40"><span class="lineNum">      40 </span><span class="lineCov">         75 :         ~Channel() {close();}</span></a>
 <span class="lineNum">      41 </span>            : 
-<a name="42"><span class="lineNum">      42 </span><span class="lineCov">       2213 :         void put(T data){</span></a>
-<span class="lineNum">      43 </span><span class="lineCov">       2213 :                 std::unique_lock&lt;std::mutex&gt; lock(mutex);</span>
-<span class="lineNum">      44 </span><span class="lineCov">       4674 :                 not_full.wait(lock,[this](){return (size()&lt;capacity || closed);});</span>
-<span class="lineNum">      45 </span><span class="lineCov">       2214 :                 if(closed)throw ChannelClosedException{};</span>
-<span class="lineNum">      46 </span><span class="lineCov">       2214 :                 this-&gt;push_back(std::move(data));</span>
-<span class="lineNum">      47 </span><span class="lineCov">       2214 :                 not_empty.notify_one();</span>
-<a name="48"><span class="lineNum">      48 </span><span class="lineCov">       2213 :         }</span></a>
+<a name="42"><span class="lineNum">      42 </span><span class="lineCov">       2235 :         void put(T data){</span></a>
+<span class="lineNum">      43 </span><span class="lineCov">       2235 :                 std::unique_lock&lt;std::mutex&gt; lock(mutex);</span>
+<span class="lineNum">      44 </span><span class="lineCov">       4654 :                 not_full.wait(lock,[this](){return (size()&lt;capacity || closed);});</span>
+<span class="lineNum">      45 </span><span class="lineCov">       2235 :                 if(closed)throw ChannelClosedException{};</span>
+<span class="lineNum">      46 </span><span class="lineCov">       2235 :                 this-&gt;push_back(std::move(data));</span>
+<span class="lineNum">      47 </span><span class="lineCov">       2235 :                 not_empty.notify_one();</span>
+<a name="48"><span class="lineNum">      48 </span><span class="lineCov">       2234 :         }</span></a>
 <span class="lineNum">      49 </span>            : 
-<a name="50"><span class="lineNum">      50 </span><span class="lineCov">       2485 :         T get(){</span></a>
-<span class="lineNum">      51 </span><span class="lineCov">       2485 :                 std::unique_lock&lt;std::mutex&gt; lock(mutex);</span>
-<span class="lineNum">      52 </span><span class="lineCov">       6961 :                 not_empty.wait(lock,[this](){return (size()&gt;0 || closed);});</span>
-<span class="lineNum">      53 </span><span class="lineCov">       2494 :                 if(closed &amp;&amp; this-&gt;size()==0)throw ChannelClosedException{};</span>
-<span class="lineNum">      54 </span><span class="lineCov">       2214 :                 T result = std::move(this-&gt;front());</span>
-<span class="lineNum">      55 </span><span class="lineCov">       2214 :                 this-&gt;pop_front();</span>
-<span class="lineNum">      56 </span><span class="lineCov">       2214 :                 not_full.notify_one();</span>
-<span class="lineNum">      57 </span><span class="lineCov">       2214 :                 return result;  </span>
+<a name="50"><span class="lineNum">      50 </span><span class="lineCov">       2511 :         T get(){</span></a>
+<span class="lineNum">      51 </span><span class="lineCov">       2511 :                 std::unique_lock&lt;std::mutex&gt; lock(mutex);</span>
+<span class="lineNum">      52 </span><span class="lineCov">       6946 :                 not_empty.wait(lock,[this](){return (size()&gt;0 || closed);});</span>
+<span class="lineNum">      53 </span><span class="lineCov">       2515 :                 if(closed &amp;&amp; this-&gt;size()==0)throw ChannelClosedException{};</span>
+<span class="lineNum">      54 </span><span class="lineCov">       2235 :                 T result = std::move(this-&gt;front());</span>
+<span class="lineNum">      55 </span><span class="lineCov">       2235 :                 this-&gt;pop_front();</span>
+<span class="lineNum">      56 </span><span class="lineCov">       2235 :                 not_full.notify_one();</span>
+<span class="lineNum">      57 </span><span class="lineCov">       2235 :                 return result;  </span>
 <a name="58"><span class="lineNum">      58 </span>            :         }</a>
 <span class="lineNum">      59 </span>            : 
-<span class="lineNum">      60 </span><span class="lineCov">       7215 :         size_t size(){</span>
-<span class="lineNum">      61 </span><span class="lineCov">       7215 :                 return std::deque&lt;T&gt;::size();</span>
+<span class="lineNum">      60 </span><span class="lineCov">       7146 :         size_t size(){</span>
+<span class="lineNum">      61 </span><span class="lineCov">       7146 :                 return std::deque&lt;T&gt;::size();</span>
 <span class="lineNum">      62 </span>            :         }
 <span class="lineNum">      63 </span>            : 
 <span class="lineNum">      64 </span>            :         size_t cap(){
