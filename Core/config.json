@@ -31,7 +31,9 @@
 		"path": "./engines"
 	},
 
-	"iocontroller": {},
+	"iocontroller": {
+		"fix":"me"
+	},
 
 	"sessionmanager": {
 		"lifetime": 600000
@@ -60,5 +62,7 @@
 		"address": "[::1]:4000"
 	},
 
-	"apiserver": {}
+	"apiserver": {
+		"fix":"me"
+	}
 }
