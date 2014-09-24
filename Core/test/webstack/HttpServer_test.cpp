@@ -26,15 +26,9 @@ protected:
 		componentManager->stopAll();
 	}
 
-	virtual void GoodCases() override {
-
-	}
-	virtual void BadCases() override {
-		
-	}
-	virtual void EdgeCases() override {
-		
-	}
+	virtual void GoodCases() override {}
+	virtual void BadCases() override {}
+	virtual void EdgeCases() override {}
 
 };
 
@@ -70,7 +64,7 @@ TEST_F(HttpServerTest, GetMissingAsset) {
 	EXPECT_EQ(404,status);
 }
 
-/*TEST_F(HttpServerTest, NotFound) {
+TEST_F(HttpServerTest, NotFound) {
 
 	Susi::HttpClient client("http://[::1]:8080");
 
@@ -78,7 +72,17 @@ TEST_F(HttpServerTest, GetMissingAsset) {
 	status = client.getStatus();
 
 	EXPECT_EQ(404,status);
-}*/
+}
+
+TEST_F(HttpServerTest, Redirect) {
+
+	Susi::HttpClient client("http://[::1]:8080");
+
+	client.get("/");
+	status = client.getStatus();
+
+	EXPECT_EQ(302,status);	
+}
 
 TEST_F(HttpServerTest, PostToForm) {
 

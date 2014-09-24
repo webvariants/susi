@@ -106,48 +106,38 @@ TEST(Any, MoveConstructor){
 }
 
 TEST(Any, CopyAssignment){
-	Any any_bool{true};
-	Any any_int{123};
-	Any any_double{123.123};
-	Any any_string{"foobar"};
-	Any any_array{Any::Array{123}};
-	Any any_object{Any::Object{{"foo",123}}};
+	Any t1,t2,t3,t4,t5,t6,t7,t8;
 
-	bool boolean{true};
-	int integer{123};
-	long integer_long{123};
-	long long integer_long_long{123};
-	double doubleval{123.123};
-	std::string str{"foobar"};
-	std::deque<Any> list{123};
-	std::map<std::string,Any> mapval{{"foo",123}};
+	const bool boolean{true};
+	const int integer{123};
+	const long integer_long{123};
+	const long long integer_long_long{123};
+	const double doubleval{123.123};
+	const std::string str{"foobar"};
+	const std::deque<Any> list{123};
+	const std::map<std::string,Any> mapval{{"foo",123}};
 
-	Any t1 = boolean;
+	t1 = boolean;
 	EXPECT_EQ(true,static_cast<bool>(t1));
-	Any t2 = integer;
+	t2 = integer;
 	EXPECT_EQ(123,static_cast<int>(t2));
-	Any t3 = integer_long;
+	t3 = integer_long;
 	EXPECT_EQ(123,static_cast<long>(t3));
-	Any t4 = integer_long_long;
+	t4 = integer_long_long;
 	EXPECT_EQ(123,static_cast<long long>(t4));
-	Any t5 = doubleval;
+	t5 = doubleval;
 	EXPECT_EQ(123.123,static_cast<double>(t5));
-	Any t6 = str;
+	t6 = str;
 	EXPECT_EQ("foobar",static_cast<std::string>(t6));
-	Any t7 = list;
+	t7 = list;
 	EXPECT_EQ(size_t{1},t7.size());
 	EXPECT_EQ(123,static_cast<long>(t7[0]));
-	Any t8 = mapval;
+	t8 = mapval;
 	EXPECT_EQ(123,static_cast<long>(t8["foo"]));
 }
 
 TEST(Any, MoveAssignment){
-	Any any_bool{true};
-	Any any_int{123};
-	Any any_double{123.123};
-	Any any_string{"foobar"};
-	Any any_array{Any::Array{123}};
-	Any any_object{Any::Object{{"foo",123}}};
+	Any t1,t2,t3,t4,t5,t6,t7,t8;
 
 	bool boolean{true};
 	int integer{123};
@@ -158,22 +148,22 @@ TEST(Any, MoveAssignment){
 	std::deque<Any> list{123};
 	std::map<std::string,Any> mapval{{"foo",123}};
 
-	Any t1 = std::move(boolean);
+	t1 = std::move(boolean);
 	EXPECT_EQ(true,static_cast<bool>(t1));
-	Any t2 = std::move(integer);
+	t2 = std::move(integer);
 	EXPECT_EQ(123,static_cast<int>(t2));
-	Any t3 = std::move(integer_long);
+	t3 = std::move(integer_long);
 	EXPECT_EQ(123,static_cast<long>(t3));
-	Any t4 = std::move(integer_long_long);
+	t4 = std::move(integer_long_long);
 	EXPECT_EQ(123,static_cast<long long>(t4));
-	Any t5 = std::move(doubleval);
+	t5 = std::move(doubleval);
 	EXPECT_EQ(123.123,static_cast<double>(t5));
-	Any t6 = std::move(str);
+	t6 = std::move(str);
 	EXPECT_EQ("foobar",static_cast<std::string>(t6));
-	Any t7 = std::move(list);
+	t7 = std::move(list);
 	EXPECT_EQ(size_t{1},t7.size());
 	EXPECT_EQ(123,static_cast<long>(t7[0]));
-	Any t8 = std::move(mapval);
+	t8 = std::move(mapval);
 	EXPECT_EQ(123,static_cast<long>(t8["foo"]));
 }
 
@@ -1034,6 +1024,9 @@ TEST (Any, FromJSONString){
 	EXPECT_EQ(o_test.toJSONString(), o.toJSONString());
 
 	Any x = Any::fromJSONString("{\"first\": 1, \"second\": 2, \"third\": 3");
+	EXPECT_TRUE(x.isNull());
+
+	x = Any::fromJSONString("{\"first\": \"\\uyyyy\"");
 	EXPECT_TRUE(x.isNull());
 
 }
