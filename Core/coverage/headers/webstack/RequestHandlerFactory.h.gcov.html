@@ -31,13 +31,13 @@
             <td class="headerValue">coverage.info.cleaned</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">14</td>
+            <td class="headerCovTableEntry">19</td>
             <td class="headerCovTableEntry">22</td>
-            <td class="headerCovTableEntryLo">63.6 %</td>
+            <td class="headerCovTableEntryMed">86.4 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 10:25:26</td>
+            <td class="headerValue">2014-09-24 14:26:01</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">4</td>
@@ -89,7 +89,7 @@
 <span class="lineNum">      27 </span>            : 
 <a name="28"><span class="lineNum">      28 </span>            : namespace Susi {</a>
 <span class="lineNum">      29 </span>            : 
-<span class="lineNum">      30 </span><span class="lineCov">         10 : class RequestHandlerFactory: public Poco::Net::HTTPRequestHandlerFactory</span>
+<span class="lineNum">      30 </span><span class="lineCov">         14 : class RequestHandlerFactory: public Poco::Net::HTTPRequestHandlerFactory</span>
 <span class="lineNum">      31 </span>            : {
 <span class="lineNum">      32 </span>            : protected:
 <span class="lineNum">      33 </span>            :     std::string _assetRoot;
@@ -97,34 +97,34 @@
 <span class="lineNum">      35 </span>            :     std::shared_ptr&lt;Susi::Api::ApiServerComponent&gt; _apiServer;
 <a name="36"><span class="lineNum">      36 </span>            :     std::shared_ptr&lt;Susi::Sessions::SessionManagerComponent&gt; _sessionManager;</a>
 <span class="lineNum">      37 </span>            : public:
-<span class="lineNum">      38 </span><span class="lineCov">          5 :     RequestHandlerFactory(std::string assetRoot, </span>
+<span class="lineNum">      38 </span><span class="lineCov">          7 :     RequestHandlerFactory(std::string assetRoot, </span>
 <span class="lineNum">      39 </span>            :                           std::string uploadDirectory,
 <span class="lineNum">      40 </span>            :                           std::shared_ptr&lt;Susi::Api::ApiServerComponent&gt; apiServer,                          
 <span class="lineNum">      41 </span>            :                           std::shared_ptr&lt;Susi::Sessions::SessionManagerComponent&gt; sessionManager) : 
 <span class="lineNum">      42 </span>            :                             _assetRoot{assetRoot}, 
 <span class="lineNum">      43 </span>            :                             _uploadDirectory{uploadDirectory},
 <a name="44"><span class="lineNum">      44 </span>            :                             _apiServer{apiServer},</a>
-<span class="lineNum">      45 </span><span class="lineCov">          5 :                             _sessionManager{sessionManager} {}</span>
-<span class="lineNum">      46 </span><span class="lineCov">          5 :     Poco::Net::HTTPRequestHandler* createRequestHandler(const Poco::Net::HTTPServerRequest&amp; request){</span>
-<span class="lineNum">      47 </span><span class="lineCov">          5 :         Susi::Logger::debug(&quot;got request with URI: &quot;+request.getURI());</span>
+<span class="lineNum">      45 </span><span class="lineCov">          7 :                             _sessionManager{sessionManager} {}</span>
+<span class="lineNum">      46 </span><span class="lineCov">          7 :     Poco::Net::HTTPRequestHandler* createRequestHandler(const Poco::Net::HTTPServerRequest&amp; request){</span>
+<span class="lineNum">      47 </span><span class="lineCov">          7 :         Susi::Logger::debug(&quot;got request with URI: &quot;+request.getURI());</span>
 <span class="lineNum">      48 </span>            :         try{
-<span class="lineNum">      49 </span><span class="lineCov">          5 :             if(request.getURI().find(&quot;/assets/&quot;)==0){</span>
+<span class="lineNum">      49 </span><span class="lineCov">          7 :             if(request.getURI().find(&quot;/assets/&quot;)==0){</span>
 <span class="lineNum">      50 </span><span class="lineCov">          3 :                 Susi::Logger::debug(&quot;using assets handler&quot;);                </span>
 <span class="lineNum">      51 </span><span class="lineCov">          3 :                 return new SessionRequestHandler(new AssetsRequestHandler(_assetRoot), _sessionManager);</span>
-<span class="lineNum">      52 </span><span class="lineCov">          2 :             }else if(request.getURI() == &quot;/ws&quot;){</span>
+<span class="lineNum">      52 </span><span class="lineCov">          4 :             }else if(request.getURI() == &quot;/ws&quot;){</span>
 <span class="lineNum">      53 </span><span class="lineCov">          1 :                 Susi::Logger::debug(&quot;using websocket handler&quot;);</span>
 <span class="lineNum">      54 </span><span class="lineCov">          1 :                 return new SessionRequestHandler(new WebSocketRequestHandler(_apiServer), _sessionManager);</span>
 <span class="lineNum">      55 </span>            :             }/*else if(request.getURI() == &quot;/compability&quot;){
 <span class="lineNum">      56 </span>            :                 return new SessionRequestHandler(new CompabilityRequestHandler());
-<span class="lineNum">      57 </span><span class="lineCov">          1 :             }*/else if(request.getURI() == &quot;/form&quot;){</span>
+<span class="lineNum">      57 </span><span class="lineCov">          3 :             }*/else if(request.getURI() == &quot;/form&quot;){</span>
 <span class="lineNum">      58 </span><span class="lineCov">          1 :                 Susi::Logger::debug(&quot;using form handler&quot;);</span>
 <span class="lineNum">      59 </span><span class="lineCov">          1 :                 return new SessionRequestHandler(new FormRequestHandler(_uploadDirectory), _sessionManager);</span>
-<span class="lineNum">      60 </span><span class="lineNoCov">          0 :             }else if(request.getURI() == &quot;/&quot;){</span>
-<span class="lineNum">      61 </span><span class="lineNoCov">          0 :                 Susi::Logger::debug(&quot;using redirect handler&quot;);</span>
-<span class="lineNum">      62 </span><span class="lineNoCov">          0 :                 return new SessionRequestHandler(new RedirectRequestHandler(), _sessionManager);</span>
+<span class="lineNum">      60 </span><span class="lineCov">          2 :             }else if(request.getURI() == &quot;/&quot;){</span>
+<span class="lineNum">      61 </span><span class="lineCov">          1 :                 Susi::Logger::debug(&quot;using redirect handler&quot;);</span>
+<span class="lineNum">      62 </span><span class="lineCov">          1 :                 return new SessionRequestHandler(new RedirectRequestHandler(), _sessionManager);</span>
 <span class="lineNum">      63 </span>            :             }
-<span class="lineNum">      64 </span><span class="lineNoCov">          0 :             Susi::Logger::debug(&quot;using not found handler&quot;);</span>
-<span class="lineNum">      65 </span><span class="lineNoCov">          0 :             return new SessionRequestHandler(new NotFoundRequestHandler(), _sessionManager);</span>
+<span class="lineNum">      64 </span><span class="lineCov">          1 :             Susi::Logger::debug(&quot;using not found handler&quot;);</span>
+<span class="lineNum">      65 </span><span class="lineCov">          1 :             return new SessionRequestHandler(new NotFoundRequestHandler(), _sessionManager);</span>
 <span class="lineNum">      66 </span><span class="lineNoCov">          0 :         }catch(const std::exception &amp; e){</span>
 <span class="lineNum">      67 </span><span class="lineNoCov">          0 :             Susi::Logger::error(std::string(&quot;error in request handler factory: &quot;)+e.what());</span>
 <span class="lineNum">      68 </span><span class="lineNoCov">          0 :             return nullptr;</span>

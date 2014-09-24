@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 10:25:26</td>
+            <td class="headerValue">2014-09-24 14:26:01</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">6</td>
@@ -85,7 +85,7 @@
 <span class="lineNum">      23 </span>            : namespace Susi {
 <a name="24"><span class="lineNum">      24 </span>            : namespace Api {</a>
 <span class="lineNum">      25 </span>            : 
-<span class="lineNum">      26 </span><span class="lineCov">         11 : class ApiServerComponent : public Susi::System::BaseComponent {</span>
+<span class="lineNum">      26 </span><span class="lineCov">         13 : class ApiServerComponent : public Susi::System::BaseComponent {</span>
 <span class="lineNum">      27 </span>            : protected:
 <span class="lineNum">      28 </span>            :         std::shared_ptr&lt;Susi::Events::ManagerComponent&gt; eventManager;
 <span class="lineNum">      29 </span>            :         std::shared_ptr&lt;Susi::Sessions::SessionManagerComponent&gt; sessionManager;
@@ -115,15 +115,15 @@
 <span class="lineNum">      53 </span>            : 
 <a name="54"><span class="lineNum">      54 </span>            : public:</a>
 <span class="lineNum">      55 </span>            :         
-<span class="lineNum">      56 </span><span class="lineCov">         11 :         ApiServerComponent(Susi::System::ComponentManager * mgr) : Susi::System::BaseComponent{mgr} {</span>
-<span class="lineNum">      57 </span><span class="lineCov">         11 :                 eventManager   = mgr-&gt;getComponent&lt;Susi::Events::ManagerComponent&gt;(&quot;eventsystem&quot;);</span>
-<span class="lineNum">      58 </span><span class="lineCov">         11 :                 sessionManager = mgr-&gt;getComponent&lt;Susi::Sessions::SessionManagerComponent&gt;(&quot;sessionmanager&quot;);</span>
-<a name="59"><span class="lineNum">      59 </span><span class="lineCov">         11 :         }</span></a>
+<span class="lineNum">      56 </span><span class="lineCov">         13 :         ApiServerComponent(Susi::System::ComponentManager * mgr) : Susi::System::BaseComponent{mgr} {</span>
+<span class="lineNum">      57 </span><span class="lineCov">         13 :                 eventManager   = mgr-&gt;getComponent&lt;Susi::Events::ManagerComponent&gt;(&quot;eventsystem&quot;);</span>
+<span class="lineNum">      58 </span><span class="lineCov">         13 :                 sessionManager = mgr-&gt;getComponent&lt;Susi::Sessions::SessionManagerComponent&gt;(&quot;sessionmanager&quot;);</span>
+<a name="59"><span class="lineNum">      59 </span><span class="lineCov">         13 :         }</span></a>
 <a name="60"><span class="lineNum">      60 </span>            : </a>
-<span class="lineNum">      61 </span><span class="lineCov">         11 :         virtual void start() override {}</span>
-<span class="lineNum">      62 </span><span class="lineCov">          8 :         virtual void stop() override {</span>
-<span class="lineNum">      63 </span><span class="lineCov">          8 :                 unsubscribeAll();</span>
-<span class="lineNum">      64 </span><span class="lineCov">          8 :         }</span>
+<span class="lineNum">      61 </span><span class="lineCov">         13 :         virtual void start() override {}</span>
+<span class="lineNum">      62 </span><span class="lineCov">         10 :         virtual void stop() override {</span>
+<span class="lineNum">      63 </span><span class="lineCov">         10 :                 unsubscribeAll();</span>
+<span class="lineNum">      64 </span><span class="lineCov">         10 :         }</span>
 <span class="lineNum">      65 </span>            : 
 <span class="lineNum">      66 </span>            :         void onConnect(std::string &amp; id);
 <span class="lineNum">      67 </span>            :         void onMessage(std::string &amp; id, Susi::Util::Any &amp; packet);
