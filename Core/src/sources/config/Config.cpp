@@ -5,13 +5,13 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
  #include "config/Config.h"
 
-void Susi::Config::loadConfig(std::string path){	
+void Susi::Config::loadConfig(std::string path){
  	std::string content = "";
  	Susi::Util::Any configVar;
 
@@ -22,20 +22,20 @@ void Susi::Config::loadConfig(std::string path){
 		throw std::runtime_error("file doesn't exist!");
  	}
 
- 	if(io.checkFile(path) && io.checkFileExtension(path, file_extension)) { 		
+ 	if(io.checkFile(path) && io.checkFileExtension(path, file_extension)) {
 		try {
 	 		content = io.readFile(path);
 	 	} catch(const std::exception & e){
-	 		std::string msg = "Susi::Config::loadConfig "; 		
+	 		std::string msg = "Susi::Config::loadConfig ";
 			msg += "Error reading Config File: " + path;
 			msg += e.what();
-			Susi::Logger::error(msg);		
+			Susi::Logger::error(msg);
 			throw std::runtime_error(msg);
 		}
 
 		try {
-			configVar = Susi::Util::Any::fromString(content);
-		} catch(const std::exception & e){		
+			configVar = Susi::Util::Any::fromJSONString(content);
+		} catch(const std::exception & e){
 			std::string msg = "Susi::Config::loadConfig ";
 			msg += ("File: " + path + " file cant be parsed as json!");
 			msg += e.what();
@@ -48,15 +48,15 @@ void Susi::Config::loadConfig(std::string path){
 			std::string msg = "Susi::Config::loadConfig ";
 			msg += ("File: " + path + " file doesn't contain a (json) object");
 			Susi::Logger::error(msg);
-			throw std::runtime_error("file doesn't contain a (json) object");	
+			throw std::runtime_error("file doesn't contain a (json) object");
 		}
 
 		if(_configVar.isNull()) {
 			// first load or empty
-			_configVar = configVar;		
+			_configVar = configVar;
 		} else {
 			//merge vars
-			mergeOptions("", configVar);		
+			mergeOptions("", configVar);
 		}
 
 		std::string msg = "Susi::Config::loadConfig ";
@@ -74,7 +74,7 @@ void Susi::Config::rec_dir(const std::string & path)
   Poco::DirectoryIterator end;
   for (Poco::DirectoryIterator it(path); it != end; ++it) {
   	if(!it->isDirectory()) {
-  		loadConfig(it->path());  		
+  		loadConfig(it->path());
 	}else if (it->isDirectory()) {
 		rec_dir(it->path());
 	}
@@ -99,23 +99,23 @@ void Susi::Config::mergeOptions(std::string key, Susi::Util::Any configVar) {
 		for (std::map<std::string,Susi::Util::Any>::iterator it=config_map.begin(); it!=config_map.end(); ++it) {
 			std::string _key = key;
 			if(key.length() == 0)  {
-				_key.append(it->first);				
+				_key.append(it->first);
 				this->mergeOptions(_key, it->second);
 			} else {
-				_key.append(".").append(it->first);				
+				_key.append(".").append(it->first);
 				this->mergeOptions(_key, it->second);
 			}
-		}	
-	} else {		
+		}
+	} else {
 		_configVar.set(key, configVar);
 	}
 }
 
 // used to set a value in the config object (should be used by parseCommandLine())
 void Susi::Config::set(std::string key, Any value) {
-	Susi::Logger::debug("set "+key+" to "+value.toString());
+	Susi::Logger::debug("set "+key+" to "+value.toJSONString());
 	std::vector<std::string> elems;
-	Susi::Util::Helpers::split(key, '.', elems);	
+	Susi::Util::Helpers::split(key, '.', elems);
 	auto * current = &_configVar;
 
 	for(size_t e=0; e<elems.size()-1; e++){
@@ -140,13 +140,13 @@ void Susi::Config::parseCommandLine(std::vector<std::string> argv) {
 	std::map<std::string,std::string>::iterator it;
 
 	int argc = argv.size();
-	
+
 	for (int i = 1; i < argc; ++i) {
 		std::string option = argv[i];
 		if(option[0] == '-') {
 			if(option[1] == '-')option = option.substr(2);
-			else option = option.substr(1);				
-			
+			else option = option.substr(1);
+
 			Susi::Util::Any v;
 			std::string key = option;
 
@@ -155,28 +155,28 @@ void Susi::Config::parseCommandLine(std::vector<std::string> argv) {
 			Susi::Util::Helpers::split(key, '=', elems);
 			if(elems.size() == 2) {
 				key = elems[0];
-				v   = Susi::Util::Any::fromString(elems[1]);
+				v   = Susi::Util::Any::fromJSONString(elems[1]);
 				set(key,v);
 			} else {
-				it = _knownCommandLineOptions.find(key);		
+				it = _knownCommandLineOptions.find(key);
 				// key found
 				if(it != _knownCommandLineOptions.end()) {
 					std::string key = it->second;
-					
+
 					if(i < (argc-1) && argv[i+1][0]!='-') {
-						std::string value = argv[(i+1)];						
-						v = Susi::Util::Any::fromString(value);
+						std::string value = argv[(i+1)];
+						v = Susi::Util::Any::fromJSONString(value);
 						i++;
 					}else{
 						v = Susi::Util::Any::Object{};
 					}
 					set(key,v);
-				} 
+				}
 				// key not found
 				else {
 					if(i < (argc-1) && argv[i+1][0]!='-') {
-						std::string value = argv[(i+1)];						
-						v = Susi::Util::Any::fromString(value);
+						std::string value = argv[(i+1)];
+						v = Susi::Util::Any::fromJSONString(value);
 						i++;
 					}else{
 						v = Susi::Util::Any::Object{};
@@ -211,7 +211,7 @@ Susi::Util::Any Susi::Config::get(std::string key) {
 			if(found.getType() == Susi::Util::Any::UNDEFINED) {
 				throw std::runtime_error("key doesn't exist!"+key);
 			}
-			
+
 		}
 
 		return found;

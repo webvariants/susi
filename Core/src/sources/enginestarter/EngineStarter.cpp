@@ -1,30 +1,18 @@
 #include "enginestarter/EngineStarter.h"
 
-Susi::EngineStarter::Starter::Starter(std::string path) {
-	this->path = path;
-}
+Susi::EngineStarter::Starter::Starter() {}
 
 void Susi::EngineStarter::Starter::killall() {
-	try{
-		for(auto & ph : phs){
-			Poco::Process::kill(ph);
-		}
-	}catch(const std::exception & e){
-		std::string msg = "Error in EngineStarter::killall : ";
-		msg += e.what();
-		Susi::Logger::error(msg);
+	while (!phs.empty())
+	{
+		auto & ph =phs.back();
+		Poco::Process::kill(ph);
+		phs.pop_back();
 	}
-
 }
 
-void Susi::EngineStarter::Starter::execute() {
-	try{
-		this->rec_dir(this->path);
-	}catch(const std::exception & e){
-		std::string msg = "Error in EngineStarter::execute : ";
-		msg += e.what();
-		Susi::Logger::error(msg);
-	}
+void Susi::EngineStarter::Starter::execute(std::string path) {
+	this->rec_dir(path);
 }
 
 void Susi::EngineStarter::Starter::rec_dir(const std::string & path)

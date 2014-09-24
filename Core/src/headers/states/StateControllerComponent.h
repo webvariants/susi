@@ -23,8 +23,9 @@ namespace Susi {
 				Susi::System::BaseComponent{mgr}, StateController{file} {}
 
 			virtual void start() override {
-				subscribe("heartbeat::fiveMinute",[this](::Susi::Events::EventPtr evt){handleSave(std::move(evt));});
+				subscribe("heartbeat::fiveMinute",[this](::Susi::Events::EventPtr evt){handleAutoSave(std::move(evt));});
 
+				subscribe("state::saveState", [this](::Susi::Events::EventPtr evt){handleSave(std::move(evt));});
 				subscribe("state::setState", [this](::Susi::Events::EventPtr evt){handleSetState(std::move(evt));});
 				subscribe("state::getState", [this](::Susi::Events::EventPtr evt){handleGetState(std::move(evt));});
 				subscribe("state::setPersistentState", [this](::Susi::Events::EventPtr evt){handleSetPersistentState(std::move(evt));});
@@ -35,60 +36,12 @@ namespace Susi {
 				unsubscribeAll();
 			}
 		protected:
-			void handleSave(Susi::Events::EventPtr event) {
-				if(persistentChanged) {
-					savePersistent();
-					persistentChanged = false;
-				}
-			}
-
-			void handleSetState(Susi::Events::EventPtr event) {
-				Susi::Logger::debug("got state event");
-				try{
-					std::string stateID  = event->payload["stateID"];
-					Susi::Util::Any value = event->payload["value"];
-					event->payload["success"] = setState(stateID, value);
-				}catch(const std::exception & e){
-					std::string msg = "Error in handleSetState(): ";
-					msg += e.what();
-					throw std::runtime_error(msg);
-				}
-			}
-
-			void handleGetState(Susi::Events::EventPtr event) {
-				try{
-					std::string stateID  = event->payload["stateID"];
-					event->payload["value"] = getState(stateID);
-				}catch(const std::exception & e){
-					std::string msg = "Error in handleGetState(): ";
-					msg += e.what();
-					throw std::runtime_error(msg);
-				}
-			}
-
-			void handleSetPersistentState(Susi::Events::EventPtr event) {
-				Susi::Logger::debug("got persitent state event");
-				try{
-					std::string stateID  = event->payload["stateID"];
-					Susi::Util::Any value = event->payload["value"];
-					event->payload["success"] = setPersistentState(stateID, value);
-				}catch(const std::exception & e){
-					std::string msg = "Error in handleSetPersistentState(): ";
-					msg += e.what();
-					throw std::runtime_error(msg);
-				}
-			}
-
-			void handleGetPersistentState(Susi::Events::EventPtr event) {
-				try{
-					std::string stateID  = event->payload["stateID"];
-					event->payload["value"] = getPersistentState(stateID);
-				}catch(const std::exception & e){
-					std::string msg = "Error in handleGetPersistentState(): ";
-					msg += e.what();
-					throw std::runtime_error(msg);
-				}
-			}
+			void handleAutoSave(Susi::Events::EventPtr event);
+			void handleSave(Susi::Events::EventPtr event);
+			void handleSetState(Susi::Events::EventPtr event);
+			void handleGetState(Susi::Events::EventPtr event);
+			void handleSetPersistentState(Susi::Events::EventPtr event);
+			void handleGetPersistentState(Susi::Events::EventPtr event);
 		};
 	}
 }

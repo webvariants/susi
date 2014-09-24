@@ -27,6 +27,7 @@
 #include "states/StateControllerComponent.h"
 #include "syscall/SyscallComponent.h"
 #include "webstack/HttpServerComponent.h"
+#include "autodiscovery/AutoDiscoveryComponent.h"
 
 namespace Susi {
 namespace System {

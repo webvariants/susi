@@ -3,25 +3,27 @@
 #include "iocontroller/IOController.h"
 
 class DatabaseTest : public ::testing::Test {
+public:
+    std::string base_path = Poco::Path(Poco::Path::current()).toString() + "dbtest/";
 protected:
     Susi::IOController io;
     std::shared_ptr<Susi::DB::Database> db{nullptr};
     virtual void SetUp() override {
-        io.makeDir("./dbtest/");
+        io.makeDir(base_path);
     }
     virtual void TearDown() override {
-        io.deletePath("./dbtest/");
+        io.deletePath(base_path);
     }
 };
 
 TEST_F(DatabaseTest, Contruct) {
 	EXPECT_NO_THROW({
-		db = std::make_shared<Susi::DB::Database>("sqlite3", "./dbtest/test_sqlite_db");
+		db = std::make_shared<Susi::DB::Database>("sqlite3", base_path + "test_sqlite_db");
 	});
 }
 
 TEST_F(DatabaseTest, QuerySqlite) {
-    db = std::make_shared<Susi::DB::Database>("sqlite3", "./dbtest/test_sqlite_db");
+    db = std::make_shared<Susi::DB::Database>("sqlite3", base_path + "test_sqlite_db");
 
     Susi::Util::Any table_exits = db->query("select count(type) from sqlite_master where type=\'table\' and name=\'test1\';");
     std::string result_str = table_exits[0]["count(type)"];

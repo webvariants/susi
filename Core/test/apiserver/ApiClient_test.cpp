@@ -1,3 +1,4 @@
+/*
 #include "gtest/gtest.h"
 
 #include "apiserver/ApiClient.h"
@@ -28,10 +29,7 @@ TEST_F(ApiClientTest, Basic){
 	client.publish(std::move(event),[&](SharedEventPtr event){
 		called2 = true;
 		cond2.notify_all();
-	});
-
-	/*std::this_thread::sleep_for(std::chrono::milliseconds{250});
-	client.close();*/
+	});	
 
 	std::mutex mutex;
 	{
@@ -43,3 +41,5 @@ TEST_F(ApiClientTest, Basic){
 		cond2.wait(lock,[&called2](){return called2;}); 
 	}
 }
+
+*/

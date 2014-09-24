@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
@@ -20,10 +20,10 @@ namespace Api {
 
 class JSONTCPClient : public TCPClient {
 public:
-	JSONTCPClient(std::string addr) : 
+	JSONTCPClient(std::string addr) :
 		TCPClient{addr},
 		collector{[this](std::string & msg){
-			auto message = Susi::Util::Any::fromString(msg);
+			auto message = Susi::Util::Any::fromJSONString(msg);
 			//std::cout<<"got message in json client"<<std::endl;
 			this->onMessage(message);
 		}} {}
@@ -31,7 +31,7 @@ public:
 		close();
 	}
 	void send(Susi::Util::Any & message){
-		std::string msg = message.toString();
+		std::string msg = message.toJSONString();
 		TCPClient::send(msg);
 	}
 	void close(){
@@ -48,7 +48,7 @@ protected:
 
 };
 
-}	
+}
 }
 
 

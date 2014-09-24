@@ -1,6 +1,5 @@
 #include "gtest/gtest.h"
 #include "db/Manager.h"
-#include "util/VarHelper.h"
 #include "iocontroller/IOController.h"
 
 
@@ -35,8 +34,6 @@ TEST(DBManager, Contruct) {
 
 
 TEST(DBManager, Sqlite3) {
-	using Susi::Util::getFromVar;
-
 	Susi::DB::Manager dm;
 
 	// identifier, dbtype, connectURI

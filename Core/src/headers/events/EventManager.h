@@ -7,6 +7,7 @@
 #include "util/ThreadPool.h"
 #include "util/Any.h"
 #include "events/Event.h"
+#include "util/Glob.h"
 
 namespace Susi {
 namespace Events{

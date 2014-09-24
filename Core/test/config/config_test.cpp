@@ -5,13 +5,17 @@
 #include "iocontroller/IOController.h"
 
 class ConfigTest : public ::testing::Test {
+
+public:
+   	std::string base_path = Poco::Path(Poco::Path::current()).toString() + "configtest/";
+   	Susi::IOController io;
+
 protected:
-	Susi::IOController io;
 	virtual void SetUp() override {
-		io.makeDir("./configtest/");
+		io.makeDir(base_path);
 	}
 	virtual void TearDown() override {
-		io.deletePath("./configtest/");
+		io.deletePath(base_path);
 	}
 };
 
@@ -20,32 +24,32 @@ TEST_F(ConfigTest, Contruct) {
 		{"foo","bar"}
 	};
 	// Test valid json
-	io.writeFile("./configtest/config.json",cfg.toString());
+	io.writeFile(base_path + "config.json",cfg.toJSONString());
 	EXPECT_NO_THROW({
-		auto config = std::make_shared<Susi::Config>("./configtest/config.json");
+		auto config = std::make_shared<Susi::Config>(base_path + "config.json");
 	});
 }
 
 TEST_F(ConfigTest, ContructInvalidJson) {
-	io.writeFile("./configtest/config.json","{\"foo\",\"bar\", 22");
+	io.writeFile(base_path + "config.json","{\"foo\",\"bar\", 22");
 	EXPECT_THROW({
-		auto config = std::make_shared<Susi::Config>("./configtest/config.json");
+		auto config = std::make_shared<Susi::Config>(base_path + "config.json");
 	},std::runtime_error);
 }
 
 
 TEST_F(ConfigTest, ContructWrongFormatJson) {
 	// Test valid json which is no object;
-	io.writeFile("./configtest/config.json","\"wrongformat\"");
+	io.writeFile(base_path + "config.json","\"wrongformat\"");
 	EXPECT_THROW({
-		auto config = std::make_shared<Susi::Config>("./configtest/config.json");
+		auto config = std::make_shared<Susi::Config>(base_path + "config.json");
 	},std::runtime_error);
 }
 
 TEST_F(ConfigTest, ContructConfigMissing) {
 	// Test nonexistent file;
 	EXPECT_THROW({
-		auto config = std::make_shared<Susi::Config>("./configtest/wrongname.json");
+		auto config = std::make_shared<Susi::Config>(base_path + "wrongname.json");
 	},std::runtime_error);
 }
 
@@ -53,27 +57,27 @@ TEST_F(ConfigTest, ContructConfigMissing) {
 TEST_F(ConfigTest, Get){
 	using Susi::Util::Any;
 	Any cfg = Any::Object{{"foo",Any::Object{{"bar", Any::Object{{"baz",123}}}}}};
-	
-	io.writeFile("./configtest/config.json",cfg.toString());
+
+	io.writeFile(base_path + "config.json",cfg.toJSONString());
 	EXPECT_NO_THROW({
-		auto config = std::make_shared<Susi::Config>("./configtest/config.json");
+		auto config = std::make_shared<Susi::Config>(base_path + "config.json");
 		Any value1 = config->get("");
 		EXPECT_EQ(cfg,value1);
-		Any value2 = config->get("foo");		
-		EXPECT_EQ(cfg["foo"],value2);	
+		Any value2 = config->get("foo");
+		EXPECT_EQ(cfg["foo"],value2);
 		Any value3 = config->get("foo.bar");
 		EXPECT_EQ(cfg["foo"]["bar"],value3);
 		Any value4 = config->get("foo.bar.baz");
 		EXPECT_EQ(cfg["foo"]["bar"]["baz"],value4);
 	});
-	
+
 	EXPECT_THROW({
-		auto config = std::make_shared<Susi::Config>("./configtest/config.json");
+		auto config = std::make_shared<Susi::Config>(base_path + "config.json");
 		config->get("bla");
 	},std::runtime_error);
 
 	EXPECT_THROW({
-		auto config = std::make_shared<Susi::Config>("./configtest/config.json");
+		auto config = std::make_shared<Susi::Config>(base_path + "config.json");
 		config->get("bla.blub");
 	},std::runtime_error);
 
@@ -82,26 +86,26 @@ TEST_F(ConfigTest, Get){
 TEST_F(ConfigTest,CommandLine){
 	using Susi::Util::Any;
 	Any cfg = Any::Object{{"foo",Any::Object{{"bar", Any::Object{{"baz",123}}}}}};
-	io.writeFile("./configtest/config.json",cfg.toString());
+	io.writeFile(base_path + "config.json",cfg.toJSONString());
 
 	std::vector<std::string> cmdLine_1 = {"prognameIsAllwaysFirstParam","-baz","321"};
 	std::vector<std::string> cmdLine_2 = {"prognameIsAllwaysFirstParam","-baz","321.123"};
 	std::vector<std::string> cmdLine_3 = {"prognameIsAllwaysFirstParam","-baz","this is it"};
 
 	EXPECT_NO_THROW({
-		auto config = std::make_shared<Susi::Config>("./configtest/config.json");
-		config->registerCommandLineOption("baz","foo.bar.baz");		
-		config->parseCommandLine(cmdLine_1);		
-		EXPECT_EQ(Any{321}.toString(),config->get("foo.bar.baz").toString());
+		auto config = std::make_shared<Susi::Config>(base_path + "config.json");
+		config->registerCommandLineOption("baz","foo.bar.baz");
+		config->parseCommandLine(cmdLine_1);
+		EXPECT_EQ(Any{321}.toJSONString(),config->get("foo.bar.baz").toJSONString());
 
-				
+
 		config->parseCommandLine(cmdLine_2);
-		EXPECT_EQ(Any{321.123}.toString(),config->get("foo.bar.baz").toString());
-		
+		EXPECT_EQ(Any{321.123}.toJSONString(),config->get("foo.bar.baz").toJSONString());
+
 
 		config->parseCommandLine(cmdLine_3);
-		EXPECT_EQ(Any{"this is it"}.toString(),config->get("foo.bar.baz").toString());
-		
+		EXPECT_EQ(Any{"this is it"}.toJSONString(),config->get("foo.bar.baz").toJSONString());
+
 	});
 }
 
@@ -109,7 +113,7 @@ TEST_F(ConfigTest,CommandLineOneDashNoArg){
 	Susi::Config cfg;
 	std::vector<std::string> cmdline = {"prognameIsAllwaysFirstParam","-foo"};
 	cfg.parseCommandLine(cmdline);
-	EXPECT_TRUE(cfg.get("foo").isObject());		
+	EXPECT_TRUE(cfg.get("foo").isObject());
 }
 
 TEST_F(ConfigTest,CommandLineOneDashOneArg){
@@ -117,7 +121,7 @@ TEST_F(ConfigTest,CommandLineOneDashOneArg){
 	std::vector<std::string> cmdline = {"prognameIsAllwaysFirstParam","-foo","bla"};
 	cfg.parseCommandLine(cmdline);
 	EXPECT_TRUE(cfg.get("foo").isString());
-	EXPECT_EQ("\"bla\"",cfg.get("foo").toString());		
+	EXPECT_EQ("\"bla\"",cfg.get("foo").toJSONString());
 }
 
 TEST_F(ConfigTest,CommandLineOneDashOneArg2){
@@ -125,14 +129,14 @@ TEST_F(ConfigTest,CommandLineOneDashOneArg2){
 	std::vector<std::string> cmdline = {"prognameIsAllwaysFirstParam","-foo=bla"};
 	cfg.parseCommandLine(cmdline);
 	EXPECT_TRUE(cfg.get("foo").isString());
-	EXPECT_EQ("\"bla\"",cfg.get("foo").toString());		
+	EXPECT_EQ("\"bla\"",cfg.get("foo").toJSONString());
 }
 
 TEST_F(ConfigTest,CommandLineTwoDashNoArg){
 	Susi::Config cfg;
 	std::vector<std::string> cmdline = {"prognameIsAllwaysFirstParam","--foo"};
 	cfg.parseCommandLine(cmdline);
-	EXPECT_TRUE(cfg.get("foo").isObject());		
+	EXPECT_TRUE(cfg.get("foo").isObject());
 }
 
 TEST_F(ConfigTest,CommandLineTwoDashOneArg){
@@ -140,7 +144,7 @@ TEST_F(ConfigTest,CommandLineTwoDashOneArg){
 	std::vector<std::string> cmdline = {"prognameIsAllwaysFirstParam","--foo","bla"};
 	cfg.parseCommandLine(cmdline);
 	EXPECT_TRUE(cfg.get("foo").isString());
-	EXPECT_EQ("\"bla\"",cfg.get("foo").toString());		
+	EXPECT_EQ("\"bla\"",cfg.get("foo").toJSONString());
 }
 
 TEST_F(ConfigTest,CommandLineTwoDashOneArg2){
@@ -148,7 +152,7 @@ TEST_F(ConfigTest,CommandLineTwoDashOneArg2){
 	std::vector<std::string> cmdline = {"prognameIsAllwaysFirstParam","--foo=bla"};
 	cfg.parseCommandLine(cmdline);
 	EXPECT_TRUE(cfg.get("foo").isString());
-	EXPECT_EQ("\"bla\"",cfg.get("foo").toString());		
+	EXPECT_EQ("\"bla\"",cfg.get("foo").toJSONString());
 }
 
 TEST_F(ConfigTest,MultipleArguments){
@@ -160,10 +164,10 @@ TEST_F(ConfigTest,MultipleArguments){
 		"-bla",
 		"--baz","bla"};
 	cfg.parseCommandLine(cmdline);
-	EXPECT_EQ("\"bla\"",cfg.get("foo").toString());
-	EXPECT_EQ("\"bla\"",cfg.get("bar").toString());
-	EXPECT_TRUE(cfg.get("bla").isObject());		
-	EXPECT_EQ("\"bla\"",cfg.get("baz").toString());	
+	EXPECT_EQ("\"bla\"",cfg.get("foo").toJSONString());
+	EXPECT_EQ("\"bla\"",cfg.get("bar").toJSONString());
+	EXPECT_TRUE(cfg.get("bla").isObject());
+	EXPECT_EQ("\"bla\"",cfg.get("baz").toJSONString());
 }
 
 TEST_F(ConfigTest,MultiLevelArguments){
@@ -171,7 +175,7 @@ TEST_F(ConfigTest,MultiLevelArguments){
 	std::vector<std::string> cmdline = {"prognameIsAllwaysFirstParam","--foo.bar.baz=bla"};
 	cfg.parseCommandLine(cmdline);
 	EXPECT_TRUE(cfg.get("foo.bar.baz").isString());
-	EXPECT_EQ("\"bla\"",cfg.get("foo.bar.baz").toString());			
+	EXPECT_EQ("\"bla\"",cfg.get("foo.bar.baz").toJSONString());
 }
 
 TEST_F(ConfigTest,MultiConfigSupport){
@@ -182,53 +186,53 @@ TEST_F(ConfigTest,MultiConfigSupport){
 	};
 
 	// Test valid json
-	io.writeFile("./configtest/config_1.json",cfg_1.toString());	
+	io.writeFile(base_path+ "config_1.json",cfg_1.toJSONString());
 
 	Susi::Util::Any cfg_2 = Susi::Util::Any::Object{
 		{"john","doe"},
 		{"data", "test2"}
 	};
 
-	io.writeFile("./configtest/config_2.json",cfg_2.toString());
-	
+	io.writeFile(base_path+ "config_2.json",cfg_2.toJSONString());
+
 	Susi::Config cfg;
 
-	cfg.loadConfig("./configtest/config_1.json");
-	cfg.loadConfig("./configtest/config_2.json");
+	cfg.loadConfig(base_path+ "config_1.json");
+	cfg.loadConfig(base_path+ "config_2.json");
 
 
 	Susi::Util::Any conf = cfg.getConfig();
-	
+
 	EXPECT_TRUE(cfg.get("foo").isString());
-	EXPECT_EQ("\"bar\"",cfg.get("foo").toString());
+	EXPECT_EQ("\"bar\"",cfg.get("foo").toJSONString());
 
 	EXPECT_TRUE(cfg.get("john").isString());
-	EXPECT_EQ("\"doe\"",cfg.get("john").toString());
+	EXPECT_EQ("\"doe\"",cfg.get("john").toJSONString());
 
 	// test override
 	EXPECT_TRUE(cfg.get("data").isString());
-	EXPECT_EQ("\"test2\"",cfg.get("data").toString());
-	
+	EXPECT_EQ("\"test2\"",cfg.get("data").toJSONString());
+
 }
 
 TEST_F(ConfigTest, LoadAllStartStop){
 	// make test independed from config file
-	
+
 	class C1 : public Susi::System::Component {
 		public:
 			virtual void start() override {}
 			virtual void stop() override {}
 	};
 	class C2 : public C1 {};
-	class C3 : public C1 {};    
+	class C3 : public C1 {};
 
     std::string test_config = "{"
 		"		\"c1\" : {},"
 		"		\"c2\" : {},"
-		"		\"c3\" : {}"		
+		"		\"c3\" : {}"
 		"	}";
 
-	Susi::Util::Any::Object config = Susi::Util::Any::fromString(test_config);
+	Susi::Util::Any::Object config = Susi::Util::Any::fromJSONString(test_config);
 
 	auto manager = std::make_shared<Susi::System::ComponentManager>(config);
 
@@ -252,28 +256,28 @@ TEST_F(ConfigTest, LoadAllStartStop){
 	bool stop  = componentManager->stopAll();
 
 	EXPECT_TRUE(start);
-	EXPECT_TRUE(stop);	
+	EXPECT_TRUE(stop);
 	*/
 }
 
-TEST_F(ConfigTest, LoadConfigsFromDir){ 
+TEST_F(ConfigTest, LoadConfigsFromDir){
 	Susi::Config cfg;
 
 	Susi::Util::Any cfg_content = Susi::Util::Any::Object{
 		{"foo","bar"}
 	};
 
-	io.makeDir("./configtest/sub");
-	io.makeDir("./configtest/sub/sub");
+	io.makeDir(base_path+ "sub");
+	io.makeDir(base_path+ "sub/sub");
 	// Test valid json
-	io.writeFile("./configtest/config.json",cfg_content.toString());
-	io.writeFile("./configtest/config2.json",cfg_content.toString());
-	io.writeFile("./configtest/sub/config3.json",cfg_content.toString());
-	io.writeFile("./configtest/sub/sub/config4.json",cfg_content.toString());
+	io.writeFile(base_path+ "config.json",cfg_content.toJSONString());
+	io.writeFile(base_path+ "config2.json",cfg_content.toJSONString());
+	io.writeFile(base_path+ "sub/config3.json",cfg_content.toJSONString());
+	io.writeFile(base_path+ "sub/sub/config4.json",cfg_content.toJSONString());
 
 
 	cfg.setLoadCount(0);
-	cfg.loadConfig("./configtest");
+	cfg.loadConfig(base_path);
 
 	EXPECT_EQ(4,cfg.getLoadCount());
 }

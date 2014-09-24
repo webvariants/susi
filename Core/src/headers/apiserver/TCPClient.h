@@ -27,6 +27,13 @@ namespace Api {
 		virtual void onData(std::string & data) {};
 		virtual void onClose() {};
 		
+		TCPClient(TCPClient && other){
+			std::swap(isClosed,other.isClosed);
+			std::swap(sa,other.sa);
+			std::swap(sock,other.sock);
+			std::swap(runloop,other.runloop);
+		}
+
 		TCPClient(std::string address) : sa{address}, sock{sa} {
 			sock.setReceiveTimeout(Poco::Timespan{0,1000000});
 			runloop = std::move(std::thread{[this](){

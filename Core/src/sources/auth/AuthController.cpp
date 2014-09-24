@@ -1,8 +1,7 @@
 #include "auth/AuthController.h"
-#include "world/World.h"
 
 bool Susi::Auth::Controller::login(std::string sessionID, std::string username, std::string password) {
-
+	
 	if(this->isLoggedIn(sessionID) == false) {
 		auto db = _dbManager->getDatabase(this->_dbIdentifier);
 
@@ -20,8 +19,8 @@ bool Susi::Auth::Controller::login(std::string sessionID, std::string username, 
 
 }
 
-void Susi::Auth::Controller::logout(std::string sessionID) {
-	_sessionManager->removeSessionAttribute(sessionID, "User");
+bool Susi::Auth::Controller::logout(std::string sessionID) {
+	return _sessionManager->removeSessionAttribute(sessionID, "User");
 }
 
 bool Susi::Auth::Controller::isLoggedIn(std::string sessionID) {	

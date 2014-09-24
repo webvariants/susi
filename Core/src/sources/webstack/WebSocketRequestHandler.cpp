@@ -5,30 +5,31 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de), Thomas Krause (thomas.krause@webvariants.de)
  */
 
 #include "webstack/WebSocketRequestHandler.h"
 
-Susi::WebSocketRequestHandler::WebSocketRequestHandler(Susi::Api::ApiServerForComponent* server) {
-	apiServer = server;
+Susi::WebSocketRequestHandler::WebSocketRequestHandler(std::shared_ptr<Susi::Api::ApiServerComponent> apiServer) {
+	_apiServer = apiServer;
 }
 
 void Susi::WebSocketRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request,
                        							Poco::Net::HTTPServerResponse& response) {
+	Susi::Logger::debug("in ws handler");
 	Poco::Net::WebSocket socket(request,response);
 	Poco::Net::NameValueCollection cookies;
 	request.getCookies(cookies);
 	std::string id = cookies["susisession"];
     Susi::Logger::debug("register sender in ws");
-    apiServer->registerSender(id,[&socket](Susi::Util::Any & arg){
-    	std::string msg = arg.toString();
+    _apiServer->registerSender(id,[&socket](Susi::Util::Any & arg){
+    	std::string msg = arg.toJSONString();
     	Susi::Logger::debug("send frame to websocket");
-    	socket.sendFrame(msg.data(), msg.length(), Poco::Net::WebSocket::FRAME_TEXT);        
+    	socket.sendFrame(msg.data(), msg.length(), Poco::Net::WebSocket::FRAME_TEXT);
     });
-    
-    apiServer->onConnect(id);
+
+    _apiServer->onConnect(id);
 
     char buffer[4096];
 	int flags;
@@ -42,9 +43,9 @@ void Susi::WebSocketRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& 
 			break;
 		}
 		std::string str(buffer, n);
-		Susi::Util::Any packet = Susi::Util::Any::fromString(str);
-		apiServer->onMessage(id,packet);   			
+		Susi::Util::Any packet = Susi::Util::Any::fromJSONString(str);
+		_apiServer->onMessage(id,packet);
 	}
 	Susi::Logger::debug("closing websocket");
-	apiServer->onClose(id);
+	_apiServer->onClose(id);
 }

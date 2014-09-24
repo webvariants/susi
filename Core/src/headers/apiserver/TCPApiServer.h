@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
@@ -15,8 +15,7 @@
 #include "Poco/Net/TCPServer.h"
 #include "Poco/Net/TCPServerConnectionFactory.h"
 #include "Poco/Net/TCPServerConnection.h"
-#include "Poco/Net/Socket.h" 
-#include "apiserver/ApiServer.h"
+#include "Poco/Net/Socket.h"
 #include "apiserver/JSONStreamCollector.h"
 #include "logger/Logger.h"
 
@@ -33,19 +32,19 @@ protected:
 		std::string sessionID = "";
 		JSONStreamCollector collector;
 	public:
-		Connection(const Poco::Net::StreamSocket& s) : 
+		Connection(const Poco::Net::StreamSocket& s) :
 				Poco::Net::TCPServerConnection{s},
 				sessionID{std::to_string(std::chrono::system_clock::now().time_since_epoch().count())},
 				collector{[this](std::string & msg){
 					std::cout<<"got message in server! "<<msg<<std::endl;
 					std::string s = sessionID;
-					auto message = Susi::Util::Any::fromString(msg);
+					auto message = Susi::Util::Any::fromJSONString(msg);
 					api.onMessage(s,message);
 				}} {
 			api.onConnect(sessionID);
 			api.registerSender(sessionID,[this](Susi::Util::Any & msg){
 				if(this==nullptr)return;
-				std::string str = msg.toString()+"\n";
+				std::string str = msg.toJSONString()+"\n";
 				socket().sendBytes(str.c_str(),str.size());
 			});
 		}
@@ -81,10 +80,10 @@ protected:
 	Poco::Net::TCPServer tcpServer;
 
 public:
-	TCPApiServer(std::string addr, size_t threads = 4, size_t backlog = 16) : 
+	TCPApiServer(std::string addr, size_t threads = 4, size_t backlog = 16) :
 		address{addr},
-		serverSocket{address}, 
-		params{new Poco::Net::TCPServerParams}, 
+		serverSocket{address},
+		params{new Poco::Net::TCPServerParams},
 		tcpServer{new ConnectionFactory{},serverSocket,params} {
 			params->setMaxThreads(threads);
 			params->setMaxQueued(backlog);

@@ -18,8 +18,6 @@
 #include "Poco/PipeStream.h"
 #include "Poco/StreamCopier.h"
 
-//#include "events/EventSystem.h"
-#include "events/global.h" 
 #include "util/Any.h"
 #include <fstream>
 #include <iostream>
@@ -67,6 +65,7 @@ namespace Susi {
 				_event->payload["return"] = ph.wait();
 				_event->payload["stdout"] = getContentFromStream(ostr);
 				_event->payload["stderr"] = getContentFromStream(estr);
+				// when event gets destructed, its acknowledged.
 			}
 		};
 	}

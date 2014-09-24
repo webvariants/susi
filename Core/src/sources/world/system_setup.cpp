@@ -60,6 +60,7 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 		return std::shared_ptr<Component>{new Susi::Auth::ControllerComponent{mgr, db_identifier}};
 	});
 	manager->registerDependency("authcontroller","eventsystem");
+	manager->registerDependency("authcontroller","dbmanager");
 
 	/**
 	 * TCP Api Server
@@ -79,30 +80,21 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 		}
 		return std::shared_ptr<Component>{new Susi::Api::TCPApiServerComponent{mgr, address, threads, backlog}};
 	});
-	manager->registerDependency("tcpapiserver","eventsystem");
-	manager->registerDependency("tcpapiserver","sessionmanager");
+	manager->registerDependency("tcpapiserver","apiserver");
 
 	/**
 	 * Declare enginestarter
 	 */
-	manager->registerComponent("enginestarter", [](ComponentManager * mgr, Any & config) {
-		std::string path{""};
-		if(config["path"].isString()){
-			path = static_cast<std::string>(config["path"]);
-		}
-		return std::shared_ptr<Component>{new Susi::EngineStarter::StarterComponent{mgr, path}};
+	manager->registerComponent("enginestarter", [](ComponentManager * mgr, Any & config) {		
+		return std::shared_ptr<Component>{new Susi::EngineStarter::StarterComponent{mgr}};
 	});
 	manager->registerDependency("enginestarter","eventsystem");
 
 	/**
 	 * Declare iocontroller
 	 */
-	manager->registerComponent("iocontroller", [](ComponentManager * mgr, Any & config) {
-		std::string base{""};
-		if(config["base"].isString()){
-			base = static_cast<std::string>(config["base"]);
-		}
-		return std::shared_ptr<Component>{new Susi::IOControllerComponent{mgr, base}};
+	manager->registerComponent("iocontroller", [](ComponentManager * mgr, Any & config) {			
+		return std::shared_ptr<Component>{new Susi::IOControllerComponent{mgr}};
 	});
 	manager->registerDependency("iocontroller","eventsystem");
 
@@ -117,6 +109,7 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 		return std::shared_ptr<Component>{new Susi::Sessions::SessionManagerComponent{mgr, lifetime}};
 	});
 	manager->registerDependency("sessionmanager","eventsystem");
+	manager->registerDependency("sessionmanager","heartbeat");
 
 	/**
 	 * Declare statecontroller
@@ -130,6 +123,7 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 	});
 	manager->registerDependency("statecontroller","eventsystem");
 	manager->registerDependency("statecontroller","iocontroller");
+	manager->registerDependency("statecontroller","heartbeat");
 
 	/**
 	 * Declare syscallcontroller
@@ -163,10 +157,38 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 		if(config["assets"].isString()){
 			assetRoot = static_cast<std::string>(config["assets"]);
 		}
-		return std::shared_ptr<Component>{new Susi::HttpServerComponent{mgr, address, assetRoot}};
-	});
-	manager->registerDependency("httpserver","eventsystem");
-	manager->registerDependency("httpserver","sessionmanager");
+		std::string upload{""};
+		if(config["upload"].isString()){
+			upload = static_cast<std::string>(config["upload"]);
+		}
+		return std::shared_ptr<Component>{new Susi::HttpServerComponent{mgr, address, assetRoot, upload}};
+	});	
+	manager->registerDependency("httpserver","apiserver");
 	
+	/**
+	 * Declare Autodiscovery
+	 */
+	manager->registerComponent("autodiscovery", [](ComponentManager * mgr, Any & config){
+		std::string mcast{"239.23.23.23:4242"};
+		std::string ownName{"susi"};
+		if(config["mcast"].isString()){
+			mcast = static_cast<std::string>(config["mcast"]);
+		}
+		if(config["address"].isString()){
+			ownName = static_cast<std::string>(config["address"]);
+		}
+		return std::shared_ptr<Component>{new Susi::Autodiscovery::AutoDiscoveryComponent{mcast,ownName,mgr}};
+	});
+	manager->registerDependency("autodiscovery","eventsystem");
+
+	/**
+	 * Declare apiserver
+	 */
+	manager->registerComponent("apiserver", [](ComponentManager * mgr, Any & config) {			
+		return std::shared_ptr<Component>{new Susi::Api::ApiServerComponent{mgr}};
+	});
+	manager->registerDependency("apiserver","eventsystem");
+	manager->registerDependency("apiserver","sessionmanager");
+
 	return manager;
 }

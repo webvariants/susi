@@ -27,6 +27,7 @@
 namespace Susi {
 	namespace Auth {
 		class Controller{
+			protected:
 				std::string _dbIdentifier;
 				std::shared_ptr<Susi::DB::DBComponent> _dbManager;
 				std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager;
@@ -38,7 +39,7 @@ namespace Susi {
 				  _dbManager{dbManager},
 				  _sessionManager{sessionManager} {}				
 				bool login(std::string sessionID, std::string username, std::string password); // return true on success
-				void logout(std::string sessionID);
+				bool logout(std::string sessionID);
 				bool isLoggedIn(std::string sessionID); 
 				
 				std::string getUsername(std::string sessionID);

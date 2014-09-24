@@ -26,6 +26,7 @@ namespace Api {
 
 	public:
 		BasicApiClient(std::string addr) : JSONTCPClient{addr} {}
+
 		virtual ~BasicApiClient(){
 			close();
 		}

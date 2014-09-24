@@ -16,7 +16,7 @@
 #include "Poco/Net/HTTPRequestHandler.h"
 #include <iostream>
 
-#include "apiserver/ApiServerForComponent.h"
+#include "apiserver/ApiServerComponent.h"
 #include "webstack/RequestHandlerFactory.h"
 #include "logger/Logger.h"
 #include "world/BaseComponent.h"
@@ -25,19 +25,19 @@ namespace Susi {
 
 class HttpServerComponent : public Susi::System::BaseComponent {
 protected:
-	Susi::Api::ApiServerForComponent apiServer;
+	std::shared_ptr<Susi::Api::ApiServerComponent> _api;
 	Poco::Net::SocketAddress address;
 	Poco::Net::ServerSocket serverSocket;
 	Poco::Net::HTTPServer server;
 
 	std::string _addr;
 public:
-	HttpServerComponent (Susi::System::ComponentManager * mgr, std::string addr,std::string assetRoot) :
+	HttpServerComponent (Susi::System::ComponentManager * mgr, std::string addr,std::string assetRoot,std::string uploadDirectory) :
 		Susi::System::BaseComponent{mgr},
-		apiServer{eventManager,mgr->getComponent<Susi::Sessions::SessionManagerComponent>("sessionmanager")},
+		_api{mgr->getComponent<Susi::Api::ApiServerComponent>("apiserver")},
 		address(addr),
 		serverSocket(address),
-		server(new RequestHandlerFactory(assetRoot, &apiServer,mgr->getComponent<Susi::Sessions::SessionManagerComponent>("sessionmanager")),serverSocket,new Poco::Net::HTTPServerParams)
+		server(new RequestHandlerFactory(assetRoot, uploadDirectory, _api, mgr->getComponent<Susi::Sessions::SessionManagerComponent>("sessionmanager")),serverSocket,new Poco::Net::HTTPServerParams)
 	{
 			_addr = addr;
 	}
