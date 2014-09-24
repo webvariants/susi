@@ -64,6 +64,10 @@ namespace Susi {
 				_headers.push_back(std::pair<std::string,std::string>{key,value});
 			}
 
+			std::vector<std::pair<std::string,std::string>> getHeaders(){
+				return _headers;
+			}
+
 			Poco::Net::HTTPResponse::HTTPStatus getStatus(){
 				return _status;
 			}

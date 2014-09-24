@@ -199,6 +199,41 @@ protected:
 		return error_found;
 	}
 
+	int countSetCookieInHeaders(std::vector<std::pair<std::string,std::string>> headers) {		
+		int set_cookie_count = 0;
+
+		for(size_t i=0; i<headers.size(); ++i) {
+			if(headers[i].first == "Set-Cookie") {
+				set_cookie_count++;
+			}
+		}
+
+		return set_cookie_count;
+	}
+
+	std::string getSessionIDFromHeaders(std::vector<std::pair<std::string,std::string>> headers) {
+
+		int last_set_cookie_idx = -1;
+		std::string sessionID = "";
+
+		for(size_t i=0; i<headers.size(); ++i) {
+			if(headers[i].first == "Set-Cookie") {
+				last_set_cookie_idx = i;
+			}
+		}
+
+		if(last_set_cookie_idx > -1) {			
+			std::string splitStr = headers[last_set_cookie_idx].second;
+			std::vector<std::string> elems_1;
+			std::vector<std::string> elems_2;
+			Susi::Util::Helpers::split(splitStr, ';', elems_1);
+			Susi::Util::Helpers::split(elems_1[0], '=', elems_2);
+			sessionID = elems_2[1];
+		}
+
+		return sessionID;
+	}
+
 private:
 	Susi::Events::EventPtr event;
 	Susi::Events::SharedEventPtr sharedEvent;

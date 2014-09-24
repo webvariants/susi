@@ -84,6 +84,61 @@ TEST_F(HttpServerTest, Redirect) {
 	EXPECT_EQ(302,status);	
 }
 
+TEST_F(HttpServerTest, Session) {
+
+	std::vector<std::pair<std::string,std::string>> headers;
+	int status;
+
+	Susi::HttpClient client("http://[::1]:8080");
+	client.addHeader("Cookie", "susisession=123");
+	client.get("/assets/test.txt");
+	status = client.getStatus();
+	headers = client.getHeaders();
+
+/*
+	for(size_t i=0; i<headers.size(); ++i) {
+		std::cout<<"HEADER "<<i<<":"<<headers[i].first<<" , "<<headers[i].second<<std::endl;
+	}
+*/
+	
+	EXPECT_EQ(200,status);
+	EXPECT_EQ(2, countSetCookieInHeaders(headers));
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(300));
+
+	// get new sessionID
+	std::string new_session = getSessionIDFromHeaders(headers);
+	client.addHeader("Cookie", "susisession="+new_session);
+	client.get("/assets/test.txt");
+	status = client.getStatus();
+	headers = client.getHeaders();
+
+/*
+	for(size_t i=0; i<headers.size(); ++i) {
+		std::cout<<"HEADER "<<i<<":"<<headers[i].first<<" , "<<headers[i].second<<std::endl;
+	}
+*/
+
+	EXPECT_EQ(200,status);
+	EXPECT_EQ(0, countSetCookieInHeaders(headers));
+
+	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+
+	client.addHeader("Cookie", "susisession="+new_session);
+	client.get("/assets/test.txt");
+	status = client.getStatus();
+	headers = client.getHeaders();
+
+	/*
+	for(size_t i=0; i<headers.size(); ++i) {
+		std::cout<<"HEADER "<<i<<":"<<headers[i].first<<" , "<<headers[i].second<<std::endl;
+	}
+	*/
+
+	EXPECT_EQ(200,status);	
+	EXPECT_EQ(2, countSetCookieInHeaders(headers));
+}
+
 TEST_F(HttpServerTest, PostToForm) {
 
 	Susi::HttpClient client("http://[::1]:8080");
