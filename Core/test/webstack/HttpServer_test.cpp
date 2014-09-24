@@ -74,6 +74,16 @@ TEST_F(HttpServerTest, NotFound) {
 	EXPECT_EQ(404,status);	
 }
 
+TEST_F(HttpServerTest, Redirect) {
+
+	Susi::HttpClient client("http://[::1]:8080");
+
+	client.get("/");
+	status = client.getStatus();
+
+	EXPECT_EQ(302,status);	
+}
+
 TEST_F(HttpServerTest, PostToForm) {
 
 	Susi::HttpClient client("http://[::1]:8080");
