@@ -1036,6 +1036,9 @@ TEST (Any, FromJSONString){
 	Any x = Any::fromJSONString("{\"first\": 1, \"second\": 2, \"third\": 3");
 	EXPECT_TRUE(x.isNull());
 
+	x = Any::fromJSONString("{\"first\": \"\\uyyyy\"");
+	EXPECT_TRUE(x.isNull());
+
 }
 
 TEST (Any, CopyConversionOperators){
