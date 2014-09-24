@@ -30,6 +30,8 @@
 #include "util/jsmn.h"
 #include "util/Helpers.h"
 
+#include "logger/Logger.h"
+
 namespace Susi {
 	namespace Util {
 		class Any {
