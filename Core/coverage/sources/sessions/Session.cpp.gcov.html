@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 09:32:35</td>
+            <td class="headerValue">2014-09-24 10:25:26</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">10</td>
@@ -77,11 +77,11 @@
 <span class="lineNum">      15 </span><span class="lineCov">         56 :         Session::Session(std::chrono::milliseconds milliseconds) {</span>
 <a name="16"><span class="lineNum">      16 </span><span class="lineCov">         56 :                 addTime(milliseconds);</span></a>
 <span class="lineNum">      17 </span><span class="lineCov">         56 :         }</span>
-<span class="lineNum">      18 </span><span class="lineCov">         19 :         bool Session::isDead() {</span>
-<span class="lineNum">      19 </span><span class="lineCov">         19 :                 Poco::Timestamp now;</span>
+<span class="lineNum">      18 </span><span class="lineCov">         22 :         bool Session::isDead() {</span>
+<span class="lineNum">      19 </span><span class="lineCov">         22 :                 Poco::Timestamp now;</span>
 <span class="lineNum">      20 </span>            :                 //std::cout&lt;&lt;deadline.epochTime()&lt;&lt;&quot; : &quot;&lt;&lt;now.epochTime()&lt;&lt;std::endl;
-<span class="lineNum">      21 </span><span class="lineCov">         19 :                 if(deadline &lt;= now) return true;</span>
-<a name="22"><span class="lineNum">      22 </span><span class="lineCov">         14 :                 return false;</span></a>
+<span class="lineNum">      21 </span><span class="lineCov">         22 :                 if(deadline &lt;= now) return true;</span>
+<a name="22"><span class="lineNum">      22 </span><span class="lineCov">         17 :                 return false;</span></a>
 <span class="lineNum">      23 </span>            :         }
 <span class="lineNum">      24 </span><span class="lineCov">         60 :         void Session::addTime(std::chrono::milliseconds milliseconds) {</span>
 <a name="25"><span class="lineNum">      25 </span><span class="lineCov">         60 :                 deadline += std::chrono::duration_cast&lt;std::chrono::microseconds&gt;(milliseconds).count();</span></a>

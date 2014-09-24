@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 09:32:35</td>
+            <td class="headerValue">2014-09-24 10:25:26</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">20</td>
@@ -85,22 +85,22 @@
 <span class="lineNum">      23 </span>            : public:
 <a name="24"><span class="lineNum">      24 </span>            :         std::string base_path;</a>
 <span class="lineNum">      25 </span>            : 
-<span class="lineNum">      26 </span><span class="lineCov">         64 :         ComponentTest(){</span>
-<span class="lineNum">      27 </span><span class="lineCov">         64 :                 Susi::Logger::setLevel(0);</span>
+<span class="lineNum">      26 </span><span class="lineCov">         65 :         ComponentTest(){</span>
+<span class="lineNum">      27 </span><span class="lineCov">         65 :                 Susi::Logger::setLevel(0);</span>
 <span class="lineNum">      28 </span>            : 
-<span class="lineNum">      29 </span><span class="lineCov">         64 :                 base_path = Poco::Path(Poco::Path::current()).toString() + &quot;component_test&quot;;</span>
+<span class="lineNum">      29 </span><span class="lineCov">         65 :                 base_path = Poco::Path(Poco::Path::current()).toString() + &quot;component_test&quot;;</span>
 <span class="lineNum">      30 </span>            : 
-<span class="lineNum">      31 </span><span class="lineCov">         64 :                 Susi::Util::Any::Object cfg = Susi::Util::Any::fromJSONString(getConfigString(base_path));</span>
-<span class="lineNum">      32 </span><span class="lineCov">         64 :                 componentManager = Susi::System::createSusiComponentManager(cfg);</span>
-<span class="lineNum">      33 </span><span class="lineCov">         64 :                 eventManager = componentManager-&gt;getComponent&lt;Susi::Events::ManagerComponent&gt;(&quot;eventsystem&quot;);</span>
+<span class="lineNum">      31 </span><span class="lineCov">         65 :                 Susi::Util::Any::Object cfg = Susi::Util::Any::fromJSONString(getConfigString(base_path));</span>
+<span class="lineNum">      32 </span><span class="lineCov">         65 :                 componentManager = Susi::System::createSusiComponentManager(cfg);</span>
+<span class="lineNum">      33 </span><span class="lineCov">         65 :                 eventManager = componentManager-&gt;getComponent&lt;Susi::Events::ManagerComponent&gt;(&quot;eventsystem&quot;);</span>
 <span class="lineNum">      34 </span>            : 
 <span class="lineNum">      35 </span>            : 
-<span class="lineNum">      36 </span><span class="lineCov">         64 :                 io.makeDir(base_path);</span>
-<a name="37"><span class="lineNum">      37 </span><span class="lineCov">         64 :         }</span></a>
+<span class="lineNum">      36 </span><span class="lineCov">         65 :                 io.makeDir(base_path);</span>
+<a name="37"><span class="lineNum">      37 </span><span class="lineCov">         65 :         }</span></a>
 <span class="lineNum">      38 </span>            : 
-<span class="lineNum">      39 </span><span class="lineCov">        128 :         virtual ~ComponentTest(){</span>
-<span class="lineNum">      40 </span><span class="lineCov">         64 :                 io.deletePath(base_path);</span>
-<span class="lineNum">      41 </span><span class="lineCov">         64 :         }</span>
+<span class="lineNum">      39 </span><span class="lineCov">        130 :         virtual ~ComponentTest(){</span>
+<span class="lineNum">      40 </span><span class="lineCov">         65 :                 io.deletePath(base_path);</span>
+<span class="lineNum">      41 </span><span class="lineCov">         65 :         }</span>
 <span class="lineNum">      42 </span>            : 
 <span class="lineNum">      43 </span>            : protected:
 <span class="lineNum">      44 </span>            :         std::shared_ptr&lt;Susi::System::ComponentManager&gt; componentManager;
@@ -112,7 +112,7 @@
 <span class="lineNum">      50 </span>            :         virtual void BadCases() = 0;
 <a name="51"><span class="lineNum">      51 </span>            :         virtual void EdgeCases() = 0;</a>
 <span class="lineNum">      52 </span>            : 
-<span class="lineNum">      53 </span><span class="lineCov">         64 :         std::string getConfigString(std::string path) {</span>
+<span class="lineNum">      53 </span><span class="lineCov">         65 :         std::string getConfigString(std::string path) {</span>
 <span class="lineNum">      54 </span>            :                 std::string configString =&quot;{&quot;
 <span class="lineNum">      55 </span>            :                                 &quot;\&quot;eventsystem\&quot; : {&quot;
 <span class="lineNum">      56 </span>            :                                         &quot;\&quot;threads\&quot;: 4,&quot;
@@ -125,12 +125,12 @@
 <span class="lineNum">      63 </span>            :                                         &quot;{&quot;
 <span class="lineNum">      64 </span>            :                                         &quot;\&quot;identifier\&quot; : \&quot;auth\&quot;,&quot;
 <span class="lineNum">      65 </span>            :                                         &quot;\&quot;type\&quot;: \&quot;sqlite3\&quot;,&quot;
-<span class="lineNum">      66 </span><span class="lineCov">        192 :                                         &quot;\&quot;uri\&quot; : \&quot;&quot;+path+&quot;/auth.sqlite3\&quot;&quot;</span>
+<span class="lineNum">      66 </span><span class="lineCov">        195 :                                         &quot;\&quot;uri\&quot; : \&quot;&quot;+path+&quot;/auth.sqlite3\&quot;&quot;</span>
 <span class="lineNum">      67 </span>            :                                         &quot;},&quot;
 <span class="lineNum">      68 </span>            :                                         &quot;{&quot;
 <span class="lineNum">      69 </span>            :                                         &quot;\&quot;identifier\&quot; : \&quot;test_db\&quot;,&quot;
 <span class="lineNum">      70 </span>            :                                         &quot;\&quot;type\&quot;: \&quot;sqlite3\&quot;,&quot;
-<span class="lineNum">      71 </span><span class="lineCov">        128 :                                         &quot;\&quot;uri\&quot; : \&quot;&quot;+path+&quot;/test_db.sqlite3\&quot;&quot;</span>
+<span class="lineNum">      71 </span><span class="lineCov">        130 :                                         &quot;\&quot;uri\&quot; : \&quot;&quot;+path+&quot;/test_db.sqlite3\&quot;&quot;</span>
 <span class="lineNum">      72 </span>            :                                         &quot;}&quot;
 <span class="lineNum">      73 </span>            :                                 &quot;],&quot;
 <span class="lineNum">      74 </span>            :                                 &quot;\&quot;authcontroller\&quot;: {&quot;
@@ -149,7 +149,7 @@
 <span class="lineNum">      87 </span>            :                                         &quot;\&quot;lifetime\&quot;: 1000&quot;
 <span class="lineNum">      88 </span>            :                                 &quot;},&quot;
 <span class="lineNum">      89 </span>            :                                 &quot;\&quot;statecontroller\&quot;: {&quot;
-<span class="lineNum">      90 </span><span class="lineCov">        128 :                                         &quot;\&quot;file\&quot;: \&quot;&quot;+path+&quot;/states.json\&quot;&quot;</span>
+<span class="lineNum">      90 </span><span class="lineCov">        130 :                                         &quot;\&quot;file\&quot;: \&quot;&quot;+path+&quot;/states.json\&quot;&quot;</span>
 <span class="lineNum">      91 </span>            :                                 &quot;},&quot;
 <span class="lineNum">      92 </span>            :                                 &quot;\&quot;syscallcontroller\&quot;: {&quot;
 <span class="lineNum">      93 </span>            :                                         &quot;\&quot;threads\&quot;: 4,&quot;
@@ -163,13 +163,13 @@
 <span class="lineNum">     101 </span>            :                                 &quot;},&quot;
 <span class="lineNum">     102 </span>            :                                 &quot;\&quot;httpserver\&quot;: {&quot;
 <span class="lineNum">     103 </span>            :                                         &quot;\&quot;address\&quot;: \&quot;[::1]:8080\&quot;,&quot;
-<span class="lineNum">     104 </span><span class="lineCov">        128 :                                         &quot;\&quot;assets\&quot;: \&quot;&quot;+path+&quot;/assets\&quot;,&quot;</span>
-<span class="lineNum">     105 </span><span class="lineCov">        128 :                                         &quot;\&quot;upload\&quot;: \&quot;&quot;+path+&quot;/upload\&quot;&quot;</span>
+<span class="lineNum">     104 </span><span class="lineCov">        130 :                                         &quot;\&quot;assets\&quot;: \&quot;&quot;+path+&quot;/assets\&quot;,&quot;</span>
+<span class="lineNum">     105 </span><span class="lineCov">        130 :                                         &quot;\&quot;upload\&quot;: \&quot;&quot;+path+&quot;/upload\&quot;&quot;</span>
 <span class="lineNum">     106 </span>            :                                 &quot;},&quot;
 <span class="lineNum">     107 </span>            :                                 &quot;\&quot;apiserver\&quot;: {}&quot;
-<span class="lineNum">     108 </span><span class="lineCov">        128 :                         &quot;}&quot;;</span>
+<span class="lineNum">     108 </span><span class="lineCov">        130 :                         &quot;}&quot;;</span>
 <span class="lineNum">     109 </span>            : 
-<span class="lineNum">     110 </span><span class="lineCov">         64 :                 return configString;</span>
+<span class="lineNum">     110 </span><span class="lineCov">         65 :                 return configString;</span>
 <a name="111"><span class="lineNum">     111 </span>            :         }</a>
 <span class="lineNum">     112 </span>            : 
 <span class="lineNum">     113 </span><span class="lineCov">          1 :         long subscribe(std::string topic, Susi::Events::Processor processor){</span>

@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 09:32:35</td>
+            <td class="headerValue">2014-09-24 10:25:26</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">11</td>
@@ -94,7 +94,7 @@
 <span class="lineNum">      32 </span><span class="lineCov">         29 :                                 init(_stdSessionLifetime);</span>
 <a name="33"><span class="lineNum">      33 </span>            : </a>
 <span class="lineNum">      34 </span>            :                                 // Consumer
-<span class="lineNum">      35 </span><span class="lineCov">         60 :                                 Susi::Events::Consumer handler = [this](::Susi::Events::SharedEventPtr evt){handleCheckSessions(std::move(evt));};</span>
+<span class="lineNum">      35 </span><span class="lineCov">         59 :                                 Susi::Events::Consumer handler = [this](::Susi::Events::SharedEventPtr evt){handleCheckSessions(std::move(evt));};</span>
 <span class="lineNum">      36 </span><span class="lineCov">         29 :                                 subscribe(&quot;heartbeat::one&quot;, handler);</span>
 <a name="37"><span class="lineNum">      37 </span>            : </a>
 <a name="38"><span class="lineNum">      38 </span>            :                                 // Processor</a>

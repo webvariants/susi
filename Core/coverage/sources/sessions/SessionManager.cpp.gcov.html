@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 09:32:35</td>
+            <td class="headerValue">2014-09-24 10:25:26</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">13</td>
@@ -88,18 +88,18 @@
 <span class="lineNum">      26 </span>            : 
 <a name="27"><span class="lineNum">      27 </span><span class="lineCov">         35 : SessionManager::~SessionManager(){}</span></a>
 <span class="lineNum">      28 </span>            : 
-<span class="lineNum">      29 </span><span class="lineCov">         32 : int SessionManager::checkSessions(){</span>
+<span class="lineNum">      29 </span><span class="lineCov">         31 : int SessionManager::checkSessions(){</span>
 <span class="lineNum">      30 </span>            :         //std::cout&lt;&lt;&quot;aquiere sessions mutex&quot;&lt;&lt;std::endl;
-<span class="lineNum">      31 </span><span class="lineCov">         32 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
+<span class="lineNum">      31 </span><span class="lineCov">         31 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
 <span class="lineNum">      32 </span>            :         //std::cout&lt;&lt;&quot;got sessions mutex&quot;&lt;&lt;std::endl;
-<span class="lineNum">      33 </span><span class="lineCov">         32 :         int deleted = 0;        </span>
-<span class="lineNum">      34 </span><span class="lineCov">         70 :         for(auto it = std::begin(sessions); it!=std::end(sessions); ){</span>
-<span class="lineNum">      35 </span><span class="lineCov">          6 :                 if(it-&gt;second.isDead()){</span>
+<span class="lineNum">      33 </span><span class="lineCov">         31 :         int deleted = 0;        </span>
+<span class="lineNum">      34 </span><span class="lineCov">         71 :         for(auto it = std::begin(sessions); it!=std::end(sessions); ){</span>
+<span class="lineNum">      35 </span><span class="lineCov">          9 :                 if(it-&gt;second.isDead()){</span>
 <span class="lineNum">      36 </span><span class="lineCov">          3 :                         Susi::Logger::debug(&quot;delete session &quot;+it-&gt;first);</span>
 <span class="lineNum">      37 </span><span class="lineCov">          3 :                         sessions.erase(it++);</span>
 <span class="lineNum">      38 </span><span class="lineCov">          3 :                         deleted++;</span>
 <span class="lineNum">      39 </span>            :                 }else{
-<span class="lineNum">      40 </span><span class="lineCov">          3 :                         ++it;</span>
+<span class="lineNum">      40 </span><span class="lineCov">          6 :                         ++it;</span>
 <span class="lineNum">      41 </span>            :                 }
 <span class="lineNum">      42 </span>            :         }
 <span class="lineNum">      43 </span>            : 
@@ -116,7 +116,7 @@
 <span class="lineNum">      54 </span>            :                 }
 <span class="lineNum">      55 </span>            :         }
 <span class="lineNum">      56 </span>            :         sessions = std::move(newSessions);*/
-<span class="lineNum">      57 </span><span class="lineCov">         32 :         return deleted;</span>
+<span class="lineNum">      57 </span><span class="lineCov">         31 :         return deleted;</span>
 <a name="58"><span class="lineNum">      58 </span>            : }</a>
 <span class="lineNum">      59 </span>            : 
 <span class="lineNum">      60 </span><span class="lineCov">         10 : bool SessionManager::checkSession(std::string id){</span>
