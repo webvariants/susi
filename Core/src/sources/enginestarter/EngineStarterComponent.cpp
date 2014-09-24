@@ -34,12 +34,6 @@ void Susi::EngineStarter::StarterComponent::handleRestart(Susi::Events::EventPtr
 	}
 }
 
-void Susi::EngineStarter::StarterComponent::handleStop(Susi::Events::EventPtr event) {
-	try{
-		killall();
-	}catch(const std::exception & e){
-		std::string msg = "Error in handleStop(): ";
-		msg += e.what();
-		throw std::runtime_error(msg);
-	}
+void Susi::EngineStarter::StarterComponent::handleStop(Susi::Events::EventPtr event) {	
+	killall();	
 }

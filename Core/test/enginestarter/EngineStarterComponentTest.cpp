@@ -74,6 +74,21 @@ protected:
 
 	virtual void BadCases() override {
 
+		//bad path
+		auto evt = createEvent("enginestarter::start");	
+		evt->payload["path"] = base_path + "/dont/exist";
+		auto result = publish_sync(std::move(evt));
+
+		EXPECT_TRUE(hasErrorHeader(result));
+
+		//bad path
+		auto evt2 = createEvent("enginestarter::restart");	
+		evt2->payload["path"] = base_path + "/dont/exist";
+		auto result2 = publish_sync(std::move(evt2));
+
+		EXPECT_TRUE(hasErrorHeader(result2));
+
+
 	}
 
 	virtual void EdgeCases() override {

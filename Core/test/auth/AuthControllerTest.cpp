@@ -47,6 +47,10 @@ protected:
 		result = authController->isLoggedIn(sessionID);
 		EXPECT_TRUE(result);
 
+		// check allready logged in
+		result = authController->login(sessionID, "John", "Doe");
+		EXPECT_TRUE(result);
+
 		username = authController->getUsername(sessionID);
 		EXPECT_EQ("John",username);
 		

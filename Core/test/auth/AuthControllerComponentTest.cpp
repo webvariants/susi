@@ -83,6 +83,37 @@ protected:
 		auto result = publish_sync(std::move(evt));
 		//check event
 		EXPECT_EQ(Susi::Util::Any{false}, result->payload["success"]);
+
+		// expect empty username
+		auto evt6 = createEvent("auth::getUsername");
+		evt6->sessionID = sessionID;
+		auto result6 = publish_sync(std::move(evt6));
+		EXPECT_EQ("", static_cast<std::string>(result6->payload["username"]));
+
+
+		auto evt2 = createEvent("auth::login");
+		evt2->payload["username"] = "John";
+		evt2->payload["password"] = "Doe";
+		evt2->sessionID = sessionID;
+		publish_sync(std::move(evt2));
+
+		// logout with wrong sessionID
+		auto evt3 = createEvent("auth::logout");
+		evt3->sessionID = sessionID + "foo" ;
+		auto result3 = publish_sync(std::move(evt3));
+
+		EXPECT_EQ(Susi::Util::Any{false}, result3->payload["success"]);
+
+		auto evt4 = createEvent("auth::isLoggedIn");
+		evt4->sessionID = sessionID;
+		auto result4 = publish_sync(std::move(evt4));
+		EXPECT_TRUE(static_cast<bool>(result4->payload["success"]));
+
+
+		// logout with mising payload
+		auto evt5 = createEvent("auth::logout");		
+		auto result5 = publish_sync(std::move(evt5));
+		EXPECT_FALSE(static_cast<bool>(result5->payload["success"]));	
 	}
 
 	virtual void EdgeCases() override {

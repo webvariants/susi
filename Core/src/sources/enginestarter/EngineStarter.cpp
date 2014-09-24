@@ -3,26 +3,16 @@
 Susi::EngineStarter::Starter::Starter() {}
 
 void Susi::EngineStarter::Starter::killall() {
-	try{
-		for(auto & ph : phs){
-			Poco::Process::kill(ph);
-		}
-	}catch(const std::exception & e){
-		std::string msg = "Error in EngineStarter::killall : ";
-		msg += e.what();
-		Susi::Logger::error(msg);
+	while (!phs.empty())
+	{
+		auto & ph =phs.back();
+		Poco::Process::kill(ph);
+		phs.pop_back();
 	}
-
 }
 
 void Susi::EngineStarter::Starter::execute(std::string path) {
-	try{
-		this->rec_dir(path);
-	}catch(const std::exception & e){
-		std::string msg = "Error in EngineStarter::execute : ";
-		msg += e.what();
-		Susi::Logger::error(msg);
-	}
+	this->rec_dir(path);
 }
 
 void Susi::EngineStarter::Starter::rec_dir(const std::string & path)
