@@ -24,7 +24,7 @@ Priority: optional
 Section: devel
 Maintainer: Tino Rusch <tino.rusch@webvariants.de>
 Architecture: all
-Version: 0.1.4a
+Version: 0.1.4b
 Description: The SUSI server
 EOF
 
