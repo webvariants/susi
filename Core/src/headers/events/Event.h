@@ -24,6 +24,7 @@ class Event {
 protected:
 public:
 	long id = 0;
+	char authlevel = 0;
 	std::string topic;
 	std::vector<Header> headers;
 	Susi::Util::Any payload;
@@ -41,6 +42,7 @@ public:
 		headers = other.headers;
 		payload = other.payload;
 		sessionID = other.sessionID;
+		authlevel = other.authlevel;
 	}
 	Event(Susi::Util::Any & any){
 		if(!any["id"].isNull()){
@@ -64,6 +66,9 @@ public:
 		}
 		if(!any["sessionid"].isNull()){
 			sessionID = static_cast<std::string>(any["sessionid"]);
+		}
+		if(!any["authlevel"].isNull()){
+			authlevel = static_cast<char>(any["authlevel"]);
 		}
 	}
 	Susi::Util::Any toAny(){

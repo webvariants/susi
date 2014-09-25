@@ -1,89 +1,81 @@
 #include "events/EventManager.h"
 
-long Susi::Events::Manager::subscribe(std::string topic, Susi::Events::Processor processor){
+
+long Susi::Events::Manager::subscribe(
+				std::string topic, 
+				Predicate predicate,
+				Consumer consumer,
+				Processor processor,
+				char authlevel,
+				std::string name,
+				std::vector<std::string> runBeforeThis,
+				std::vector<std::string> runAfterThis )
+{
+	long id = std::chrono::system_clock::now().time_since_epoch().count();
+	Subscription sub;
+	sub.id = id;
+	sub.name = name;
+	sub.minAuthlevel = authlevel;
+	sub.topic = topic;
+	sub.predicate = std::move(predicate);
+	sub.processor = std::move(processor);
+	sub.consumer = std::move(consumer);
+	sub.runBeforeThis = std::move(runBeforeThis);
+	sub.runAfterThis = std::move(runAfterThis);
+	if(topic != ""){
+		std::lock_guard<std::mutex> lock(mutex);
+		auto & subs = subscriptionsByTopic[topic];
+		subs.push_back(std::move(sub));
+	}else{
+		std::lock_guard<std::mutex> lock(mutex);
+		subscriptionsByPred.push_back(std::move(sub));
+	}
+	return id;
+
+}
+
+long Susi::Events::Manager::subscribe(std::string topic, Processor processor, char minAuthlevel, std::string name, std::vector<std::string> runBeforeThis, std::vector<std::string> runAfterThis){
 	if(Susi::Util::Glob::isGlob(topic)){
 		auto predicate = [topic](Susi::Events::Event& event){
 			Susi::Util::Glob glob{topic};
 			return glob.match(event.topic);
 		};
-		return subscribe(predicate,processor);
+		return subscribe("",predicate,Consumer{},std::move(processor),minAuthlevel,name,runBeforeThis,runAfterThis);
 	}
-	std::lock_guard<std::mutex> lock(mutex);
-	long id = std::chrono::system_clock::now().time_since_epoch().count();
-	processorsByTopic[topic].push_back(std::make_pair(id,processor));
-	return id;
+	return subscribe(topic,Predicate{},Consumer{},std::move(processor),minAuthlevel,name,runBeforeThis,runAfterThis);
 }
-long Susi::Events::Manager::subscribe(Susi::Events::Predicate pred, Susi::Events::Processor processor){
-	std::lock_guard<std::mutex> lock(mutex);
-	long id = std::chrono::system_clock::now().time_since_epoch().count();
-	processorsByPred.push_back(std::make_tuple(id,pred,processor));
-	return id;
+long Susi::Events::Manager::subscribe(Predicate pred, Processor processor, char minAuthlevel, std::string name, std::vector<std::string> runBeforeThis, std::vector<std::string> runAfterThis){
+	return subscribe("",pred,Consumer{},std::move(processor),minAuthlevel,name,runBeforeThis,runAfterThis);
 }
-long Susi::Events::Manager::subscribe(std::string topic, Susi::Events::Consumer consumer){
+long Susi::Events::Manager::subscribe(std::string topic, Consumer consumer, char minAuthlevel, std::string name, std::vector<std::string> runBeforeThis, std::vector<std::string> runAfterThis){
 	if(Susi::Util::Glob::isGlob(topic)){
 		auto predicate = [topic](Susi::Events::Event& event){
 			Susi::Util::Glob glob{topic};
 			return glob.match(event.topic);
 		};
-		return subscribe(predicate,consumer);
+		return subscribe("",predicate,std::move(consumer),Processor{},minAuthlevel,name,runBeforeThis,runAfterThis);
 	}
-	std::lock_guard<std::mutex> lock(mutex);
-	long id = std::chrono::system_clock::now().time_since_epoch().count();
-	consumersByTopic[topic].push_back(std::make_pair(id,consumer));
-	return id;
+	return subscribe(topic,Predicate{},std::move(consumer),Processor{},minAuthlevel,name,runBeforeThis,runAfterThis);
 }
-long Susi::Events::Manager::subscribe(Susi::Events::Predicate pred, Susi::Events::Consumer consumer){
-	std::lock_guard<std::mutex> lock(mutex);
-	long id = std::chrono::system_clock::now().time_since_epoch().count();
-	consumersByPred.push_back(std::make_tuple(id,pred,consumer));
-	return id;
+long Susi::Events::Manager::subscribe(Predicate pred, Consumer consumer, char minAuthlevel, std::string name, std::vector<std::string> runBeforeThis, std::vector<std::string> runAfterThis){
+	return subscribe("",pred,std::move(consumer),Processor{},minAuthlevel,name,runBeforeThis,runAfterThis);
 }
+
 bool Susi::Events::Manager::unsubscribe(long id){
 	std::lock_guard<std::mutex> lock(mutex);
-	for(auto & kv : processorsByTopic){
-		auto & processors = kv.second;
-		for(size_t i=0;i<processors.size();i++){
-			if(processors[i].first == id){
-				processors.erase(processors.begin()+i);
+	for(auto & kv : subscriptionsByTopic){
+		auto & subs = kv.second;
+		for(int i=0;i<subs.size();i++){
+			if(subs[i].id == id){
+				subs.erase(subs.begin()+i);
 				return true;
 			}
 		}
 	}
-	for(size_t i=0;i<processorsByPred.size();i++){
-		auto & tuple = processorsByPred[i];
-		if(std::get<0>(tuple) == id){
-			processorsByPred.erase(processorsByPred.begin()+i);
-			return true;
-		}
-	}
-	for(auto & kv : consumersByTopic){
-		auto & consumers = kv.second;
-		for(size_t i=0;i<consumers.size();i++){
-			if(consumers[i].first == id){
-				consumers.erase(consumers.begin()+i);
-				return true;
-			}
-		}
-	}
-	for(size_t i=0;i<consumersByPred.size();i++){
-		auto & tuple = consumersByPred[i];
-		if(std::get<0>(tuple) == id){
-			consumersByPred.erase(consumersByPred.begin()+i);
-			return true;
-		}
-	}
-	for(auto & kv : publishProcesses){
-		for(auto & processorPair : kv.second->processors){
-			if(processorPair.first == id){
-				processorPair.second = Processor{};
-				break;
-			}
-		}
-		for(auto & consumerPair : kv.second->consumers){
-			if(consumerPair.first == id){
-				consumerPair.second = Consumer{};
-				break;
-			}
+	for(int i=0;i<subscriptionsByPred.size();i++){
+		if(subscriptionsByPred[i].id == id){
+			subscriptionsByPred.erase(subscriptionsByPred.begin()+i);
+			return 0;
 		}
 	}
 	return false;
@@ -99,34 +91,32 @@ void Susi::Events::Manager::publish(Susi::Events::EventPtr event, Susi::Events::
 	{
 		std::lock_guard<std::mutex> lock(mutex);
 		auto process = std::make_shared<PublishProcess>();
-		for(auto & kv : processorsByTopic){
+		for(auto & kv : subscriptionsByTopic){
 			if(kv.first == event->topic){
-				for(auto & pair : kv.second){
-					process->processors.push_back(pair);
+				for(auto & sub : kv.second){
+					if(event->authlevel <= sub.minAuthlevel){
+						if(sub.consumer){
+							process->consumers.push_back(sub.consumer);
+						}else if(sub.processor){
+							process->processors.push_back(sub.processor);
+						}
+					}
 				}
 				break;
 			}
 		}
-		for(auto & tuple : processorsByPred){
-			if((std::get<1>(tuple))(*event)){
-				process->processors.push_back(std::make_pair(std::get<0>(tuple),std::get<2>(tuple)));
-			}
-		}
-
-		for(auto & kv : consumersByTopic){
-			if(kv.first == event->topic){
-				for(auto & pair : kv.second){
-					process->consumers.push_back(pair);
+		for(auto & sub : subscriptionsByPred){
+			if(sub.predicate(*event)){
+				if(event->authlevel <= sub.minAuthlevel){
+					if(sub.consumer){
+						process->consumers.push_back(sub.consumer);
+					}else if(sub.processor){
+						process->processors.push_back(sub.processor);
+					}
 				}
-				break;
 			}
 		}
-		for(auto & tuple : consumersByPred){
-			if((std::get<1>(tuple))(*event)){
-				process->consumers.push_back(std::make_pair(std::get<0>(tuple),std::get<2>(tuple)));
-			}
-		}
-		process->consumers.push_back(std::pair<long,Consumer>{0,finishCallback});
+		process->consumers.push_back(finishCallback);
 		publishProcesses[event->id] = process;
 	} // release lock
 	ack(std::move(event));
@@ -171,7 +161,7 @@ void Susi::Events::Manager::ack(EventPtr event){
 			}
 			if(process->current < process->processors.size()){
 				try{
-					auto nextProcessor = process->processors[process->current++].second;
+					auto nextProcessor = process->processors[process->current++];
 					if(nextProcessor){
 						nextProcessor(std::move(event));
 					}
@@ -180,8 +170,7 @@ void Susi::Events::Manager::ack(EventPtr event){
 				}
 			}else{
 				std::shared_ptr<Event> sharedEvent{event.release()};
-				for(auto & consumerPair : process->consumers){
-					auto consumer = consumerPair.second;
+				for(auto & consumer : process->consumers){
 					if(consumer) manager->pool.add([consumer,sharedEvent](){
 						consumer(sharedEvent);
 					});

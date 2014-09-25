@@ -532,6 +532,14 @@ Any::operator std::map<std::string,Any>&() {
 
 
 // copy conversion operators
+// 
+Any::operator char() {
+	if(this->type != INTEGER) {
+		throw WrongTypeException(INTEGER, type);
+	}
+	return static_cast<char>(this->integerValue);
+}
+
 Any::operator int() {
 	if(this->type != INTEGER) {
 		throw WrongTypeException(INTEGER, type);

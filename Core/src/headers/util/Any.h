@@ -157,6 +157,7 @@ namespace Susi {
 			operator std::map<std::string,Any>&();
 
 			// copy conversion operators
+			operator char();
 			operator int();
 			operator long();
 			operator std::map<std::string,std::string>();

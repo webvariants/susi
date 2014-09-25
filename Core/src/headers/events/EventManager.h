@@ -27,10 +27,10 @@ class Manager {
 public:
 	Manager(size_t workers = 4, size_t buffsize = 32) : pool{workers,buffsize} {};
 	// public subscribe api
-	long subscribe(std::string topic, Processor processor);
-	long subscribe(Predicate pred, Processor processor);
-	long subscribe(std::string topic, Consumer consumer);
-	long subscribe(Predicate pred, Consumer consumer);
+	long subscribe(std::string topic, Processor processor, char minAuthlevel=0, std::string name="", std::vector<std::string> runBeforeThis = std::vector<std::string>{} , std::vector<std::string> runAfterThis = std::vector<std::string>{});
+	long subscribe(Predicate pred, Processor processor, char minAuthlevel=0, std::string name="", std::vector<std::string> runBeforeThis = std::vector<std::string>{} , std::vector<std::string> runAfterThis = std::vector<std::string>{});
+	long subscribe(std::string topic, Consumer consumer, char minAuthlevel=0, std::string name="", std::vector<std::string> runBeforeThis = std::vector<std::string>{} , std::vector<std::string> runAfterThis = std::vector<std::string>{});
+	long subscribe(Predicate pred, Consumer consumer, char minAuthlevel=0, std::string name="", std::vector<std::string> runBeforeThis = std::vector<std::string>{} , std::vector<std::string> runAfterThis = std::vector<std::string>{});
 	bool unsubscribe(long id);
 	// public publish api function
 	void publish(EventPtr event, Consumer finishCallback = Consumer{});
@@ -45,14 +45,42 @@ protected:
 
 	std::condition_variable publishFinished;
 
+	long subscribe(std::string topic, 
+				   Predicate predicate,
+				   Consumer consumer,
+				   Processor processor,
+				   char authlevel,
+				   std::string name,
+				   std::vector<std::string> runBeforeThis,
+				   std::vector<std::string> runAfterThis);
+
 	struct PublishProcess {
-		std::vector<std::pair<long,Processor>>   processors;
-		std::vector<std::pair<long,Consumer>>    consumers;
+		std::vector<Processor>   processors;
+		std::vector<Consumer>    consumers;
 		std::vector<std::string> errors;
 		std::mutex				 mutex;
 		size_t current = 0;
 	};
 	std::map<long,std::shared_ptr<PublishProcess>> publishProcesses;
+
+	struct Subscription {
+		//identifier
+		long id = 0;
+		std::string name = "";
+		char minAuthlevel = 0;
+		//select statements
+		std::string topic = "";
+		Predicate predicate = Predicate{};
+		//actual callback
+		Processor processor = Processor{};
+		Consumer consumer = Consumer{};
+		//constraints
+		std::vector<std::string> runBeforeThis;
+		std::vector<std::string> runAfterThis;
+	};
+
+	std::map<std::string,std::vector<Subscription>> subscriptionsByTopic;
+	std::vector<Subscription> subscriptionsByPred;
 
 	std::map<std::string,std::vector<std::pair<long,Processor>>> processorsByTopic;
 	std::map<std::string,std::vector<std::pair<long,Consumer>>> consumersByTopic;
