@@ -29,6 +29,8 @@
 #include "webstack/HttpServerComponent.h"
 #include "autodiscovery/AutoDiscoveryComponent.h"
 
+#include "util/ConstrainedScheduler.h"
+
 namespace Susi {
 namespace System {
 
