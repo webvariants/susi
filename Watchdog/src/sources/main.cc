@@ -14,7 +14,9 @@
 #include <chrono>
 #include <condition_variable>
 
-#include "headers/Watchdog.h"
+#include <csignal>
+
+#include "Watchdog.h"
 
 std::condition_variable waitCond;
 
@@ -27,7 +29,6 @@ void waitForEver(){
 
 void signalHandler (int signum) {
 	std::cout << "Interrupt signal (" << signum << ") received.\n";
-	componentManager->stopAll();
 	exit(0);
 }
 
@@ -38,5 +39,5 @@ int main(int argc, char** argv){
 
 	waitForEver();
 
-	exit(0)
+	exit(0);
 }

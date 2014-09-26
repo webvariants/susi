@@ -18,8 +18,6 @@ project( "WATCHDOG" )
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/dev")
 
 find_package(POCO REQUIRED PocoFoundation PocoUtil PocoJSON PocoNet)
-find_package(SOCI REQUIRED)
-find_package(Threads REQUIRED)
 
 #add_subdirectory( ${CMAKE_SOURCE_DIR}/test/gtest-1.7.0 )
 #include_directories( ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR} )
@@ -33,7 +31,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/src/headers )
 include_directories( ${POCO_INCLUDE_DIR} )
 include_directories( ${SOCI_INCLUDE_DIRS} )
 
-file( GLOB SRCFILES ${CMAKE_SOURCE_DIR}/src/sources/**/*.cpp )
+file( GLOB SRCFILES ${CMAKE_SOURCE_DIR}/src/sources/*.cpp )
 #file( GLOB TESTFILES ${CMAKE_SOURCE_DIR}/test/*/*.cpp )
 
 #LIBRARY
@@ -43,8 +41,6 @@ set_target_properties(libwatchdog PROPERTIES OUTPUT_NAME watchdog)
 #WATCHDOG BINARY
 add_executable( watchdog ${CMAKE_SOURCE_DIR}/src/sources/main.cc )
 target_link_libraries(watchdog libwatchdog)
-target_link_libraries(watchdog ${CMAKE_THREAD_LIBS_INIT})
-target_link_libraries(watchdog ${SOCI_LIBRARY})
 target_link_libraries(watchdog ${POCO_LIBRARIES})
 
 #SUSI TESTS
