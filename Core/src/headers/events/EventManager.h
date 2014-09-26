@@ -8,6 +8,7 @@
 #include "util/Any.h"
 #include "events/Event.h"
 #include "util/Glob.h"
+#include "util/ConstrainedScheduler.h"
 
 namespace Susi {
 namespace Events{
@@ -27,21 +28,26 @@ class Manager {
 public:
 	Manager(size_t workers = 4, size_t buffsize = 32) : pool{workers,buffsize} {};
 	// public subscribe api
-	long subscribe(std::string topic, Processor processor, char minAuthlevel=0, std::string name="", std::vector<std::string> runBeforeThis = std::vector<std::string>{} , std::vector<std::string> runAfterThis = std::vector<std::string>{});
-	long subscribe(Predicate pred, Processor processor, char minAuthlevel=0, std::string name="", std::vector<std::string> runBeforeThis = std::vector<std::string>{} , std::vector<std::string> runAfterThis = std::vector<std::string>{});
-	long subscribe(std::string topic, Consumer consumer, char minAuthlevel=0, std::string name="", std::vector<std::string> runBeforeThis = std::vector<std::string>{} , std::vector<std::string> runAfterThis = std::vector<std::string>{});
-	long subscribe(Predicate pred, Consumer consumer, char minAuthlevel=0, std::string name="", std::vector<std::string> runBeforeThis = std::vector<std::string>{} , std::vector<std::string> runAfterThis = std::vector<std::string>{});
+	long subscribe(std::string topic, Processor processor, char minAuthlevel=0, std::string name="");
+	long subscribe(Predicate pred, Processor processor, char minAuthlevel=0, std::string name="");
+	long subscribe(std::string topic, Consumer consumer, char minAuthlevel=0, std::string name="");
+	long subscribe(Predicate pred, Consumer consumer, char minAuthlevel=0, std::string name="");
 	bool unsubscribe(long id);
 	// public publish api function
 	void publish(EventPtr event, Consumer finishCallback = Consumer{});
 	// pass event back to system
 	void ack(EventPtr event);
 
+	void addConstraint(std::pair<std::string,std::string> constraint){
+		scheduler.addConstraint(constraint);
+	}
+
 	EventPtr createEvent(std::string topic);
 
 protected:
 	Susi::Util::ThreadPool pool;
 	std::mutex mutex;
+	Susi::Util::ConstrainedScheduler scheduler;
 
 	std::condition_variable publishFinished;
 
@@ -50,9 +56,7 @@ protected:
 				   Consumer consumer,
 				   Processor processor,
 				   char authlevel,
-				   std::string name,
-				   std::vector<std::string> runBeforeThis,
-				   std::vector<std::string> runAfterThis);
+				   std::string name);
 
 	struct PublishProcess {
 		std::vector<Processor>   processors;
@@ -74,18 +78,10 @@ protected:
 		//actual callback
 		Processor processor = Processor{};
 		Consumer consumer = Consumer{};
-		//constraints
-		std::vector<std::string> runBeforeThis;
-		std::vector<std::string> runAfterThis;
 	};
 
 	std::map<std::string,std::vector<Subscription>> subscriptionsByTopic;
 	std::vector<Subscription> subscriptionsByPred;
-
-	std::map<std::string,std::vector<std::pair<long,Processor>>> processorsByTopic;
-	std::map<std::string,std::vector<std::pair<long,Consumer>>> consumersByTopic;
-	std::vector<std::tuple<long,Predicate,Processor>> processorsByPred;
-	std::vector<std::tuple<long,Predicate,Consumer>> consumersByPred;
 
 	void deleter(Event *event);
 

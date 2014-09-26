@@ -7,9 +7,7 @@ long Susi::Events::Manager::subscribe(
 				Consumer consumer,
 				Processor processor,
 				char authlevel,
-				std::string name,
-				std::vector<std::string> runBeforeThis,
-				std::vector<std::string> runAfterThis )
+				std::string name)
 {
 	long id = std::chrono::system_clock::now().time_since_epoch().count();
 	Subscription sub;
@@ -20,8 +18,6 @@ long Susi::Events::Manager::subscribe(
 	sub.predicate = std::move(predicate);
 	sub.processor = std::move(processor);
 	sub.consumer = std::move(consumer);
-	sub.runBeforeThis = std::move(runBeforeThis);
-	sub.runAfterThis = std::move(runAfterThis);
 	if(topic != ""){
 		std::lock_guard<std::mutex> lock(mutex);
 		auto & subs = subscriptionsByTopic[topic];
@@ -34,31 +30,31 @@ long Susi::Events::Manager::subscribe(
 
 }
 
-long Susi::Events::Manager::subscribe(std::string topic, Processor processor, char minAuthlevel, std::string name, std::vector<std::string> runBeforeThis, std::vector<std::string> runAfterThis){
+long Susi::Events::Manager::subscribe(std::string topic, Processor processor, char minAuthlevel, std::string name){
 	if(Susi::Util::Glob::isGlob(topic)){
 		auto predicate = [topic](Susi::Events::Event& event){
 			Susi::Util::Glob glob{topic};
 			return glob.match(event.topic);
 		};
-		return subscribe("",predicate,Consumer{},std::move(processor),minAuthlevel,name,runBeforeThis,runAfterThis);
+		return subscribe("",predicate,Consumer{},std::move(processor),minAuthlevel,name);
 	}
-	return subscribe(topic,Predicate{},Consumer{},std::move(processor),minAuthlevel,name,runBeforeThis,runAfterThis);
+	return subscribe(topic,Predicate{},Consumer{},std::move(processor),minAuthlevel,name);
 }
-long Susi::Events::Manager::subscribe(Predicate pred, Processor processor, char minAuthlevel, std::string name, std::vector<std::string> runBeforeThis, std::vector<std::string> runAfterThis){
-	return subscribe("",pred,Consumer{},std::move(processor),minAuthlevel,name,runBeforeThis,runAfterThis);
+long Susi::Events::Manager::subscribe(Predicate pred, Processor processor, char minAuthlevel, std::string name){
+	return subscribe("",pred,Consumer{},std::move(processor),minAuthlevel,name);
 }
-long Susi::Events::Manager::subscribe(std::string topic, Consumer consumer, char minAuthlevel, std::string name, std::vector<std::string> runBeforeThis, std::vector<std::string> runAfterThis){
+long Susi::Events::Manager::subscribe(std::string topic, Consumer consumer, char minAuthlevel, std::string name){
 	if(Susi::Util::Glob::isGlob(topic)){
 		auto predicate = [topic](Susi::Events::Event& event){
 			Susi::Util::Glob glob{topic};
 			return glob.match(event.topic);
 		};
-		return subscribe("",predicate,std::move(consumer),Processor{},minAuthlevel,name,runBeforeThis,runAfterThis);
+		return subscribe("",predicate,std::move(consumer),Processor{},minAuthlevel,name);
 	}
-	return subscribe(topic,Predicate{},std::move(consumer),Processor{},minAuthlevel,name,runBeforeThis,runAfterThis);
+	return subscribe(topic,Predicate{},std::move(consumer),Processor{},minAuthlevel,name);
 }
-long Susi::Events::Manager::subscribe(Predicate pred, Consumer consumer, char minAuthlevel, std::string name, std::vector<std::string> runBeforeThis, std::vector<std::string> runAfterThis){
-	return subscribe("",pred,std::move(consumer),Processor{},minAuthlevel,name,runBeforeThis,runAfterThis);
+long Susi::Events::Manager::subscribe(Predicate pred, Consumer consumer, char minAuthlevel, std::string name){
+	return subscribe("",pred,std::move(consumer),Processor{},minAuthlevel,name);
 }
 
 bool Susi::Events::Manager::unsubscribe(long id){
@@ -91,6 +87,9 @@ void Susi::Events::Manager::publish(Susi::Events::EventPtr event, Susi::Events::
 	{
 		std::lock_guard<std::mutex> lock(mutex);
 		auto process = std::make_shared<PublishProcess>();
+
+		std::vector<Subscription> affectedProcessorSubscriptions;
+		//collect consumers, processors by topic
 		for(auto & kv : subscriptionsByTopic){
 			if(kv.first == event->topic){
 				for(auto & sub : kv.second){
@@ -98,24 +97,39 @@ void Susi::Events::Manager::publish(Susi::Events::EventPtr event, Susi::Events::
 						if(sub.consumer){
 							process->consumers.push_back(sub.consumer);
 						}else if(sub.processor){
-							process->processors.push_back(sub.processor);
+							affectedProcessorSubscriptions.push_back(sub);
 						}
 					}
 				}
 				break;
 			}
 		}
+		//collect consumers, processors by predicate
 		for(auto & sub : subscriptionsByPred){
 			if(sub.predicate(*event)){
 				if(event->authlevel <= sub.minAuthlevel){
 					if(sub.consumer){
 						process->consumers.push_back(sub.consumer);
 					}else if(sub.processor){
-						process->processors.push_back(sub.processor);
+						affectedProcessorSubscriptions.push_back(sub);
 					}
 				}
 			}
 		}
+		//schedule processors
+		std::set<std::string> tasks;
+		for(auto & s : affectedProcessorSubscriptions){
+			tasks.insert(s.name);
+		}
+		auto plan = scheduler.schedule(tasks);
+		for(auto & name : plan){
+			for(auto & sub : affectedProcessorSubscriptions){
+				if(sub.name==name){
+					process->processors.push_back(sub.processor);
+				}
+			}
+		}
+
 		process->consumers.push_back(finishCallback);
 		publishProcesses[event->id] = process;
 	} // release lock
