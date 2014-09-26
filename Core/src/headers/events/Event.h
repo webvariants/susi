@@ -44,6 +44,15 @@ public:
 		sessionID = other.sessionID;
 		authlevel = other.authlevel;
 	}
+	Event& operator=(Event & other){
+		setID(other.getID());
+		setSessionID(other.getSessionID());
+		setTopic(other.getTopic());
+		setHeaders(other.getHeaders());
+		setPayload(other.getPayload());
+		setAuthlevel(other.getAuthlevel());
+		return *this;
+	}
 	Event(Susi::Util::Any & any){
 		if(!any["id"].isNull()){
 			id = any["id"];
@@ -75,7 +84,8 @@ public:
 		Susi::Util::Any obj = Susi::Util::Any::Object{
 			{"id",id},
 			{"sessionid",sessionID},
-			{"topic",topic}
+			{"topic",topic},
+			{"authlevel",authlevel}
 		};
 		if(!payload.isNull()){
 			obj["payload"] = payload;
@@ -101,6 +111,9 @@ public:
 	inline std::vector<Header> & getHeaders(){
 		return headers;
 	}
+	inline char getAuthlevel(){
+		return authlevel;
+	}
 	inline Susi::Util::Any & getPayload(){
 		return payload;
 	}
@@ -120,19 +133,14 @@ public:
 	inline void setPayload(Susi::Util::Any _payload){
 		payload = _payload;
 	}
+	inline void setAuthlevel(char _authlevel){
+		authlevel = _authlevel;
+	}
 
 	std::string toString(){
 		return toAny().toJSONString();
 	}
 
-	Event& operator=(Event & other){
-		setID(other.getID());
-		setSessionID(other.getSessionID());
-		setTopic(other.getTopic());
-		setHeaders(other.getHeaders());
-		setPayload(other.getPayload());
-		return *this;
-	}
 
 };
 

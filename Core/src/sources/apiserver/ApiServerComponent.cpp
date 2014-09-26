@@ -70,15 +70,9 @@ void Susi::Api::ApiServerComponent::handleRegisterConsumer(std::string & id, Sus
 			}
 			Susi::Util::Any packet;
 			packet["type"] = "consumerEvent";
-			packet["data"] = Susi::Util::Any::Object{
-				{"id",event->id},
-				{"topic",event->topic},
-				{"headers",headers},
-				{"payload",event->payload},
-				{"sessionid",event->sessionID}
-			};
-			std::string _id = id;
+			packet["data"] = event->toAny();
 			//std::cout<<"got consumer event, try to send it "+packet.toJSONString()<<std::endl;
+			std::string _id = id;
 			send(_id,packet);
 		};
 		long subid = eventManager->subscribe(topic,callback);
@@ -104,13 +98,7 @@ void Susi::Api::ApiServerComponent::handleRegisterProcessor(std::string & id, Su
 			}
 			Susi::Util::Any packet;
 			packet["type"] = "processorEvent";
-			packet["data"] = Susi::Util::Any::Object{
-				{"id",event->id},
-				{"topic",event->topic},
-				{"headers",headers},
-				{"payload",event->payload},
-				{"sessionid",event->sessionID}
-			};
+			packet["data"] = event->toAny();
 			std::string _id = id;
 			eventsToAck[_id][event->id] = std::move(event);
 			send(_id,packet);
@@ -157,29 +145,16 @@ void Susi::Api::ApiServerComponent::handleUnregisterProcessor(std::string & id, 
 void Susi::Api::ApiServerComponent::handlePublish(std::string & id, Susi::Util::Any & packet){
 	auto & eventData = packet["data"];
 	if(!eventData.isObject() || !eventData["topic"].isString()){
-		sendFail(id,"data is not an object or topic is not set correctly");
+		sendFail(id,"publish handler: data is not an object or topic is not set correctly");
 		return;
 	}
 	auto event = eventManager->createEvent(eventData["topic"]);
-	event->sessionID = id;
-	auto eventID = eventData["id"];
-	if(eventID.isNull()){
-		eventID = std::chrono::system_clock::now().time_since_epoch().count();
+	Susi::Events::Event rawEvent{eventData};
+	rawEvent.sessionID = id;
+	if(rawEvent.id == 0){
+		rawEvent.id = std::chrono::system_clock::now().time_since_epoch().count();
 	}
-
-	event->id = eventID;
-
-	if(eventData["headers"].isArray()){
-		Susi::Util::Any::Array arr = eventData["headers"];
-		for(Susi::Util::Any::Object & val : arr){
-			for(auto & kv : val){
-				event->headers.push_back(std::make_pair(kv.first,(std::string)kv.second));
-			}
-		}
-	}
-	if(!eventData["payload"].isNull()){
-		event->payload = eventData["payload"];
-	}
+	*event = rawEvent;
 
 	eventManager->publish(std::move(event),[this,id](Susi::Events::SharedEventPtr event){
 		Susi::Util::Any::Array headers;
@@ -188,13 +163,7 @@ void Susi::Api::ApiServerComponent::handlePublish(std::string & id, Susi::Util::
 		}
 		Susi::Util::Any packet;
 		packet["type"] = "ack";
-		packet["data"] = Susi::Util::Any::Object{
-			{"id",event->id},
-			{"topic",event->topic},
-			{"headers",headers},
-			{"payload",event->payload},
-			{"sessionid",event->sessionID}
-		};
+		packet["data"] = event->toAny();
 		std::string _id = id;
 		send(_id,packet);
 	});
@@ -205,7 +174,7 @@ void Susi::Api::ApiServerComponent::handlePublish(std::string & id, Susi::Util::
 void Susi::Api::ApiServerComponent::handleAck(std::string & id, Susi::Util::Any & packet){
 	auto & eventData = packet["data"];
 	if(!eventData.isObject() || !eventData["topic"].isString()){
-		sendFail(id,"data is not an object or topic is not set correctly");
+		sendFail(id,"ack handler: data is not an object or topic is not set correctly");
 		return;
 	}
 	long eventID = eventData["id"];
