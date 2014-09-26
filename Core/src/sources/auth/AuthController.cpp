@@ -6,8 +6,9 @@ void Susi::Auth::Controller::setup() {
         db->query( "SELECT id,username,password,authlevel FROM users" );
     } catch(const std::exception & e) {
         Susi::Logger::debug("AuthDB not ready!");
+        SHA3 hasher;
         db->query( "CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR, password VARCHAR, authlevel INTEGER);");
-        db->query( "INSERT INTO users VALUES(0,'root','toor',0);");
+        db->query( "INSERT INTO users VALUES(0,'root','"+hasher("toor")+"',0);");
     }
 
 }
@@ -17,8 +18,8 @@ bool Susi::Auth::Controller::login( std::string sessionID, std::string username,
     if( this->isLoggedIn( sessionID ) == false ) {
         Susi::Logger::debug("user is not allready logged in");
         auto db = _dbManager->getDatabase( this->_dbIdentifier );
-
-        Susi::Util::Any result = db->query( "SELECT authlevel FROM users WHERE username=\'"+username+"\' AND password=\'"+password+"\'" );
+        SHA3 hasher;
+        Susi::Util::Any result = db->query( "SELECT authlevel FROM users WHERE username=\'"+username+"\' AND password=\'"+hasher(password)+"\'" );
 
         if( result.size()==0 ) {
             Susi::Logger::debug("username and password does not match");

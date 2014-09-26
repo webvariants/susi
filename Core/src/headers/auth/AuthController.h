@@ -23,6 +23,7 @@
 #include <sessions/SessionManagerComponent.h>
 
 #include "util/Any.h"
+#include "util/sha3.h"
 
 namespace Susi {
     namespace Auth {
