@@ -32,11 +32,11 @@
 #include "util/ConstrainedScheduler.h"
 
 namespace Susi {
-namespace System {
+    namespace System {
 
-std::shared_ptr<Susi::System::ComponentManager> createSusiComponentManager(Susi::Util::Any::Object config);
+        std::shared_ptr<Susi::System::ComponentManager> createSusiComponentManager( Susi::Util::Any::Object config );
 
-}
+    }
 }
 
 #endif // __SYSTEMSETUP__

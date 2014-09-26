@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
@@ -24,17 +24,19 @@
 namespace Susi {
 
 
-class SessionRequestHandler: public Poco::Net::HTTPRequestHandler {
-protected:
-	Poco::Net::HTTPRequestHandler *defaultHandler;
-	std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager;
-public:
-    SessionRequestHandler(Poco::Net::HTTPRequestHandler *defaultHandler, 
-    					  std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager) : 
-    						defaultHandler{defaultHandler}, _sessionManager{sessionManager} {}
-    ~SessionRequestHandler(){delete defaultHandler;}
-    void handleRequest(Poco::Net::HTTPServerRequest& request,Poco::Net::HTTPServerResponse& response);
-};
+    class SessionRequestHandler: public Poco::Net::HTTPRequestHandler {
+    protected:
+        Poco::Net::HTTPRequestHandler *defaultHandler;
+        std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager;
+    public:
+        SessionRequestHandler( Poco::Net::HTTPRequestHandler *defaultHandler,
+                               std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager ) :
+            defaultHandler {defaultHandler}, _sessionManager {sessionManager} {}
+        ~SessionRequestHandler() {
+            delete defaultHandler;
+        }
+        void handleRequest( Poco::Net::HTTPServerRequest& request,Poco::Net::HTTPServerResponse& response );
+    };
 
 }
 

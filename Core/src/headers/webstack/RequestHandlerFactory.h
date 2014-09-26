@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
@@ -27,48 +27,51 @@
 
 namespace Susi {
 
-class RequestHandlerFactory: public Poco::Net::HTTPRequestHandlerFactory
-{
-protected:
-    std::string _assetRoot;
-    std::string _uploadDirectory;
-    std::shared_ptr<Susi::Api::ApiServerComponent> _apiServer;
-    std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager;
-public:
-    RequestHandlerFactory(std::string assetRoot, 
-                          std::string uploadDirectory,
-                          std::shared_ptr<Susi::Api::ApiServerComponent> apiServer,                          
-                          std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager) : 
-                            _assetRoot{assetRoot}, 
-                            _uploadDirectory{uploadDirectory},
-                            _apiServer{apiServer},
-                            _sessionManager{sessionManager} {}
-    Poco::Net::HTTPRequestHandler* createRequestHandler(const Poco::Net::HTTPServerRequest& request){
-        Susi::Logger::debug("got request with URI: "+request.getURI());
-        try{
-            if(request.getURI().find("/assets/")==0){
-                Susi::Logger::debug("using assets handler");                
-            	return new SessionRequestHandler(new AssetsRequestHandler(_assetRoot), _sessionManager);
-            }else if(request.getURI() == "/ws"){
-                Susi::Logger::debug("using websocket handler");
-            	return new SessionRequestHandler(new WebSocketRequestHandler(_apiServer), _sessionManager);
-            }/*else if(request.getURI() == "/compability"){
+    class RequestHandlerFactory: public Poco::Net::HTTPRequestHandlerFactory
+    {
+    protected:
+        std::string _assetRoot;
+        std::string _uploadDirectory;
+        std::shared_ptr<Susi::Api::ApiServerComponent> _apiServer;
+        std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager;
+    public:
+        RequestHandlerFactory( std::string assetRoot,
+                               std::string uploadDirectory,
+                               std::shared_ptr<Susi::Api::ApiServerComponent> apiServer,
+                               std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager ) :
+            _assetRoot {assetRoot},
+                   _uploadDirectory {uploadDirectory},
+                   _apiServer {apiServer},
+        _sessionManager {sessionManager} {}
+        Poco::Net::HTTPRequestHandler* createRequestHandler( const Poco::Net::HTTPServerRequest& request ) {
+            Susi::Logger::debug( "got request with URI: "+request.getURI() );
+            try {
+                if( request.getURI().find( "/assets/" )==0 ) {
+                    Susi::Logger::debug( "using assets handler" );
+                    return new SessionRequestHandler( new AssetsRequestHandler( _assetRoot ), _sessionManager );
+                }
+                else if( request.getURI() == "/ws" ) {
+                    Susi::Logger::debug( "using websocket handler" );
+                    return new SessionRequestHandler( new WebSocketRequestHandler( _apiServer ), _sessionManager );
+                }/*else if(request.getURI() == "/compability"){
                 return new SessionRequestHandler(new CompabilityRequestHandler());
-            }*/else if(request.getURI() == "/form"){
-                Susi::Logger::debug("using form handler");
-                return new SessionRequestHandler(new FormRequestHandler(_uploadDirectory), _sessionManager);
-            }else if(request.getURI() == "/"){
-                Susi::Logger::debug("using redirect handler");
-            	return new SessionRequestHandler(new RedirectRequestHandler(), _sessionManager);
+            }*/else if( request.getURI() == "/form" ) {
+                    Susi::Logger::debug( "using form handler" );
+                    return new SessionRequestHandler( new FormRequestHandler( _uploadDirectory ), _sessionManager );
+                }
+                else if( request.getURI() == "/" ) {
+                    Susi::Logger::debug( "using redirect handler" );
+                    return new SessionRequestHandler( new RedirectRequestHandler(), _sessionManager );
+                }
+                Susi::Logger::debug( "using not found handler" );
+                return new SessionRequestHandler( new NotFoundRequestHandler(), _sessionManager );
             }
-            Susi::Logger::debug("using not found handler");
-            return new SessionRequestHandler(new NotFoundRequestHandler(), _sessionManager);
-        }catch(const std::exception & e){
-            Susi::Logger::error(std::string("error in request handler factory: ")+e.what());
-            return nullptr;
+            catch( const std::exception & e ) {
+                Susi::Logger::error( std::string( "error in request handler factory: " )+e.what() );
+                return nullptr;
+            }
         }
-    }
-};
+    };
 
 }
 

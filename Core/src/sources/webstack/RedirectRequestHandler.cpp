@@ -5,13 +5,13 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
 #include "webstack/RedirectRequestHandler.h"
 
-void Susi::RedirectRequestHandler::handleRequest(Poco::Net::HTTPServerRequest& request,
-                       							Poco::Net::HTTPServerResponse& response) {
-	response.redirect("/assets/main.html");
+void Susi::RedirectRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& request,
+        Poco::Net::HTTPServerResponse& response ) {
+    response.redirect( "/assets/main.html" );
 }

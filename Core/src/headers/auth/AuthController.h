@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
@@ -25,26 +25,26 @@
 #include "util/Any.h"
 
 namespace Susi {
-	namespace Auth {
-		class Controller{
-			protected:
-				std::string _dbIdentifier;
-				std::shared_ptr<Susi::DB::DBComponent> _dbManager;
-				std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager;
-			public:
-				Controller(std::shared_ptr<Susi::DB::DBComponent> dbManager, 
-					std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager,
-					std::string db_identifier) :
-				  _dbIdentifier{db_identifier},
-				  _dbManager{dbManager},
-				  _sessionManager{sessionManager} {}				
-				bool login(std::string sessionID, std::string username, std::string password); // return true on success
-				bool logout(std::string sessionID);
-				bool isLoggedIn(std::string sessionID); 
-				
-				std::string getUsername(std::string sessionID);
-		};
-	}
+    namespace Auth {
+        class Controller {
+        protected:
+            std::string _dbIdentifier;
+            std::shared_ptr<Susi::DB::DBComponent> _dbManager;
+            std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager;
+        public:
+            Controller( std::shared_ptr<Susi::DB::DBComponent> dbManager,
+                        std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager,
+                        std::string db_identifier ) :
+                _dbIdentifier {db_identifier},
+                          _dbManager {dbManager},
+            _sessionManager {sessionManager} {}
+            bool login( std::string sessionID, std::string username, std::string password ); // return true on success
+            bool logout( std::string sessionID );
+            bool isLoggedIn( std::string sessionID );
+
+            std::string getUsername( std::string sessionID );
+        };
+    }
 }
 
 #endif // __AUTH_CONTROLLER__

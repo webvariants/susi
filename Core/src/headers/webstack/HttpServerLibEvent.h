@@ -28,16 +28,16 @@ namespace Webstack {
 
 class HttpServer {
 protected:
-	std::string srvAddress = "127.0.0.1";
-	std::uint16_t srvPort = 5555;
-	int srvThreadcount = 4;
-	void onRequest(evhttp_request *req, void *);
+    std::string srvAddress = "127.0.0.1";
+    std::uint16_t srvPort = 5555;
+    int srvThreadcount = 4;
+    void onRequest(evhttp_request *req, void *);
 public:
-	HttpServer(std::string const &address,
-			   std::uint16_t port,
-			   std::uint16_t threadcount,
-			   OnrequestFunc o);
-	~HttpServer();
+    HttpServer(std::string const &address,
+               std::uint16_t port,
+               std::uint16_t threadcount,
+               OnrequestFunc o);
+    ~HttpServer();
 };
 
 }

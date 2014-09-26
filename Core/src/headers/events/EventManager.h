@@ -11,83 +11,83 @@
 #include "util/ConstrainedScheduler.h"
 
 namespace Susi {
-namespace Events{
+    namespace Events {
 
 //Event pointer types
-typedef std::unique_ptr<Event,std::function<void(Event*)>> EventPtr;
-typedef std::shared_ptr<Event> SharedEventPtr;
+        typedef std::unique_ptr<Event,std::function<void( Event* )>> EventPtr;
+        typedef std::shared_ptr<Event> SharedEventPtr;
 
 //Callback types
-typedef std::function<void(EventPtr)> Processor;
-typedef std::function<void(SharedEventPtr)> Consumer;
+        typedef std::function<void( EventPtr )> Processor;
+        typedef std::function<void( SharedEventPtr )> Consumer;
 
 //a event predicate
-typedef std::function<bool(Event&)> Predicate;
+        typedef std::function<bool( Event& )> Predicate;
 
-class Manager {
-public:
-	Manager(size_t workers = 4, size_t buffsize = 32) : pool{workers,buffsize} {};
-	// public subscribe api
-	long subscribe(std::string topic, Processor processor, char minAuthlevel=0, std::string name="");
-	long subscribe(Predicate pred, Processor processor, char minAuthlevel=0, std::string name="");
-	long subscribe(std::string topic, Consumer consumer, char minAuthlevel=0, std::string name="");
-	long subscribe(Predicate pred, Consumer consumer, char minAuthlevel=0, std::string name="");
-	bool unsubscribe(long id);
-	// public publish api function
-	void publish(EventPtr event, Consumer finishCallback = Consumer{});
-	// pass event back to system
-	void ack(EventPtr event);
+        class Manager {
+        public:
+            Manager( size_t workers = 4, size_t buffsize = 32 ) : pool {workers,buffsize} {};
+            // public subscribe api
+            long subscribe( std::string topic, Processor processor, char minAuthlevel=0, std::string name="" );
+            long subscribe( Predicate pred, Processor processor, char minAuthlevel=0, std::string name="" );
+            long subscribe( std::string topic, Consumer consumer, char minAuthlevel=0, std::string name="" );
+            long subscribe( Predicate pred, Consumer consumer, char minAuthlevel=0, std::string name="" );
+            bool unsubscribe( long id );
+            // public publish api function
+            void publish( EventPtr event, Consumer finishCallback = Consumer {} );
+            // pass event back to system
+            void ack( EventPtr event );
 
-	void addConstraint(std::pair<std::string,std::string> constraint){
-		scheduler.addConstraint(constraint);
-	}
+            void addConstraint( std::pair<std::string,std::string> constraint ) {
+                scheduler.addConstraint( constraint );
+            }
 
-	EventPtr createEvent(std::string topic);
+            EventPtr createEvent( std::string topic );
 
-protected:
-	Susi::Util::ThreadPool pool;
-	std::mutex mutex;
-	Susi::Util::ConstrainedScheduler scheduler;
+        protected:
+            Susi::Util::ThreadPool pool;
+            std::mutex mutex;
+            Susi::Util::ConstrainedScheduler scheduler;
 
-	std::condition_variable publishFinished;
+            std::condition_variable publishFinished;
 
-	long subscribe(std::string topic, 
-				   Predicate predicate,
-				   Consumer consumer,
-				   Processor processor,
-				   char authlevel,
-				   std::string name);
+            long subscribe( std::string topic,
+                            Predicate predicate,
+                            Consumer consumer,
+                            Processor processor,
+                            char authlevel,
+                            std::string name );
 
-	struct PublishProcess {
-		std::vector<Processor>   processors;
-		std::vector<Consumer>    consumers;
-		std::vector<std::string> errors;
-		std::mutex				 mutex;
-		size_t current = 0;
-	};
-	std::map<long,std::shared_ptr<PublishProcess>> publishProcesses;
+            struct PublishProcess {
+                std::vector<Processor>   processors;
+                std::vector<Consumer>    consumers;
+                std::vector<std::string> errors;
+                std::mutex               mutex;
+                size_t current = 0;
+            };
+            std::map<long,std::shared_ptr<PublishProcess>> publishProcesses;
 
-	struct Subscription {
-		//identifier
-		long id = 0;
-		std::string name = "";
-		char minAuthlevel = 0;
-		//select statements
-		std::string topic = "";
-		Predicate predicate = Predicate{};
-		//actual callback
-		Processor processor = Processor{};
-		Consumer consumer = Consumer{};
-	};
+            struct Subscription {
+                //identifier
+                long id = 0;
+                std::string name = "";
+                char minAuthlevel = 0;
+                //select statements
+                std::string topic = "";
+                Predicate predicate = Predicate {};
+                //actual callback
+                Processor processor = Processor {};
+                Consumer consumer = Consumer {};
+            };
 
-	std::map<std::string,std::vector<Subscription>> subscriptionsByTopic;
-	std::vector<Subscription> subscriptionsByPred;
+            std::map<std::string,std::vector<Subscription>> subscriptionsByTopic;
+            std::vector<Subscription> subscriptionsByPred;
 
-	void deleter(Event *event);
+            void deleter( Event *event );
 
-};
+        };
 
-}//end namespace Events
+    }//end namespace Events
 }//end namespace Susi
 
 #endif // __EVENTSMANAGER__

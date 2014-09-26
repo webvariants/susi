@@ -15,15 +15,15 @@
 #include "util/Any.h"
 
 namespace Susi {
-namespace System {
+    namespace System {
 
-class Component {
-public:
-    virtual void start() = 0;
-    virtual void stop() = 0;
-};
+        class Component {
+        public:
+            virtual void start() = 0;
+            virtual void stop() = 0;
+        };
 
-}
+    }
 }
 
 #endif // __COMPONENT__

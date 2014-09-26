@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
@@ -25,13 +25,13 @@
 
 namespace Susi {
 
-	class WebSocketRequestHandler: public Poco::Net::HTTPRequestHandler {
-		protected:
-    	std::shared_ptr<Susi::Api::ApiServerComponent> _apiServer;
-		public:
-    		void handleRequest(Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response);
-    		WebSocketRequestHandler(std::shared_ptr<Susi::Api::ApiServerComponent> apiServer);
-	};
+    class WebSocketRequestHandler: public Poco::Net::HTTPRequestHandler {
+    protected:
+        std::shared_ptr<Susi::Api::ApiServerComponent> _apiServer;
+    public:
+        void handleRequest( Poco::Net::HTTPServerRequest& request, Poco::Net::HTTPServerResponse& response );
+        WebSocketRequestHandler( std::shared_ptr<Susi::Api::ApiServerComponent> apiServer );
+    };
 
 }
 
