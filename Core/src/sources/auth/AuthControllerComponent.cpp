@@ -13,20 +13,12 @@
 
 void Susi::Auth::ControllerComponent::handleLogin( Susi::Events::EventPtr event ) {
     try {
-
-        try {
-            std::string username = event->getPayload()["username"];
-            std::string password  = event->getPayload()["password"];
-
-            event->getPayload()["success"] = login( event->getSessionID(), username, password );
-        }
-        catch( const std::exception & e ) {
-            event->getPayload()["success"] = false;
-            throw e;
-        }
-
+        std::string username = event->getPayload()["username"];
+        std::string password  = event->getPayload()["password"];
+        event->getPayload()["success"] = login( event->getSessionID(), username, password );
     }
     catch( const std::exception & e ) {
+        event->getPayload()["success"] = false;
         std::string msg = "Error in handleLogin(): ";
         msg += e.what();
         throw std::runtime_error( msg );

@@ -31,13 +31,16 @@ namespace Susi {
             std::string _dbIdentifier;
             std::shared_ptr<Susi::DB::DBComponent> _dbManager;
             std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager;
+            void setup();
         public:
             Controller( std::shared_ptr<Susi::DB::DBComponent> dbManager,
                         std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager,
                         std::string db_identifier ) :
                 _dbIdentifier {db_identifier},
                           _dbManager {dbManager},
-            _sessionManager {sessionManager} {}
+            _sessionManager {sessionManager} {
+                setup();
+            }
             bool login( std::string sessionID, std::string username, std::string password ); // return true on success
             bool logout( std::string sessionID );
             bool isLoggedIn( std::string sessionID );

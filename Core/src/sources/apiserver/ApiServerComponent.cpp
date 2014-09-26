@@ -172,9 +172,11 @@ void Susi::Api::ApiServerComponent::handlePublish( std::string & id, Susi::Util:
         return;
     }
     char authlevel = 3;
-    auto sessionAuthlevel = sessionManager->getSessionAttribute( id,"authlevel" );
+    auto sessionAuthlevel = sessionManager->getSessionAttribute( id, "authlevel" );
     if( sessionAuthlevel.isInteger() ) {
         authlevel = static_cast<char>( sessionAuthlevel );
+    }else{
+        Susi::Logger::debug("sessionAuthlevelValue: "+sessionAuthlevel.toJSONString());
     }
     auto event = eventManager->createEvent( eventData["topic"] );
     Susi::Events::Event rawEvent {eventData};
