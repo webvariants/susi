@@ -20,13 +20,11 @@ namespace Susi {
 namespace Util {
 
 class ConstrainedScheduler {
-protected:
-	typedef std::pair<std::string,std::string> Constraint;
-	std::set<Constraint> _constraints;
-
 public:	
-	void addConstraint(std::string left, std::string right){
-		_constraints.insert(Constraint{left,right});
+	typedef std::pair<std::string,std::string> Constraint;
+	
+	void addConstraint(Constraint c){
+		_constraints.insert(c);
 	}
 
 	std::vector<std::string> schedule(std::set<std::string> tasks){
@@ -51,6 +49,8 @@ public:
 	}
 
 private:
+	std::set<Constraint> _constraints;
+
 	std::set<Constraint> getNeededConstraints(const std::set<std::string> & tasks){
 		std::set<Constraint> result;
 		for(auto & constraint : _constraints){
@@ -64,15 +64,17 @@ private:
 		return result;
 	}
 
-	void removeConstraints(std::set<Constraint> & constraints, std::string leftHandSide){
-		for(auto & c : constraints){
-			if(c.first == leftHandSide){
-				constraints.erase(c);
+	void removeConstraints(std::set<Constraint> & constraints, const std::string & leftHandSide){
+		auto it = constraints.begin();
+		while(it != constraints.end()) {
+			auto current = it++;
+			if ((*current).first == leftHandSide) {
+				constraints.erase(current);
 			}
 		}
 	}
 
-	size_t countAncestors(const std::set<Constraint> & constraints, std::string value){
+	size_t countAncestors(const std::set<Constraint> & constraints, const std::string & value){
 		size_t count = 0;
 		for(auto & c : constraints){
 			if(c.second == value){
