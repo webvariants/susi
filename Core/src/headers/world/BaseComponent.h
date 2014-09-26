@@ -23,60 +23,60 @@ namespace System {
 
 class BaseComponent : public Component {
 protected:
-	ComponentManager * componentManager;
-	std::shared_ptr<Susi::Events::ManagerComponent> eventManager;
-	std::vector<long> evtIdPool;
+    ComponentManager * componentManager;
+    std::shared_ptr<Susi::Events::ManagerComponent> eventManager;
+    std::vector<long> evtIdPool;
 
 public:
-	BaseComponent(ComponentManager * manager) : componentManager{manager} {
-		eventManager = componentManager->getComponent<Susi::Events::ManagerComponent>("eventsystem");
-	}
-	long subscribe(std::string topic, Susi::Events::Processor processor){
-		long id = eventManager->subscribe(topic,std::move(processor));
-		evtIdPool.push_back(id);
-		return id;
-	}
-	long subscribe(Susi::Events::Predicate pred, Susi::Events::Processor processor){
-		long id = eventManager->subscribe(pred,std::move(processor));
-		evtIdPool.push_back(id);
-		return id;
-	}
-	long subscribe(std::string topic, Susi::Events::Consumer consumer){
-		long id = eventManager->subscribe(topic,std::move(consumer));
-		evtIdPool.push_back(id);
-		return id;
-	}
-	long subscribe(Susi::Events::Predicate pred, Susi::Events::Consumer consumer){
-		long id = eventManager->subscribe(pred,std::move(consumer));
-		evtIdPool.push_back(id);
-		return id;
-	}
-	bool unsubscribe(long id){
-		return eventManager->unsubscribe(id);
-	}
-	void publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer{}){
-		eventManager->publish(std::move(event),finishCallback);
-	}
-	Susi::Events::EventPtr createEvent(std::string topic){
-		return eventManager->createEvent(topic);
-	}
+    BaseComponent(ComponentManager * manager) : componentManager {manager} {
+        eventManager = componentManager->getComponent<Susi::Events::ManagerComponent>("eventsystem");
+    }
+    long subscribe(std::string topic, Susi::Events::Processor processor, char authlevel=0, std::string name="") {
+        long id = eventManager->subscribe(topic,std::move(processor),authlevel,name);
+        evtIdPool.push_back(id);
+        return id;
+    }
+    long subscribe(Susi::Events::Predicate pred, Susi::Events::Processor processor, char authlevel=0, std::string name="") {
+        long id = eventManager->subscribe(pred,std::move(processor),authlevel,name);
+        evtIdPool.push_back(id);
+        return id;
+    }
+    long subscribe(std::string topic, Susi::Events::Consumer consumer, char authlevel=0, std::string name="") {
+        long id = eventManager->subscribe(topic,std::move(consumer),authlevel,name);
+        evtIdPool.push_back(id);
+        return id;
+    }
+    long subscribe(Susi::Events::Predicate pred, Susi::Events::Consumer consumer, char authlevel=0, std::string name="") {
+        long id = eventManager->subscribe(pred,std::move(consumer),authlevel,name);
+        evtIdPool.push_back(id);
+        return id;
+    }
+    bool unsubscribe(long id) {
+        return eventManager->unsubscribe(id);
+    }
+    void publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer {}) {
+        eventManager->publish(std::move(event),finishCallback);
+    }
+    Susi::Events::EventPtr createEvent(std::string topic) {
+        return eventManager->createEvent(topic);
+    }
 
 
-	bool unsubscribeAll(){
+    bool unsubscribeAll() {
 
-  		bool result = true;
+        bool result = true;
 
-  		for (auto id : evtIdPool)
-  		{
-			if(eventManager->unsubscribe(id) == false) {
-				result = false;
-			}
-		}
+        for (auto id : evtIdPool)
+        {
+            if(eventManager->unsubscribe(id) == false) {
+                result = false;
+            }
+        }
 
-		evtIdPool.clear();
+        evtIdPool.clear();
 
-		return result;
-	}
+        return result;
+    }
 
 };
 
