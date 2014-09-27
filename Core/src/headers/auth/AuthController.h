@@ -25,6 +25,8 @@
 #include "util/Any.h"
 #include "util/sha3.h"
 
+#include <algorithm>
+
 namespace Susi {
     namespace Auth {
         class Controller {
@@ -32,7 +34,15 @@ namespace Susi {
             std::string _dbIdentifier;
             std::shared_ptr<Susi::DB::DBComponent> _dbManager;
             std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager;
-            void setup();
+            
+                        void setup();
+            std::string generateSalt();
+
+            bool checkForSqlSafety(std::string subject){
+                auto pred = [](char c){return !std::isalnum(c);};
+                return std::find_if(subject.begin(),subject.end(),pred) == subject.end();
+            }
+
         public:
             Controller( std::shared_ptr<Susi::DB::DBComponent> dbManager,
                         std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager,
@@ -45,6 +55,9 @@ namespace Susi {
             bool login( std::string sessionID, std::string username, std::string password ); // return true on success
             bool logout( std::string sessionID );
             bool isLoggedIn( std::string sessionID );
+
+            bool addUser( std::string username, std::string password , char authlevel );
+            bool delUser( std::string username );
 
             std::string getUsername( std::string sessionID );
         };
