@@ -6,22 +6,8 @@ protected:
 	std::string sessionID = "ljcfbhsdlfsdpf434sdff";
 	virtual void SetUp() override {
 		componentManager->startComponent("authcontroller");
-
-
-		auto evt = createEvent("db::query");
-		evt->payload["identifier"] = "auth";
-		evt->payload["query"] = "create table users( id integer, username varchar(100), password varchar(100));";
-
-		publish_sync(std::move(evt));
-
-		auto evt2 = createEvent("db::query");
-			evt2->payload["identifier"] = "auth";
-			evt2->payload["query"] = "insert into users(id, username, password) values(7, \'John\', \'Doe\');";
-
-		publish_sync(std::move(evt2));
-
 		authController = componentManager->getComponent<Susi::Auth::Controller>("authcontroller");
-
+		authController->addUser("John","Doe",1);
 	}
 	
 	virtual void TearDown() override {

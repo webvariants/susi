@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
@@ -16,24 +16,24 @@
 #include <Poco/Process.h>
 #include <vector>
 #include <string>
- 
+
 #include <chrono>
 #include <thread>
 
 #include "logger/Logger.h"
 
 namespace Susi {
-	namespace EngineStarter {
-		class Starter {				
-				std::vector<Poco::ProcessHandle> phs; 
-			public:
-				Starter();
-				void execute(std::string path);
-				void killall();
-			private:
-				void rec_dir(const std::string & path);
-		};
-	}
+    namespace EngineStarter {
+        class Starter {
+            std::vector<Poco::ProcessHandle> phs;
+        public:
+            Starter();
+            void execute( std::string path );
+            void killall();
+        private:
+            void rec_dir( const std::string & path );
+        };
+    }
 }
 
 #endif // __ENGINE_STARTER__

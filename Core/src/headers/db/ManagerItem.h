@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
@@ -16,17 +16,17 @@
 #include <db/Database.h>
 
 namespace Susi {
-	namespace DB{
-		class ManagerItem {
-			public:
-				bool connected;
-				std::string dbtype;
-				std::string connectURI;
-				std::shared_ptr<Susi::DB::Database> db;
-				ManagerItem(){};
-				ManagerItem(std::string dbtype, std::string connectURI);
-		};
-	}
+    namespace DB {
+        class ManagerItem {
+        public:
+            bool connected;
+            std::string dbtype;
+            std::string connectURI;
+            std::shared_ptr<Susi::DB::Database> db;
+            ManagerItem() {};
+            ManagerItem( std::string dbtype, std::string connectURI );
+        };
+    }
 }
 
 #endif // __MANAGER_ITEM__

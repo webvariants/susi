@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
@@ -24,20 +24,20 @@
 #include "logger/Logger.h"
 
 namespace Susi {
-	namespace DB {
-		class Manager{
-				std::map <std::string, Susi::DB::ManagerItem> dbMap;
-			public:
-				Manager();
-				Manager(Susi::Util::Any config);
-				Manager(std::vector<std::tuple<std::string,std::string,std::string>> dbs);
+    namespace DB {
+        class Manager {
+            std::map <std::string, Susi::DB::ManagerItem> dbMap;
+        public:
+            Manager();
+            Manager( Susi::Util::Any config );
+            Manager( std::vector<std::tuple<std::string,std::string,std::string>> dbs );
 
-				void init(Susi::Util::Any config);
-				void addDatabase(std::string identifier,std::string dbtype,std::string connectURI);
-				std::shared_ptr<Database> getDatabase(std::string identifier);
-		};
+            void init( Susi::Util::Any config );
+            void addDatabase( std::string identifier,std::string dbtype,std::string connectURI );
+            std::shared_ptr<Database> getDatabase( std::string identifier );
+        };
 
-	}
+    }
 }
 
 #endif // __DB_MANAGER__

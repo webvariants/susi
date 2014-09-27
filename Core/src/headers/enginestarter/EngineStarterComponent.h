@@ -16,36 +16,48 @@
 #include "enginestarter/EngineStarter.h"
 
 namespace Susi {
-	namespace EngineStarter {
-		class StarterComponent : public Susi::System::BaseComponent , public Starter {
-			public:
-				StarterComponent (Susi::System::ComponentManager * mgr) :
-					Susi::System::BaseComponent{mgr}, Starter{} {}
+    namespace EngineStarter {
+        class StarterComponent : public Susi::System::BaseComponent , public Starter {
+        public:
+            StarterComponent( Susi::System::ComponentManager * mgr ) :
+                Susi::System::BaseComponent {mgr}, Starter {} {}
 
-				virtual void start() override {
-					subscribe("enginestarter::start", [this](Susi::Events::EventPtr evt){handleStart(std::move(evt));});
-					subscribe("enginestarter::restart", [this](Susi::Events::EventPtr evt){handleRestart(std::move(evt));});
-					subscribe("enginestarter::stop", [this](Susi::Events::EventPtr evt){handleStop(std::move(evt));});
+            virtual void start() override {
+                subscribe( "enginestarter::start", [this]( Susi::Events::EventPtr evt ) {
+                    handleStart( std::move( evt ) );
+                } );
+                subscribe( "enginestarter::restart", [this]( Susi::Events::EventPtr evt ) {
+                    handleRestart( std::move( evt ) );
+                } );
+                subscribe( "enginestarter::stop", [this]( Susi::Events::EventPtr evt ) {
+                    handleStop( std::move( evt ) );
+                } );
 
-					subscribe("global::start", [this](Susi::Events::EventPtr evt){handleStart(std::move(evt));});
-					subscribe("global::restart", [this](Susi::Events::EventPtr evt){handleRestart(std::move(evt));});
-					subscribe("global::stop", [this](Susi::Events::EventPtr evt){handleStop(std::move(evt));});
-				}
+                subscribe( "global::start", [this]( Susi::Events::EventPtr evt ) {
+                    handleStart( std::move( evt ) );
+                } );
+                subscribe( "global::restart", [this]( Susi::Events::EventPtr evt ) {
+                    handleRestart( std::move( evt ) );
+                } );
+                subscribe( "global::stop", [this]( Susi::Events::EventPtr evt ) {
+                    handleStop( std::move( evt ) );
+                } );
+            }
 
-				virtual void stop() override {
-					unsubscribeAll();
-					killall();
-				}
+            virtual void stop() override {
+                unsubscribeAll();
+                killall();
+            }
 
-				~StarterComponent() {
-					stop();
-				}
-			protected:
-				void handleStart(Susi::Events::EventPtr event);
-				void handleRestart(Susi::Events::EventPtr event);
-				void handleStop(Susi::Events::EventPtr event);
-		};
-	}
+            ~StarterComponent() {
+                stop();
+            }
+        protected:
+            void handleStart( Susi::Events::EventPtr event );
+            void handleRestart( Susi::Events::EventPtr event );
+            void handleStop( Susi::Events::EventPtr event );
+        };
+    }
 
 }
 

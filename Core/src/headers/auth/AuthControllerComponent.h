@@ -17,40 +17,50 @@
 #include "world/BaseComponent.h"
 
 namespace Susi {
-namespace Auth {
+    namespace Auth {
 
-class ControllerComponent : public Controller, public Susi::System::BaseComponent
-{
-protected:
-	void handleLogin(Susi::Events::EventPtr event);
-	void handleLogout(Susi::Events::EventPtr event);
-	void handleIsLoggedIn(Susi::Events::EventPtr event);
-	void handleGetUsername(Susi::Events::EventPtr event);
+        class ControllerComponent : public Controller, public Susi::System::BaseComponent
+        {
+        protected:
+            void handleLogin( Susi::Events::EventPtr event );
+            void handleLogout( Susi::Events::EventPtr event );
+            void handleIsLoggedIn( Susi::Events::EventPtr event );
+            void handleGetUsername( Susi::Events::EventPtr event );
 
-public:
-	ControllerComponent(Susi::System::ComponentManager * mgr, std::string db_identifier) :
-		Controller{
-			mgr->getComponent<Susi::DB::DBComponent>("dbmanager"),
-			mgr->getComponent<Susi::Sessions::SessionManagerComponent>("sessionmanager"),
-			db_identifier
-		},
-		Susi::System::BaseComponent{mgr} {}
+        public:
+            ControllerComponent( Susi::System::ComponentManager * mgr, std::string db_identifier ) :
+                Controller {
+                mgr->getComponent<Susi::DB::DBComponent>( "dbmanager" ),
+                mgr->getComponent<Susi::Sessions::SessionManagerComponent>( "sessionmanager" ),
+                db_identifier
+            },
+            Susi::System::BaseComponent {mgr} {}
 
-	virtual void start() override {
-		subscribe("auth::login", [this](Susi::Events::EventPtr evt){handleLogin(std::move(evt));});
-		subscribe("auth::logout", [this](Susi::Events::EventPtr evt){handleLogout(std::move(evt));});
-		subscribe("auth::isLoggedIn", [this](Susi::Events::EventPtr evt){handleIsLoggedIn(std::move(evt));});
-		subscribe("auth::getUsername", [this](Susi::Events::EventPtr evt){handleGetUsername(std::move(evt));});
-	}
+            virtual void start() override {
+                subscribe( "auth::login", [this]( Susi::Events::EventPtr evt ) {
+                    handleLogin( std::move( evt ) );
+                }, 3 );
+                subscribe( "auth::logout", [this]( Susi::Events::EventPtr evt ) {
+                    handleLogout( std::move( evt ) );
+                }, 3 );
+                subscribe( "auth::isLoggedIn", [this]( Susi::Events::EventPtr evt ) {
+                    handleIsLoggedIn( std::move( evt ) );
+                }, 3 );
+                subscribe( "auth::getUsername", [this]( Susi::Events::EventPtr evt ) {
+                    handleGetUsername( std::move( evt ) );
+                }, 3 );
+            }
 
-	virtual void stop() override {
-		unsubscribeAll();
-	}
+            virtual void stop() override {
+                unsubscribeAll();
+            }
 
-	~ControllerComponent() {stop();}
-};
+            ~ControllerComponent() {
+                stop();
+            }
+        };
 
-}
+    }
 }
 
 #endif // __AUTH_CONTROLLERCOMPONENT__

@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
@@ -15,17 +15,17 @@
 #include <string>
 
 namespace Susi {
-	namespace Util {
-		class Glob {
-			protected:
-				std::string _pattern;
-			public:		
-				Glob(std::string pattern);
-				bool match(std::string str);
+    namespace Util {
+        class Glob {
+        protected:
+            std::string _pattern;
+        public:
+            Glob( std::string pattern );
+            bool match( std::string str );
 
-				static bool isGlob(std::string pattern);
-		};
-	}
+            static bool isGlob( std::string pattern );
+        };
+    }
 }
 
 #endif // __GLOB__

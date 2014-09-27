@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
@@ -26,17 +26,17 @@
 
 namespace Susi {
 
-class AssetsRequestHandler: public Poco::Net::HTTPRequestHandler {
-private:
-	Poco::File _rootDirectory;
-public:
-	AssetsRequestHandler(std::string rootDirectory) :
-	  _rootDirectory(rootDirectory) {
-		Susi::Logger::debug("init assets handler");
-	}
-    virtual void handleRequest(Poco::Net::HTTPServerRequest& request,
-                       Poco::Net::HTTPServerResponse& response) override;
-};
+    class AssetsRequestHandler: public Poco::Net::HTTPRequestHandler {
+    private:
+        Poco::File _rootDirectory;
+    public:
+        AssetsRequestHandler( std::string rootDirectory ) :
+            _rootDirectory( rootDirectory ) {
+            Susi::Logger::debug( "init assets handler" );
+        }
+        virtual void handleRequest( Poco::Net::HTTPServerRequest& request,
+                                    Poco::Net::HTTPServerResponse& response ) override;
+    };
 
 }
 

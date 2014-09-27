@@ -427,3 +427,61 @@ TEST_F(EventManagerTest, GlobTest){
 		EXPECT_TRUE(callbackCalledTwo);
 	}
 }
+
+TEST_F(EventManagerTest, Authlevel) {
+	int callCounter = 0;
+
+	//subscribe processor with authlevel 0 (highest authlevel)
+	eventManager->subscribe("test",[this,&callCounter](EventPtr event){
+		callCounter++;
+		condOne.notify_all();
+	},0);
+
+	//create events with authlevel of zero respectivly one
+	auto event_auth0 = eventManager->createEvent("test");
+	event_auth0->authlevel = 0;
+	auto event_auth1 = eventManager->createEvent("test");
+	event_auth0->authlevel = 1;
+
+	//publish them
+	eventManager->publish(std::move(event_auth0),Susi::Events::Consumer{});
+	eventManager->publish(std::move(event_auth1),Susi::Events::Consumer{});
+	
+	//we expect only the zero authlevel event to be processed.
+	{
+		std::unique_lock<std::mutex> lk(mutex);
+		condOne.wait_for(lk,std::chrono::milliseconds{100},[&callCounter](){return callCounter>0;});
+		EXPECT_TRUE(callCounter>0);
+	}
+	{
+		std::unique_lock<std::mutex> lk(mutex);
+		condOne.wait_for(lk,std::chrono::milliseconds{100},[&callCounter](){return callCounter>1;});
+		EXPECT_FALSE(callCounter>1);
+	}
+}
+
+TEST_F(EventManagerTest,Constraints){
+	eventManager->subscribe("test",[](Susi::Events::EventPtr evt){
+		evt->headers.push_back({"foo","foo"});
+	},0,"fooAdder");
+	
+	eventManager->subscribe("test",[](Susi::Events::EventPtr evt){
+		evt->headers.push_back({"bar","bar"});
+	},0,"barAdder");
+	
+	eventManager->addConstraint({"barAdder","fooAdder"});
+	
+	auto event = eventManager->createEvent("test");
+	eventManager->publish(std::move(event),[this](Susi::Events::SharedEventPtr evt){
+		EXPECT_EQ("bar",evt->headers[0].first);
+		EXPECT_EQ("foo",evt->headers[1].first);
+		callbackCalledOne = true;
+		condOne.notify_one();
+	});
+
+	{
+		std::unique_lock<std::mutex> lock{mutex};
+		condOne.wait_for(lock,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		EXPECT_TRUE(callbackCalledOne);
+	}
+}

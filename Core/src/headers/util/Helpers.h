@@ -19,14 +19,14 @@
 #include <iostream>
 
 namespace Susi {
-	namespace Util {
-		class Helpers {
-			public:
-				static std::vector<std::string> & split(const std::string &s, char delim, std::vector<std::string> &elems);
-				static bool isInteger(const std::string & s);
-				static bool isDouble(const std::string & s);
-		};
-	}
+    namespace Util {
+        class Helpers {
+        public:
+            static std::vector<std::string> & split( const std::string &s, char delim, std::vector<std::string> &elems );
+            static bool isInteger( const std::string & s );
+            static bool isDouble( const std::string & s );
+        };
+    }
 }
 
 #endif // __UTIL_HELPERS__

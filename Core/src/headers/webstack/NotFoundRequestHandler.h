@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
@@ -19,11 +19,11 @@
 
 namespace Susi {
 
-class NotFoundRequestHandler: public Poco::Net::HTTPRequestHandler {
-public:
-    void handleRequest(Poco::Net::HTTPServerRequest& request,
-                       Poco::Net::HTTPServerResponse& response);
-};
+    class NotFoundRequestHandler: public Poco::Net::HTTPRequestHandler {
+    public:
+        void handleRequest( Poco::Net::HTTPServerRequest& request,
+                            Poco::Net::HTTPServerResponse& response );
+    };
 
 }
 
