@@ -14,7 +14,7 @@
 #include <thread>         // std::thread
 #include <csignal>
 
-#include "helper.h"
+#include "config.h"
 #include "IOController.h"
 
 #include "Poco/Process.h"
@@ -31,16 +31,28 @@ std::thread t;
 IOController io;
 std::string prog;
 
+Config config;
+
 
 void signalHandler (int signum) {
 	std::cout << "Interrupt signal (" << signum << ") received.\n";
 
 	if(processStarted == true && p_id != 0) {
-		processKillRequest = true;
-		std::cout<<"processKillRequest"<<std::endl;
+		processKillRequest = true;		
 		// send signal to process
-		Poco::Process::requestTermination(p_id);
+		if(config.kill_friendly) {
+			Poco::Process::requestTermination(p_id);
+		} else {
+			Poco::Process::kill(p_id);
+		}
 	}
+}
+
+void init()  {
+	processStarted = false;
+	processKillRequest = false;
+	p_id = 0;
+	ret_code = 0;
 }
 
 
@@ -52,43 +64,70 @@ void startProcess(std::string program, std::vector<std::string> args) {
 }
 
 int main(int argc, char** argv){
+	
+	// register signal handler
+	signal(SIGINT, signalHandler);  // Strg-C
+	signal(SIGUSR1, signalHandler); // 10
+	signal(SIGUSR2, signalHandler); // 12
 
-	signal(SIGINT, signalHandler);
+	std::vector<std::string> argv_vec;	
+	std::vector<std::string> filtered_vec;
 
-	std::vector<std::string> argv_vec;
+	if(argc < 2) {
+		std::cout<<"Usage ..."<<std::endl;
+		std::cout<<"watchdog [PATH TO EXECUTABLE] <arguments for watchdog end executable> \n"<<std::endl;
+		std::cout<<"watchdog arguments ...>"<<std::endl;
+		std::cout<<"	-wd_f=[true,false]		kill process friendly with signal or hard kill>"<<std::endl;
+		std::cout<<"	-wd_r=[times]		    restart process n times after finish, -1 means infined restarts>"<<std::endl;
+		std::cout<<"\n\n>"<<std::endl;
+		std::cout<<"Example for susi ...\n"<<std::endl;
+		std::cout<<"./watchdog  ../../Core/build/susi --wd_f=true -config=\"../../Core/config.json\""<<std::endl;
+		std::cout<<"Example for test.sh ...\n"<<std::endl;
+		std::cout<<"./watchdog  ../test/test.sh -wd_r=2"<<std::endl;
 
-	if(argc < 1) {
-		std::cout<<"Help ..."<<std::endl;
 	} else {
 
-		prog = argv[1]; 
+		prog = argv[1];
 
-		if(io.getExecutable(prog)) {		
+		if(config.getExecutable(prog)) {		
 
 			// get argument 
-			for (int i=2; i<argc; i++)	argv_vec.push_back(argv[i]);				
+			for (int i=2; i<argc; i++)	argv_vec.push_back(argv[i]);
+			filtered_vec = config.parseCommandLine(argv_vec);			
 
+
+			std::cout<<"NZ RT:"<<config.restart_trys<<std::endl;
 			for(;;) {
-				std::cout<<"start"<<std::endl;
+				init();
 
-				t = std::thread(startProcess, prog, argv_vec);
+				std::cout<<"Start Process: "<<prog<<std::endl;
 
+				t = std::thread(startProcess, prog, filtered_vec);
 				t.join();
 
 				if(ret_code != 0) {
 					break;
 				}
 
-				std::cout<<"thread finished"<<std::endl;
+				std::cout<<"Thread finished with:"<<ret_code<<std::endl;
 				if(processKillRequest == true) {
 					std::cout<<"processKillRequest after"<<std::endl;
 					exit(0);
+				}
+
+				if(config.restart_trys > 0 && config.restart_trys != -1) {
+					config.restart_trys--;
+				} else {				
+					if(config.restart_trys == 0) {
+						std::cout<<"Watchdog finished."<<std::endl;
+						exit(0);				
+					}
 				}
 			}
 
 
 		} else {
-			std::cout<<"Prog not found or isn't executable"<<std::endl;
+			std::cout<<"Process not found or isn't executable"<<std::endl;
 			exit(0);
 		}
 
