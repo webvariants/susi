@@ -15,8 +15,10 @@
 #include <csignal>
 
 #include "helper.h"
+#include "IOController.h"
 
 #include "Poco/Process.h"
+#include "Poco/Foundation.h"
 
 std::atomic<int> p_id (0);
 std::atomic<int> ret_code (0);
@@ -25,6 +27,9 @@ std::atomic<bool> processStarted (false);
 std::atomic<bool> processKillRequest (false);
 
 std::thread t;
+
+IOController io;
+std::string prog;
 
 
 void signalHandler (int signum) {
@@ -39,17 +44,10 @@ void signalHandler (int signum) {
 }
 
 
-void startProcess(std::string program) {
-	std::string cmd("bash");
-	std::vector<std::string> args;
-	args.push_back(program);
-	
-	Poco::ProcessHandle ph = Poco::Process::launch(cmd, args, 0, 0, 0);
-
+void startProcess(std::string program, std::vector<std::string> args) {	
+	Poco::ProcessHandle ph = Poco::Process::launch(program, args, 0, 0, 0);
 	processStarted = true;
-
 	p_id = ph.id();
-
 	ret_code = ph.wait();	
 }
 
@@ -57,24 +55,43 @@ int main(int argc, char** argv){
 
 	signal(SIGINT, signalHandler);
 
-	std::string cmd = "../test/test.sh";
+	std::vector<std::string> argv_vec;
 
-	for(;;) {
-		std::cout<<"start"<<std::endl;
+	if(argc < 1) {
+		std::cout<<"Help ..."<<std::endl;
+	} else {
 
-		t = std::thread(startProcess, cmd);
+		prog = argv[1]; 
 
-		t.join();
+		if(io.getExecutable(prog)) {		
 
-		if(ret_code != 0) {
-			break;
-		}
+			// get argument 
+			for (int i=2; i<argc; i++)	argv_vec.push_back(argv[i]);				
 
-		std::cout<<"thread finished"<<std::endl;
-		if(processKillRequest == true) {
-			std::cout<<"processKillRequest after"<<std::endl;
+			for(;;) {
+				std::cout<<"start"<<std::endl;
+
+				t = std::thread(startProcess, prog, argv_vec);
+
+				t.join();
+
+				if(ret_code != 0) {
+					break;
+				}
+
+				std::cout<<"thread finished"<<std::endl;
+				if(processKillRequest == true) {
+					std::cout<<"processKillRequest after"<<std::endl;
+					exit(0);
+				}
+			}
+
+
+		} else {
+			std::cout<<"Prog not found or isn't executable"<<std::endl;
 			exit(0);
 		}
+
 	}
 
 	exit(0);
