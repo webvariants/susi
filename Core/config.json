@@ -4,9 +4,7 @@
 		"queuelen": 32
 	},
 
-	"heartbeat": {
-		"fix":"me"
-	},
+	"heartbeat": {},
 
 
 	"dbmanager": [
@@ -62,7 +60,5 @@
 		"address": "[::1]:4000"
 	},
 
-	"apiserver": {
-		"fix":"me"
-	}
+	"apiserver": {}
 }

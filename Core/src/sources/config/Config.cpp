@@ -55,11 +55,14 @@ void Susi::Config::loadConfig( std::string path ) {
 
         if( _configVar.isNull() ) {
             // first load or empty
+            Susi::Logger::debug("first load of config");
             _configVar = configVar;
         }
         else {
             //merge vars
-            mergeOptions( "", configVar );
+            Susi::Logger::debug("merge config");
+            //mergeOptions( "", configVar );
+            merge(_configVar,configVar);
         }
 
         std::string msg = "Susi::Config::loadConfig ";
@@ -98,23 +101,17 @@ void Susi::Config::setLoadCount( int _load_count ) {
     load_count = _load_count;
 }
 
-void Susi::Config::mergeOptions( std::string key, Susi::Util::Any configVar ) {
-    if( configVar.isObject() ) {
-        std::map<std::string,Susi::Util::Any> config_map = configVar;
-        for( std::map<std::string,Susi::Util::Any>::iterator it=config_map.begin(); it!=config_map.end(); ++it ) {
-            std::string _key = key;
-            if( key.length() == 0 )  {
-                _key.append( it->first );
-                this->mergeOptions( _key, it->second );
-            }
-            else {
-                _key.append( "." ).append( it->first );
-                this->mergeOptions( _key, it->second );
+void Susi::Config::merge( Susi::Util::Any & ref, Susi::Util::Any & other ){
+    if(ref.isObject() && other.isObject()){
+        for(auto & kv : static_cast<Susi::Util::Any::Object>(other)){
+            if(ref[kv.first].isObject()){
+                merge(ref[kv.first],kv.second);
+            }else{
+                ref[kv.first] = kv.second;
             }
         }
-    }
-    else {
-        _configVar.set( key, configVar );
+    }else{
+        ref = other;
     }
 }
 
