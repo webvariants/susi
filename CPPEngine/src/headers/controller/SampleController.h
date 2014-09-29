@@ -22,20 +22,20 @@ class SampleController : public Susi::Cpp::BaseController {
 public:
 	virtual void start() override {
 		Susi::Events::Consumer c = [this](Susi::Events::SharedEventPtr event){
-			sampleConsumer(event);
+			sampleConsumerFunction(event);
 		};
 		Susi::Events::Processor p = [this](Susi::Events::EventPtr event){
-			sampleProcessor(std::move(event));
+			sampleProcessorFunction(std::move(event));
 		};
 		subscribe("samplecontroller::test1", c , 3);
 		subscribe("samplecontroller::test2", p , 3);
 	}
 
-	void sampleConsumer(Susi::Events::SharedEventPtr event){
+	void sampleConsumerFunction(Susi::Events::SharedEventPtr event){
 		log("Funktioniert!");
 	}
 
-	void sampleProcessor(Susi::Events::EventPtr event){
+	void sampleProcessorFunction(Susi::Events::EventPtr event){
 		event->payload = "processed!";
 	}
 };

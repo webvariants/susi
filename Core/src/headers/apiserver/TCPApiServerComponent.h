@@ -76,7 +76,6 @@ namespace Susi {
 
                 ConnectionFactory( std::shared_ptr<Susi::Api::ApiServerComponent> api ) : _api {api} {}
                 virtual Poco::Net::TCPServerConnection * createConnection( const Poco::Net::StreamSocket& s ) {
-                    //std::cout<<"create connection!"<<std::endl;
                     Susi::Logger::debug( "creating new tcp connection" );
                     return new Connection {s, _api};
                 }
