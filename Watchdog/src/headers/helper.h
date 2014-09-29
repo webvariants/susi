@@ -9,12 +9,11 @@
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
-#ifndef __WATCHDOG__
-#define __WATCHDOG__
+#ifndef __HELPERS__
+#define __HELPERS__
 
-class Watchdog {
-	protected:
-	public:
+class Helper {
+
 };
 
-#endif // __WATCHDOG__
+#endif // __HELPERS__

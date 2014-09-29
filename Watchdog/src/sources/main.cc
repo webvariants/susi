@@ -9,35 +9,73 @@
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
-#include <iostream>
-#include <mutex>
-#include <chrono>
-#include <condition_variable>
-
+#include <atomic>
+#include <iostream>       // std::cout
+#include <thread>         // std::thread
 #include <csignal>
 
-#include "Watchdog.h"
+#include "helper.h"
 
-std::condition_variable waitCond;
+#include "Poco/Process.h"
 
-void waitForEver(){
-	std::mutex mutex;
-	std::unique_lock<std::mutex> lk(mutex);
-	waitCond.wait(lk,[](){return false;});
-}
+std::atomic<int> p_id (0);
+std::atomic<int> ret_code (0);
+
+std::atomic<bool> processStarted (false);
+std::atomic<bool> processKillRequest (false);
+
+std::thread t;
 
 
 void signalHandler (int signum) {
 	std::cout << "Interrupt signal (" << signum << ") received.\n";
-	exit(0);
+
+	if(processStarted == true && p_id != 0) {
+		processKillRequest = true;
+		std::cout<<"processKillRequest"<<std::endl;
+		// send signal to process
+		Poco::Process::requestTermination(p_id);
+	}
+}
+
+
+void startProcess(std::string program) {
+	std::string cmd("bash");
+	std::vector<std::string> args;
+	args.push_back(program);
+	
+	Poco::ProcessHandle ph = Poco::Process::launch(cmd, args, 0, 0, 0);
+
+	processStarted = true;
+
+	p_id = ph.id();
+
+	ret_code = ph.wait();	
 }
 
 int main(int argc, char** argv){
 
-	// register signal SIGINT and signal handler  
-    signal(SIGINT, signalHandler); 
+	signal(SIGINT, signalHandler);
 
-	waitForEver();
+	std::string cmd = "../test/test.sh";
+
+	for(;;) {
+		std::cout<<"start"<<std::endl;
+
+		t = std::thread(startProcess, cmd);
+
+		t.join();
+
+		if(ret_code != 0) {
+			break;
+		}
+
+		std::cout<<"thread finished"<<std::endl;
+		if(processKillRequest == true) {
+			std::cout<<"processKillRequest after"<<std::endl;
+			exit(0);
+		}
+	}
 
 	exit(0);
 }
