@@ -15,7 +15,6 @@
 #include <csignal>
 
 #include "config.h"
-#include "IOController.h"
 
 #include "Poco/Process.h"
 #include "Poco/Foundation.h"
@@ -27,10 +26,7 @@ std::atomic<bool> processStarted (false);
 std::atomic<bool> processKillRequest (false);
 
 std::thread t;
-
-IOController io;
 std::string prog;
-
 Config config;
 
 
