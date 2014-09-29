@@ -72,7 +72,7 @@ bool Susi::Events::Manager::unsubscribe( long id ) {
     for( int i=0; i<subscriptionsByPred.size(); i++ ) {
         if( subscriptionsByPred[i].id == id ) {
             subscriptionsByPred.erase( subscriptionsByPred.begin()+i );
-            return 0;
+            return true;
         }
     }
     return false;

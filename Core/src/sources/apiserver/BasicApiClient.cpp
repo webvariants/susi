@@ -39,6 +39,20 @@ void Susi::Api::BasicApiClient::sendRegisterProcessor( std::string topic ) {
     JSONTCPClient::send( packet );
 }
 
+
+void Susi::Api::BasicApiClient::sendUnregisterConsumer( long id ){
+    Susi::Util::Any packet = Susi::Util::Any::Object{
+        {"type","unregisterConsumer"},
+        {"data",id}
+    };
+}
+void Susi::Api::BasicApiClient::sendUnregisterProcessor( long id ){
+    Susi::Util::Any packet = Susi::Util::Any::Object{
+        {"type","unregisterProcessor"},
+        {"data",id}
+    };
+}
+
 void Susi::Api::BasicApiClient::onMessage( Susi::Util::Any & message ) {
     //std::cout<<"got message in basic api client"<<std::endl;
     std::string type = message["type"];

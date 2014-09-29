@@ -43,6 +43,8 @@ namespace Susi {
             void sendRegisterConsumer( std::string topic );
             void sendRegisterProcessor( std::string topic );
             void sendAck( Susi::Events::Event & event );
+            void sendUnregisterConsumer( long id );
+            void sendUnregisterProcessor( long id );
 
         };
 

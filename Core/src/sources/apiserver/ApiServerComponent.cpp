@@ -83,7 +83,7 @@ void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, Su
             Susi::Util::Any packet;
             packet["type"] = "consumerEvent";
             packet["data"] = event->toAny();
-            //std::cout<<"got consumer event, try to send it "+packet.toJSONString()<<std::endl;
+            std::cout<<"got consumer event, try to send it "+packet.toJSONString()<<std::endl;
             std::string _id = id;
             send( _id,packet );
         };
@@ -95,6 +95,7 @@ void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, Su
         sendFail( id,"data is not a string" );
     }
 }
+
 void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, Susi::Util::Any & packet ) {
     auto & data = packet["data"];
     if( data.isString() ) {
