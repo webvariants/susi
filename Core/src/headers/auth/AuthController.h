@@ -59,6 +59,7 @@ namespace Susi {
             bool isLoggedIn( std::string sessionID );
 
             bool addUser( std::string username, std::string password , char authlevel );
+            bool updateUser( std::string username, std::string password , char authlevel );
             bool delUser( std::string username );
 
             std::string getUsername( std::string sessionID );

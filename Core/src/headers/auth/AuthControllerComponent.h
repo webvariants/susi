@@ -27,6 +27,10 @@ namespace Susi {
             void handleIsLoggedIn( Susi::Events::EventPtr event );
             void handleGetUsername( Susi::Events::EventPtr event );
 
+            void handleAddUser( Susi::Events::EventPtr event );
+            void handleDelUser( Susi::Events::EventPtr event );
+            void handleUpdateUser( Susi::Events::EventPtr event );
+
         public:
             ControllerComponent( Susi::System::ComponentManager * mgr, std::string db_identifier ) :
                 Controller {
@@ -49,6 +53,17 @@ namespace Susi {
                 subscribe( "auth::getUsername", [this]( Susi::Events::EventPtr evt ) {
                     handleGetUsername( std::move( evt ) );
                 }, 3 );
+
+
+                subscribe( "auth::addUser", [this]( Susi::Events::EventPtr evt ) {
+                    handleAddUser( std::move( evt ) );
+                }, 0 );
+                subscribe( "auth::delUser", [this]( Susi::Events::EventPtr evt ) {
+                    handleDelUser( std::move( evt ) );
+                }, 0 );
+                subscribe( "auth::updateUser", [this]( Susi::Events::EventPtr evt ) {
+                    handleUpdateUser( std::move( evt ) );
+                }, 0 );
             }
 
             virtual void stop() override {

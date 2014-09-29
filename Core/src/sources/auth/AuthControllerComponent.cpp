@@ -36,3 +36,20 @@ void Susi::Auth::ControllerComponent::handleIsLoggedIn( Susi::Events::EventPtr e
 void Susi::Auth::ControllerComponent::handleGetUsername( Susi::Events::EventPtr event ) {
     event->getPayload()["username"] = getUsername( event->getSessionID() );
 }
+
+
+
+void Susi::Auth::ControllerComponent::handleAddUser( Susi::Events::EventPtr event ) {
+    auto & payload = event->payload;
+    event->getPayload()["success"] = addUser( payload["username"], payload["password"], payload["authlevel"] );
+}
+
+void Susi::Auth::ControllerComponent::handleDelUser( Susi::Events::EventPtr event ) {
+    auto & payload = event->payload;
+    event->getPayload()["success"] = delUser( payload["username"] );
+}
+
+void Susi::Auth::ControllerComponent::handleUpdateUser( Susi::Events::EventPtr event ) {
+    auto & payload = event->payload;
+    event->getPayload()["success"] = updateUser( payload["username"], payload["password"], payload["authlevel"] );
+}

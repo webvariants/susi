@@ -27,7 +27,6 @@ void Susi::Auth::Controller::setup() {
             throw std::runtime_error {"this should not happen"};
         }
     }
-
 }
 
 bool Susi::Auth::Controller::addUser( std::string username, std::string password , char authlevel ) {
@@ -43,6 +42,26 @@ bool Susi::Auth::Controller::addUser( std::string username, std::string password
         }
         db->query( "INSERT INTO users(username,password,salt,authlevel) "
                    "VALUES('"+username+"','"+pwHash+"','"+salt+"',"+authlevelStr+");" );
+    }
+    catch( const std::exception & e ) {
+        return false;
+    }
+    return true;
+}
+
+bool Susi::Auth::Controller::updateUser( std::string username, std::string password , char authlevel ) {
+    auto db = _dbManager->getDatabase( this->_dbIdentifier );
+    try {
+        std::string authlevelStr = std::to_string( ( int )authlevel );
+        std::string salt = generateSalt();
+        SHA3 hasher;
+        std::string pwHash = hasher( password+salt );
+        if( !checkForSqlSafety( username ) ) {
+            Susi::Logger::error( "username seems to be an sql injection: "+username );
+            return false;
+        }
+        db->query( "UPDATE INTO users(password,salt,authlevel) "
+                   "VALUES('"+pwHash+"','"+salt+"',"+authlevelStr+") WHERE username='"+username+"';" );
     }
     catch( const std::exception & e ) {
         return false;
@@ -89,7 +108,7 @@ bool Susi::Auth::Controller::login( std::string sessionID, std::string username,
         }
         return false;
     }
-    return true; // allready logged in
+    return false; // allready logged in
 }
 
 bool Susi::Auth::Controller::logout( std::string sessionID ) {
