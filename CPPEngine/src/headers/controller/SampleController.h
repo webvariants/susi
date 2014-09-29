@@ -21,11 +21,22 @@ namespace Cpp {
 class SampleController : public Susi::Cpp::BaseController {
 public:
 	virtual void start() override {
-		std::cout<<"starting sample!"<<std::endl;
-		Susi::Events::Consumer c = [this](Susi::Events::SharedEventPtr event) {
-			log("Funktioniert!");
+		Susi::Events::Consumer c = [this](Susi::Events::SharedEventPtr event){
+			sampleConsumer(event);
 		};
-		subscribe("samplecontroller::test", c , 3);
+		Susi::Events::Processor p = [this](Susi::Events::EventPtr event){
+			sampleProcessor(std::move(event));
+		};
+		subscribe("samplecontroller::test1", c , 3);
+		subscribe("samplecontroller::test2", p , 3);
+	}
+
+	void sampleConsumer(Susi::Events::SharedEventPtr event){
+		log("Funktioniert!");
+	}
+
+	void sampleProcessor(Susi::Events::EventPtr event){
+		event->payload = "processed!";
 	}
 };
 

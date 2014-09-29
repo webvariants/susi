@@ -18,7 +18,6 @@
 
 #include "apiserver/ApiClient.h"
 #include "BaseController.h"
-#include "controller/SampleController.h"
 
 namespace Susi {
 namespace Cpp {
