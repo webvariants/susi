@@ -14,6 +14,7 @@ bool Susi::System::ComponentManager::loadComponent( std::string name ) {
     if( components.find( name ) == components.end() && registerFunctions[name] ) {
         ComponentData data;
         if( config[name].isNull() ) {
+            Susi::Logger::debug( Susi::Util::Any{config}.toJSONString() );
             Susi::Logger::debug( "cant find config for component "+name );
             return false;
         }

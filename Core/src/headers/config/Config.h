@@ -62,7 +62,8 @@ namespace Susi {
         }
 
         void loadConfig( std::string path );
-        void mergeOptions( std::string key, Any configVar );
+
+        void merge( Susi::Util::Any & ref, Susi::Util::Any & other );
 
         // register a commandline option which will be recognized while parsing
         void registerCommandLineOption( std::string name, std::string key );
