@@ -24,8 +24,6 @@
 namespace Susi {
     namespace Api {
 
-
-
         class TCPApiServerComponent : public Susi::System::BaseComponent {
         protected:
             class Connection : public Poco::Net::TCPServerConnection {
@@ -38,13 +36,12 @@ namespace Susi {
                     Poco::Net::TCPServerConnection {s},
                      _api {api},
                      sessionID {std::to_string( std::chrono::system_clock::now().time_since_epoch().count() )},
-                collector {[this]( std::string & msg ) {
-                    Susi::Logger::debug( "got message in collector!" );
-                    std::string s = sessionID;
-                    auto message = Susi::Util::Any::fromJSONString( msg );
-                    _api->onMessage( s,message );
-                }
-                               } {
+                    collector {[this]( std::string & msg ) {
+                        Susi::Logger::debug( "got message in collector!" );
+                        std::string s = sessionID;
+                        auto message = Susi::Util::Any::fromJSONString( msg );
+                        _api->onMessage( s,message );
+                    }} {
                     Susi::Logger::debug( "Connection constructor" );
                     _api->onConnect( sessionID );
                     _api->registerSender( sessionID,[this]( Susi::Util::Any & msg ) {

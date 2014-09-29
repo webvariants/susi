@@ -6,7 +6,7 @@
  *
  * http://www.opensource.org/licenses/mit-license.php
  *
- * @author: Christian Sonderfeld (christian.sonderfeld@webvariants.de)
+ * @author: Christian Sonderfeld (christian.sonderfeld@webvariants.de), Tino Rusch (tino.rusch@webvariants.de)
  */
 
 
