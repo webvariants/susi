@@ -485,3 +485,36 @@ TEST_F(EventManagerTest,Constraints){
 		EXPECT_TRUE(callbackCalledOne);
 	}
 }
+
+TEST_F(EventManagerTest, ConsumerError){
+	Susi::Events::Consumer consumerErrorConsumer = [this](Susi::Events::SharedEventPtr evt){
+		EXPECT_EQ("consumererror",evt->topic);
+		EXPECT_EQ("consumer fail",static_cast<std::string>(evt->payload));
+		callbackCalledOne = true;
+		condOne.notify_one();
+	};
+	eventManager->subscribe("consumererror",consumerErrorConsumer);
+	
+	Susi::Events::Consumer throwingConsumer = [](Susi::Events::SharedEventPtr evt){
+		throw std::runtime_error{"consumer fail"};
+	};
+	eventManager->subscribe("test",throwingConsumer);
+
+	auto event = eventManager->createEvent("test");
+	eventManager->publish(std::move(event),[this](Susi::Events::SharedEventPtr evt){
+		callbackCalledTwo = true;
+		condTwo.notify_one();
+	});
+	
+	{
+		std::unique_lock<std::mutex> lock{mutex};
+		condOne.wait_for(lock,std::chrono::milliseconds{100},[this](){return callbackCalledOne;});
+		EXPECT_TRUE(callbackCalledOne);
+	}
+	
+	{
+		std::unique_lock<std::mutex> lock{mutex};
+		condTwo.wait_for(lock,std::chrono::milliseconds{100},[this](){return callbackCalledTwo;});
+		EXPECT_TRUE(callbackCalledTwo);
+	}
+}
