@@ -18,8 +18,8 @@ project( "SUSI-CPPENGINE" )
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}")
 
 find_package(POCO REQUIRED PocoFoundation PocoUtil PocoJSON PocoNet)
-find_package(Threads REQUIRED)
 find_package(SOCI REQUIRED)
+find_package(Threads REQUIRED)
 
 set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g -Wall --std=c++11 -fPIC -O3" )
 
@@ -31,9 +31,9 @@ include_directories( ${CMAKE_SOURCE_DIR}/src/headers )
 include_directories( ${POCO_INCLUDE_DIR} )
 include_directories( ${SOCI_INCLUDE_DIRS} )
 
-file( GLOB SRCFILES ${CMAKE_SOURCE_DIR}/src/source/*.cpp )
+file( GLOB SRCFILES ${CMAKE_SOURCE_DIR}/src/source/**/*.cpp )
 
-add_executable( susi-cppengine ${SRCFILES} ${CMAKE_SOURCE_DIR}/main.cpp)
+add_executable( susi-cppengine ${SRCFILES} ${CMAKE_SOURCE_DIR}/src/source/main.cpp)
 target_link_libraries(susi-cppengine ${CMAKE_SOURCE_DIR}/../Core/build/libsusi.so)
 target_link_libraries(susi-cppengine ${POCO_LIBRARIES})
 target_link_libraries(susi-cppengine ${SOCI_LIBRARY})
