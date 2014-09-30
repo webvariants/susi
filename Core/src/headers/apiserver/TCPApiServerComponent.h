@@ -128,17 +128,17 @@ namespace Susi {
 
             virtual void start() override {
                 tcpServer.start();
-                std::string msg {"started TCP Api Server on "};
+                std::string msg {"started TCPApiServerComponent on "};
                 msg += address.toString();
                 Susi::Logger::info( msg );
                 std::this_thread::sleep_for( std::chrono::milliseconds {250} );
             }
             virtual void stop() override {
                 tcpServer.stop();
-                Susi::Logger::info( "stopped TCP Api Server" );
             }
             ~TCPApiServerComponent() {
                 stop();
+                Susi::Logger::info( "stopped TCPApiServerComponent" );
             }
 
         };

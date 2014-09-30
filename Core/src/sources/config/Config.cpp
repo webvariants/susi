@@ -65,9 +65,9 @@ void Susi::Config::loadConfig( std::string path ) {
             merge(_configVar,configVar);
         }
 
-        std::string msg = "Susi::Config::loadConfig ";
+        /*std::string msg = "Susi::Config::loadConfig ";
         msg += ( "File: " + path );
-        Susi::Logger::info( msg );
+        Susi::Logger::info( msg );*/
         load_count++;
 
     }

@@ -52,6 +52,7 @@ namespace Susi {
         }
         ~HttpServerComponent() {
             stop();
+            Susi::Logger::info( "stopped HTTPServerComponent" );
         }
     };
 

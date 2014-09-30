@@ -4,11 +4,6 @@ Susi::DB::Manager::Manager() {}
 
 Susi::DB::Manager::Manager( Susi::Util::Any config ) {
     this->init( config );
-
-    std::string msg = "initialized database manager with ";
-    msg += std::to_string( config.size() );
-    msg += " databases";
-    Susi::Logger::info( msg );
 }
 
 Susi::DB::Manager::Manager( std::vector<std::tuple<std::string,std::string,std::string>> dbs ) {
@@ -27,7 +22,7 @@ void Susi::DB::Manager::init( Susi::Util::Any config ) {
             try {
                 Susi::Util::Any entry = config[i];
 
-                Susi::Logger::info( "INIT:" + entry.toJSONString() +" TYPE:" + ( entry.isObject() ? "Object" : "Wrong Type" ) );
+                //Susi::Logger::info( "INIT:" + entry.toJSONString() +" TYPE:" + ( entry.isObject() ? "Object" : "Wrong Type" ) );
 
                 std::string identifier = entry["identifier"];
                 std::string dbtype     = entry["type"];

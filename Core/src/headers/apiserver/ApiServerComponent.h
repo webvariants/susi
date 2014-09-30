@@ -58,7 +58,14 @@ namespace Susi {
                 sessionManager = mgr->getComponent<Susi::Sessions::SessionManagerComponent>( "sessionmanager" );
             }
 
-            virtual void start() override {}
+            ~ApiServerComponent(){
+                stop();
+                Susi::Logger::info( "stopped ApiServerComponent" );
+            }
+
+            virtual void start() override {
+                Susi::Logger::info( "started ApiServerComponent" );
+            }
             virtual void stop() override {
                 unsubscribeAll();
             }

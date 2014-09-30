@@ -37,15 +37,16 @@ namespace Susi {
                 subscribe( "syscall::exec", [this]( EventPtr evt ) {
                     handleExec( std::move( evt ) );
                 } );
+                Susi::Logger::info( "started SyscallComponent" );
             }
 
             virtual void stop() override {
                 unsubscribeAll();
-                Susi::Logger::info( "stopping SyscallComponent" );
             }
 
             ~SyscallComponent() {
                 stop();
+                Susi::Logger::info( "stopped SyscallComponent" );
             }
 
         protected:

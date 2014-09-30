@@ -28,6 +28,7 @@ namespace Susi {
 
         ~HeartBeatComponent() {
             stop();
+            Susi::Logger::info( "stopped HeartBeatComponent" );
         }
 
         virtual void start() override {
@@ -54,6 +55,8 @@ namespace Susi {
                     }
                 }
             } );
+
+            Susi::Logger::info( "started HeartBeatComponent" );
         }
 
         virtual void stop() override {
