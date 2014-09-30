@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">2</td>
@@ -62,45 +62,45 @@
 <pre class="source">
 <a name="1"><span class="lineNum">       1 </span>            : #include &quot;apiserver/ApiClient.h&quot;</a>
 <span class="lineNum">       2 </span>            : 
-<span class="lineNum">       3 </span><span class="lineNoCov">          0 : void Susi::Api::ApiClient::publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback){</span>
-<span class="lineNum">       4 </span><span class="lineNoCov">          0 :         finishCallbacks[event-&gt;getID()] = finishCallback;</span>
-<span class="lineNum">       5 </span><span class="lineNoCov">          0 :         sendPublish(*event);</span>
-<span class="lineNum">       6 </span><span class="lineNoCov">          0 :         delete event.release();</span>
+<span class="lineNum">       3 </span><span class="lineNoCov">          0 : void Susi::Api::ApiClient::publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback ) {</span>
+<span class="lineNum">       4 </span><span class="lineNoCov">          0 :     finishCallbacks[event-&gt;getID()] = finishCallback;</span>
+<span class="lineNum">       5 </span><span class="lineNoCov">          0 :     sendPublish( *event );</span>
+<span class="lineNum">       6 </span><span class="lineNoCov">          0 :     delete event.release();</span>
 <a name="7"><span class="lineNum">       7 </span><span class="lineNoCov">          0 : }</span></a>
 <span class="lineNum">       8 </span>            : 
-<span class="lineNum">       9 </span><span class="lineNoCov">          0 : long Susi::Api::ApiClient::subscribe(std::string topic, Susi::Events::Processor processor){</span>
-<span class="lineNum">      10 </span><span class="lineNoCov">          0 :         sendRegisterProcessor(topic);</span>
-<span class="lineNum">      11 </span><span class="lineNoCov">          0 :         return Susi::Events::Manager::subscribe(topic,processor);</span>
+<span class="lineNum">       9 </span><span class="lineNoCov">          0 : long Susi::Api::ApiClient::subscribe( std::string topic, Susi::Events::Processor processor ) {</span>
+<span class="lineNum">      10 </span><span class="lineNoCov">          0 :     sendRegisterProcessor( topic );</span>
+<span class="lineNum">      11 </span><span class="lineNoCov">          0 :     return Susi::Events::Manager::subscribe( topic,processor );</span>
 <a name="12"><span class="lineNum">      12 </span>            : }</a>
 <span class="lineNum">      13 </span>            : 
-<span class="lineNum">      14 </span><span class="lineNoCov">          0 : long Susi::Api::ApiClient::subscribe(std::string topic, Susi::Events::Consumer consumer){</span>
-<span class="lineNum">      15 </span><span class="lineNoCov">          0 :         sendRegisterConsumer(topic);</span>
-<span class="lineNum">      16 </span><span class="lineNoCov">          0 :         return Susi::Events::Manager::subscribe(topic,consumer);</span>
+<span class="lineNum">      14 </span><span class="lineNoCov">          0 : long Susi::Api::ApiClient::subscribe( std::string topic, Susi::Events::Consumer consumer ) {</span>
+<span class="lineNum">      15 </span><span class="lineNoCov">          0 :     sendRegisterConsumer( topic );</span>
+<span class="lineNum">      16 </span><span class="lineNoCov">          0 :     return Susi::Events::Manager::subscribe( topic,consumer );</span>
 <span class="lineNum">      17 </span>            : }
 <a name="18"><span class="lineNum">      18 </span>            : </a>
 <span class="lineNum">      19 </span>            : 
-<span class="lineNum">      20 </span><span class="lineNoCov">          0 : void Susi::Api::ApiClient::onConsumerEvent(Susi::Events::Event &amp; event){</span>
-<span class="lineNum">      21 </span><span class="lineNoCov">          0 :         auto evt = createEvent(event.getTopic());</span>
-<span class="lineNum">      22 </span><span class="lineNoCov">          0 :         *evt = event;</span>
-<span class="lineNum">      23 </span><span class="lineNoCov">          0 :         Susi::Events::Manager::publish(std::move(evt));</span>
+<span class="lineNum">      20 </span><span class="lineNoCov">          0 : void Susi::Api::ApiClient::onConsumerEvent( Susi::Events::Event &amp; event ) {</span>
+<span class="lineNum">      21 </span><span class="lineNoCov">          0 :     auto evt = createEvent( event.getTopic() );</span>
+<span class="lineNum">      22 </span><span class="lineNoCov">          0 :     *evt = event;</span>
+<span class="lineNum">      23 </span><span class="lineNoCov">          0 :     Susi::Events::Manager::publish( std::move( evt ) );</span>
 <a name="24"><span class="lineNum">      24 </span><span class="lineNoCov">          0 : }</span></a>
 <span class="lineNum">      25 </span>            : 
-<span class="lineNum">      26 </span><span class="lineNoCov">          0 : void Susi::Api::ApiClient::onProcessorEvent(Susi::Events::Event &amp; event){</span>
-<a name="27"><span class="lineNum">      27 </span><span class="lineNoCov">          0 :         auto evt = createEvent(event.getTopic());</span></a>
-<span class="lineNum">      28 </span><span class="lineNoCov">          0 :         *evt = event;</span>
-<span class="lineNum">      29 </span><span class="lineNoCov">          0 :         Susi::Events::Manager::publish(std::move(evt),[this](Susi::Events::SharedEventPtr event){</span>
-<span class="lineNum">      30 </span><span class="lineNoCov">          0 :                 std::cout&lt;&lt;&quot;finished in client, acking to susi!&quot;&lt;&lt;std::endl;</span>
-<span class="lineNum">      31 </span><span class="lineNoCov">          0 :                 sendAck(*event);</span>
-<span class="lineNum">      32 </span><span class="lineNoCov">          0 :                 std::cout&lt;&lt;&quot;sended ack&quot;&lt;&lt;std::endl;</span>
-<span class="lineNum">      33 </span><span class="lineNoCov">          0 :         });</span>
+<span class="lineNum">      26 </span><span class="lineNoCov">          0 : void Susi::Api::ApiClient::onProcessorEvent( Susi::Events::Event &amp; event ) {</span>
+<a name="27"><span class="lineNum">      27 </span><span class="lineNoCov">          0 :     auto evt = createEvent( event.getTopic() );</span></a>
+<span class="lineNum">      28 </span><span class="lineNoCov">          0 :     *evt = event;</span>
+<span class="lineNum">      29 </span><span class="lineNoCov">          0 :     Susi::Events::Manager::publish( std::move( evt ),[this]( Susi::Events::SharedEventPtr event ) {</span>
+<span class="lineNum">      30 </span><span class="lineNoCov">          0 :         std::cout&lt;&lt;&quot;finished in client, acking to susi!&quot;&lt;&lt;std::endl;</span>
+<span class="lineNum">      31 </span><span class="lineNoCov">          0 :         sendAck( *event );</span>
+<span class="lineNum">      32 </span><span class="lineNoCov">          0 :         std::cout&lt;&lt;&quot;sended ack&quot;&lt;&lt;std::endl;</span>
+<span class="lineNum">      33 </span><span class="lineNoCov">          0 :     } );</span>
 <a name="34"><span class="lineNum">      34 </span><span class="lineNoCov">          0 : }</span></a>
 <span class="lineNum">      35 </span>            : 
-<span class="lineNum">      36 </span><span class="lineNoCov">          0 : void Susi::Api::ApiClient::onAck(Susi::Events::Event &amp; event){</span>
-<span class="lineNum">      37 </span><span class="lineNoCov">          0 :         auto evt = std::make_shared&lt;Susi::Events::Event&gt;(event);</span>
-<span class="lineNum">      38 </span><span class="lineNoCov">          0 :         auto callback = finishCallbacks[evt-&gt;getID()];</span>
-<span class="lineNum">      39 </span><span class="lineNoCov">          0 :         if(callback){</span>
-<a name="40"><span class="lineNum">      40 </span><span class="lineNoCov">          0 :                 callback(evt);</span></a>
-<span class="lineNum">      41 </span><span class="lineNoCov">          0 :         }</span>
+<span class="lineNum">      36 </span><span class="lineNoCov">          0 : void Susi::Api::ApiClient::onAck( Susi::Events::Event &amp; event ) {</span>
+<span class="lineNum">      37 </span><span class="lineNoCov">          0 :     auto evt = std::make_shared&lt;Susi::Events::Event&gt;( event );</span>
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 :     auto callback = finishCallbacks[evt-&gt;getID()];</span>
+<span class="lineNum">      39 </span><span class="lineNoCov">          0 :     if( callback ) {</span>
+<a name="40"><span class="lineNum">      40 </span><span class="lineNoCov">          0 :         callback( evt );</span></a>
+<span class="lineNum">      41 </span><span class="lineNoCov">          0 :     }</span>
 <span class="lineNum">      42 </span><span class="lineCov">          3 : }</span>
 </pre>
       </td>

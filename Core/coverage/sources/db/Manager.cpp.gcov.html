@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">8</td>
@@ -64,67 +64,69 @@
 <span class="lineNum">       2 </span>            : 
 <a name="3"><span class="lineNum">       3 </span><span class="lineCov">          2 : Susi::DB::Manager::Manager() {}</span></a>
 <span class="lineNum">       4 </span>            : 
-<span class="lineNum">       5 </span><span class="lineCov">         10 : Susi::DB::Manager::Manager(Susi::Util::Any config) {</span>
-<span class="lineNum">       6 </span><span class="lineCov">         10 :         this-&gt;init(config);</span>
+<span class="lineNum">       5 </span><span class="lineCov">         10 : Susi::DB::Manager::Manager( Susi::Util::Any config ) {</span>
+<span class="lineNum">       6 </span><span class="lineCov">         10 :     this-&gt;init( config );</span>
 <span class="lineNum">       7 </span>            : 
-<span class="lineNum">       8 </span><span class="lineCov">         10 :         std::string msg = &quot;initialized database manager with &quot;;</span>
-<span class="lineNum">       9 </span><span class="lineCov">         10 :         msg += std::to_string(config.size());</span>
-<span class="lineNum">      10 </span><span class="lineCov">         10 :         msg += &quot; databases&quot;;</span>
-<span class="lineNum">      11 </span><span class="lineCov">         10 :         Susi::Logger::info(msg);</span>
+<span class="lineNum">       8 </span><span class="lineCov">         10 :     std::string msg = &quot;initialized database manager with &quot;;</span>
+<span class="lineNum">       9 </span><span class="lineCov">         10 :     msg += std::to_string( config.size() );</span>
+<span class="lineNum">      10 </span><span class="lineCov">         10 :     msg += &quot; databases&quot;;</span>
+<span class="lineNum">      11 </span><span class="lineCov">         10 :     Susi::Logger::info( msg );</span>
 <a name="12"><span class="lineNum">      12 </span><span class="lineCov">         10 : }</span></a>
 <span class="lineNum">      13 </span>            : 
-<span class="lineNum">      14 </span><span class="lineCov">          1 : Susi::DB::Manager::Manager(std::vector&lt;std::tuple&lt;std::string,std::string,std::string&gt;&gt; dbs) {</span>
-<span class="lineNum">      15 </span><span class="lineCov">          3 :         for(std::size_t i=0; i&lt;dbs.size(); ++i){</span>
-<span class="lineNum">      16 </span><span class="lineCov">          2 :           this-&gt;addDatabase(std::get&lt;0&gt;(dbs[i]), std::get&lt;1&gt;(dbs[i]),std::get&lt;2&gt;(dbs[i]));</span>
-<span class="lineNum">      17 </span>            :         }
-<span class="lineNum">      18 </span><span class="lineCov">          1 :         std::string msg = &quot;initialized database manager with &quot;;</span>
-<span class="lineNum">      19 </span><span class="lineCov">          1 :         msg += std::to_string(dbs.size());</span>
-<span class="lineNum">      20 </span><span class="lineCov">          1 :         msg += &quot; databases&quot;;</span>
-<span class="lineNum">      21 </span><span class="lineCov">          1 :         Susi::Logger::info(msg);</span>
+<span class="lineNum">      14 </span><span class="lineCov">          1 : Susi::DB::Manager::Manager( std::vector&lt;std::tuple&lt;std::string,std::string,std::string&gt;&gt; dbs ) {</span>
+<span class="lineNum">      15 </span><span class="lineCov">          3 :     for( std::size_t i=0; i&lt;dbs.size(); ++i ) {</span>
+<span class="lineNum">      16 </span><span class="lineCov">          2 :         this-&gt;addDatabase( std::get&lt;0&gt;( dbs[i] ), std::get&lt;1&gt;( dbs[i] ),std::get&lt;2&gt;( dbs[i] ) );</span>
+<span class="lineNum">      17 </span>            :     }
+<span class="lineNum">      18 </span><span class="lineCov">          1 :     std::string msg = &quot;initialized database manager with &quot;;</span>
+<span class="lineNum">      19 </span><span class="lineCov">          1 :     msg += std::to_string( dbs.size() );</span>
+<span class="lineNum">      20 </span><span class="lineCov">          1 :     msg += &quot; databases&quot;;</span>
+<span class="lineNum">      21 </span><span class="lineCov">          1 :     Susi::Logger::info( msg );</span>
 <a name="22"><span class="lineNum">      22 </span><span class="lineCov">          1 : }</span></a>
 <span class="lineNum">      23 </span>            : 
-<span class="lineNum">      24 </span><span class="lineCov">         10 : void Susi::DB::Manager::init(Susi::Util::Any config) {</span>
-<span class="lineNum">      25 </span><span class="lineCov">         10 :         if(config.isArray()) {</span>
-<span class="lineNum">      26 </span><span class="lineCov">         30 :                 for(std::size_t i=0; i&lt;config.size(); ++i){</span>
-<span class="lineNum">      27 </span>            :                         try{
-<span class="lineNum">      28 </span><span class="lineCov">         20 :                                 Susi::Util::Any entry = config[i];</span>
+<span class="lineNum">      24 </span><span class="lineCov">         10 : void Susi::DB::Manager::init( Susi::Util::Any config ) {</span>
+<span class="lineNum">      25 </span><span class="lineCov">         10 :     if( config.isArray() ) {</span>
+<span class="lineNum">      26 </span><span class="lineCov">         30 :         for( std::size_t i=0; i&lt;config.size(); ++i ) {</span>
+<span class="lineNum">      27 </span>            :             try {
+<span class="lineNum">      28 </span><span class="lineCov">         20 :                 Susi::Util::Any entry = config[i];</span>
 <span class="lineNum">      29 </span>            : 
-<span class="lineNum">      30 </span><span class="lineCov">         20 :                                 Susi::Logger::info(&quot;INIT:&quot; + entry.toJSONString() +&quot; TYPE:&quot; + (entry.isObject() ? &quot;Object&quot; : &quot;Wrong Type&quot;));</span>
+<span class="lineNum">      30 </span><span class="lineCov">         20 :                 Susi::Logger::info( &quot;INIT:&quot; + entry.toJSONString() +&quot; TYPE:&quot; + ( entry.isObject() ? &quot;Object&quot; : &quot;Wrong Type&quot; ) );</span>
 <span class="lineNum">      31 </span>            : 
-<span class="lineNum">      32 </span><span class="lineCov">         40 :                                 std::string identifier = entry[&quot;identifier&quot;];</span>
-<span class="lineNum">      33 </span><span class="lineCov">         40 :                                 std::string dbtype     = entry[&quot;type&quot;];</span>
-<span class="lineNum">      34 </span><span class="lineCov">         40 :                                 std::string connectURI = entry[&quot;uri&quot;];</span>
-<span class="lineNum">      35 </span><span class="lineCov">         40 :                                 addDatabase(identifier, dbtype, connectURI);</span>
-<span class="lineNum">      36 </span><span class="lineNoCov">          0 :                         }catch(const std::exception &amp; e){</span>
-<span class="lineNum">      37 </span><span class="lineNoCov">          0 :                                 Susi::Logger::error(&quot;malformed config file&quot;);</span>
-<span class="lineNum">      38 </span>            :                         }
-<span class="lineNum">      39 </span>            :                 }
+<span class="lineNum">      32 </span><span class="lineCov">         40 :                 std::string identifier = entry[&quot;identifier&quot;];</span>
+<span class="lineNum">      33 </span><span class="lineCov">         40 :                 std::string dbtype     = entry[&quot;type&quot;];</span>
+<span class="lineNum">      34 </span><span class="lineCov">         40 :                 std::string connectURI = entry[&quot;uri&quot;];</span>
+<span class="lineNum">      35 </span><span class="lineCov">         40 :                 addDatabase( identifier, dbtype, connectURI );</span>
+<span class="lineNum">      36 </span>            :             }
+<span class="lineNum">      37 </span><span class="lineNoCov">          0 :             catch( const std::exception &amp; e ) {</span>
+<span class="lineNum">      38 </span><span class="lineNoCov">          0 :                 Susi::Logger::error( &quot;malformed config file&quot; );</span>
+<span class="lineNum">      39 </span>            :             }
 <span class="lineNum">      40 </span>            :         }
-<a name="41"><span class="lineNum">      41 </span><span class="lineCov">         10 : }</span></a>
-<span class="lineNum">      42 </span>            : 
-<span class="lineNum">      43 </span><span class="lineCov">         23 : void Susi::DB::Manager::addDatabase(std::string identifier,std::string dbtype,std::string connectURI) {</span>
-<span class="lineNum">      44 </span><span class="lineCov">         23 :         this-&gt;dbMap[identifier] = Susi::DB::ManagerItem{dbtype,connectURI};</span>
-<a name="45"><span class="lineNum">      45 </span><span class="lineCov">         23 : }</span></a>
-<span class="lineNum">      46 </span>            : 
-<span class="lineNum">      47 </span><span class="lineCov">         30 : std::shared_ptr&lt;Susi::DB::Database&gt; Susi::DB::Manager::getDatabase(std::string identifier) {</span>
-<span class="lineNum">      48 </span><span class="lineCov">         30 :         if(this-&gt;dbMap.count(identifier) &gt; 0) {</span>
-<span class="lineNum">      49 </span><span class="lineCov">         29 :                 Susi::DB::ManagerItem item = this-&gt;dbMap[identifier];</span>
-<span class="lineNum">      50 </span>            : 
-<span class="lineNum">      51 </span><span class="lineCov">         29 :                 if(item.connected == false) {</span>
-<span class="lineNum">      52 </span><span class="lineCov">         29 :                         item.db = std::shared_ptr&lt;Susi::DB::Database&gt;(new Susi::DB::Database(item.dbtype, item.connectURI));</span>
-<span class="lineNum">      53 </span><span class="lineCov">         29 :                         item.connected = true;</span>
-<span class="lineNum">      54 </span>            :                 }
-<span class="lineNum">      55 </span>            : 
-<span class="lineNum">      56 </span><span class="lineCov">         29 :                 return item.db;</span>
-<span class="lineNum">      57 </span>            : 
-<span class="lineNum">      58 </span>            :         } else {
-<span class="lineNum">      59 </span><span class="lineCov">          1 :                 std::string msg = &quot;DB not found: &quot;;</span>
-<span class="lineNum">      60 </span><span class="lineCov">          1 :                 msg += identifier;</span>
-<span class="lineNum">      61 </span><span class="lineCov">          1 :                 Susi::Logger::error(msg);</span>
-<span class="lineNum">      62 </span>            :         }
-<a name="63"><span class="lineNum">      63 </span>            : </a>
-<span class="lineNum">      64 </span><span class="lineCov">          1 :         return nullptr;</span>
-<span class="lineNum">      65 </span><span class="lineCov">          3 : }</span>
+<span class="lineNum">      41 </span>            :     }
+<a name="42"><span class="lineNum">      42 </span><span class="lineCov">         10 : }</span></a>
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span><span class="lineCov">         23 : void Susi::DB::Manager::addDatabase( std::string identifier,std::string dbtype,std::string connectURI ) {</span>
+<span class="lineNum">      45 </span><span class="lineCov">         23 :     this-&gt;dbMap[identifier] = Susi::DB::ManagerItem {dbtype,connectURI};</span>
+<a name="46"><span class="lineNum">      46 </span><span class="lineCov">         23 : }</span></a>
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span><span class="lineCov">         36 : std::shared_ptr&lt;Susi::DB::Database&gt; Susi::DB::Manager::getDatabase( std::string identifier ) {</span>
+<span class="lineNum">      49 </span><span class="lineCov">         36 :     if( this-&gt;dbMap.count( identifier ) &gt; 0 ) {</span>
+<span class="lineNum">      50 </span><span class="lineCov">         35 :         Susi::DB::ManagerItem item = this-&gt;dbMap[identifier];</span>
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span><span class="lineCov">         35 :         if( item.connected == false ) {</span>
+<span class="lineNum">      53 </span><span class="lineCov">         35 :             item.db = std::shared_ptr&lt;Susi::DB::Database&gt;( new Susi::DB::Database( item.dbtype, item.connectURI ) );</span>
+<span class="lineNum">      54 </span><span class="lineCov">         35 :             item.connected = true;</span>
+<span class="lineNum">      55 </span>            :         }
+<span class="lineNum">      56 </span>            : 
+<span class="lineNum">      57 </span><span class="lineCov">         35 :         return item.db;</span>
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span>            :     }
+<span class="lineNum">      60 </span>            :     else {
+<span class="lineNum">      61 </span><span class="lineCov">          1 :         std::string msg = &quot;DB not found: &quot;;</span>
+<span class="lineNum">      62 </span><span class="lineCov">          1 :         msg += identifier;</span>
+<span class="lineNum">      63 </span><span class="lineCov">          1 :         Susi::Logger::error( msg );</span>
+<span class="lineNum">      64 </span>            :     }
+<a name="65"><span class="lineNum">      65 </span>            : </a>
+<span class="lineNum">      66 </span><span class="lineCov">          1 :     return nullptr;</span>
+<span class="lineNum">      67 </span><span class="lineCov">          3 : }</span>
 </pre>
       </td>
     </tr>

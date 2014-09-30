@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">3</td>
@@ -67,7 +67,7 @@
 <span class="lineNum">       5 </span>            :  * complete text in the attached LICENSE file or online at:
 <span class="lineNum">       6 </span>            :  *
 <span class="lineNum">       7 </span>            :  * http://www.opensource.org/licenses/mit-license.php
-<span class="lineNum">       8 </span>            :  * 
+<span class="lineNum">       8 </span>            :  *
 <span class="lineNum">       9 </span>            :  * @author: Thomas Krause (thomas.krause@webvariants.de)
 <span class="lineNum">      10 </span>            :  */
 <span class="lineNum">      11 </span>            : 
@@ -86,18 +86,18 @@
 <span class="lineNum">      24 </span>            : 
 <a name="25"><span class="lineNum">      25 </span>            : namespace Susi {</a>
 <span class="lineNum">      26 </span>            : 
-<span class="lineNum">      27 </span><span class="lineCov">          2 :         class FormRequestHandler: public Poco::Net::HTTPRequestHandler {</span>
-<span class="lineNum">      28 </span>            :                 private:
-<a name="29"><span class="lineNum">      29 </span>            :                         std::string _uploadDirectory;</a>
-<span class="lineNum">      30 </span>            :                 public:
-<span class="lineNum">      31 </span><span class="lineCov">          1 :                         FormRequestHandler(std::string uploadDirectory) :</span>
-<span class="lineNum">      32 </span><span class="lineCov">          1 :                                 _uploadDirectory(uploadDirectory) {</span>
-<span class="lineNum">      33 </span><span class="lineCov">          1 :                                 Susi::Logger::debug(&quot;init form handler&quot;);</span>
-<span class="lineNum">      34 </span><span class="lineCov">          1 :                         }                       </span>
-<span class="lineNum">      35 </span>            :                         
-<span class="lineNum">      36 </span>            :                         virtual void handleRequest(Poco::Net::HTTPServerRequest&amp; request,
-<span class="lineNum">      37 </span>            :                                 Poco::Net::HTTPServerResponse&amp; response) override;
-<span class="lineNum">      38 </span>            : };
+<span class="lineNum">      27 </span><span class="lineCov">          2 :     class FormRequestHandler: public Poco::Net::HTTPRequestHandler {</span>
+<span class="lineNum">      28 </span>            :     private:
+<a name="29"><span class="lineNum">      29 </span>            :         std::string _uploadDirectory;</a>
+<span class="lineNum">      30 </span>            :     public:
+<span class="lineNum">      31 </span><span class="lineCov">          1 :         FormRequestHandler( std::string uploadDirectory ) :</span>
+<span class="lineNum">      32 </span><span class="lineCov">          1 :             _uploadDirectory( uploadDirectory ) {</span>
+<span class="lineNum">      33 </span><span class="lineCov">          1 :             Susi::Logger::debug( &quot;init form handler&quot; );</span>
+<span class="lineNum">      34 </span><span class="lineCov">          1 :         }</span>
+<span class="lineNum">      35 </span>            : 
+<span class="lineNum">      36 </span>            :         virtual void handleRequest( Poco::Net::HTTPServerRequest&amp; request,
+<span class="lineNum">      37 </span>            :                                     Poco::Net::HTTPServerResponse&amp; response ) override;
+<span class="lineNum">      38 </span>            :     };
 <span class="lineNum">      39 </span>            : 
 <span class="lineNum">      40 </span>            : }
 <span class="lineNum">      41 </span>            : 

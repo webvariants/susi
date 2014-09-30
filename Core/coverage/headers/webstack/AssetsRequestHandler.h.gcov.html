@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">3</td>
@@ -67,7 +67,7 @@
 <span class="lineNum">       5 </span>            :  * complete text in the attached LICENSE file or online at:
 <span class="lineNum">       6 </span>            :  *
 <span class="lineNum">       7 </span>            :  * http://www.opensource.org/licenses/mit-license.php
-<span class="lineNum">       8 </span>            :  * 
+<span class="lineNum">       8 </span>            :  *
 <span class="lineNum">       9 </span>            :  * @author: Tino Rusch (tino.rusch@webvariants.de)
 <span class="lineNum">      10 </span>            :  */
 <span class="lineNum">      11 </span>            : 
@@ -88,17 +88,17 @@
 <span class="lineNum">      26 </span>            : 
 <a name="27"><span class="lineNum">      27 </span>            : namespace Susi {</a>
 <span class="lineNum">      28 </span>            : 
-<span class="lineNum">      29 </span><span class="lineCov">          6 : class AssetsRequestHandler: public Poco::Net::HTTPRequestHandler {</span>
-<span class="lineNum">      30 </span>            : private:
+<span class="lineNum">      29 </span><span class="lineCov">         12 :     class AssetsRequestHandler: public Poco::Net::HTTPRequestHandler {</span>
+<span class="lineNum">      30 </span>            :     private:
 <a name="31"><span class="lineNum">      31 </span>            :         Poco::File _rootDirectory;</a>
-<span class="lineNum">      32 </span>            : public:
-<span class="lineNum">      33 </span><span class="lineCov">          3 :         AssetsRequestHandler(std::string rootDirectory) :</span>
-<span class="lineNum">      34 </span><span class="lineCov">          3 :           _rootDirectory(rootDirectory) {</span>
-<span class="lineNum">      35 </span><span class="lineCov">          3 :                 Susi::Logger::debug(&quot;init assets handler&quot;);</span>
-<span class="lineNum">      36 </span><span class="lineCov">          3 :         }</span>
-<span class="lineNum">      37 </span>            :     virtual void handleRequest(Poco::Net::HTTPServerRequest&amp; request,
-<span class="lineNum">      38 </span>            :                        Poco::Net::HTTPServerResponse&amp; response) override;
-<span class="lineNum">      39 </span>            : };
+<span class="lineNum">      32 </span>            :     public:
+<span class="lineNum">      33 </span><span class="lineCov">          6 :         AssetsRequestHandler( std::string rootDirectory ) :</span>
+<span class="lineNum">      34 </span><span class="lineCov">          6 :             _rootDirectory( rootDirectory ) {</span>
+<span class="lineNum">      35 </span><span class="lineCov">          6 :             Susi::Logger::debug( &quot;init assets handler&quot; );</span>
+<span class="lineNum">      36 </span><span class="lineCov">          6 :         }</span>
+<span class="lineNum">      37 </span>            :         virtual void handleRequest( Poco::Net::HTTPServerRequest&amp; request,
+<span class="lineNum">      38 </span>            :                                     Poco::Net::HTTPServerResponse&amp; response ) override;
+<span class="lineNum">      39 </span>            :     };
 <span class="lineNum">      40 </span>            : 
 <span class="lineNum">      41 </span>            : }
 <span class="lineNum">      42 </span>            : 

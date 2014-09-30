@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">5</td>
@@ -73,43 +73,43 @@
 <span class="lineNum">      11 </span>            : 
 <a name="12"><span class="lineNum">      12 </span>            : #include &quot;webstack/WebSocketRequestHandler.h&quot;</a>
 <span class="lineNum">      13 </span>            : 
-<span class="lineNum">      14 </span><span class="lineCov">          1 : Susi::WebSocketRequestHandler::WebSocketRequestHandler(std::shared_ptr&lt;Susi::Api::ApiServerComponent&gt; apiServer) {</span>
-<span class="lineNum">      15 </span><span class="lineCov">          1 :         _apiServer = apiServer;</span>
+<span class="lineNum">      14 </span><span class="lineCov">          1 : Susi::WebSocketRequestHandler::WebSocketRequestHandler( std::shared_ptr&lt;Susi::Api::ApiServerComponent&gt; apiServer ) {</span>
+<span class="lineNum">      15 </span><span class="lineCov">          1 :     _apiServer = apiServer;</span>
 <a name="16"><span class="lineNum">      16 </span><span class="lineCov">          1 : }</span></a>
 <span class="lineNum">      17 </span>            : 
-<span class="lineNum">      18 </span><span class="lineCov">          1 : void Susi::WebSocketRequestHandler::handleRequest(Poco::Net::HTTPServerRequest&amp; request,</span>
-<span class="lineNum">      19 </span>            :                                                                         Poco::Net::HTTPServerResponse&amp; response) {
-<span class="lineNum">      20 </span><span class="lineCov">          1 :         Susi::Logger::debug(&quot;in ws handler&quot;);</span>
-<span class="lineNum">      21 </span><span class="lineCov">          1 :         Poco::Net::WebSocket socket(request,response);</span>
-<span class="lineNum">      22 </span><span class="lineCov">          2 :         Poco::Net::NameValueCollection cookies;</span>
-<span class="lineNum">      23 </span><span class="lineCov">          1 :         request.getCookies(cookies);</span>
-<a name="24"><span class="lineNum">      24 </span><span class="lineCov">          2 :         std::string id = cookies[&quot;susisession&quot;];</span></a>
-<span class="lineNum">      25 </span><span class="lineCov">          1 :     Susi::Logger::debug(&quot;register sender in ws&quot;);</span>
-<span class="lineNum">      26 </span><span class="lineCov">          2 :     _apiServer-&gt;registerSender(id,[&amp;socket](Susi::Util::Any &amp; arg){</span>
+<span class="lineNum">      18 </span><span class="lineCov">          1 : void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&amp; request,</span>
+<span class="lineNum">      19 </span>            :         Poco::Net::HTTPServerResponse&amp; response ) {
+<span class="lineNum">      20 </span><span class="lineCov">          1 :     Susi::Logger::debug( &quot;in ws handler&quot; );</span>
+<span class="lineNum">      21 </span><span class="lineCov">          1 :     Poco::Net::WebSocket socket( request,response );</span>
+<span class="lineNum">      22 </span><span class="lineCov">          2 :     Poco::Net::NameValueCollection cookies;</span>
+<span class="lineNum">      23 </span><span class="lineCov">          1 :     request.getCookies( cookies );</span>
+<a name="24"><span class="lineNum">      24 </span><span class="lineCov">          2 :     std::string id = cookies[&quot;susisession&quot;];</span></a>
+<span class="lineNum">      25 </span><span class="lineCov">          1 :     Susi::Logger::debug( &quot;register sender in ws&quot; );</span>
+<span class="lineNum">      26 </span><span class="lineCov">          2 :     _apiServer-&gt;registerSender( id,[&amp;socket]( Susi::Util::Any &amp; arg ) {</span>
 <span class="lineNum">      27 </span><span class="lineCov">          2 :         std::string msg = arg.toJSONString();</span>
-<span class="lineNum">      28 </span><span class="lineCov">          2 :         Susi::Logger::debug(&quot;send frame to websocket&quot;);</span>
-<span class="lineNum">      29 </span><span class="lineCov">          2 :         socket.sendFrame(msg.data(), msg.length(), Poco::Net::WebSocket::FRAME_TEXT);</span>
-<span class="lineNum">      30 </span><span class="lineCov">          3 :     });</span>
+<span class="lineNum">      28 </span><span class="lineCov">          2 :         Susi::Logger::debug( &quot;send frame to websocket&quot; );</span>
+<span class="lineNum">      29 </span><span class="lineCov">          2 :         socket.sendFrame( msg.data(), msg.length(), Poco::Net::WebSocket::FRAME_TEXT );</span>
+<span class="lineNum">      30 </span><span class="lineCov">          3 :     } );</span>
 <span class="lineNum">      31 </span>            : 
-<span class="lineNum">      32 </span><span class="lineCov">          1 :     _apiServer-&gt;onConnect(id);</span>
+<span class="lineNum">      32 </span><span class="lineCov">          1 :     _apiServer-&gt;onConnect( id );</span>
 <span class="lineNum">      33 </span>            : 
 <span class="lineNum">      34 </span>            :     char buffer[4096];
-<span class="lineNum">      35 </span>            :         int flags;
-<span class="lineNum">      36 </span>            :         size_t n;
+<span class="lineNum">      35 </span>            :     int flags;
+<span class="lineNum">      36 </span>            :     size_t n;
 <span class="lineNum">      37 </span>            : 
-<span class="lineNum">      38 </span>            :         while (true) {
-<span class="lineNum">      39 </span><span class="lineCov">          2 :                 n = socket.receiveFrame(buffer, sizeof(buffer), flags);</span>
-<span class="lineNum">      40 </span><span class="lineCov">          2 :         Susi::Logger::debug(&quot;got frame&quot;);</span>
-<span class="lineNum">      41 </span><span class="lineCov">          2 :         Susi::Logger::debug(std::to_string(n));</span>
-<span class="lineNum">      42 </span><span class="lineCov">          2 :                 if(n==0 || (flags &amp; Poco::Net::WebSocket::FRAME_OP_BITMASK) == Poco::Net::WebSocket::FRAME_OP_CLOSE){</span>
-<span class="lineNum">      43 </span>            :                         break;
-<span class="lineNum">      44 </span>            :                 }
-<span class="lineNum">      45 </span><span class="lineCov">          1 :                 std::string str(buffer, n);</span>
-<span class="lineNum">      46 </span><span class="lineCov">          2 :                 Susi::Util::Any packet = Susi::Util::Any::fromJSONString(str);</span>
-<span class="lineNum">      47 </span><span class="lineCov">          1 :                 _apiServer-&gt;onMessage(id,packet);</span>
-<span class="lineNum">      48 </span><span class="lineCov">          1 :         }</span>
-<a name="49"><span class="lineNum">      49 </span><span class="lineCov">          1 :         Susi::Logger::debug(&quot;closing websocket&quot;);</span></a>
-<span class="lineNum">      50 </span><span class="lineCov">          2 :         _apiServer-&gt;onClose(id);</span>
+<span class="lineNum">      38 </span>            :     while( true ) {
+<span class="lineNum">      39 </span><span class="lineCov">          2 :         n = socket.receiveFrame( buffer, sizeof( buffer ), flags );</span>
+<span class="lineNum">      40 </span><span class="lineCov">          2 :         Susi::Logger::debug( &quot;got frame&quot; );</span>
+<span class="lineNum">      41 </span><span class="lineCov">          2 :         Susi::Logger::debug( std::to_string( n ) );</span>
+<span class="lineNum">      42 </span><span class="lineCov">          2 :         if( n==0 || ( flags &amp; Poco::Net::WebSocket::FRAME_OP_BITMASK ) == Poco::Net::WebSocket::FRAME_OP_CLOSE ) {</span>
+<span class="lineNum">      43 </span>            :             break;
+<span class="lineNum">      44 </span>            :         }
+<span class="lineNum">      45 </span><span class="lineCov">          1 :         std::string str( buffer, n );</span>
+<span class="lineNum">      46 </span><span class="lineCov">          2 :         Susi::Util::Any packet = Susi::Util::Any::fromJSONString( str );</span>
+<span class="lineNum">      47 </span><span class="lineCov">          1 :         _apiServer-&gt;onMessage( id,packet );</span>
+<span class="lineNum">      48 </span><span class="lineCov">          1 :     }</span>
+<a name="49"><span class="lineNum">      49 </span><span class="lineCov">          1 :     Susi::Logger::debug( &quot;closing websocket&quot; );</span></a>
+<span class="lineNum">      50 </span><span class="lineCov">          2 :     _apiServer-&gt;onClose( id );</span>
 <span class="lineNum">      51 </span><span class="lineCov">          4 : }</span>
 </pre>
       </td>

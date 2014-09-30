@@ -31,13 +31,13 @@
             <td class="headerValue">coverage.info.cleaned</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">21</td>
-            <td class="headerCovTableEntry">21</td>
+            <td class="headerCovTableEntry">35</td>
+            <td class="headerCovTableEntry">35</td>
             <td class="headerCovTableEntryHi">100.0 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">11</td>
@@ -78,53 +78,67 @@
 <span class="lineNum">      16 </span>            : #include &quot;sessions/SessionManager.h&quot;
 <span class="lineNum">      17 </span>            : 
 <span class="lineNum">      18 </span>            : namespace Susi {
-<span class="lineNum">      19 </span>            :         namespace Sessions {
-<a name="20"><span class="lineNum">      20 </span>            :                 class SessionManagerComponent : public Susi::System::BaseComponent , public SessionManager {</a>
-<span class="lineNum">      21 </span>            :                 public:
-<span class="lineNum">      22 </span><span class="lineCov">         37 :                         SessionManagerComponent (Susi::System::ComponentManager * mgr, std::chrono::milliseconds stdSessionLifetime) :</span>
-<span class="lineNum">      23 </span><span class="lineCov">         37 :                                 Susi::System::BaseComponent{mgr}, SessionManager{} {</span>
-<span class="lineNum">      24 </span><span class="lineCov">         37 :                                         _stdSessionLifetime = stdSessionLifetime;                                       </span>
-<a name="25"><span class="lineNum">      25 </span><span class="lineCov">         37 :                                 }</span></a>
+<span class="lineNum">      19 </span>            :     namespace Sessions {
+<a name="20"><span class="lineNum">      20 </span>            :         class SessionManagerComponent : public Susi::System::BaseComponent , public SessionManager {</a>
+<span class="lineNum">      21 </span>            :         public:
+<span class="lineNum">      22 </span><span class="lineCov">         38 :             SessionManagerComponent( Susi::System::ComponentManager * mgr, std::chrono::milliseconds stdSessionLifetime ) :</span>
+<span class="lineNum">      23 </span><span class="lineCov">         38 :                 Susi::System::BaseComponent {mgr}, SessionManager {} {</span>
+<span class="lineNum">      24 </span><span class="lineCov">         38 :                 _stdSessionLifetime = stdSessionLifetime;</span>
+<a name="25"><span class="lineNum">      25 </span><span class="lineCov">         38 :             }</span></a>
 <span class="lineNum">      26 </span>            : 
-<span class="lineNum">      27 </span><span class="lineCov">         74 :                         ~SessionManagerComponent() {</span>
-<span class="lineNum">      28 </span><span class="lineCov">         37 :                                 stop();</span>
-<a name="29"><span class="lineNum">      29 </span><span class="lineCov">         37 :                         }</span></a>
+<span class="lineNum">      27 </span><span class="lineCov">         76 :             ~SessionManagerComponent() {</span>
+<span class="lineNum">      28 </span><span class="lineCov">         38 :                 stop();</span>
+<a name="29"><span class="lineNum">      29 </span><span class="lineCov">         38 :             }</span></a>
 <span class="lineNum">      30 </span>            : 
-<span class="lineNum">      31 </span><span class="lineCov">         31 :                         virtual void start() override {</span>
-<span class="lineNum">      32 </span><span class="lineCov">         31 :                                 init(_stdSessionLifetime);</span>
+<span class="lineNum">      31 </span><span class="lineCov">         32 :             virtual void start() override {</span>
+<span class="lineNum">      32 </span><span class="lineCov">         32 :                 init( _stdSessionLifetime );</span>
 <a name="33"><span class="lineNum">      33 </span>            : </a>
-<span class="lineNum">      34 </span>            :                                 // Consumer
-<span class="lineNum">      35 </span><span class="lineCov">         64 :                                 Susi::Events::Consumer handler = [this](::Susi::Events::SharedEventPtr evt){handleCheckSessions(std::move(evt));};</span>
-<span class="lineNum">      36 </span><span class="lineCov">         31 :                                 subscribe(&quot;heartbeat::one&quot;, handler);</span>
-<a name="37"><span class="lineNum">      37 </span>            : </a>
-<a name="38"><span class="lineNum">      38 </span>            :                                 // Processor</a>
-<a name="39"><span class="lineNum">      39 </span><span class="lineCov">         35 :                                 subscribe(&quot;session::setAttribute&quot;, [this](::Susi::Events::EventPtr evt){handleSetAttribute(std::move(evt));});</span></a>
-<a name="40"><span class="lineNum">      40 </span><span class="lineCov">         35 :                                 subscribe(&quot;session::getAttribute&quot;, [this](::Susi::Events::EventPtr evt){handleGetAttribute(std::move(evt));});</span></a>
-<a name="41"><span class="lineNum">      41 </span><span class="lineCov">         33 :                                 subscribe(&quot;session::pushAttribute&quot;, [this](::Susi::Events::EventPtr evt){handlePushAttribute(std::move(evt));});</span></a>
-<a name="42"><span class="lineNum">      42 </span><span class="lineCov">         34 :                                 subscribe(&quot;session::removeAttribute&quot;, [this](::Susi::Events::EventPtr evt){handleRemoveAttribute(std::move(evt));});</span></a>
-<span class="lineNum">      43 </span><span class="lineCov">         36 :                                 subscribe(&quot;session::update&quot;, [this](::Susi::Events::EventPtr evt){handleUpdate(std::move(evt));});</span>
-<span class="lineNum">      44 </span><span class="lineCov">         33 :                                 subscribe(&quot;session::check&quot;, [this](::Susi::Events::EventPtr evt){handleCheck(std::move(evt));});</span>
-<a name="45"><span class="lineNum">      45 </span><span class="lineCov">         31 :                         }</span></a>
-<span class="lineNum">      46 </span>            : 
-<span class="lineNum">      47 </span><span class="lineCov">         62 :                         virtual void stop() override {</span>
-<span class="lineNum">      48 </span><span class="lineCov">         62 :                                 unsubscribeAll();</span>
-<span class="lineNum">      49 </span><span class="lineCov">         62 :                         }</span>
-<span class="lineNum">      50 </span>            : 
-<span class="lineNum">      51 </span>            :                 protected:
-<span class="lineNum">      52 </span>            :                         std::chrono::milliseconds _stdSessionLifetime;                  
-<span class="lineNum">      53 </span>            : 
-<span class="lineNum">      54 </span>            :                         void handleCheckSessions(Susi::Events::SharedEventPtr event);
-<span class="lineNum">      55 </span>            :                         void handleGetAttribute(Susi::Events::EventPtr event);
-<span class="lineNum">      56 </span>            :                         void handleSetAttribute(Susi::Events::EventPtr event);
-<span class="lineNum">      57 </span>            :                         void handlePushAttribute(Susi::Events::EventPtr event);
-<span class="lineNum">      58 </span>            :                         void handleRemoveAttribute(Susi::Events::EventPtr event);
-<span class="lineNum">      59 </span>            :                         void handleUpdate(Susi::Events::EventPtr event);
-<span class="lineNum">      60 </span>            :                         void handleCheck(Susi::Events::EventPtr event);
-<span class="lineNum">      61 </span>            :                 };
-<span class="lineNum">      62 </span>            :         }
-<span class="lineNum">      63 </span>            : }
+<span class="lineNum">      34 </span>            :                 // Consumer
+<span class="lineNum">      35 </span><span class="lineCov">         35 :                 Susi::Events::Consumer handler = [this]( ::Susi::Events::SharedEventPtr evt ) {</span>
+<span class="lineNum">      36 </span><span class="lineCov">         35 :                     handleCheckSessions( std::move( evt ) );</span>
+<span class="lineNum">      37 </span><span class="lineCov">         67 :                 };</span>
+<span class="lineNum">      38 </span><span class="lineCov">         32 :                 subscribe( &quot;heartbeat::one&quot;, handler );</span>
+<a name="39"><span class="lineNum">      39 </span>            : </a>
+<span class="lineNum">      40 </span>            :                 // Processor
+<span class="lineNum">      41 </span><span class="lineCov">          4 :                 subscribe( &quot;session::setAttribute&quot;, [this]( ::Susi::Events::EventPtr evt ) {</span>
+<a name="42"><span class="lineNum">      42 </span><span class="lineCov">          5 :                     handleSetAttribute( std::move( evt ) );</span></a>
+<span class="lineNum">      43 </span><span class="lineCov">         35 :                 } );</span>
+<span class="lineNum">      44 </span><span class="lineCov">          4 :                 subscribe( &quot;session::getAttribute&quot;, [this]( ::Susi::Events::EventPtr evt ) {</span>
+<a name="45"><span class="lineNum">      45 </span><span class="lineCov">          5 :                     handleGetAttribute( std::move( evt ) );</span></a>
+<span class="lineNum">      46 </span><span class="lineCov">         35 :                 } );</span>
+<span class="lineNum">      47 </span><span class="lineCov">          2 :                 subscribe( &quot;session::pushAttribute&quot;, [this]( ::Susi::Events::EventPtr evt ) {</span>
+<a name="48"><span class="lineNum">      48 </span><span class="lineCov">          3 :                     handlePushAttribute( std::move( evt ) );</span></a>
+<span class="lineNum">      49 </span><span class="lineCov">         33 :                 } );</span>
+<span class="lineNum">      50 </span><span class="lineCov">          3 :                 subscribe( &quot;session::removeAttribute&quot;, [this]( ::Susi::Events::EventPtr evt ) {</span>
+<a name="51"><span class="lineNum">      51 </span><span class="lineCov">          4 :                     handleRemoveAttribute( std::move( evt ) );</span></a>
+<span class="lineNum">      52 </span><span class="lineCov">         34 :                 } );</span>
+<span class="lineNum">      53 </span><span class="lineCov">          5 :                 subscribe( &quot;session::update&quot;, [this]( ::Susi::Events::EventPtr evt ) {</span>
+<a name="54"><span class="lineNum">      54 </span><span class="lineCov">          7 :                     handleUpdate( std::move( evt ) );</span></a>
+<span class="lineNum">      55 </span><span class="lineCov">         35 :                 } );</span>
+<span class="lineNum">      56 </span><span class="lineCov">          2 :                 subscribe( &quot;session::check&quot;, [this]( ::Susi::Events::EventPtr evt ) {</span>
+<span class="lineNum">      57 </span><span class="lineCov">          2 :                     handleCheck( std::move( evt ) );</span>
+<span class="lineNum">      58 </span><span class="lineCov">         34 :                 } );</span>
+<a name="59"><span class="lineNum">      59 </span><span class="lineCov">         32 :             }</span></a>
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span><span class="lineCov">         64 :             virtual void stop() override {</span>
+<span class="lineNum">      62 </span><span class="lineCov">         64 :                 unsubscribeAll();</span>
+<span class="lineNum">      63 </span><span class="lineCov">         64 :             }</span>
 <span class="lineNum">      64 </span>            : 
-<span class="lineNum">      65 </span>            : #endif // __SESSION_MANAGER_COMPONENT__
+<span class="lineNum">      65 </span>            :         protected:
+<span class="lineNum">      66 </span>            :             std::chrono::milliseconds _stdSessionLifetime;
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            :             void handleCheckSessions( Susi::Events::SharedEventPtr event );
+<span class="lineNum">      69 </span>            :             void handleGetAttribute( Susi::Events::EventPtr event );
+<span class="lineNum">      70 </span>            :             void handleSetAttribute( Susi::Events::EventPtr event );
+<span class="lineNum">      71 </span>            :             void handlePushAttribute( Susi::Events::EventPtr event );
+<span class="lineNum">      72 </span>            :             void handleRemoveAttribute( Susi::Events::EventPtr event );
+<span class="lineNum">      73 </span>            :             void handleUpdate( Susi::Events::EventPtr event );
+<span class="lineNum">      74 </span>            :             void handleCheck( Susi::Events::EventPtr event );
+<span class="lineNum">      75 </span>            :         };
+<span class="lineNum">      76 </span>            :     }
+<span class="lineNum">      77 </span>            : }
+<span class="lineNum">      78 </span>            : 
+<span class="lineNum">      79 </span>            : #endif // __SESSION_MANAGER_COMPONENT__
 </pre>
       </td>
     </tr>

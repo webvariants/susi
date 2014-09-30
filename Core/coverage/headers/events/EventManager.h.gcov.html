@@ -31,17 +31,17 @@
             <td class="headerValue">coverage.info.cleaned</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">3</td>
-            <td class="headerCovTableEntry">3</td>
+            <td class="headerCovTableEntry">7</td>
+            <td class="headerCovTableEntry">7</td>
             <td class="headerCovTableEntryHi">100.0 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
-            <td class="headerCovTableEntry">4</td>
-            <td class="headerCovTableEntry">4</td>
+            <td class="headerCovTableEntry">10</td>
+            <td class="headerCovTableEntry">10</td>
             <td class="headerCovTableEntryHi">100.0 %</td>
           </tr>
           <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
@@ -70,65 +70,89 @@
 <span class="lineNum">       8 </span>            : #include &quot;util/Any.h&quot;
 <span class="lineNum">       9 </span>            : #include &quot;events/Event.h&quot;
 <span class="lineNum">      10 </span>            : #include &quot;util/Glob.h&quot;
-<span class="lineNum">      11 </span>            : 
-<span class="lineNum">      12 </span>            : namespace Susi {
-<span class="lineNum">      13 </span>            : namespace Events{
-<span class="lineNum">      14 </span>            : 
-<span class="lineNum">      15 </span>            : //Event pointer types
-<span class="lineNum">      16 </span>            : typedef std::unique_ptr&lt;Event,std::function&lt;void(Event*)&gt;&gt; EventPtr;
-<span class="lineNum">      17 </span>            : typedef std::shared_ptr&lt;Event&gt; SharedEventPtr;
-<span class="lineNum">      18 </span>            : 
-<span class="lineNum">      19 </span>            : //Callback types
-<span class="lineNum">      20 </span>            : typedef std::function&lt;void(EventPtr)&gt; Processor;
-<span class="lineNum">      21 </span>            : typedef std::function&lt;void(SharedEventPtr)&gt; Consumer;
-<span class="lineNum">      22 </span>            : 
-<span class="lineNum">      23 </span>            : //a event predicate
-<a name="24"><span class="lineNum">      24 </span>            : typedef std::function&lt;bool(Event&amp;)&gt; Predicate;</a>
-<span class="lineNum">      25 </span>            : 
-<a name="26"><span class="lineNum">      26 </span><span class="lineCov">         67 : class Manager {</span></a>
-<span class="lineNum">      27 </span>            : public:
-<span class="lineNum">      28 </span><span class="lineCov">         67 :         Manager(size_t workers = 4, size_t buffsize = 32) : pool{workers,buffsize} {};</span>
-<span class="lineNum">      29 </span>            :         // public subscribe api
-<span class="lineNum">      30 </span>            :         long subscribe(std::string topic, Processor processor);
-<span class="lineNum">      31 </span>            :         long subscribe(Predicate pred, Processor processor);
-<span class="lineNum">      32 </span>            :         long subscribe(std::string topic, Consumer consumer);
-<span class="lineNum">      33 </span>            :         long subscribe(Predicate pred, Consumer consumer);
-<span class="lineNum">      34 </span>            :         bool unsubscribe(long id);
-<span class="lineNum">      35 </span>            :         // public publish api function
-<span class="lineNum">      36 </span>            :         void publish(EventPtr event, Consumer finishCallback = Consumer{});
-<span class="lineNum">      37 </span>            :         // pass event back to system
-<span class="lineNum">      38 </span>            :         void ack(EventPtr event);
-<span class="lineNum">      39 </span>            : 
-<span class="lineNum">      40 </span>            :         EventPtr createEvent(std::string topic);
-<span class="lineNum">      41 </span>            : 
-<span class="lineNum">      42 </span>            : protected:
-<span class="lineNum">      43 </span>            :         Susi::Util::ThreadPool pool;
-<span class="lineNum">      44 </span>            :         std::mutex mutex;
-<span class="lineNum">      45 </span>            : 
-<a name="46"><span class="lineNum">      46 </span>            :         std::condition_variable publishFinished;</a>
-<span class="lineNum">      47 </span>            : 
-<span class="lineNum">      48 </span><span class="lineCov">        322 :         struct PublishProcess {</span>
-<span class="lineNum">      49 </span>            :                 std::vector&lt;std::pair&lt;long,Processor&gt;&gt;   processors;
-<span class="lineNum">      50 </span>            :                 std::vector&lt;std::pair&lt;long,Consumer&gt;&gt;    consumers;
-<span class="lineNum">      51 </span>            :                 std::vector&lt;std::string&gt; errors;
-<span class="lineNum">      52 </span>            :                 std::mutex                               mutex;
-<span class="lineNum">      53 </span>            :                 size_t current = 0;
-<span class="lineNum">      54 </span>            :         };
-<span class="lineNum">      55 </span>            :         std::map&lt;long,std::shared_ptr&lt;PublishProcess&gt;&gt; publishProcesses;
-<span class="lineNum">      56 </span>            : 
-<span class="lineNum">      57 </span>            :         std::map&lt;std::string,std::vector&lt;std::pair&lt;long,Processor&gt;&gt;&gt; processorsByTopic;
-<span class="lineNum">      58 </span>            :         std::map&lt;std::string,std::vector&lt;std::pair&lt;long,Consumer&gt;&gt;&gt; consumersByTopic;
-<span class="lineNum">      59 </span>            :         std::vector&lt;std::tuple&lt;long,Predicate,Processor&gt;&gt; processorsByPred;
-<span class="lineNum">      60 </span>            :         std::vector&lt;std::tuple&lt;long,Predicate,Consumer&gt;&gt; consumersByPred;
-<span class="lineNum">      61 </span>            : 
-<span class="lineNum">      62 </span>            :         void deleter(Event *event);
-<span class="lineNum">      63 </span>            : 
-<span class="lineNum">      64 </span>            : };
-<span class="lineNum">      65 </span>            : 
-<span class="lineNum">      66 </span>            : }//end namespace Events
-<span class="lineNum">      67 </span>            : }//end namespace Susi
-<span class="lineNum">      68 </span>            : 
-<span class="lineNum">      69 </span>            : #endif // __EVENTSMANAGER__
+<span class="lineNum">      11 </span>            : #include &quot;util/ConstrainedScheduler.h&quot;
+<span class="lineNum">      12 </span>            : 
+<span class="lineNum">      13 </span>            : namespace Susi {
+<span class="lineNum">      14 </span>            :     namespace Events {
+<span class="lineNum">      15 </span>            : 
+<span class="lineNum">      16 </span>            : //Event pointer types
+<span class="lineNum">      17 </span>            :         typedef std::unique_ptr&lt;Event,std::function&lt;void( Event* )&gt;&gt; EventPtr;
+<span class="lineNum">      18 </span>            :         typedef std::shared_ptr&lt;Event&gt; SharedEventPtr;
+<span class="lineNum">      19 </span>            : 
+<span class="lineNum">      20 </span>            : //Callback types
+<span class="lineNum">      21 </span>            :         typedef std::function&lt;void( EventPtr )&gt; Processor;
+<span class="lineNum">      22 </span>            :         typedef std::function&lt;void( SharedEventPtr )&gt; Consumer;
+<span class="lineNum">      23 </span>            : 
+<span class="lineNum">      24 </span>            : //a event predicate
+<a name="25"><span class="lineNum">      25 </span>            :         typedef std::function&lt;bool( Event&amp; )&gt; Predicate;</a>
+<span class="lineNum">      26 </span>            : 
+<a name="27"><span class="lineNum">      27 </span><span class="lineCov">         71 :         class Manager {</span></a>
+<span class="lineNum">      28 </span>            :         public:
+<span class="lineNum">      29 </span><span class="lineCov">         71 :             Manager( size_t workers = 4, size_t buffsize = 32 ) : pool {workers,buffsize} {};</span>
+<span class="lineNum">      30 </span>            :             // public subscribe api
+<span class="lineNum">      31 </span>            :             long subscribe( std::string topic, Processor processor, char minAuthlevel=0, std::string name=&quot;&quot; );
+<span class="lineNum">      32 </span>            :             long subscribe( Predicate pred, Processor processor, char minAuthlevel=0, std::string name=&quot;&quot; );
+<span class="lineNum">      33 </span>            :             long subscribe( std::string topic, Consumer consumer, char minAuthlevel=0, std::string name=&quot;&quot; );
+<span class="lineNum">      34 </span>            :             long subscribe( Predicate pred, Consumer consumer, char minAuthlevel=0, std::string name=&quot;&quot; );
+<span class="lineNum">      35 </span>            :             bool unsubscribe( long id );
+<span class="lineNum">      36 </span>            :             // public publish api function
+<span class="lineNum">      37 </span>            :             void publish( EventPtr event, Consumer finishCallback = Consumer {} );
+<span class="lineNum">      38 </span>            :             // pass event back to system
+<a name="39"><span class="lineNum">      39 </span>            :             void ack( EventPtr event );</a>
+<span class="lineNum">      40 </span>            : 
+<span class="lineNum">      41 </span><span class="lineCov">          1 :             void addConstraint( std::pair&lt;std::string,std::string&gt; constraint ) {</span>
+<span class="lineNum">      42 </span><span class="lineCov">          1 :                 scheduler.addConstraint( constraint );</span>
+<span class="lineNum">      43 </span><span class="lineCov">          1 :             }</span>
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span>            :             EventPtr createEvent( std::string topic );
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            :         protected:
+<span class="lineNum">      48 </span>            :             Susi::Util::ThreadPool pool;
+<span class="lineNum">      49 </span>            :             std::mutex mutex;
+<span class="lineNum">      50 </span>            :             Susi::Util::ConstrainedScheduler scheduler;
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            :             std::condition_variable publishFinished;
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span>            :             long subscribe( std::string topic,
+<span class="lineNum">      55 </span>            :                             Predicate predicate,
+<span class="lineNum">      56 </span>            :                             Consumer consumer,
+<span class="lineNum">      57 </span>            :                             Processor processor,
+<span class="lineNum">      58 </span>            :                             char authlevel,
+<a name="59"><span class="lineNum">      59 </span>            :                             std::string name );</a>
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span><span class="lineCov">        318 :             struct PublishProcess {</span>
+<span class="lineNum">      62 </span>            :                 std::vector&lt;Processor&gt;   processors;
+<span class="lineNum">      63 </span>            :                 std::vector&lt;Consumer&gt;    consumers;
+<span class="lineNum">      64 </span>            :                 std::vector&lt;std::string&gt; errors;
+<span class="lineNum">      65 </span>            :                 std::mutex               mutex;
+<span class="lineNum">      66 </span>            :                 size_t current = 0;
+<span class="lineNum">      67 </span>            :             };
+<a name="68"><span class="lineNum">      68 </span>            :             std::map&lt;long,std::shared_ptr&lt;PublishProcess&gt;&gt; publishProcesses;</a>
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span><span class="lineCov">      12005 :             struct Subscription {</span>
+<span class="lineNum">      71 </span>            :                 //identifier
+<span class="lineNum">      72 </span>            :                 long id = 0;
+<span class="lineNum">      73 </span>            :                 std::string name = &quot;&quot;;
+<span class="lineNum">      74 </span>            :                 char minAuthlevel = 0;
+<span class="lineNum">      75 </span>            :                 //select statements
+<span class="lineNum">      76 </span>            :                 std::string topic = &quot;&quot;;
+<span class="lineNum">      77 </span>            :                 Predicate predicate = Predicate {};
+<span class="lineNum">      78 </span>            :                 //actual callback
+<span class="lineNum">      79 </span>            :                 Processor processor = Processor {};
+<span class="lineNum">      80 </span>            :                 Consumer consumer = Consumer {};
+<span class="lineNum">      81 </span>            :             };
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            :             std::map&lt;std::string,std::vector&lt;Subscription&gt;&gt; subscriptionsByTopic;
+<span class="lineNum">      84 </span>            :             std::vector&lt;Subscription&gt; subscriptionsByPred;
+<span class="lineNum">      85 </span>            : 
+<span class="lineNum">      86 </span>            :             void deleter( Event *event );
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span>            :         };
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            :     }//end namespace Events
+<span class="lineNum">      91 </span>            : }//end namespace Susi
+<span class="lineNum">      92 </span>            : 
+<span class="lineNum">      93 </span>            : #endif // __EVENTSMANAGER__
 </pre>
       </td>
     </tr>

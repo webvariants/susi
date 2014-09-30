@@ -31,13 +31,13 @@
             <td class="headerValue">coverage.info.cleaned</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">18</td>
             <td class="headerCovTableEntry">19</td>
-            <td class="headerCovTableEntryHi">94.7 %</td>
+            <td class="headerCovTableEntry">20</td>
+            <td class="headerCovTableEntryHi">95.0 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">6</td>
@@ -78,43 +78,44 @@
 <span class="lineNum">      16 </span>            : #include &quot;apiserver/JSONStreamCollector.h&quot;
 <span class="lineNum">      17 </span>            : #include &quot;util/Any.h&quot;
 <span class="lineNum">      18 </span>            : namespace Susi {
-<span class="lineNum">      19 </span>            : namespace Api {
+<span class="lineNum">      19 </span>            :     namespace Api {
 <span class="lineNum">      20 </span>            : 
-<a name="21"><span class="lineNum">      21 </span>            : class JSONTCPClient : public TCPClient {</a>
-<span class="lineNum">      22 </span>            : public:
-<a name="23"><span class="lineNum">      23 </span><span class="lineCov">          3 :         JSONTCPClient(std::string addr) :</span></a>
-<span class="lineNum">      24 </span>            :                 TCPClient{addr},
-<span class="lineNum">      25 </span><span class="lineCov">          2 :                 collector{[this](std::string &amp; msg){</span>
-<span class="lineNum">      26 </span><span class="lineCov">          2 :                         auto message = Susi::Util::Any::fromJSONString(msg);</span>
-<span class="lineNum">      27 </span>            :                         //std::cout&lt;&lt;&quot;got message in json client&quot;&lt;&lt;std::endl;
-<a name="28"><span class="lineNum">      28 </span><span class="lineCov">          2 :                         this-&gt;onMessage(message);</span></a>
-<span class="lineNum">      29 </span><span class="lineCov">          5 :                 }} {}</span>
-<span class="lineNum">      30 </span><span class="lineCov">          4 :         virtual ~JSONTCPClient(){</span>
-<a name="31"><span class="lineNum">      31 </span><span class="lineCov">          2 :                 close();</span></a>
-<span class="lineNum">      32 </span><span class="lineCov">          2 :         }</span>
-<span class="lineNum">      33 </span><span class="lineCov">          2 :         void send(Susi::Util::Any &amp; message){</span>
-<span class="lineNum">      34 </span><span class="lineCov">          2 :                 std::string msg = message.toJSONString();</span>
-<a name="35"><span class="lineNum">      35 </span><span class="lineCov">          3 :                 TCPClient::send(msg);</span></a>
-<span class="lineNum">      36 </span><span class="lineCov">          1 :         }</span>
-<span class="lineNum">      37 </span><span class="lineCov">          4 :         void close(){</span>
-<span class="lineNum">      38 </span><span class="lineCov">          4 :                 TCPClient::close();</span>
-<span class="lineNum">      39 </span><span class="lineCov">          4 :         }</span>
-<a name="40"><span class="lineNum">      40 </span>            : protected:</a>
-<span class="lineNum">      41 </span>            :         JSONStreamCollector collector;
-<span class="lineNum">      42 </span><span class="lineCov">          2 :         virtual void onData(std::string &amp; data) override {</span>
-<span class="lineNum">      43 </span>            :                 //std::cout&lt;&lt;&quot;JSONTCPClient::onData()&quot;&lt;&lt;std::endl;
-<span class="lineNum">      44 </span><span class="lineCov">          2 :                 collector.collect(data);</span>
-<a name="45"><span class="lineNum">      45 </span><span class="lineCov">          2 :         }</span></a>
-<span class="lineNum">      46 </span>            : 
-<span class="lineNum">      47 </span><span class="lineNoCov">          0 :         virtual void onMessage(Susi::Util::Any &amp; message){};</span>
-<span class="lineNum">      48 </span>            : 
-<span class="lineNum">      49 </span>            : };
-<span class="lineNum">      50 </span>            : 
-<span class="lineNum">      51 </span>            : }
-<span class="lineNum">      52 </span>            : }
-<span class="lineNum">      53 </span>            : 
+<a name="21"><span class="lineNum">      21 </span>            :         class JSONTCPClient : public TCPClient {</a>
+<span class="lineNum">      22 </span>            :         public:
+<a name="23"><span class="lineNum">      23 </span><span class="lineCov">          3 :             JSONTCPClient( std::string addr ) :</span></a>
+<span class="lineNum">      24 </span>            :                 TCPClient {addr},
+<span class="lineNum">      25 </span><span class="lineCov">          2 :             collector {[this]( std::string &amp; msg ) {</span>
+<span class="lineNum">      26 </span><span class="lineCov">          2 :                 auto message = Susi::Util::Any::fromJSONString( msg );</span>
+<span class="lineNum">      27 </span>            :                 //std::cout&lt;&lt;&quot;got message in json client&quot;&lt;&lt;std::endl;
+<span class="lineNum">      28 </span><span class="lineCov">          2 :                 this-&gt;onMessage( message );</span>
+<a name="29"><span class="lineNum">      29 </span><span class="lineCov">          2 :             }</span></a>
+<span class="lineNum">      30 </span><span class="lineCov">          3 :                                 } {}</span>
+<span class="lineNum">      31 </span><span class="lineCov">          4 :             virtual ~JSONTCPClient() {</span>
+<a name="32"><span class="lineNum">      32 </span><span class="lineCov">          2 :                 close();</span></a>
+<span class="lineNum">      33 </span><span class="lineCov">          2 :             }</span>
+<span class="lineNum">      34 </span><span class="lineCov">          2 :             void send( Susi::Util::Any &amp; message ) {</span>
+<span class="lineNum">      35 </span><span class="lineCov">          2 :                 std::string msg = message.toJSONString();</span>
+<a name="36"><span class="lineNum">      36 </span><span class="lineCov">          3 :                 TCPClient::send( msg );</span></a>
+<span class="lineNum">      37 </span><span class="lineCov">          1 :             }</span>
+<span class="lineNum">      38 </span><span class="lineCov">          4 :             void close() {</span>
+<span class="lineNum">      39 </span><span class="lineCov">          4 :                 TCPClient::close();</span>
+<span class="lineNum">      40 </span><span class="lineCov">          4 :             }</span>
+<a name="41"><span class="lineNum">      41 </span>            :         protected:</a>
+<span class="lineNum">      42 </span>            :             JSONStreamCollector collector;
+<span class="lineNum">      43 </span><span class="lineCov">          2 :             virtual void onData( std::string &amp; data ) override {</span>
+<span class="lineNum">      44 </span>            :                 //std::cout&lt;&lt;&quot;JSONTCPClient::onData()&quot;&lt;&lt;std::endl;
+<span class="lineNum">      45 </span><span class="lineCov">          2 :                 collector.collect( data );</span>
+<a name="46"><span class="lineNum">      46 </span><span class="lineCov">          2 :             }</span></a>
+<span class="lineNum">      47 </span>            : 
+<span class="lineNum">      48 </span><span class="lineNoCov">          0 :             virtual void onMessage( Susi::Util::Any &amp; message ) {};</span>
+<span class="lineNum">      49 </span>            : 
+<span class="lineNum">      50 </span>            :         };
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            :     }
+<span class="lineNum">      53 </span>            : }
 <span class="lineNum">      54 </span>            : 
-<span class="lineNum">      55 </span>            : #endif // __JSONTCPCLIENT__
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span>            : #endif // __JSONTCPCLIENT__
 </pre>
       </td>
     </tr>

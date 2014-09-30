@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">5</td>
@@ -67,7 +67,7 @@
 <span class="lineNum">       5 </span>            :  * complete text in the attached LICENSE file or online at:
 <span class="lineNum">       6 </span>            :  *
 <span class="lineNum">       7 </span>            :  * http://www.opensource.org/licenses/mit-license.php
-<span class="lineNum">       8 </span>            :  * 
+<span class="lineNum">       8 </span>            :  *
 <span class="lineNum">       9 </span>            :  * @author: Tino Rusch (tino.rusch@webvariants.de)
 <span class="lineNum">      10 </span>            :  */
 <span class="lineNum">      11 </span>            : 
@@ -81,23 +81,23 @@
 <span class="lineNum">      19 </span>            : 
 <span class="lineNum">      20 </span>            : namespace Susi {
 <span class="lineNum">      21 </span>            : 
-<span class="lineNum">      22 </span>            : extern unsigned char logLevel;
+<span class="lineNum">      22 </span>            :     extern unsigned char logLevel;
 <span class="lineNum">      23 </span>            : 
-<a name="24"><span class="lineNum">      24 </span>            : class Logger {</a>
-<span class="lineNum">      25 </span>            : protected:
-<span class="lineNum">      26 </span><span class="lineCov">       1161 :         static void log(std::string message,unsigned char level){</span>
-<span class="lineNum">      27 </span><span class="lineCov">       1161 :                 if(level &amp; logLevel){</span>
-<span class="lineNum">      28 </span><span class="lineNoCov">          0 :                         Poco::LocalDateTime now;</span>
-<span class="lineNum">      29 </span><span class="lineNoCov">          0 :                         std::string prefix = &quot;&quot;;</span>
-<span class="lineNum">      30 </span><span class="lineNoCov">          0 :                         if(level &amp; INFO) prefix = &quot;INFO&quot;;</span>
-<span class="lineNum">      31 </span><span class="lineNoCov">          0 :                         if(level &amp; WARN) prefix = &quot;WARN&quot;;</span>
-<span class="lineNum">      32 </span><span class="lineNoCov">          0 :                         if(level &amp; ERROR) prefix = &quot;ERROR&quot;;</span>
-<span class="lineNum">      33 </span><span class="lineNoCov">          0 :                         if(level &amp; DEBUG) prefix = &quot;DEBUG&quot;;</span>
-<span class="lineNum">      34 </span><span class="lineNoCov">          0 :                         std::string date = Poco::DateTimeFormatter::format(now,Poco::DateTimeFormat::HTTP_FORMAT);</span>
-<span class="lineNum">      35 </span><span class="lineNoCov">          0 :                         std::cerr&lt;&lt;prefix&lt;&lt;&quot; : &quot;&lt;&lt;date&lt;&lt;&quot; : &quot;&lt;&lt;message&lt;&lt;std::endl;</span>
-<span class="lineNum">      36 </span>            :                 }
-<span class="lineNum">      37 </span><span class="lineCov">       1161 :         }</span>
-<span class="lineNum">      38 </span>            : public:
+<a name="24"><span class="lineNum">      24 </span>            :     class Logger {</a>
+<span class="lineNum">      25 </span>            :     protected:
+<span class="lineNum">      26 </span><span class="lineCov">       1259 :         static void log( std::string message,unsigned char level ) {</span>
+<span class="lineNum">      27 </span><span class="lineCov">       1259 :             if( level &amp; logLevel ) {</span>
+<span class="lineNum">      28 </span><span class="lineNoCov">          0 :                 Poco::LocalDateTime now;</span>
+<span class="lineNum">      29 </span><span class="lineNoCov">          0 :                 std::string prefix = &quot;&quot;;</span>
+<span class="lineNum">      30 </span><span class="lineNoCov">          0 :                 if( level &amp; INFO ) prefix = &quot;INFO&quot;;</span>
+<span class="lineNum">      31 </span><span class="lineNoCov">          0 :                 if( level &amp; WARN ) prefix = &quot;WARN&quot;;</span>
+<span class="lineNum">      32 </span><span class="lineNoCov">          0 :                 if( level &amp; ERROR ) prefix = &quot;ERROR&quot;;</span>
+<span class="lineNum">      33 </span><span class="lineNoCov">          0 :                 if( level &amp; DEBUG ) prefix = &quot;DEBUG&quot;;</span>
+<span class="lineNum">      34 </span><span class="lineNoCov">          0 :                 std::string date = Poco::DateTimeFormatter::format( now,Poco::DateTimeFormat::HTTP_FORMAT );</span>
+<span class="lineNum">      35 </span><span class="lineNoCov">          0 :                 std::cerr&lt;&lt;prefix&lt;&lt;&quot; : &quot;&lt;&lt;date&lt;&lt;&quot; : &quot;&lt;&lt;message&lt;&lt;std::endl;</span>
+<span class="lineNum">      36 </span>            :             }
+<span class="lineNum">      37 </span><span class="lineCov">       1259 :         }</span>
+<span class="lineNum">      38 </span>            :     public:
 <span class="lineNum">      39 </span>            :         static const unsigned char NOTHING = 0;
 <span class="lineNum">      40 </span>            :         static const unsigned char INFO = 1;
 <span class="lineNum">      41 </span>            :         static const unsigned char WARN = 2;
@@ -105,25 +105,25 @@
 <span class="lineNum">      43 </span>            :         static const unsigned char DEBUG = 8;
 <span class="lineNum">      44 </span>            :         static const unsigned char ALL = INFO | WARN | ERROR | DEBUG;
 <span class="lineNum">      45 </span>            : 
-<span class="lineNum">      46 </span>            :         static void log(std::string msg){
-<a name="47"><span class="lineNum">      47 </span>            :                 info(msg);</a>
+<span class="lineNum">      46 </span>            :         static void log( std::string msg ) {
+<a name="47"><span class="lineNum">      47 </span>            :             info( msg );</a>
 <span class="lineNum">      48 </span>            :         }
-<span class="lineNum">      49 </span><span class="lineCov">         75 :         static void info(std::string msg){</span>
-<span class="lineNum">      50 </span><span class="lineCov">         75 :                 log(msg,INFO);</span>
-<span class="lineNum">      51 </span><span class="lineCov">         75 :         }</span>
-<span class="lineNum">      52 </span>            :         static void warn(std::string msg){
-<a name="53"><span class="lineNum">      53 </span>            :                 log(msg,WARN);</a>
+<span class="lineNum">      49 </span><span class="lineCov">         81 :         static void info( std::string msg ) {</span>
+<span class="lineNum">      50 </span><span class="lineCov">         81 :             log( msg,INFO );</span>
+<span class="lineNum">      51 </span><span class="lineCov">         81 :         }</span>
+<span class="lineNum">      52 </span>            :         static void warn( std::string msg ) {
+<a name="53"><span class="lineNum">      53 </span>            :             log( msg,WARN );</a>
 <span class="lineNum">      54 </span>            :         }
-<span class="lineNum">      55 </span><span class="lineCov">       1067 :         static void debug(std::string msg){</span>
-<a name="56"><span class="lineNum">      56 </span><span class="lineCov">       1067 :                 log(msg,DEBUG);</span></a>
-<span class="lineNum">      57 </span><span class="lineCov">       1067 :         }</span>
-<span class="lineNum">      58 </span><span class="lineCov">         19 :         static void error(std::string msg){</span>
-<a name="59"><span class="lineNum">      59 </span><span class="lineCov">         19 :                 log(msg,ERROR);</span></a>
-<span class="lineNum">      60 </span><span class="lineCov">         19 :         }</span>
-<span class="lineNum">      61 </span><span class="lineCov">         67 :         static void setLevel(unsigned char level){</span>
-<span class="lineNum">      62 </span><span class="lineCov">         67 :                 logLevel = level;</span>
-<span class="lineNum">      63 </span><span class="lineCov">         67 :         }</span>
-<span class="lineNum">      64 </span>            : };
+<span class="lineNum">      55 </span><span class="lineCov">       1157 :         static void debug( std::string msg ) {</span>
+<a name="56"><span class="lineNum">      56 </span><span class="lineCov">       1157 :             log( msg,DEBUG );</span></a>
+<span class="lineNum">      57 </span><span class="lineCov">       1157 :         }</span>
+<span class="lineNum">      58 </span><span class="lineCov">         21 :         static void error( std::string msg ) {</span>
+<a name="59"><span class="lineNum">      59 </span><span class="lineCov">         21 :             log( msg,ERROR );</span></a>
+<span class="lineNum">      60 </span><span class="lineCov">         21 :         }</span>
+<span class="lineNum">      61 </span><span class="lineCov">         71 :         static void setLevel( unsigned char level ) {</span>
+<span class="lineNum">      62 </span><span class="lineCov">         71 :             logLevel = level;</span>
+<span class="lineNum">      63 </span><span class="lineCov">         71 :         }</span>
+<span class="lineNum">      64 </span>            :     };
 <span class="lineNum">      65 </span>            : 
 <span class="lineNum">      66 </span>            : 
 <span class="lineNum">      67 </span>            : }

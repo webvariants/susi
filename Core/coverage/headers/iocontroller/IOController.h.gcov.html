@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">1</td>
@@ -67,7 +67,7 @@
 <span class="lineNum">       5 </span>            :  * complete text in the attached LICENSE file or online at:
 <span class="lineNum">       6 </span>            :  *
 <span class="lineNum">       7 </span>            :  * http://www.opensource.org/licenses/mit-license.php
-<span class="lineNum">       8 </span>            :  * 
+<span class="lineNum">       8 </span>            :  *
 <span class="lineNum">       9 </span>            :  * @author: Thomas Krause (thomas.krause@webvariants.de)
 <span class="lineNum">      10 </span>            :  */
 <span class="lineNum">      11 </span>            : 
@@ -87,33 +87,33 @@
 <span class="lineNum">      25 </span>            : 
 <a name="26"><span class="lineNum">      26 </span>            : namespace Susi {</a>
 <span class="lineNum">      27 </span>            : 
-<span class="lineNum">      28 </span><span class="lineCov">        157 :         class IOController {</span>
-<span class="lineNum">      29 </span>            :         public:
-<span class="lineNum">      30 </span>            :                 Poco::Path base_path;
+<span class="lineNum">      28 </span><span class="lineCov">        162 :     class IOController {</span>
+<span class="lineNum">      29 </span>            :     public:
+<span class="lineNum">      30 </span>            :         Poco::Path base_path;
 <span class="lineNum">      31 </span>            : 
-<span class="lineNum">      32 </span>            :                 IOController();
-<span class="lineNum">      33 </span>            :                 // high level
-<span class="lineNum">      34 </span>            :                 std::size_t writeFile(std::string filename,char* ptr, std::size_t len);
-<span class="lineNum">      35 </span>            :                 std::size_t writeFile(std::string filename,std::string content);
-<span class="lineNum">      36 </span>            :                 std::string readFile(std::string filename);
-<span class="lineNum">      37 </span>            :                 bool movePath(std::string source_path, std::string dest_path); // copies the file (or directory) to the given path and removes the original file. The target path can be a directory.
-<span class="lineNum">      38 </span>            :                 bool copyPath(std::string source_path, std::string dest_path); // copies the file (or directory) to the given path. The target path can be a directory.
-<span class="lineNum">      39 </span>            :                 bool deletePath(std::string path); // delete file or directory(includes delete of subdirs)
+<span class="lineNum">      32 </span>            :         IOController();
+<span class="lineNum">      33 </span>            :         // high level
+<span class="lineNum">      34 </span>            :         std::size_t writeFile( std::string filename,char* ptr, std::size_t len );
+<span class="lineNum">      35 </span>            :         std::size_t writeFile( std::string filename,std::string content );
+<span class="lineNum">      36 </span>            :         std::string readFile( std::string filename );
+<span class="lineNum">      37 </span>            :         bool movePath( std::string source_path, std::string dest_path ); // copies the file (or directory) to the given path and removes the original file. The target path can be a directory.
+<span class="lineNum">      38 </span>            :         bool copyPath( std::string source_path, std::string dest_path ); // copies the file (or directory) to the given path. The target path can be a directory.
+<span class="lineNum">      39 </span>            :         bool deletePath( std::string path ); // delete file or directory(includes delete of subdirs)
 <span class="lineNum">      40 </span>            : 
-<span class="lineNum">      41 </span>            :                 // low level
-<span class="lineNum">      42 </span>            :                 //std::fstream open(std::string filename, std::string mode);
-<span class="lineNum">      43 </span>            :                 bool makeDir(std::string dir);
-<span class="lineNum">      44 </span>            :                 bool setExecutable(std::string path, bool isExecutable);
-<span class="lineNum">      45 </span>            :                 bool getExecutable(std::string path);
-<span class="lineNum">      46 </span>            :                 
-<span class="lineNum">      47 </span>            :                 // helper functions
-<span class="lineNum">      48 </span>            :                 Poco::Path getAbsPathFromString(std::string path);
-<span class="lineNum">      49 </span>            :                 Poco::Path getAbsDirFromString(std::string path);
-<span class="lineNum">      50 </span>            :                 bool checkDir(Poco::Path dir); // returns true if dir exists or false if dir not exists or is a file
-<span class="lineNum">      51 </span>            :                 bool checkFile(Poco::Path dir); // returns true if file exists or false if file not exists
+<span class="lineNum">      41 </span>            :         // low level
+<span class="lineNum">      42 </span>            :         //std::fstream open(std::string filename, std::string mode);
+<span class="lineNum">      43 </span>            :         bool makeDir( std::string dir );
+<span class="lineNum">      44 </span>            :         bool setExecutable( std::string path, bool isExecutable );
+<span class="lineNum">      45 </span>            :         bool getExecutable( std::string path );
+<span class="lineNum">      46 </span>            : 
+<span class="lineNum">      47 </span>            :         // helper functions
+<span class="lineNum">      48 </span>            :         Poco::Path getAbsPathFromString( std::string path );
+<span class="lineNum">      49 </span>            :         Poco::Path getAbsDirFromString( std::string path );
+<span class="lineNum">      50 </span>            :         bool checkDir( Poco::Path dir ); // returns true if dir exists or false if dir not exists or is a file
+<span class="lineNum">      51 </span>            :         bool checkFile( Poco::Path dir ); // returns true if file exists or false if file not exists
 <span class="lineNum">      52 </span>            : 
-<span class="lineNum">      53 </span>            :                 bool checkFileExtension(std::string path, std::string file_extension);
-<span class="lineNum">      54 </span>            :         };
+<span class="lineNum">      53 </span>            :         bool checkFileExtension( std::string path, std::string file_extension );
+<span class="lineNum">      54 </span>            :     };
 <span class="lineNum">      55 </span>            : }
 <span class="lineNum">      56 </span>            : 
 <span class="lineNum">      57 </span>            : #endif // __IO_CONTROLLER__

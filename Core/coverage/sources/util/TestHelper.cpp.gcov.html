@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">3</td>
@@ -63,17 +63,17 @@
 <a name="1"><span class="lineNum">       1 </span>            : #include &quot;util/TestHelper.h&quot;</a>
 <span class="lineNum">       2 </span>            : 
 <span class="lineNum">       3 </span>            : static const char alphanum[] = &quot;0123456789!@#$%^&amp;*ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz&quot;;
-<a name="4"><span class="lineNum">       4 </span>            : int stringLength = sizeof(alphanum) - 1;</a>
+<a name="4"><span class="lineNum">       4 </span>            : int stringLength = sizeof( alphanum ) - 1;</a>
 <span class="lineNum">       5 </span>            : 
-<span class="lineNum">       6 </span><span class="lineCov">          1 : std::string Susi::Util::__createRandomString(std::size_t len) {</span>
-<span class="lineNum">       7 </span>            :         
-<span class="lineNum">       8 </span><span class="lineCov">          1 :         char buffer[len];</span>
+<span class="lineNum">       6 </span><span class="lineCov">          1 : std::string Susi::Util::__createRandomString( std::size_t len ) {</span>
+<span class="lineNum">       7 </span>            : 
+<span class="lineNum">       8 </span><span class="lineCov">          1 :     char buffer[len];</span>
 <span class="lineNum">       9 </span>            : 
-<span class="lineNum">      10 </span><span class="lineCov">    5242881 :         for (int i = 0; i &lt; (int)len; i++ ){ </span>
-<span class="lineNum">      11 </span><span class="lineCov">    5242880 :        buffer[i] =  alphanum[rand() % stringLength];</span>
+<span class="lineNum">      10 </span><span class="lineCov">    5242881 :     for( int i = 0; i &lt; ( int )len; i++ ) {</span>
+<span class="lineNum">      11 </span><span class="lineCov">    5242880 :         buffer[i] =  alphanum[rand() % stringLength];</span>
 <span class="lineNum">      12 </span>            :     }
 <a name="13"><span class="lineNum">      13 </span>            : </a>
-<span class="lineNum">      14 </span><span class="lineCov">          1 :     return std::string(buffer,len);</span>
+<span class="lineNum">      14 </span><span class="lineCov">          1 :     return std::string( buffer,len );</span>
 <span class="lineNum">      15 </span><span class="lineCov">          3 : }</span>
 </pre>
       </td>

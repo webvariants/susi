@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">1</td>
@@ -73,16 +73,16 @@
 <span class="lineNum">      11 </span>            : 
 <a name="12"><span class="lineNum">      12 </span>            : #include &quot;webstack/NotFoundRequestHandler.h&quot;</a>
 <span class="lineNum">      13 </span>            : 
-<span class="lineNum">      14 </span><span class="lineCov">          1 : void Susi::NotFoundRequestHandler::handleRequest(Poco::Net::HTTPServerRequest&amp; request,</span>
-<span class="lineNum">      15 </span>            :                                                                         Poco::Net::HTTPServerResponse&amp; response) {
-<span class="lineNum">      16 </span><span class="lineCov">          1 :         response.setChunkedTransferEncoding(true);</span>
-<span class="lineNum">      17 </span><span class="lineCov">          1 :         response.setContentType(&quot;text/html&quot;);</span>
-<span class="lineNum">      18 </span><span class="lineCov">          1 :         response.setStatus(Poco::Net::HTTPServerResponse::HTTPStatus::HTTP_NOT_FOUND);</span>
-<span class="lineNum">      19 </span><span class="lineCov">          1 :         std::ostream&amp; ostr = response.send();</span>
-<span class="lineNum">      20 </span><span class="lineCov">          1 :         ostr &lt;&lt; &quot;&lt;html&gt;&lt;head&gt;&lt;title&gt;SUSI&lt;/title&gt;&lt;/head&gt; &quot;;</span>
-<span class="lineNum">      21 </span><span class="lineCov">          1 :         ostr &lt;&lt; &quot;&lt;body&gt;&lt;p style=\&quot;text-align: center;font-size: 48px;\&quot;&gt;&lt;/br&gt;&lt;/br&gt;&lt;/br&gt;&quot;;</span>
-<span class="lineNum">      22 </span><span class="lineCov">          1 :         ostr &lt;&lt; &quot;(404) Not found.&quot;;</span>
-<span class="lineNum">      23 </span><span class="lineCov">          1 :         ostr &lt;&lt; &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</span>
+<span class="lineNum">      14 </span><span class="lineCov">          1 : void Susi::NotFoundRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&amp; request,</span>
+<span class="lineNum">      15 </span>            :         Poco::Net::HTTPServerResponse&amp; response ) {
+<span class="lineNum">      16 </span><span class="lineCov">          1 :     response.setChunkedTransferEncoding( true );</span>
+<span class="lineNum">      17 </span><span class="lineCov">          1 :     response.setContentType( &quot;text/html&quot; );</span>
+<span class="lineNum">      18 </span><span class="lineCov">          1 :     response.setStatus( Poco::Net::HTTPServerResponse::HTTPStatus::HTTP_NOT_FOUND );</span>
+<span class="lineNum">      19 </span><span class="lineCov">          1 :     std::ostream&amp; ostr = response.send();</span>
+<span class="lineNum">      20 </span><span class="lineCov">          1 :     ostr &lt;&lt; &quot;&lt;html&gt;&lt;head&gt;&lt;title&gt;SUSI&lt;/title&gt;&lt;/head&gt; &quot;;</span>
+<span class="lineNum">      21 </span><span class="lineCov">          1 :     ostr &lt;&lt; &quot;&lt;body&gt;&lt;p style=\&quot;text-align: center;font-size: 48px;\&quot;&gt;&lt;/br&gt;&lt;/br&gt;&lt;/br&gt;&quot;;</span>
+<span class="lineNum">      22 </span><span class="lineCov">          1 :     ostr &lt;&lt; &quot;(404) Not found.&quot;;</span>
+<span class="lineNum">      23 </span><span class="lineCov">          1 :     ostr &lt;&lt; &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</span>
 <span class="lineNum">      24 </span><span class="lineCov">          1 : }</span>
 </pre>
       </td>

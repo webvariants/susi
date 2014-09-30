@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">3</td>
@@ -73,44 +73,46 @@
 <span class="lineNum">      11 </span>            : 
 <a name="12"><span class="lineNum">      12 </span>            : #include &quot;webstack/AssetsRequestHandler.h&quot;</a>
 <span class="lineNum">      13 </span>            : 
-<span class="lineNum">      14 </span><span class="lineCov">          3 : void Susi::AssetsRequestHandler::handleRequest(Poco::Net::HTTPServerRequest&amp; request,</span>
-<span class="lineNum">      15 </span>            :                                                                         Poco::Net::HTTPServerResponse&amp; response) {
-<span class="lineNum">      16 </span><span class="lineCov">          3 :         Susi::Logger::debug(&quot;Assets request from &quot; + request.clientAddress().toString()+&quot; &quot;+request.getURI());</span>
-<span class="lineNum">      17 </span>            :         try{
-<span class="lineNum">      18 </span><span class="lineCov">          3 :                 std::string fileLocation = _rootDirectory.path()+&quot;/&quot;+request.getURI().substr(8);</span>
-<span class="lineNum">      19 </span><span class="lineCov">          3 :                 Susi::Logger::debug(&quot;Target file: &quot;+fileLocation);</span>
-<span class="lineNum">      20 </span><span class="lineCov">          6 :                 Poco::File f(fileLocation);</span>
+<span class="lineNum">      14 </span><span class="lineCov">          6 : void Susi::AssetsRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&amp; request,</span>
+<span class="lineNum">      15 </span>            :         Poco::Net::HTTPServerResponse&amp; response ) {
+<span class="lineNum">      16 </span><span class="lineCov">          6 :     Susi::Logger::debug( &quot;Assets request from &quot; + request.clientAddress().toString()+&quot; &quot;+request.getURI() );</span>
+<span class="lineNum">      17 </span>            :     try {
+<span class="lineNum">      18 </span><span class="lineCov">          6 :         std::string fileLocation = _rootDirectory.path()+&quot;/&quot;+request.getURI().substr( 8 );</span>
+<span class="lineNum">      19 </span><span class="lineCov">          6 :         Susi::Logger::debug( &quot;Target file: &quot;+fileLocation );</span>
+<span class="lineNum">      20 </span><span class="lineCov">         12 :         Poco::File f( fileLocation );</span>
 <span class="lineNum">      21 </span>            : 
-<span class="lineNum">      22 </span><span class="lineCov">          5 :                 Poco::Timestamp dateTime    = f.getLastModified();</span>
-<span class="lineNum">      23 </span><span class="lineCov">          2 :                 Poco::File::FileSize length = f.getSize();</span>
-<span class="lineNum">      24 </span><span class="lineCov">          2 :                 response.set(&quot;Last-Modified&quot;, Poco::DateTimeFormatter::format(dateTime, Poco::DateTimeFormat::HTTP_FORMAT));</span>
-<span class="lineNum">      25 </span><span class="lineCov">          2 :                 response.setContentLength(static_cast&lt;int&gt;(length));</span>
+<span class="lineNum">      22 </span><span class="lineCov">         11 :         Poco::Timestamp dateTime    = f.getLastModified();</span>
+<span class="lineNum">      23 </span><span class="lineCov">          5 :         Poco::File::FileSize length = f.getSize();</span>
+<span class="lineNum">      24 </span><span class="lineCov">          5 :         response.set( &quot;Last-Modified&quot;, Poco::DateTimeFormatter::format( dateTime, Poco::DateTimeFormat::HTTP_FORMAT ) );</span>
+<span class="lineNum">      25 </span><span class="lineCov">          5 :         response.setContentLength( static_cast&lt;int&gt;( length ) );</span>
 <span class="lineNum">      26 </span>            : 
-<span class="lineNum">      27 </span><span class="lineCov">          2 :                 if(fileLocation.find(&quot;.svg&quot;) == fileLocation.size()-4){</span>
-<span class="lineNum">      28 </span><span class="lineCov">          1 :                         response.setContentType(&quot;image/svg+xml&quot;);</span>
-<span class="lineNum">      29 </span>            :                 }
+<span class="lineNum">      27 </span><span class="lineCov">          5 :         if( fileLocation.find( &quot;.svg&quot; ) == fileLocation.size()-4 ) {</span>
+<span class="lineNum">      28 </span><span class="lineCov">          1 :             response.setContentType( &quot;image/svg+xml&quot; );</span>
+<span class="lineNum">      29 </span>            :         }
 <span class="lineNum">      30 </span>            : 
-<span class="lineNum">      31 </span><span class="lineCov">          2 :                 response.setChunkedTransferEncoding(false);</span>
+<span class="lineNum">      31 </span><span class="lineCov">          5 :         response.setChunkedTransferEncoding( false );</span>
 <span class="lineNum">      32 </span>            : 
-<span class="lineNum">      33 </span><span class="lineCov">          4 :                 Poco::FileInputStream istr(fileLocation);</span>
-<span class="lineNum">      34 </span><span class="lineCov">          2 :                 if (istr.good()){</span>
-<span class="lineNum">      35 </span><span class="lineCov">          2 :                         std::ostream&amp; ostr = response.send();</span>
-<span class="lineNum">      36 </span><span class="lineCov">          2 :                         Poco::StreamCopier::copyStream(istr, ostr);</span>
-<span class="lineNum">      37 </span>            :                 }else{
-<span class="lineNum">      38 </span><span class="lineNoCov">          0 :                         throw std::runtime_error{&quot;cannot find file&quot;};</span>
-<span class="lineNum">      39 </span><span class="lineCov">          3 :                 }</span>
-<span class="lineNum">      40 </span><span class="lineCov">          1 :         }catch(const std::exception &amp; e){</span>
-<span class="lineNum">      41 </span><span class="lineCov">          1 :                 Susi::Logger::debug(&quot;got error &quot;+std::string{e.what()});</span>
-<span class="lineNum">      42 </span><span class="lineCov">          1 :                 response.setChunkedTransferEncoding(true);</span>
-<span class="lineNum">      43 </span><span class="lineCov">          1 :                 response.setContentType(&quot;text/html&quot;);</span>
-<span class="lineNum">      44 </span><span class="lineCov">          1 :                 response.setStatus(Poco::Net::HTTPServerResponse::HTTPStatus::HTTP_NOT_FOUND);</span>
-<span class="lineNum">      45 </span><span class="lineCov">          1 :                 std::ostream&amp; ostr = response.send();</span>
-<span class="lineNum">      46 </span><span class="lineCov">          1 :                 ostr &lt;&lt; &quot;&lt;html&gt;&lt;head&gt;&lt;title&gt;SUSI&lt;/title&gt;&lt;/head&gt; &quot;;</span>
-<span class="lineNum">      47 </span><span class="lineCov">          1 :                 ostr &lt;&lt; &quot;&lt;body&gt;&lt;p style=\&quot;text-align: center;font-size: 48px;\&quot;&gt;&lt;/br&gt;&lt;/br&gt;&lt;/br&gt;&quot;;</span>
-<span class="lineNum">      48 </span><span class="lineCov">          1 :                 ostr &lt;&lt; &quot;(404) Not found: &quot;+std::string(e.what());</span>
-<a name="49"><span class="lineNum">      49 </span><span class="lineCov">          1 :                 ostr &lt;&lt; &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</span></a>
-<span class="lineNum">      50 </span>            :         }
-<span class="lineNum">      51 </span><span class="lineCov">          6 : }</span>
+<span class="lineNum">      33 </span><span class="lineCov">         10 :         Poco::FileInputStream istr( fileLocation );</span>
+<span class="lineNum">      34 </span><span class="lineCov">          5 :         if( istr.good() ) {</span>
+<span class="lineNum">      35 </span><span class="lineCov">          5 :             std::ostream&amp; ostr = response.send();</span>
+<span class="lineNum">      36 </span><span class="lineCov">          5 :             Poco::StreamCopier::copyStream( istr, ostr );</span>
+<span class="lineNum">      37 </span>            :         }
+<span class="lineNum">      38 </span>            :         else {
+<span class="lineNum">      39 </span><span class="lineNoCov">          0 :             throw std::runtime_error {&quot;cannot find file&quot;};</span>
+<span class="lineNum">      40 </span><span class="lineCov">          6 :         }</span>
+<span class="lineNum">      41 </span>            :     }
+<span class="lineNum">      42 </span><span class="lineCov">          1 :     catch( const std::exception &amp; e ) {</span>
+<span class="lineNum">      43 </span><span class="lineCov">          1 :         Susi::Logger::debug( &quot;got error &quot;+std::string {e.what()} );</span>
+<span class="lineNum">      44 </span><span class="lineCov">          1 :         response.setChunkedTransferEncoding( true );</span>
+<span class="lineNum">      45 </span><span class="lineCov">          1 :         response.setContentType( &quot;text/html&quot; );</span>
+<span class="lineNum">      46 </span><span class="lineCov">          1 :         response.setStatus( Poco::Net::HTTPServerResponse::HTTPStatus::HTTP_NOT_FOUND );</span>
+<span class="lineNum">      47 </span><span class="lineCov">          1 :         std::ostream&amp; ostr = response.send();</span>
+<span class="lineNum">      48 </span><span class="lineCov">          1 :         ostr &lt;&lt; &quot;&lt;html&gt;&lt;head&gt;&lt;title&gt;SUSI&lt;/title&gt;&lt;/head&gt; &quot;;</span>
+<span class="lineNum">      49 </span><span class="lineCov">          1 :         ostr &lt;&lt; &quot;&lt;body&gt;&lt;p style=\&quot;text-align: center;font-size: 48px;\&quot;&gt;&lt;/br&gt;&lt;/br&gt;&lt;/br&gt;&quot;;</span>
+<span class="lineNum">      50 </span><span class="lineCov">          1 :         ostr &lt;&lt; &quot;(404) Not found: &quot;+std::string( e.what() );</span>
+<a name="51"><span class="lineNum">      51 </span><span class="lineCov">          1 :         ostr &lt;&lt; &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;;</span></a>
+<span class="lineNum">      52 </span>            :     }
+<span class="lineNum">      53 </span><span class="lineCov">          9 : }</span>
 </pre>
       </td>
     </tr>

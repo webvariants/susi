@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">3</td>
@@ -67,7 +67,7 @@
 <span class="lineNum">       5 </span>            :  * complete text in the attached LICENSE file or online at:
 <span class="lineNum">       6 </span>            :  *
 <span class="lineNum">       7 </span>            :  * http://www.opensource.org/licenses/mit-license.php
-<span class="lineNum">       8 </span>            :  * 
+<span class="lineNum">       8 </span>            :  *
 <span class="lineNum">       9 </span>            :  * @author: Tino Rusch (tino.rusch@webvariants.de)
 <span class="lineNum">      10 </span>            :  */
 <span class="lineNum">      11 </span>            : 
@@ -82,12 +82,12 @@
 <span class="lineNum">      20 </span>            : #include &quot;iocontroller/IOController.h&quot;
 <span class="lineNum">      21 </span>            : #include &quot;logger/Logger.h&quot;
 <span class="lineNum">      22 </span>            : 
-<span class="lineNum">      23 </span>            : namespace Susi{
+<span class="lineNum">      23 </span>            : namespace Susi {
 <span class="lineNum">      24 </span>            : 
-<a name="25"><span class="lineNum">      25 </span>            : using Susi::Util::Any;</a>
+<a name="25"><span class="lineNum">      25 </span>            :     using Susi::Util::Any;</a>
 <span class="lineNum">      26 </span>            : 
-<span class="lineNum">      27 </span><span class="lineCov">         15 : class Config {</span>
-<span class="lineNum">      28 </span>            : protected:
+<span class="lineNum">      27 </span><span class="lineCov">         15 :     class Config {</span>
+<span class="lineNum">      28 </span>            :     protected:
 <span class="lineNum">      29 </span>            :         Susi::IOController io;
 <span class="lineNum">      30 </span>            : 
 <span class="lineNum">      31 </span>            :         // file extension
@@ -95,64 +95,67 @@
 <span class="lineNum">      33 </span>            :         int load_count = 0;
 <span class="lineNum">      34 </span>            : 
 <span class="lineNum">      35 </span>            :         // holds the config
-<span class="lineNum">      36 </span>            :         Any _configVar; 
+<span class="lineNum">      36 </span>            :         Any _configVar;
 <span class="lineNum">      37 </span>            : 
 <span class="lineNum">      38 </span>            :         // holds infos to all possible commandline options
 <span class="lineNum">      39 </span>            :         std::map&lt;std::string,std::string&gt; _knownCommandLineOptions;
-<span class="lineNum">      40 </span>            :         
+<span class="lineNum">      40 </span>            : 
 <span class="lineNum">      41 </span>            :         // used to set a value in the config object (should be used by parseCommandLine())
-<span class="lineNum">      42 </span>            :         void set(std::string key, Any value);
+<span class="lineNum">      42 </span>            :         void set( std::string key, Any value );
 <span class="lineNum">      43 </span>            : 
 <span class="lineNum">      44 </span>            :         // recursive config loading, in alphabetical order
-<a name="45"><span class="lineNum">      45 </span>            :         void rec_dir(const std::string &amp; path);</a>
-<span class="lineNum">      46 </span>            : public:
-<span class="lineNum">      47 </span><span class="lineCov">         10 :         Config(){};</span>
+<a name="45"><span class="lineNum">      45 </span>            :         void rec_dir( const std::string &amp; path );</a>
+<span class="lineNum">      46 </span>            :     public:
+<span class="lineNum">      47 </span><span class="lineCov">         10 :         Config() {};</span>
 <span class="lineNum">      48 </span>            :         // constructs new config object
 <span class="lineNum">      49 </span>            :         // reads filename and parses into _configVar
 <span class="lineNum">      50 </span>            :         // should throw an error if
 <span class="lineNum">      51 </span>            :         //     - filename does not exist
 <a name="52"><span class="lineNum">      52 </span>            :         //     - file cant be parsed as json</a>
 <span class="lineNum">      53 </span>            :         //     - file doesn't contain a (json) object
-<span class="lineNum">      54 </span><span class="lineCov">         11 :         Config(std::string filename){</span>
-<span class="lineNum">      55 </span><span class="lineCov">         11 :                 loadConfig(filename);</span>
+<span class="lineNum">      54 </span><span class="lineCov">         11 :         Config( std::string filename ) {</span>
+<span class="lineNum">      55 </span><span class="lineCov">         11 :             loadConfig( filename );</span>
 <span class="lineNum">      56 </span><span class="lineCov">          5 :         }</span>
 <span class="lineNum">      57 </span>            : 
-<span class="lineNum">      58 </span>            :         Config(const char *filename) : Config{std::string{filename}} {}
+<span class="lineNum">      58 </span>            :         Config( const char *filename ) : Config {std::string{filename}} {}
 <span class="lineNum">      59 </span>            : 
-<span class="lineNum">      60 </span>            :         Config(Susi::Util::Any cfg) { _configVar = cfg; }
-<span class="lineNum">      61 </span>            : 
-<span class="lineNum">      62 </span>            :         void loadConfig(std::string path);
-<span class="lineNum">      63 </span>            :         void mergeOptions(std::string key, Any configVar);
-<span class="lineNum">      64 </span>            : 
-<span class="lineNum">      65 </span>            :         // register a commandline option which will be recognized while parsing
-<span class="lineNum">      66 </span>            :         void registerCommandLineOption(std::string name, std::string key);
+<span class="lineNum">      60 </span>            :         Config( Susi::Util::Any cfg ) {
+<span class="lineNum">      61 </span>            :             _configVar = cfg;
+<span class="lineNum">      62 </span>            :         }
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            :         void loadConfig( std::string path );
+<span class="lineNum">      65 </span>            : 
+<span class="lineNum">      66 </span>            :         void merge( Susi::Util::Any &amp; ref, Susi::Util::Any &amp; other );
 <span class="lineNum">      67 </span>            : 
-<span class="lineNum">      68 </span>            :         // parses the commandline
-<span class="lineNum">      69 </span>            :         // loops though the args and check if it is in _knownCommandLineOptions
-<span class="lineNum">      70 </span>            :         // if so, place it in the _configVar at the specified key
-<span class="lineNum">      71 </span>            :         // should throw an error if unknown commandline options are supplied, but should parse everything else
-<span class="lineNum">      72 </span>            :         void parseCommandLine(std::vector&lt;std::string&gt; argv);
-<span class="lineNum">      73 </span>            : 
-<span class="lineNum">      74 </span>            :         // get a config variable.
-<span class="lineNum">      75 </span>            :         // keys are in this format: &quot;foo.bar.baz&quot;
-<span class="lineNum">      76 </span>            :         // -&gt; if we have {foo:{bar:{baz:123}}} get(&quot;foo.bar.baz&quot;) should return Any{123};
-<span class="lineNum">      77 </span>            :         // should throw if key doesn't exist
-<span class="lineNum">      78 </span>            :         Any get(std::string key);
-<span class="lineNum">      79 </span>            : 
-<span class="lineNum">      80 </span>            :         Any getConfig();
-<span class="lineNum">      81 </span>            : 
-<span class="lineNum">      82 </span>            :         // returns a help message which shows which options are available
-<span class="lineNum">      83 </span>            :         std::string getHelp();
+<span class="lineNum">      68 </span>            :         // register a commandline option which will be recognized while parsing
+<span class="lineNum">      69 </span>            :         void registerCommandLineOption( std::string name, std::string key );
+<span class="lineNum">      70 </span>            : 
+<span class="lineNum">      71 </span>            :         // parses the commandline
+<span class="lineNum">      72 </span>            :         // loops though the args and check if it is in _knownCommandLineOptions
+<span class="lineNum">      73 </span>            :         // if so, place it in the _configVar at the specified key
+<span class="lineNum">      74 </span>            :         // should throw an error if unknown commandline options are supplied, but should parse everything else
+<span class="lineNum">      75 </span>            :         void parseCommandLine( std::vector&lt;std::string&gt; argv );
+<span class="lineNum">      76 </span>            : 
+<span class="lineNum">      77 </span>            :         // get a config variable.
+<span class="lineNum">      78 </span>            :         // keys are in this format: &quot;foo.bar.baz&quot;
+<span class="lineNum">      79 </span>            :         // -&gt; if we have {foo:{bar:{baz:123}}} get(&quot;foo.bar.baz&quot;) should return Any{123};
+<span class="lineNum">      80 </span>            :         // should throw if key doesn't exist
+<span class="lineNum">      81 </span>            :         Any get( std::string key );
+<span class="lineNum">      82 </span>            : 
+<span class="lineNum">      83 </span>            :         Any getConfig();
 <span class="lineNum">      84 </span>            : 
-<span class="lineNum">      85 </span>            :         void setFileExtension(std::string _file_extension);
-<span class="lineNum">      86 </span>            :         
-<span class="lineNum">      87 </span>            :         int getLoadCount();
-<span class="lineNum">      88 </span>            :         void setLoadCount(int _load_count);
-<span class="lineNum">      89 </span>            : };
-<span class="lineNum">      90 </span>            : 
-<span class="lineNum">      91 </span>            : }
-<span class="lineNum">      92 </span>            : 
-<span class="lineNum">      93 </span>            : #endif // __CONFIG__
+<span class="lineNum">      85 </span>            :         // returns a help message which shows which options are available
+<span class="lineNum">      86 </span>            :         std::string getHelp();
+<span class="lineNum">      87 </span>            : 
+<span class="lineNum">      88 </span>            :         void setFileExtension( std::string _file_extension );
+<span class="lineNum">      89 </span>            : 
+<span class="lineNum">      90 </span>            :         int getLoadCount();
+<span class="lineNum">      91 </span>            :         void setLoadCount( int _load_count );
+<span class="lineNum">      92 </span>            :     };
+<span class="lineNum">      93 </span>            : 
+<span class="lineNum">      94 </span>            : }
+<span class="lineNum">      95 </span>            : 
+<span class="lineNum">      96 </span>            : #endif // __CONFIG__
 </pre>
       </td>
     </tr>

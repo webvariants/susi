@@ -31,18 +31,18 @@
             <td class="headerValue">coverage.info.cleaned</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">128</td>
-            <td class="headerCovTableEntry">164</td>
-            <td class="headerCovTableEntryMed">78.0 %</td>
+            <td class="headerCovTableEntry">141</td>
+            <td class="headerCovTableEntry">161</td>
+            <td class="headerCovTableEntryMed">87.6 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
-            <td class="headerCovTableEntry">25</td>
-            <td class="headerCovTableEntry">31</td>
-            <td class="headerCovTableEntryMed">80.6 %</td>
+            <td class="headerCovTableEntry">27</td>
+            <td class="headerCovTableEntry">33</td>
+            <td class="headerCovTableEntryMed">81.8 %</td>
           </tr>
           <tr><td><img src="../../glass.png" width=3 height=3 alt=""></td></tr>
         </table>
@@ -61,244 +61,262 @@
 <pre class="sourceHeading">          Line data    Source code</pre>
 <pre class="source">
 <a name="1"><span class="lineNum">       1 </span>            : #include &quot;events/EventManager.h&quot;</a>
-<span class="lineNum">       2 </span>            : 
-<a name="3"><span class="lineNum">       3 </span><span class="lineCov">       1350 : long Susi::Events::Manager::subscribe(std::string topic, Susi::Events::Processor processor){</span></a>
-<span class="lineNum">       4 </span><span class="lineCov">       1350 :         if(Susi::Util::Glob::isGlob(topic)){</span>
-<span class="lineNum">       5 </span><span class="lineCov">         17 :                 auto predicate = [topic](Susi::Events::Event&amp; event){</span>
-<span class="lineNum">       6 </span><span class="lineCov">          3 :                         Susi::Util::Glob glob{topic};</span>
-<span class="lineNum">       7 </span><span class="lineCov">          6 :                         return glob.match(event.topic);</span>
-<span class="lineNum">       8 </span><span class="lineCov">          5 :                 };</span>
-<span class="lineNum">       9 </span><span class="lineCov">          2 :                 return subscribe(predicate,processor);</span>
-<span class="lineNum">      10 </span>            :         }
-<span class="lineNum">      11 </span><span class="lineCov">       1348 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
-<span class="lineNum">      12 </span><span class="lineCov">       1348 :         long id = std::chrono::system_clock::now().time_since_epoch().count();</span>
-<span class="lineNum">      13 </span><span class="lineCov">       1348 :         processorsByTopic[topic].push_back(std::make_pair(id,processor));</span>
-<a name="14"><span class="lineNum">      14 </span><span class="lineCov">       1348 :         return id;</span></a>
-<span class="lineNum">      15 </span>            : }
-<span class="lineNum">      16 </span><span class="lineCov">          4 : long Susi::Events::Manager::subscribe(Susi::Events::Predicate pred, Susi::Events::Processor processor){</span>
-<span class="lineNum">      17 </span><span class="lineCov">          4 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
-<span class="lineNum">      18 </span><span class="lineCov">          4 :         long id = std::chrono::system_clock::now().time_since_epoch().count();</span>
-<span class="lineNum">      19 </span><span class="lineCov">          4 :         processorsByPred.push_back(std::make_tuple(id,pred,processor));</span>
-<a name="20"><span class="lineNum">      20 </span><span class="lineCov">          4 :         return id;</span></a>
-<span class="lineNum">      21 </span>            : }
-<a name="22"><span class="lineNum">      22 </span><span class="lineCov">         37 : long Susi::Events::Manager::subscribe(std::string topic, Susi::Events::Consumer consumer){</span></a>
-<span class="lineNum">      23 </span><span class="lineCov">         37 :         if(Susi::Util::Glob::isGlob(topic)){</span>
-<span class="lineNum">      24 </span><span class="lineNoCov">          0 :                 auto predicate = [topic](Susi::Events::Event&amp; event){</span>
-<span class="lineNum">      25 </span><span class="lineNoCov">          0 :                         Susi::Util::Glob glob{topic};</span>
-<span class="lineNum">      26 </span><span class="lineNoCov">          0 :                         return glob.match(event.topic);</span>
-<span class="lineNum">      27 </span><span class="lineNoCov">          0 :                 };</span>
-<span class="lineNum">      28 </span><span class="lineNoCov">          0 :                 return subscribe(predicate,consumer);</span>
-<span class="lineNum">      29 </span>            :         }
-<span class="lineNum">      30 </span><span class="lineCov">         37 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
-<span class="lineNum">      31 </span><span class="lineCov">         37 :         long id = std::chrono::system_clock::now().time_since_epoch().count();</span>
-<span class="lineNum">      32 </span><span class="lineCov">         37 :         consumersByTopic[topic].push_back(std::make_pair(id,consumer));</span>
-<a name="33"><span class="lineNum">      33 </span><span class="lineCov">         37 :         return id;</span></a>
-<span class="lineNum">      34 </span>            : }
-<span class="lineNum">      35 </span><span class="lineNoCov">          0 : long Susi::Events::Manager::subscribe(Susi::Events::Predicate pred, Susi::Events::Consumer consumer){</span>
-<span class="lineNum">      36 </span><span class="lineNoCov">          0 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
-<span class="lineNum">      37 </span><span class="lineNoCov">          0 :         long id = std::chrono::system_clock::now().time_since_epoch().count();</span>
-<span class="lineNum">      38 </span><span class="lineNoCov">          0 :         consumersByPred.push_back(std::make_tuple(id,pred,consumer));</span>
-<a name="39"><span class="lineNum">      39 </span><span class="lineNoCov">          0 :         return id;</span></a>
-<span class="lineNum">      40 </span>            : }
-<span class="lineNum">      41 </span><span class="lineCov">        378 : bool Susi::Events::Manager::unsubscribe(long id){</span>
-<span class="lineNum">      42 </span><span class="lineCov">        378 :         std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
-<span class="lineNum">      43 </span><span class="lineCov">       1655 :         for(auto &amp; kv : processorsByTopic){</span>
-<span class="lineNum">      44 </span><span class="lineCov">       1616 :                 auto &amp; processors = kv.second;</span>
-<span class="lineNum">      45 </span><span class="lineCov">       2447 :                 for(size_t i=0;i&lt;processors.size();i++){</span>
-<span class="lineNum">      46 </span><span class="lineCov">       1170 :                         if(processors[i].first == id){</span>
-<span class="lineNum">      47 </span><span class="lineCov">        339 :                                 processors.erase(processors.begin()+i);</span>
-<span class="lineNum">      48 </span><span class="lineCov">        339 :                                 return true;</span>
-<span class="lineNum">      49 </span>            :                         }
-<span class="lineNum">      50 </span>            :                 }
-<span class="lineNum">      51 </span>            :         }
-<span class="lineNum">      52 </span><span class="lineCov">         39 :         for(size_t i=0;i&lt;processorsByPred.size();i++){</span>
-<span class="lineNum">      53 </span><span class="lineCov">          3 :                 auto &amp; tuple = processorsByPred[i];</span>
-<span class="lineNum">      54 </span><span class="lineCov">          3 :                 if(std::get&lt;0&gt;(tuple) == id){</span>
-<span class="lineNum">      55 </span><span class="lineCov">          3 :                         processorsByPred.erase(processorsByPred.begin()+i);</span>
-<span class="lineNum">      56 </span><span class="lineCov">          3 :                         return true;</span>
-<span class="lineNum">      57 </span>            :                 }
-<span class="lineNum">      58 </span>            :         }
-<span class="lineNum">      59 </span><span class="lineCov">         42 :         for(auto &amp; kv : consumersByTopic){</span>
-<span class="lineNum">      60 </span><span class="lineCov">         40 :                 auto &amp; consumers = kv.second;</span>
-<span class="lineNum">      61 </span><span class="lineCov">         44 :                 for(size_t i=0;i&lt;consumers.size();i++){</span>
-<span class="lineNum">      62 </span><span class="lineCov">         38 :                         if(consumers[i].first == id){</span>
-<span class="lineNum">      63 </span><span class="lineCov">         34 :                                 consumers.erase(consumers.begin()+i);</span>
-<span class="lineNum">      64 </span><span class="lineCov">         34 :                                 return true;</span>
-<span class="lineNum">      65 </span>            :                         }
-<span class="lineNum">      66 </span>            :                 }
-<span class="lineNum">      67 </span>            :         }
-<span class="lineNum">      68 </span><span class="lineCov">          2 :         for(size_t i=0;i&lt;consumersByPred.size();i++){</span>
-<span class="lineNum">      69 </span><span class="lineNoCov">          0 :                 auto &amp; tuple = consumersByPred[i];</span>
-<span class="lineNum">      70 </span><span class="lineNoCov">          0 :                 if(std::get&lt;0&gt;(tuple) == id){</span>
-<span class="lineNum">      71 </span><span class="lineNoCov">          0 :                         consumersByPred.erase(consumersByPred.begin()+i);</span>
-<span class="lineNum">      72 </span><span class="lineNoCov">          0 :                         return true;</span>
-<span class="lineNum">      73 </span>            :                 }
-<span class="lineNum">      74 </span>            :         }
-<span class="lineNum">      75 </span><span class="lineCov">          2 :         for(auto &amp; kv : publishProcesses){</span>
-<span class="lineNum">      76 </span><span class="lineNoCov">          0 :                 for(auto &amp; processorPair : kv.second-&gt;processors){</span>
-<span class="lineNum">      77 </span><span class="lineNoCov">          0 :                         if(processorPair.first == id){</span>
-<span class="lineNum">      78 </span><span class="lineNoCov">          0 :                                 processorPair.second = Processor{};</span>
-<span class="lineNum">      79 </span><span class="lineNoCov">          0 :                                 break;</span>
-<span class="lineNum">      80 </span>            :                         }
-<span class="lineNum">      81 </span>            :                 }
-<span class="lineNum">      82 </span><span class="lineNoCov">          0 :                 for(auto &amp; consumerPair : kv.second-&gt;consumers){</span>
-<span class="lineNum">      83 </span><span class="lineNoCov">          0 :                         if(consumerPair.first == id){</span>
-<span class="lineNum">      84 </span><span class="lineNoCov">          0 :                                 consumerPair.second = Consumer{};</span>
-<span class="lineNum">      85 </span><span class="lineNoCov">          0 :                                 break;</span>
-<span class="lineNum">      86 </span>            :                         }
-<span class="lineNum">      87 </span>            :                 }
-<span class="lineNum">      88 </span>            :         }
-<span class="lineNum">      89 </span><span class="lineCov">          2 :         return false;</span>
-<span class="lineNum">      90 </span>            : }
-<a name="91"><span class="lineNum">      91 </span>            : </a>
-<span class="lineNum">      92 </span>            : // public publish api function
-<span class="lineNum">      93 </span><span class="lineCov">        161 : void Susi::Events::Manager::publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback){</span>
-<span class="lineNum">      94 </span><span class="lineCov">        161 :         if(event.get()==nullptr){</span>
-<span class="lineNum">      95 </span>            :                 //std::cout&lt;&lt;&quot;event is nullptr&quot;&lt;&lt;std::endl;
-<span class="lineNum">      96 </span><span class="lineNoCov">          0 :                 event.release();</span>
-<span class="lineNum">      97 </span><span class="lineCov">        161 :                 return;</span>
-<span class="lineNum">      98 </span>            :         }
-<span class="lineNum">      99 </span>            :         {
-<span class="lineNum">     100 </span><span class="lineCov">        161 :                 std::lock_guard&lt;std::mutex&gt; lock(mutex);</span>
-<span class="lineNum">     101 </span><span class="lineCov">        322 :                 auto process = std::make_shared&lt;PublishProcess&gt;();</span>
-<span class="lineNum">     102 </span><span class="lineCov">        634 :                 for(auto &amp; kv : processorsByTopic){</span>
-<span class="lineNum">     103 </span><span class="lineCov">        587 :                         if(kv.first == event-&gt;topic){</span>
-<span class="lineNum">     104 </span><span class="lineCov">       1228 :                                 for(auto &amp; pair : kv.second){</span>
-<span class="lineNum">     105 </span><span class="lineCov">       1114 :                                         process-&gt;processors.push_back(pair);</span>
-<span class="lineNum">     106 </span>            :                                 }
-<span class="lineNum">     107 </span><span class="lineCov">        114 :                                 break;</span>
-<span class="lineNum">     108 </span>            :                         }
-<span class="lineNum">     109 </span>            :                 }
-<span class="lineNum">     110 </span><span class="lineCov">        165 :                 for(auto &amp; tuple : processorsByPred){</span>
-<span class="lineNum">     111 </span><span class="lineCov">          4 :                         if((std::get&lt;1&gt;(tuple))(*event)){</span>
-<span class="lineNum">     112 </span><span class="lineCov">          3 :                                 process-&gt;processors.push_back(std::make_pair(std::get&lt;0&gt;(tuple),std::get&lt;2&gt;(tuple)));</span>
-<span class="lineNum">     113 </span>            :                         }
-<span class="lineNum">     114 </span>            :                 }
-<span class="lineNum">     115 </span>            : 
-<span class="lineNum">     116 </span><span class="lineCov">        187 :                 for(auto &amp; kv : consumersByTopic){</span>
-<span class="lineNum">     117 </span><span class="lineCov">         63 :                         if(kv.first == event-&gt;topic){</span>
-<span class="lineNum">     118 </span><span class="lineCov">         74 :                                 for(auto &amp; pair : kv.second){</span>
-<span class="lineNum">     119 </span><span class="lineCov">         37 :                                         process-&gt;consumers.push_back(pair);</span>
-<span class="lineNum">     120 </span>            :                                 }
-<span class="lineNum">     121 </span><span class="lineCov">         37 :                                 break;</span>
-<span class="lineNum">     122 </span>            :                         }
-<span class="lineNum">     123 </span>            :                 }
-<span class="lineNum">     124 </span><span class="lineCov">        161 :                 for(auto &amp; tuple : consumersByPred){</span>
-<span class="lineNum">     125 </span><span class="lineNoCov">          0 :                         if((std::get&lt;1&gt;(tuple))(*event)){</span>
-<span class="lineNum">     126 </span><span class="lineNoCov">          0 :                                 process-&gt;consumers.push_back(std::make_pair(std::get&lt;0&gt;(tuple),std::get&lt;2&gt;(tuple)));</span>
-<span class="lineNum">     127 </span>            :                         }
-<span class="lineNum">     128 </span>            :                 }
-<span class="lineNum">     129 </span><span class="lineCov">        161 :                 process-&gt;consumers.push_back(std::pair&lt;long,Consumer&gt;{0,finishCallback});</span>
-<span class="lineNum">     130 </span><span class="lineCov">        322 :                 publishProcesses[event-&gt;id] = process;</span>
-<span class="lineNum">     131 </span>            :         } // release lock
-<span class="lineNum">     132 </span><span class="lineCov">        161 :         ack(std::move(event));</span>
-<span class="lineNum">     133 </span>            : }
-<a name="134"><span class="lineNum">     134 </span>            : </a>
-<span class="lineNum">     135 </span>            : // pass event back to system
-<span class="lineNum">     136 </span><span class="lineCov">       1278 : void Susi::Events::Manager::ack(EventPtr event){</span>
-<span class="lineNum">     137 </span><span class="lineCov">       1278 :         if(event.get()==nullptr){</span>
-<span class="lineNum">     138 </span><span class="lineNoCov">          0 :                 event.release();</span>
-<a name="139"><span class="lineNum">     139 </span><span class="lineCov">       1278 :                 return;</span></a>
-<span class="lineNum">     140 </span>            :         }
-<span class="lineNum">     141 </span><span class="lineCov">       5112 :         struct Work {</span>
-<a name="142"><span class="lineNum">     142 </span>            :                 EventPtr event;</a>
-<a name="143"><span class="lineNum">     143 </span>            :                 Manager *manager;</a>
-<a name="144"><span class="lineNum">     144 </span><span class="lineCov">       1278 :                 Work(EventPtr evt, Manager *mgr) : event{std::move(evt)}, manager{mgr} {}</span></a>
-<a name="145"><span class="lineNum">     145 </span><span class="lineCov">       2556 :                 Work(Work &amp;&amp; other) : event{std::move(other.event)}, manager{other.manager} {}</span></a>
-<span class="lineNum">     146 </span><span class="lineCov">       1278 :                 Work(Work &amp; other) : event{std::move(other.event)}, manager{other.manager} {}</span>
-<span class="lineNum">     147 </span><span class="lineCov">       1278 :                 void operator()(){</span>
-<span class="lineNum">     148 </span><span class="lineCov">       1278 :                         long id = event-&gt;id;</span>
-<span class="lineNum">     149 </span><span class="lineCov">       1278 :                         std::shared_ptr&lt;PublishProcess&gt; process;</span>
-<span class="lineNum">     150 </span>            :                         {
-<span class="lineNum">     151 </span><span class="lineCov">       1278 :                                 std::unique_lock&lt;std::mutex&gt; lock(manager-&gt;mutex);</span>
-<span class="lineNum">     152 </span><span class="lineCov">       1281 :                                 for(auto &amp; kv : manager-&gt;publishProcesses){</span>
-<span class="lineNum">     153 </span><span class="lineCov">       1280 :                                         if(kv.first == id){</span>
-<span class="lineNum">     154 </span><span class="lineCov">       1277 :                                                 process = kv.second;</span>
-<span class="lineNum">     155 </span><span class="lineCov">       1277 :                                                 break;</span>
-<span class="lineNum">     156 </span>            :                                         }
-<span class="lineNum">     157 </span><span class="lineCov">       1278 :                                 }</span>
-<span class="lineNum">     158 </span>            :                         }
-<span class="lineNum">     159 </span><span class="lineCov">       1278 :                         if(process.get()==nullptr){</span>
-<span class="lineNum">     160 </span>            :                                 /*std::cout&lt;&lt;&quot;cant find process, this should not happen&quot;&lt;&lt;std::endl;
-<span class="lineNum">     161 </span>            :                                 std::cout&lt;&lt;event-&gt;topic&lt;&lt;std::endl;*/
-<span class="lineNum">     162 </span><span class="lineCov">          1 :                                 delete event.release();</span>
-<span class="lineNum">     163 </span><span class="lineCov">       1279 :                                 return;</span>
-<span class="lineNum">     164 </span>            :                         }
-<span class="lineNum">     165 </span>            :                         //std::cout&lt;&lt;&quot;ack event &quot;&lt;&lt;event-&gt;topic&lt;&lt;std::endl;
-<span class="lineNum">     166 </span>            : 
-<span class="lineNum">     167 </span><span class="lineCov">       2554 :                         std::unique_lock&lt;std::mutex&gt; lock(process-&gt;mutex);</span>
-<span class="lineNum">     168 </span><span class="lineCov">       2583 :                         while(process-&gt;errors.size() &gt; 0){</span>
-<span class="lineNum">     169 </span><span class="lineCov">         29 :                                 event-&gt;headers.push_back(std::make_pair(&quot;error&quot;,process-&gt;errors.back()));</span>
-<span class="lineNum">     170 </span><span class="lineCov">         29 :                                 process-&gt;errors.pop_back();</span>
-<span class="lineNum">     171 </span>            :                         }
-<span class="lineNum">     172 </span><span class="lineCov">       1277 :                         if(process-&gt;current &lt; process-&gt;processors.size()){</span>
-<span class="lineNum">     173 </span>            :                                 try{
-<span class="lineNum">     174 </span><span class="lineCov">       1117 :                                         auto nextProcessor = process-&gt;processors[process-&gt;current++].second;</span>
-<span class="lineNum">     175 </span><span class="lineCov">       1117 :                                         if(nextProcessor){</span>
-<span class="lineNum">     176 </span><span class="lineCov">       1146 :                                                 nextProcessor(std::move(event));</span>
-<span class="lineNum">     177 </span><span class="lineCov">       1117 :                                         }</span>
-<span class="lineNum">     178 </span><span class="lineCov">         29 :                                 }catch(const std::exception &amp; e){</span>
-<span class="lineNum">     179 </span><span class="lineCov">         29 :                                         process-&gt;errors.push_back(e.what());</span>
-<span class="lineNum">     180 </span>            :                                 }
-<span class="lineNum">     181 </span>            :                         }else{
-<span class="lineNum">     182 </span><span class="lineCov">        160 :                                 std::shared_ptr&lt;Event&gt; sharedEvent{event.release()};</span>
-<a name="183"><span class="lineNum">     183 </span><span class="lineCov">        357 :                                 for(auto &amp; consumerPair : process-&gt;consumers){</span></a>
-<span class="lineNum">     184 </span><span class="lineCov">        197 :                                         auto consumer = consumerPair.second;</span>
-<span class="lineNum">     185 </span><span class="lineCov">       1139 :                                         if(consumer) manager-&gt;pool.add([consumer,sharedEvent](){</span>
-<span class="lineNum">     186 </span><span class="lineCov">        158 :                                                 consumer(sharedEvent);</span>
-<span class="lineNum">     187 </span><span class="lineCov">        313 :                                         });</span>
-<span class="lineNum">     188 </span><span class="lineCov">        197 :                                 }</span>
-<span class="lineNum">     189 </span>            :                                 {
-<span class="lineNum">     190 </span><span class="lineCov">        160 :                                         std::unique_lock&lt;std::mutex&gt; lock(manager-&gt;mutex);</span>
-<span class="lineNum">     191 </span><span class="lineCov">        161 :                                         for(auto &amp; kv : manager-&gt;publishProcesses){</span>
-<span class="lineNum">     192 </span><span class="lineCov">        161 :                                                 if(kv.second == process) {</span>
-<span class="lineNum">     193 </span><span class="lineCov">        160 :                                                         manager-&gt;publishProcesses.erase(kv.first);</span>
-<span class="lineNum">     194 </span><span class="lineCov">        160 :                                                         break;</span>
-<span class="lineNum">     195 </span>            :                                                 }
-<span class="lineNum">     196 </span><span class="lineCov">        160 :                                         }</span>
-<span class="lineNum">     197 </span>            :                                 }
-<span class="lineNum">     198 </span><span class="lineCov">        160 :                                 manager-&gt;publishFinished.notify_one();</span>
-<span class="lineNum">     199 </span><span class="lineCov">       1277 :                         }</span>
-<span class="lineNum">     200 </span>            :                 }
-<span class="lineNum">     201 </span>            :         };
-<a name="202"><span class="lineNum">     202 </span>            : </a>
-<span class="lineNum">     203 </span><span class="lineCov">       1278 :         long id = event-&gt;id;</span>
-<span class="lineNum">     204 </span><span class="lineNoCov">          0 :         auto error = [id,this](std::string msg){</span>
-<span class="lineNum">     205 </span><span class="lineNoCov">          0 :                 std::unique_lock&lt;std::mutex&gt; lock(mutex);</span>
-<span class="lineNum">     206 </span><span class="lineNoCov">          0 :                 std::shared_ptr&lt;PublishProcess&gt; process;</span>
-<span class="lineNum">     207 </span><span class="lineNoCov">          0 :                 for(auto &amp; kv : publishProcesses){</span>
-<span class="lineNum">     208 </span><span class="lineNoCov">          0 :                         if(kv.first == id){</span>
-<span class="lineNum">     209 </span><span class="lineNoCov">          0 :                                 process = kv.second;</span>
-<span class="lineNum">     210 </span>            :                         }
-<span class="lineNum">     211 </span>            :                 }
-<span class="lineNum">     212 </span><span class="lineNoCov">          0 :                 if(process.get()!=nullptr){</span>
-<span class="lineNum">     213 </span><span class="lineNoCov">          0 :                         process-&gt;errors.push_back(msg);</span>
-<span class="lineNum">     214 </span>            :                 }
-<span class="lineNum">     215 </span><span class="lineCov">       1278 :         };</span>
-<span class="lineNum">     216 </span><span class="lineCov">       1278 :         Work work{std::move(event),this};</span>
-<span class="lineNum">     217 </span><span class="lineCov">       1278 :         pool.add(std::move(work),error);</span>
-<a name="218"><span class="lineNum">     218 </span>            : }</a>
-<a name="219"><span class="lineNum">     219 </span>            : </a>
-<span class="lineNum">     220 </span><span class="lineCov">        162 : Susi::Events::EventPtr Susi::Events::Manager::createEvent(std::string topic){</span>
-<span class="lineNum">     221 </span><span class="lineCov">        272 :         auto event = Susi::Events::EventPtr{new Susi::Events::Event{topic},[this](Event * event){</span>
-<span class="lineNum">     222 </span><span class="lineCov">        110 :                 this-&gt;deleter(event);</span>
-<span class="lineNum">     223 </span><span class="lineCov">        434 :         }};</span>
-<span class="lineNum">     224 </span><span class="lineCov">        162 :         return event;</span>
-<a name="225"><span class="lineNum">     225 </span>            : }</a>
-<span class="lineNum">     226 </span>            : 
-<span class="lineNum">     227 </span><span class="lineCov">       1109 : void Susi::Events::Manager::deleter(Event *event){</span>
-<a name="228"><span class="lineNum">     228 </span>            :         //std::cout&lt;&lt;&quot;calling deleter of &quot;&lt;&lt;event&lt;&lt;std::endl;</a>
-<span class="lineNum">     229 </span><span class="lineCov">       1109 :         if(event!=nullptr){</span>
-<span class="lineNum">     230 </span><span class="lineCov">        999 :                 Susi::Events::EventPtr ptr(event,[this](Event *event){</span>
-<span class="lineNum">     231 </span><span class="lineCov">        999 :                         deleter(event);</span>
-<span class="lineNum">     232 </span><span class="lineCov">       2108 :                 });</span>
-<span class="lineNum">     233 </span>            :                 try{
-<span class="lineNum">     234 </span><span class="lineCov">       1109 :                         ack(std::move(ptr));</span>
-<span class="lineNum">     235 </span><span class="lineNoCov">          0 :                 }catch(const std::exception &amp; e){</span>
-<span class="lineNum">     236 </span><span class="lineNoCov">          0 :                         std::cout&lt;&lt;&quot;error in deleter:&quot;&lt;&lt;e.what()&lt;&lt;std::endl;</span>
-<a name="237"><span class="lineNum">     237 </span><span class="lineCov">       1109 :                 }</span></a>
-<span class="lineNum">     238 </span>            :         }
-<span class="lineNum">     239 </span><span class="lineCov">       1112 : }</span>
+<a name="2"><span class="lineNum">       2 </span>            : </a>
+<span class="lineNum">       3 </span>            : 
+<span class="lineNum">       4 </span><span class="lineCov">       1419 : long Susi::Events::Manager::subscribe(</span>
+<span class="lineNum">       5 </span>            :     std::string topic,
+<span class="lineNum">       6 </span>            :     Predicate predicate,
+<span class="lineNum">       7 </span>            :     Consumer consumer,
+<span class="lineNum">       8 </span>            :     Processor processor,
+<span class="lineNum">       9 </span>            :     char authlevel,
+<span class="lineNum">      10 </span>            :     std::string name )
+<span class="lineNum">      11 </span>            : {
+<span class="lineNum">      12 </span><span class="lineCov">       1419 :     long id = std::chrono::system_clock::now().time_since_epoch().count();</span>
+<span class="lineNum">      13 </span><span class="lineCov">       1419 :     Subscription sub;</span>
+<span class="lineNum">      14 </span><span class="lineCov">       1419 :     sub.id = id;</span>
+<span class="lineNum">      15 </span><span class="lineCov">       1419 :     sub.name = name;</span>
+<span class="lineNum">      16 </span><span class="lineCov">       1419 :     sub.minAuthlevel = authlevel;</span>
+<span class="lineNum">      17 </span><span class="lineCov">       1419 :     sub.topic = topic;</span>
+<span class="lineNum">      18 </span><span class="lineCov">       1419 :     sub.predicate = std::move( predicate );</span>
+<span class="lineNum">      19 </span><span class="lineCov">       1419 :     sub.processor = std::move( processor );</span>
+<span class="lineNum">      20 </span><span class="lineCov">       1419 :     sub.consumer = std::move( consumer );</span>
+<span class="lineNum">      21 </span><span class="lineCov">       1419 :     if( topic != &quot;&quot; ) {</span>
+<span class="lineNum">      22 </span><span class="lineCov">       1415 :         std::lock_guard&lt;std::mutex&gt; lock( mutex );</span>
+<span class="lineNum">      23 </span><span class="lineCov">       1415 :         auto &amp; subs = subscriptionsByTopic[topic];</span>
+<span class="lineNum">      24 </span><span class="lineCov">       1415 :         subs.push_back( std::move( sub ) );</span>
+<span class="lineNum">      25 </span>            :     }
+<span class="lineNum">      26 </span>            :     else {
+<span class="lineNum">      27 </span><span class="lineCov">          4 :         std::lock_guard&lt;std::mutex&gt; lock( mutex );</span>
+<span class="lineNum">      28 </span><span class="lineCov">          4 :         subscriptionsByPred.push_back( std::move( sub ) );</span>
+<span class="lineNum">      29 </span>            :     }
+<span class="lineNum">      30 </span><span class="lineCov">       1419 :     return id;</span>
+<span class="lineNum">      31 </span>            : 
+<a name="32"><span class="lineNum">      32 </span>            : }</a>
+<span class="lineNum">      33 </span>            : 
+<a name="34"><span class="lineNum">      34 </span><span class="lineCov">       1377 : long Susi::Events::Manager::subscribe( std::string topic, Processor processor, char minAuthlevel, std::string name ) {</span></a>
+<span class="lineNum">      35 </span><span class="lineCov">       1377 :     if( Susi::Util::Glob::isGlob( topic ) ) {</span>
+<span class="lineNum">      36 </span><span class="lineCov">         19 :         auto predicate = [topic]( Susi::Events::Event&amp; event ) {</span>
+<span class="lineNum">      37 </span><span class="lineCov">          5 :             Susi::Util::Glob glob {topic};</span>
+<span class="lineNum">      38 </span><span class="lineCov">         10 :             return glob.match( event.topic );</span>
+<span class="lineNum">      39 </span><span class="lineCov">          7 :         };</span>
+<span class="lineNum">      40 </span><span class="lineCov">          2 :         return subscribe( &quot;&quot;,predicate,Consumer {},std::move( processor ),minAuthlevel,name );</span>
+<span class="lineNum">      41 </span>            :     }
+<span class="lineNum">      42 </span><span class="lineCov">       1375 :     return subscribe( topic,Predicate {},Consumer {},std::move( processor ),minAuthlevel,name );</span>
+<a name="43"><span class="lineNum">      43 </span>            : }</a>
+<span class="lineNum">      44 </span>            : 
+<span class="lineNum">      45 </span><span class="lineCov">          2 : long Susi::Events::Manager::subscribe( Predicate pred, Processor processor, char minAuthlevel, std::string name ) {</span>
+<span class="lineNum">      46 </span><span class="lineCov">          2 :     return subscribe( &quot;&quot;,pred,Consumer {},std::move( processor ),minAuthlevel,name );</span>
+<a name="47"><span class="lineNum">      47 </span>            : }</a>
+<span class="lineNum">      48 </span>            : 
+<a name="49"><span class="lineNum">      49 </span><span class="lineCov">         40 : long Susi::Events::Manager::subscribe( std::string topic, Consumer consumer, char minAuthlevel, std::string name ) {</span></a>
+<span class="lineNum">      50 </span><span class="lineCov">         40 :     if( Susi::Util::Glob::isGlob( topic ) ) {</span>
+<span class="lineNum">      51 </span><span class="lineNoCov">          0 :         auto predicate = [topic]( Susi::Events::Event&amp; event ) {</span>
+<span class="lineNum">      52 </span><span class="lineNoCov">          0 :             Susi::Util::Glob glob {topic};</span>
+<span class="lineNum">      53 </span><span class="lineNoCov">          0 :             return glob.match( event.topic );</span>
+<span class="lineNum">      54 </span><span class="lineNoCov">          0 :         };</span>
+<span class="lineNum">      55 </span><span class="lineNoCov">          0 :         return subscribe( &quot;&quot;,predicate,std::move( consumer ),Processor {},minAuthlevel,name );</span>
+<span class="lineNum">      56 </span>            :     }
+<span class="lineNum">      57 </span><span class="lineCov">         40 :     return subscribe( topic,Predicate {},std::move( consumer ),Processor {},minAuthlevel,name );</span>
+<a name="58"><span class="lineNum">      58 </span>            : }</a>
+<span class="lineNum">      59 </span>            : 
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 : long Susi::Events::Manager::subscribe( Predicate pred, Consumer consumer, char minAuthlevel, std::string name ) {</span>
+<span class="lineNum">      61 </span><span class="lineNoCov">          0 :     return subscribe( &quot;&quot;,pred,std::move( consumer ),Processor {},minAuthlevel,name );</span>
+<a name="62"><span class="lineNum">      62 </span>            : }</a>
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span><span class="lineCov">        403 : bool Susi::Events::Manager::unsubscribe( long id ) {</span>
+<span class="lineNum">      65 </span><span class="lineCov">        403 :     std::lock_guard&lt;std::mutex&gt; lock( mutex );</span>
+<span class="lineNum">      66 </span><span class="lineCov">       1813 :     for( auto &amp; kv : subscriptionsByTopic ) {</span>
+<span class="lineNum">      67 </span><span class="lineCov">       1808 :         auto &amp; subs = kv.second;</span>
+<span class="lineNum">      68 </span><span class="lineCov">       2520 :         for( int i=0; i&lt;subs.size(); i++ ) {</span>
+<span class="lineNum">      69 </span><span class="lineCov">       1110 :             if( subs[i].id == id ) {</span>
+<span class="lineNum">      70 </span><span class="lineCov">        398 :                 subs.erase( subs.begin()+i );</span>
+<span class="lineNum">      71 </span><span class="lineCov">        398 :                 return true;</span>
+<span class="lineNum">      72 </span>            :             }
+<span class="lineNum">      73 </span>            :         }
+<span class="lineNum">      74 </span>            :     }
+<span class="lineNum">      75 </span><span class="lineCov">          5 :     for( int i=0; i&lt;subscriptionsByPred.size(); i++ ) {</span>
+<span class="lineNum">      76 </span><span class="lineCov">          3 :         if( subscriptionsByPred[i].id == id ) {</span>
+<span class="lineNum">      77 </span><span class="lineCov">          3 :             subscriptionsByPred.erase( subscriptionsByPred.begin()+i );</span>
+<span class="lineNum">      78 </span><span class="lineCov">          3 :             return 0;</span>
+<span class="lineNum">      79 </span>            :         }
+<span class="lineNum">      80 </span>            :     }
+<span class="lineNum">      81 </span><span class="lineCov">          2 :     return false;</span>
+<span class="lineNum">      82 </span>            : }
+<a name="83"><span class="lineNum">      83 </span>            : </a>
+<span class="lineNum">      84 </span>            : // public publish api function
+<span class="lineNum">      85 </span><span class="lineCov">        159 : void Susi::Events::Manager::publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback ) {</span>
+<span class="lineNum">      86 </span><span class="lineCov">        159 :     if( event.get()==nullptr ) {</span>
+<span class="lineNum">      87 </span>            :         //std::cout&lt;&lt;&quot;event is nullptr&quot;&lt;&lt;std::endl;
+<span class="lineNum">      88 </span><span class="lineNoCov">          0 :         event.release();</span>
+<span class="lineNum">      89 </span><span class="lineCov">        159 :         return;</span>
+<span class="lineNum">      90 </span>            :     }
+<span class="lineNum">      91 </span>            :     {
+<span class="lineNum">      92 </span><span class="lineCov">        159 :         std::lock_guard&lt;std::mutex&gt; lock( mutex );</span>
+<span class="lineNum">      93 </span><span class="lineCov">        318 :         auto process = std::make_shared&lt;PublishProcess&gt;();</span>
+<span class="lineNum">      94 </span>            : 
+<span class="lineNum">      95 </span><span class="lineCov">        318 :         std::vector&lt;Subscription&gt; affectedProcessorSubscriptions;</span>
+<span class="lineNum">      96 </span>            :         //collect consumers, processors by topic
+<span class="lineNum">      97 </span><span class="lineCov">        611 :         for( auto &amp; kv : subscriptionsByTopic ) {</span>
+<span class="lineNum">      98 </span><span class="lineCov">        597 :             if( kv.first == event-&gt;topic ) {</span>
+<span class="lineNum">      99 </span><span class="lineCov">       1292 :                 for( auto &amp; sub : kv.second ) {</span>
+<span class="lineNum">     100 </span><span class="lineCov">       1147 :                     if( event-&gt;authlevel &lt;= sub.minAuthlevel ) {</span>
+<span class="lineNum">     101 </span><span class="lineCov">       1146 :                         if( sub.consumer ) {</span>
+<span class="lineNum">     102 </span><span class="lineCov">         41 :                             process-&gt;consumers.push_back( sub.consumer );</span>
+<span class="lineNum">     103 </span>            :                         }
+<span class="lineNum">     104 </span><span class="lineCov">       1105 :                         else if( sub.processor ) {</span>
+<span class="lineNum">     105 </span><span class="lineCov">       1105 :                             affectedProcessorSubscriptions.push_back( sub );</span>
+<span class="lineNum">     106 </span>            :                         }
+<span class="lineNum">     107 </span>            :                     }
+<span class="lineNum">     108 </span>            :                 }
+<span class="lineNum">     109 </span><span class="lineCov">        145 :                 break;</span>
+<span class="lineNum">     110 </span>            :             }
+<span class="lineNum">     111 </span>            :         }
+<span class="lineNum">     112 </span>            :         //collect consumers, processors by predicate
+<span class="lineNum">     113 </span><span class="lineCov">        165 :         for( auto &amp; sub : subscriptionsByPred ) {</span>
+<span class="lineNum">     114 </span><span class="lineCov">          6 :             if( sub.predicate( *event ) ) {</span>
+<span class="lineNum">     115 </span><span class="lineCov">          3 :                 if( event-&gt;authlevel &lt;= sub.minAuthlevel ) {</span>
+<span class="lineNum">     116 </span><span class="lineCov">          3 :                     if( sub.consumer ) {</span>
+<span class="lineNum">     117 </span><span class="lineNoCov">          0 :                         process-&gt;consumers.push_back( sub.consumer );</span>
+<span class="lineNum">     118 </span>            :                     }
+<span class="lineNum">     119 </span><span class="lineCov">          3 :                     else if( sub.processor ) {</span>
+<span class="lineNum">     120 </span><span class="lineCov">          3 :                         affectedProcessorSubscriptions.push_back( sub );</span>
+<span class="lineNum">     121 </span>            :                     }
+<span class="lineNum">     122 </span>            :                 }
+<span class="lineNum">     123 </span>            :             }
+<span class="lineNum">     124 </span>            :         }
+<span class="lineNum">     125 </span>            :         //schedule processors
+<span class="lineNum">     126 </span><span class="lineCov">        318 :         std::set&lt;std::string&gt; tasks;</span>
+<span class="lineNum">     127 </span><span class="lineCov">       1267 :         for( auto &amp; s : affectedProcessorSubscriptions ) {</span>
+<span class="lineNum">     128 </span><span class="lineCov">       1108 :             tasks.insert( s.name );</span>
+<span class="lineNum">     129 </span>            :         }
+<span class="lineNum">     130 </span><span class="lineCov">        318 :         auto plan = scheduler.schedule( tasks );</span>
+<span class="lineNum">     131 </span><span class="lineCov">        266 :         for( auto &amp; name : plan ) {</span>
+<span class="lineNum">     132 </span><span class="lineCov">       1217 :             for( auto &amp; sub : affectedProcessorSubscriptions ) {</span>
+<span class="lineNum">     133 </span><span class="lineCov">       1110 :                 if( sub.name==name ) {</span>
+<span class="lineNum">     134 </span><span class="lineCov">       1108 :                     process-&gt;processors.push_back( sub.processor );</span>
+<span class="lineNum">     135 </span>            :                 }
+<span class="lineNum">     136 </span>            :             }
+<span class="lineNum">     137 </span>            :         }
+<span class="lineNum">     138 </span>            : 
+<span class="lineNum">     139 </span><span class="lineCov">        159 :         process-&gt;consumers.push_back( finishCallback );</span>
+<span class="lineNum">     140 </span><span class="lineCov">        318 :         publishProcesses[event-&gt;id] = process;</span>
+<span class="lineNum">     141 </span>            :     } // release lock
+<span class="lineNum">     142 </span><span class="lineCov">        159 :     ack( std::move( event ) );</span>
+<span class="lineNum">     143 </span>            : }
+<a name="144"><span class="lineNum">     144 </span>            : </a>
+<span class="lineNum">     145 </span>            : // pass event back to system
+<span class="lineNum">     146 </span><span class="lineCov">       1267 : void Susi::Events::Manager::ack( EventPtr event ) {</span>
+<span class="lineNum">     147 </span><span class="lineCov">       1267 :     if( event.get()==nullptr ) {</span>
+<span class="lineNum">     148 </span><span class="lineNoCov">          0 :         event.release();</span>
+<a name="149"><span class="lineNum">     149 </span><span class="lineCov">       1267 :         return;</span></a>
+<span class="lineNum">     150 </span>            :     }
+<span class="lineNum">     151 </span><span class="lineCov">       5068 :     struct Work {</span>
+<a name="152"><span class="lineNum">     152 </span>            :         EventPtr event;</a>
+<a name="153"><span class="lineNum">     153 </span>            :         Manager *manager;</a>
+<a name="154"><span class="lineNum">     154 </span><span class="lineCov">       1267 :         Work( EventPtr evt, Manager *mgr ) : event {std::move( evt )}, manager {mgr} {}</span></a>
+<a name="155"><span class="lineNum">     155 </span><span class="lineCov">       2534 :         Work( Work &amp;&amp; other ) : event {std::move( other.event )}, manager {other.manager} {}</span></a>
+<span class="lineNum">     156 </span><span class="lineCov">       1267 :         Work( Work &amp; other ) : event {std::move( other.event )}, manager {other.manager} {}</span>
+<span class="lineNum">     157 </span><span class="lineCov">       1267 :         void operator()() {</span>
+<span class="lineNum">     158 </span><span class="lineCov">       1267 :             long id = event-&gt;id;</span>
+<span class="lineNum">     159 </span><span class="lineCov">       1267 :             std::shared_ptr&lt;PublishProcess&gt; process;</span>
+<span class="lineNum">     160 </span>            :             {
+<span class="lineNum">     161 </span><span class="lineCov">       1267 :                 std::unique_lock&lt;std::mutex&gt; lock( manager-&gt;mutex );</span>
+<span class="lineNum">     162 </span><span class="lineCov">       1269 :                 for( auto &amp; kv : manager-&gt;publishProcesses ) {</span>
+<span class="lineNum">     163 </span><span class="lineCov">       1268 :                     if( kv.first == id ) {</span>
+<span class="lineNum">     164 </span><span class="lineCov">       1266 :                         process = kv.second;</span>
+<span class="lineNum">     165 </span><span class="lineCov">       1266 :                         break;</span>
+<span class="lineNum">     166 </span>            :                     }
+<span class="lineNum">     167 </span><span class="lineCov">       1267 :                 }</span>
+<span class="lineNum">     168 </span>            :             }
+<span class="lineNum">     169 </span><span class="lineCov">       1267 :             if( process.get()==nullptr ) {</span>
+<span class="lineNum">     170 </span>            :                 /*std::cout&lt;&lt;&quot;cant find process, this should not happen&quot;&lt;&lt;std::endl;
+<span class="lineNum">     171 </span>            :                 std::cout&lt;&lt;event-&gt;topic&lt;&lt;std::endl;*/
+<span class="lineNum">     172 </span><span class="lineCov">          1 :                 delete event.release();</span>
+<span class="lineNum">     173 </span><span class="lineCov">       1268 :                 return;</span>
+<span class="lineNum">     174 </span>            :             }
+<span class="lineNum">     175 </span>            :             //std::cout&lt;&lt;&quot;ack event &quot;&lt;&lt;event-&gt;topic&lt;&lt;std::endl;
+<span class="lineNum">     176 </span>            : 
+<span class="lineNum">     177 </span><span class="lineCov">       2532 :             std::unique_lock&lt;std::mutex&gt; lock( process-&gt;mutex );</span>
+<span class="lineNum">     178 </span><span class="lineCov">       2561 :             while( process-&gt;errors.size() &gt; 0 ) {</span>
+<span class="lineNum">     179 </span><span class="lineCov">         29 :                 event-&gt;headers.push_back( std::make_pair( &quot;error&quot;,process-&gt;errors.back() ) );</span>
+<span class="lineNum">     180 </span><span class="lineCov">         29 :                 process-&gt;errors.pop_back();</span>
+<span class="lineNum">     181 </span>            :             }
+<span class="lineNum">     182 </span><span class="lineCov">       1266 :             if( process-&gt;current &lt; process-&gt;processors.size() ) {</span>
+<span class="lineNum">     183 </span>            :                 try {
+<span class="lineNum">     184 </span><span class="lineCov">       1108 :                     auto nextProcessor = process-&gt;processors[process-&gt;current++];</span>
+<span class="lineNum">     185 </span><span class="lineCov">       1108 :                     if( nextProcessor ) {</span>
+<span class="lineNum">     186 </span><span class="lineCov">       1137 :                         nextProcessor( std::move( event ) );</span>
+<span class="lineNum">     187 </span><span class="lineCov">       1108 :                     }</span>
+<span class="lineNum">     188 </span>            :                 }
+<span class="lineNum">     189 </span><span class="lineCov">         29 :                 catch( const std::exception &amp; e ) {</span>
+<span class="lineNum">     190 </span><span class="lineCov">         29 :                     process-&gt;errors.push_back( e.what() );</span>
+<span class="lineNum">     191 </span>            :                 }
+<span class="lineNum">     192 </span>            :             }
+<span class="lineNum">     193 </span>            :             else {
+<a name="194"><span class="lineNum">     194 </span><span class="lineCov">        158 :                 std::shared_ptr&lt;Event&gt; sharedEvent {event.release()};</span></a>
+<span class="lineNum">     195 </span><span class="lineCov">        357 :                 for( auto &amp; consumer : process-&gt;consumers ) {</span>
+<a name="196"><span class="lineNum">     196 </span><span class="lineCov">       1105 :                     if( consumer ) manager-&gt;pool.add( [consumer,sharedEvent]() {</span></a>
+<span class="lineNum">     197 </span><span class="lineCov">        153 :                         consumer( sharedEvent );</span>
+<span class="lineNum">     198 </span><span class="lineCov">        151 :                     } ,[this](std::string errorMessage){</span>
+<span class="lineNum">     199 </span><span class="lineCov">          2 :                         auto errorEvent = manager-&gt;createEvent(&quot;consumererror&quot;);</span>
+<span class="lineNum">     200 </span><span class="lineCov">          2 :                         Susi::Logger::error(&quot;consumer error: &quot;+errorMessage);</span>
+<span class="lineNum">     201 </span><span class="lineCov">          2 :                         errorEvent-&gt;payload = errorMessage;</span>
+<span class="lineNum">     202 </span><span class="lineCov">          2 :                         manager-&gt;publish(std::move(errorEvent));</span>
+<span class="lineNum">     203 </span><span class="lineCov">        153 :                     });</span>
+<span class="lineNum">     204 </span>            :                 }
+<span class="lineNum">     205 </span>            :                 {
+<span class="lineNum">     206 </span><span class="lineCov">        158 :                     std::unique_lock&lt;std::mutex&gt; lock( manager-&gt;mutex );</span>
+<span class="lineNum">     207 </span><span class="lineCov">        159 :                     for( auto &amp; kv : manager-&gt;publishProcesses ) {</span>
+<span class="lineNum">     208 </span><span class="lineCov">        159 :                         if( kv.second == process ) {</span>
+<span class="lineNum">     209 </span><span class="lineCov">        158 :                             manager-&gt;publishProcesses.erase( kv.first );</span>
+<span class="lineNum">     210 </span><span class="lineCov">        158 :                             break;</span>
+<span class="lineNum">     211 </span>            :                         }
+<span class="lineNum">     212 </span><span class="lineCov">        158 :                     }</span>
+<span class="lineNum">     213 </span>            :                 }
+<span class="lineNum">     214 </span><span class="lineCov">        158 :                 manager-&gt;publishFinished.notify_one();</span>
+<span class="lineNum">     215 </span><span class="lineCov">       1266 :             }</span>
+<span class="lineNum">     216 </span>            :         }
+<span class="lineNum">     217 </span>            :     };
+<a name="218"><span class="lineNum">     218 </span>            : </a>
+<span class="lineNum">     219 </span><span class="lineCov">       1267 :     long id = event-&gt;id;</span>
+<span class="lineNum">     220 </span><span class="lineNoCov">          0 :     auto error = [id,this]( std::string msg ) {</span>
+<span class="lineNum">     221 </span><span class="lineNoCov">          0 :         std::unique_lock&lt;std::mutex&gt; lock( mutex );</span>
+<span class="lineNum">     222 </span><span class="lineNoCov">          0 :         std::shared_ptr&lt;PublishProcess&gt; process;</span>
+<span class="lineNum">     223 </span><span class="lineNoCov">          0 :         for( auto &amp; kv : publishProcesses ) {</span>
+<span class="lineNum">     224 </span><span class="lineNoCov">          0 :             if( kv.first == id ) {</span>
+<span class="lineNum">     225 </span><span class="lineNoCov">          0 :                 process = kv.second;</span>
+<span class="lineNum">     226 </span>            :             }
+<span class="lineNum">     227 </span>            :         }
+<span class="lineNum">     228 </span><span class="lineNoCov">          0 :         if( process.get()!=nullptr ) {</span>
+<span class="lineNum">     229 </span><span class="lineNoCov">          0 :             process-&gt;errors.push_back( msg );</span>
+<span class="lineNum">     230 </span>            :         }
+<span class="lineNum">     231 </span><span class="lineCov">       1267 :     };</span>
+<span class="lineNum">     232 </span><span class="lineCov">       1267 :     Work work {std::move( event ),this};</span>
+<span class="lineNum">     233 </span><span class="lineCov">       1267 :     pool.add( std::move( work ),error );</span>
+<a name="234"><span class="lineNum">     234 </span>            : }</a>
+<a name="235"><span class="lineNum">     235 </span>            : </a>
+<span class="lineNum">     236 </span><span class="lineCov">        160 : Susi::Events::EventPtr Susi::Events::Manager::createEvent( std::string topic ) {</span>
+<span class="lineNum">     237 </span><span class="lineCov">        260 :     auto event = Susi::Events::EventPtr {new Susi::Events::Event{topic},[this]( Event * event ) {</span>
+<span class="lineNum">     238 </span><span class="lineCov">        100 :             this-&gt;deleter( event );</span>
+<span class="lineNum">     239 </span><span class="lineCov">        100 :         }</span>
+<span class="lineNum">     240 </span><span class="lineCov">        320 :     };</span>
+<span class="lineNum">     241 </span><span class="lineCov">        160 :     return event;</span>
+<a name="242"><span class="lineNum">     242 </span>            : }</a>
+<span class="lineNum">     243 </span>            : 
+<span class="lineNum">     244 </span><span class="lineCov">       1100 : void Susi::Events::Manager::deleter( Event *event ) {</span>
+<a name="245"><span class="lineNum">     245 </span>            :     //std::cout&lt;&lt;&quot;calling deleter of &quot;&lt;&lt;event&lt;&lt;std::endl;</a>
+<span class="lineNum">     246 </span><span class="lineCov">       1100 :     if( event!=nullptr ) {</span>
+<span class="lineNum">     247 </span><span class="lineCov">       1000 :         Susi::Events::EventPtr ptr( event,[this]( Event *event ) {</span>
+<span class="lineNum">     248 </span><span class="lineCov">       1000 :             deleter( event );</span>
+<span class="lineNum">     249 </span><span class="lineCov">       2100 :         } );</span>
+<span class="lineNum">     250 </span>            :         try {
+<span class="lineNum">     251 </span><span class="lineCov">       1100 :             ack( std::move( ptr ) );</span>
+<span class="lineNum">     252 </span>            :         }
+<span class="lineNum">     253 </span><span class="lineNoCov">          0 :         catch( const std::exception &amp; e ) {</span>
+<span class="lineNum">     254 </span><span class="lineNoCov">          0 :             std::cout&lt;&lt;&quot;error in deleter:&quot;&lt;&lt;e.what()&lt;&lt;std::endl;</span>
+<a name="255"><span class="lineNum">     255 </span><span class="lineCov">       1100 :         }</span></a>
+<span class="lineNum">     256 </span>            :     }
+<span class="lineNum">     257 </span><span class="lineCov">       1103 : }</span>
 </pre>
       </td>
     </tr>

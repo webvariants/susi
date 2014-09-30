@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">3</td>
@@ -79,36 +79,36 @@
 <span class="lineNum">      17 </span>            : #include &quot;util/Any.h&quot;
 <span class="lineNum">      18 </span>            : 
 <span class="lineNum">      19 </span>            : namespace Susi {
-<span class="lineNum">      20 </span>            : namespace Api {
+<span class="lineNum">      20 </span>            :     namespace Api {
 <span class="lineNum">      21 </span>            : 
 <span class="lineNum">      22 </span>            :         class BasicApiClient : protected JSONTCPClient {
 <span class="lineNum">      23 </span>            :         protected:
 <span class="lineNum">      24 </span>            : 
-<span class="lineNum">      25 </span>            :                 virtual void onMessage(Susi::Util::Any &amp; message) override;
+<span class="lineNum">      25 </span>            :             virtual void onMessage( Susi::Util::Any &amp; message ) override;
 <a name="26"><span class="lineNum">      26 </span>            : </a>
 <span class="lineNum">      27 </span>            :         public:
-<a name="28"><span class="lineNum">      28 </span><span class="lineCov">          3 :                 BasicApiClient(std::string addr) : JSONTCPClient{addr} {}</span></a>
+<a name="28"><span class="lineNum">      28 </span><span class="lineCov">          3 :             BasicApiClient( std::string addr ) : JSONTCPClient {addr} {}</span></a>
 <span class="lineNum">      29 </span>            : 
-<span class="lineNum">      30 </span><span class="lineCov">          4 :                 virtual ~BasicApiClient(){</span>
-<span class="lineNum">      31 </span><span class="lineCov">          2 :                         close();</span>
-<a name="32"><span class="lineNum">      32 </span><span class="lineCov">          2 :                 }</span></a>
+<span class="lineNum">      30 </span><span class="lineCov">          4 :             virtual ~BasicApiClient() {</span>
+<span class="lineNum">      31 </span><span class="lineCov">          2 :                 close();</span>
+<a name="32"><span class="lineNum">      32 </span><span class="lineCov">          2 :             }</span></a>
 <span class="lineNum">      33 </span>            : 
-<span class="lineNum">      34 </span><span class="lineCov">          2 :                 void close(){</span>
-<span class="lineNum">      35 </span><span class="lineCov">          2 :                         JSONTCPClient::close();</span>
-<a name="36"><span class="lineNum">      36 </span><span class="lineCov">          2 :                 }</span></a>
+<span class="lineNum">      34 </span><span class="lineCov">          2 :             void close() {</span>
+<span class="lineNum">      35 </span><span class="lineCov">          2 :                 JSONTCPClient::close();</span>
+<a name="36"><span class="lineNum">      36 </span><span class="lineCov">          2 :             }</span></a>
 <a name="37"><span class="lineNum">      37 </span>            : </a>
-<a name="38"><span class="lineNum">      38 </span><span class="lineNoCov">          0 :                 virtual void onConsumerEvent(Susi::Events::Event &amp; event){};</span></a>
-<span class="lineNum">      39 </span><span class="lineNoCov">          0 :                 virtual void onProcessorEvent(Susi::Events::Event &amp; event){};</span>
-<span class="lineNum">      40 </span><span class="lineNoCov">          0 :                 virtual void onAck(Susi::Events::Event &amp; event){};</span>
+<a name="38"><span class="lineNum">      38 </span><span class="lineNoCov">          0 :             virtual void onConsumerEvent( Susi::Events::Event &amp; event ) {};</span></a>
+<span class="lineNum">      39 </span><span class="lineNoCov">          0 :             virtual void onProcessorEvent( Susi::Events::Event &amp; event ) {};</span>
+<span class="lineNum">      40 </span><span class="lineNoCov">          0 :             virtual void onAck( Susi::Events::Event &amp; event ) {};</span>
 <span class="lineNum">      41 </span>            : 
-<span class="lineNum">      42 </span>            :                 void sendPublish(Susi::Events::Event &amp; event);
-<span class="lineNum">      43 </span>            :                 void sendRegisterConsumer(std::string topic);
-<span class="lineNum">      44 </span>            :                 void sendRegisterProcessor(std::string topic);
-<span class="lineNum">      45 </span>            :                 void sendAck(Susi::Events::Event &amp; event);
+<span class="lineNum">      42 </span>            :             void sendPublish( Susi::Events::Event &amp; event );
+<span class="lineNum">      43 </span>            :             void sendRegisterConsumer( std::string topic );
+<span class="lineNum">      44 </span>            :             void sendRegisterProcessor( std::string topic );
+<span class="lineNum">      45 </span>            :             void sendAck( Susi::Events::Event &amp; event );
 <span class="lineNum">      46 </span>            : 
 <span class="lineNum">      47 </span>            :         };
 <span class="lineNum">      48 </span>            : 
-<span class="lineNum">      49 </span>            : }
+<span class="lineNum">      49 </span>            :     }
 <span class="lineNum">      50 </span>            : }
 <span class="lineNum">      51 </span>            : 
 <span class="lineNum">      52 </span>            : #endif // __BASICAPICLIENT__

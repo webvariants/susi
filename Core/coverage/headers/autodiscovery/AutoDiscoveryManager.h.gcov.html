@@ -31,13 +31,13 @@
             <td class="headerValue">coverage.info.cleaned</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">52</td>
-            <td class="headerCovTableEntry">57</td>
-            <td class="headerCovTableEntryHi">91.2 %</td>
+            <td class="headerCovTableEntry">53</td>
+            <td class="headerCovTableEntry">58</td>
+            <td class="headerCovTableEntryHi">91.4 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">8</td>
@@ -67,7 +67,7 @@
 <span class="lineNum">       5 </span>            :  * complete text in the attached LICENSE file or online at:
 <span class="lineNum">       6 </span>            :  *
 <span class="lineNum">       7 </span>            :  * http://www.opensource.org/licenses/mit-license.php
-<span class="lineNum">       8 </span>            :  * 
+<span class="lineNum">       8 </span>            :  *
 <span class="lineNum">       9 </span>            :  * @author: Tino Rusch (tino.rusch@webvariants.de)
 <span class="lineNum">      10 </span>            :  */
 <span class="lineNum">      11 </span>            : 
@@ -82,114 +82,117 @@
 <span class="lineNum">      20 </span>            : #include &lt;vector&gt;
 <span class="lineNum">      21 </span>            : 
 <span class="lineNum">      22 </span>            : namespace Susi {
-<span class="lineNum">      23 </span>            : namespace Autodiscovery {
+<span class="lineNum">      23 </span>            :     namespace Autodiscovery {
 <span class="lineNum">      24 </span>            : 
-<span class="lineNum">      25 </span>            : class Manager {
-<span class="lineNum">      26 </span>            : protected:      
-<span class="lineNum">      27 </span>            :         Poco::Net::SocketAddress _groupAddr;
-<span class="lineNum">      28 </span>            :         Poco::Net::NetworkInterface _interface;
-<span class="lineNum">      29 </span>            :         Poco::Net::MulticastSocket _socket;
+<span class="lineNum">      25 </span>            :         class Manager {
+<span class="lineNum">      26 </span>            :         protected:
+<span class="lineNum">      27 </span>            :             Poco::Net::SocketAddress _groupAddr;
+<span class="lineNum">      28 </span>            :             Poco::Net::NetworkInterface _interface;
+<span class="lineNum">      29 </span>            :             Poco::Net::MulticastSocket _socket;
 <span class="lineNum">      30 </span>            : 
-<span class="lineNum">      31 </span>            :         std::string _ownAddr;
+<span class="lineNum">      31 </span>            :             std::string _ownAddr;
 <span class="lineNum">      32 </span>            : 
-<span class="lineNum">      33 </span>            :         std::vector&lt;std::string&gt; _onlineList;
+<span class="lineNum">      33 </span>            :             std::vector&lt;std::string&gt; _onlineList;
 <span class="lineNum">      34 </span>            : 
-<span class="lineNum">      35 </span>            :         std::thread _runloop;
-<a name="36"><span class="lineNum">      36 </span>            :         std::atomic&lt;bool&gt; _stop{false};</a>
+<span class="lineNum">      35 </span>            :             std::thread _runloop;
+<a name="36"><span class="lineNum">      36 </span>            :             std::atomic&lt;bool&gt; _stop {false};</a>
 <span class="lineNum">      37 </span>            : 
-<span class="lineNum">      38 </span><span class="lineCov">          3 :         Poco::Net::NetworkInterface findInterface(){</span>
+<span class="lineNum">      38 </span><span class="lineCov">          3 :             Poco::Net::NetworkInterface findInterface() {</span>
 <span class="lineNum">      39 </span><span class="lineCov">          3 :                 Poco::Net::NetworkInterface::Map m = Poco::Net::NetworkInterface::map();</span>
-<span class="lineNum">      40 </span><span class="lineCov">          6 :                 for (Poco::Net::NetworkInterface::Map::const_iterator it = m.begin(); it != m.end(); ++it) {</span>
-<span class="lineNum">      41 </span><span class="lineCov">         18 :                         if (it-&gt;second.supportsIPv4() &amp;&amp; </span>
-<span class="lineNum">      42 </span><span class="lineCov">         12 :                                 it-&gt;second.firstAddress(Poco::Net::IPAddress::IPv4).isUnicast() &amp;&amp; </span>
-<span class="lineNum">      43 </span><span class="lineCov">         15 :                                 !it-&gt;second.isLoopback() &amp;&amp; </span>
-<span class="lineNum">      44 </span><span class="lineCov">          3 :                                 !it-&gt;second.isPointToPoint()) </span>
-<span class="lineNum">      45 </span>            :                         {
-<span class="lineNum">      46 </span><span class="lineCov">          3 :                                 return it-&gt;second;</span>
-<span class="lineNum">      47 </span>            :                         }
+<span class="lineNum">      40 </span><span class="lineCov">          6 :                 for( Poco::Net::NetworkInterface::Map::const_iterator it = m.begin(); it != m.end(); ++it ) {</span>
+<span class="lineNum">      41 </span><span class="lineCov">         18 :                     if( it-&gt;second.supportsIPv4() &amp;&amp;</span>
+<span class="lineNum">      42 </span><span class="lineCov">         12 :                             it-&gt;second.firstAddress( Poco::Net::IPAddress::IPv4 ).isUnicast() &amp;&amp;</span>
+<span class="lineNum">      43 </span><span class="lineCov">         15 :                             !it-&gt;second.isLoopback() &amp;&amp;</span>
+<span class="lineNum">      44 </span><span class="lineCov">          3 :                             !it-&gt;second.isPointToPoint() )</span>
+<span class="lineNum">      45 </span>            :                     {
+<span class="lineNum">      46 </span><span class="lineCov">          3 :                         return it-&gt;second;</span>
+<span class="lineNum">      47 </span>            :                     }
 <span class="lineNum">      48 </span>            :                 }
 <span class="lineNum">      49 </span><span class="lineNoCov">          0 :                 return Poco::Net::NetworkInterface();</span>
-<span class="lineNum">      50 </span>            :         }
+<span class="lineNum">      50 </span>            :             }
 <span class="lineNum">      51 </span>            : 
-<a name="52"><span class="lineNum">      52 </span>            :         virtual void onNewHost(std::string &amp; addr) = 0;</a>
+<a name="52"><span class="lineNum">      52 </span>            :             virtual void onNewHost( std::string &amp; addr ) = 0;</a>
 <span class="lineNum">      53 </span>            : 
-<span class="lineNum">      54 </span><span class="lineCov">          9 :         void send(std::string &amp; message){</span>
-<span class="lineNum">      55 </span>            :                 try{
-<span class="lineNum">      56 </span><span class="lineCov">          9 :                         _socket.sendTo(message.c_str(),message.size(), _groupAddr);</span>
-<span class="lineNum">      57 </span><span class="lineNoCov">          0 :                 }catch (Poco::Exception&amp; exc) {</span>
-<span class="lineNum">      58 </span><span class="lineNoCov">          0 :                         std::cerr &lt;&lt; &quot;Multicast: &quot; &lt;&lt; exc.displayText() &lt;&lt; std::endl;</span>
-<span class="lineNum">      59 </span>            :                 }
-<a name="60"><span class="lineNum">      60 </span><span class="lineCov">          9 :         }</span></a>
-<span class="lineNum">      61 </span>            : 
-<span class="lineNum">      62 </span><span class="lineCov">          9 :         void sendHello(){</span>
-<span class="lineNum">      63 </span><span class="lineCov">          9 :                 std::string message{&quot;hello &quot;+_ownAddr};</span>
-<span class="lineNum">      64 </span><span class="lineCov">          9 :                 send(message);</span>
-<span class="lineNum">      65 </span><span class="lineCov">          9 :         }</span>
-<span class="lineNum">      66 </span>            :         void sendBye(std::string addr){
-<span class="lineNum">      67 </span>            :                 std::string message{&quot;bye &quot;+addr};
-<span class="lineNum">      68 </span>            :                 send(message);
-<span class="lineNum">      69 </span>            :         }
-<a name="70"><span class="lineNum">      70 </span>            : </a>
-<span class="lineNum">      71 </span>            : public:
-<span class="lineNum">      72 </span><span class="lineCov">          3 :         Manager(std::string groupAddr, std::string ownAddr) : </span>
-<span class="lineNum">      73 </span>            :                 _groupAddr{groupAddr},
-<span class="lineNum">      74 </span>            :                 _interface{findInterface()},
-<span class="lineNum">      75 </span><span class="lineCov">          3 :                 _ownAddr{ownAddr}</span>
-<span class="lineNum">      76 </span>            :         {
-<span class="lineNum">      77 </span><span class="lineCov">          3 :                 _socket.bind(Poco::Net::SocketAddress{Poco::Net::IPAddress(), _groupAddr.port()}, true);</span>
-<span class="lineNum">      78 </span><span class="lineCov">          3 :                 _socket.joinGroup(_groupAddr.host(), _interface);</span>
-<a name="79"><span class="lineNum">      79 </span><span class="lineCov">          3 :         }</span></a>
-<a name="80"><span class="lineNum">      80 </span>            : </a>
-<span class="lineNum">      81 </span><span class="lineCov">          3 :         void start() {</span>
-<span class="lineNum">      82 </span><span class="lineCov">          6 :                 _runloop = std::move(std::thread{[this](){</span>
-<span class="lineNum">      83 </span><span class="lineCov">          3 :                         Poco::Timespan span(250000);</span>
-<span class="lineNum">      84 </span><span class="lineCov">          3 :                         sendHello();</span>
-<span class="lineNum">      85 </span><span class="lineCov">         38 :                         while(!_stop.load()){</span>
-<span class="lineNum">      86 </span><span class="lineCov">         33 :                                 if (_socket.poll(span, Poco::Net::Socket::SELECT_READ)) {</span>
-<span class="lineNum">      87 </span>            :                                         try {
-<span class="lineNum">      88 </span>            :                                                 char buffer[256];
-<span class="lineNum">      89 </span><span class="lineCov">         27 :                                                 Poco::Net::SocketAddress sender;</span>
-<span class="lineNum">      90 </span><span class="lineCov">         27 :                                                 int n = _socket.receiveFrom(buffer, sizeof(buffer)-1, sender);</span>
-<span class="lineNum">      91 </span><span class="lineCov">         27 :                                                 buffer[n] = 0;</span>
-<span class="lineNum">      92 </span><span class="lineCov">         54 :                                                 std::string message{buffer};</span>
-<span class="lineNum">      93 </span><span class="lineCov">         27 :                                                 if(message.find(&quot;hello&quot;)==0){</span>
-<span class="lineNum">      94 </span><span class="lineCov">         27 :                                                         std::string senderAddr = message.substr(message.find(&quot; &quot;)+1);</span>
-<span class="lineNum">      95 </span><span class="lineCov">         27 :                                                         bool allreadyKnown = false;</span>
-<span class="lineNum">      96 </span><span class="lineCov">         50 :                                                         for(auto &amp; knownAddr : _onlineList){</span>
-<span class="lineNum">      97 </span><span class="lineCov">         35 :                                                                 if(knownAddr == senderAddr){</span>
-<span class="lineNum">      98 </span><span class="lineCov">         13 :                                                                         allreadyKnown = true;</span>
-<span class="lineNum">      99 </span><span class="lineCov">         13 :                                                                         break;</span>
-<span class="lineNum">     100 </span>            :                                                                 }
-<span class="lineNum">     101 </span>            :                                                         }
-<span class="lineNum">     102 </span><span class="lineCov">         27 :                                                         if(!allreadyKnown &amp;&amp; senderAddr != _ownAddr){</span>
-<span class="lineNum">     103 </span><span class="lineCov">          6 :                                                                 _onlineList.push_back(senderAddr);</span>
-<span class="lineNum">     104 </span><span class="lineCov">          6 :                                                                 sendHello();</span>
-<span class="lineNum">     105 </span><span class="lineCov">          6 :                                                                 onNewHost(senderAddr);</span>
-<span class="lineNum">     106 </span><span class="lineCov">         27 :                                                         }</span>
-<span class="lineNum">     107 </span><span class="lineCov">         27 :                                                 }</span>
-<span class="lineNum">     108 </span><span class="lineNoCov">          0 :                                         } catch (Poco::Exception&amp; exc) {</span>
-<span class="lineNum">     109 </span><span class="lineNoCov">          0 :                                                 std::cerr &lt;&lt; &quot;Multicast: &quot; &lt;&lt; exc.displayText() &lt;&lt; std::endl;</span>
-<span class="lineNum">     110 </span>            :                                         }
-<span class="lineNum">     111 </span>            :                                 }
-<span class="lineNum">     112 </span>            :                         }
-<span class="lineNum">     113 </span><span class="lineCov">          9 :                 }});</span>
-<a name="114"><span class="lineNum">     114 </span><span class="lineCov">          3 :         }</span></a>
-<span class="lineNum">     115 </span>            : 
-<span class="lineNum">     116 </span><span class="lineCov">          6 :         void stop() {</span>
-<span class="lineNum">     117 </span><span class="lineCov">          6 :                 _stop.store(true);</span>
-<span class="lineNum">     118 </span><span class="lineCov">          6 :                 if(_runloop.joinable())_runloop.join();</span>
-<a name="119"><span class="lineNum">     119 </span><span class="lineCov">          6 :         }</span></a>
-<span class="lineNum">     120 </span>            : 
-<span class="lineNum">     121 </span><span class="lineCov">          6 :         ~Manager(){</span>
-<span class="lineNum">     122 </span><span class="lineCov">          3 :                 stop();</span>
-<span class="lineNum">     123 </span><span class="lineCov">          3 :         }</span>
-<span class="lineNum">     124 </span>            : 
-<span class="lineNum">     125 </span>            : };
-<span class="lineNum">     126 </span>            : 
-<span class="lineNum">     127 </span>            : }
-<span class="lineNum">     128 </span>            : }
+<span class="lineNum">      54 </span><span class="lineCov">          9 :             void send( std::string &amp; message ) {</span>
+<span class="lineNum">      55 </span>            :                 try {
+<span class="lineNum">      56 </span><span class="lineCov">          9 :                     _socket.sendTo( message.c_str(),message.size(), _groupAddr );</span>
+<span class="lineNum">      57 </span>            :                 }
+<span class="lineNum">      58 </span><span class="lineNoCov">          0 :                 catch( Poco::Exception&amp; exc ) {</span>
+<span class="lineNum">      59 </span><span class="lineNoCov">          0 :                     std::cerr &lt;&lt; &quot;Multicast: &quot; &lt;&lt; exc.displayText() &lt;&lt; std::endl;</span>
+<span class="lineNum">      60 </span>            :                 }
+<a name="61"><span class="lineNum">      61 </span><span class="lineCov">          9 :             }</span></a>
+<span class="lineNum">      62 </span>            : 
+<span class="lineNum">      63 </span><span class="lineCov">          9 :             void sendHello() {</span>
+<span class="lineNum">      64 </span><span class="lineCov">          9 :                 std::string message {&quot;hello &quot;+_ownAddr};</span>
+<span class="lineNum">      65 </span><span class="lineCov">          9 :                 send( message );</span>
+<span class="lineNum">      66 </span><span class="lineCov">          9 :             }</span>
+<span class="lineNum">      67 </span>            :             void sendBye( std::string addr ) {
+<span class="lineNum">      68 </span>            :                 std::string message {&quot;bye &quot;+addr};
+<span class="lineNum">      69 </span>            :                 send( message );
+<span class="lineNum">      70 </span>            :             }
+<a name="71"><span class="lineNum">      71 </span>            : </a>
+<span class="lineNum">      72 </span>            :         public:
+<span class="lineNum">      73 </span><span class="lineCov">          3 :             Manager( std::string groupAddr, std::string ownAddr ) :</span>
+<span class="lineNum">      74 </span>            :                 _groupAddr {groupAddr},
+<span class="lineNum">      75 </span>            :                        _interface {findInterface()},
+<span class="lineNum">      76 </span><span class="lineCov">          3 :             _ownAddr {ownAddr}</span>
+<span class="lineNum">      77 </span>            :             {
+<span class="lineNum">      78 </span><span class="lineCov">          3 :                 _socket.bind( Poco::Net::SocketAddress{Poco::Net::IPAddress(), _groupAddr.port()}, true );</span>
+<span class="lineNum">      79 </span><span class="lineCov">          3 :                 _socket.joinGroup( _groupAddr.host(), _interface );</span>
+<a name="80"><span class="lineNum">      80 </span><span class="lineCov">          3 :             }</span></a>
+<a name="81"><span class="lineNum">      81 </span>            : </a>
+<span class="lineNum">      82 </span><span class="lineCov">          3 :             void start() {</span>
+<span class="lineNum">      83 </span><span class="lineCov">          6 :                 _runloop = std::move( std::thread {[this]() {</span>
+<span class="lineNum">      84 </span><span class="lineCov">          3 :                     Poco::Timespan span( 250000 );</span>
+<span class="lineNum">      85 </span><span class="lineCov">          3 :                     sendHello();</span>
+<span class="lineNum">      86 </span><span class="lineCov">         38 :                     while( !_stop.load() ) {</span>
+<span class="lineNum">      87 </span><span class="lineCov">         33 :                         if( _socket.poll( span, Poco::Net::Socket::SELECT_READ ) ) {</span>
+<span class="lineNum">      88 </span>            :                             try {
+<span class="lineNum">      89 </span>            :                                 char buffer[256];
+<span class="lineNum">      90 </span><span class="lineCov">         27 :                                 Poco::Net::SocketAddress sender;</span>
+<span class="lineNum">      91 </span><span class="lineCov">         27 :                                 int n = _socket.receiveFrom( buffer, sizeof( buffer )-1, sender );</span>
+<span class="lineNum">      92 </span><span class="lineCov">         27 :                                 buffer[n] = 0;</span>
+<span class="lineNum">      93 </span><span class="lineCov">         54 :                                 std::string message {buffer};</span>
+<span class="lineNum">      94 </span><span class="lineCov">         27 :                                 if( message.find( &quot;hello&quot; )==0 ) {</span>
+<span class="lineNum">      95 </span><span class="lineCov">         27 :                                     std::string senderAddr = message.substr( message.find( &quot; &quot; )+1 );</span>
+<span class="lineNum">      96 </span><span class="lineCov">         27 :                                     bool allreadyKnown = false;</span>
+<span class="lineNum">      97 </span><span class="lineCov">         49 :                                     for( auto &amp; knownAddr : _onlineList ) {</span>
+<span class="lineNum">      98 </span><span class="lineCov">         34 :                                         if( knownAddr == senderAddr ) {</span>
+<span class="lineNum">      99 </span><span class="lineCov">         12 :                                             allreadyKnown = true;</span>
+<span class="lineNum">     100 </span><span class="lineCov">         12 :                                             break;</span>
+<span class="lineNum">     101 </span>            :                                         }
+<span class="lineNum">     102 </span>            :                                     }
+<span class="lineNum">     103 </span><span class="lineCov">         27 :                                     if( !allreadyKnown &amp;&amp; senderAddr != _ownAddr ) {</span>
+<span class="lineNum">     104 </span><span class="lineCov">          6 :                                         _onlineList.push_back( senderAddr );</span>
+<span class="lineNum">     105 </span><span class="lineCov">          6 :                                         sendHello();</span>
+<span class="lineNum">     106 </span><span class="lineCov">          6 :                                         onNewHost( senderAddr );</span>
+<span class="lineNum">     107 </span><span class="lineCov">         27 :                                     }</span>
+<span class="lineNum">     108 </span><span class="lineCov">         27 :                                 }</span>
+<span class="lineNum">     109 </span>            :                             }
+<span class="lineNum">     110 </span><span class="lineNoCov">          0 :                             catch( Poco::Exception&amp; exc ) {</span>
+<span class="lineNum">     111 </span><span class="lineNoCov">          0 :                                 std::cerr &lt;&lt; &quot;Multicast: &quot; &lt;&lt; exc.displayText() &lt;&lt; std::endl;</span>
+<span class="lineNum">     112 </span>            :                             }
+<span class="lineNum">     113 </span>            :                         }
+<span class="lineNum">     114 </span>            :                     }
+<span class="lineNum">     115 </span><span class="lineCov">          3 :                 }</span>
+<span class="lineNum">     116 </span><span class="lineCov">          6 :                                                   } );</span>
+<a name="117"><span class="lineNum">     117 </span><span class="lineCov">          3 :             }</span></a>
+<span class="lineNum">     118 </span>            : 
+<span class="lineNum">     119 </span><span class="lineCov">          6 :             void stop() {</span>
+<span class="lineNum">     120 </span><span class="lineCov">          6 :                 _stop.store( true );</span>
+<span class="lineNum">     121 </span><span class="lineCov">          6 :                 if( _runloop.joinable() )_runloop.join();</span>
+<a name="122"><span class="lineNum">     122 </span><span class="lineCov">          6 :             }</span></a>
+<span class="lineNum">     123 </span>            : 
+<span class="lineNum">     124 </span><span class="lineCov">          6 :             ~Manager() {</span>
+<span class="lineNum">     125 </span><span class="lineCov">          3 :                 stop();</span>
+<span class="lineNum">     126 </span><span class="lineCov">          3 :             }</span>
+<span class="lineNum">     127 </span>            : 
+<span class="lineNum">     128 </span>            :         };
 <span class="lineNum">     129 </span>            : 
-<span class="lineNum">     130 </span>            : #endif // __AUTODISCOVERYMANAGER__
+<span class="lineNum">     130 </span>            :     }
+<span class="lineNum">     131 </span>            : }
+<span class="lineNum">     132 </span>            : 
+<span class="lineNum">     133 </span>            : #endif // __AUTODISCOVERYMANAGER__
 </pre>
       </td>
     </tr>

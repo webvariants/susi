@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">17</td>
@@ -80,50 +80,56 @@
 <span class="lineNum">      18 </span>            : 
 <span class="lineNum">      19 </span>            : #include &lt;functional&gt;
 <span class="lineNum">      20 </span>            : 
-<span class="lineNum">      21 </span>            : namespace Susi {
-<a name="22"><span class="lineNum">      22 </span>            : namespace System {</a>
-<span class="lineNum">      23 </span>            : 
-<span class="lineNum">      24 </span><span class="lineCov">         75 :         class ComponentManager {</span>
-<a name="25"><span class="lineNum">      25 </span>            :         protected:</a>
-<span class="lineNum">      26 </span>            :                 typedef std::function&lt;std::shared_ptr&lt;Component&gt;(ComponentManager * mgr, Susi::Util::Any &amp; config)&gt; RegisterFunction;
-<span class="lineNum">      27 </span><span class="lineCov">       1163 :                 struct ComponentData {</span>
-<span class="lineNum">      28 </span>            :                         std::shared_ptr&lt;Component&gt; component{nullptr};
-<span class="lineNum">      29 </span>            :                         bool running = false;
-<span class="lineNum">      30 </span>            :                 };
-<span class="lineNum">      31 </span>            :                 Susi::Util::Any::Object config;
-<span class="lineNum">      32 </span>            :                 std::map&lt;std::string,RegisterFunction&gt; registerFunctions;
-<span class="lineNum">      33 </span>            :                 std::map&lt;std::string,ComponentData&gt; components;
-<span class="lineNum">      34 </span>            :                 std::map&lt;std::string,std::vector&lt;std::string&gt;&gt; dependencies;
-<span class="lineNum">      35 </span>            :                 std::map&lt;std::string,std::vector&lt;std::string&gt;&gt; inverseDependencies;
-<a name="36"><span class="lineNum">      36 </span>            :         public:</a>
-<span class="lineNum">      37 </span>            : 
-<span class="lineNum">      38 </span><span class="lineCov">         75 :                 ComponentManager(Susi::Util::Any::Object config) : config{config} {}</span>
-<span class="lineNum">      39 </span>            : 
-<span class="lineNum">      40 </span>            :                 void registerComponent(std::string name, RegisterFunction func);
-<span class="lineNum">      41 </span>            :                 void registerDependency(std::string subject, std::string dependency);
-<span class="lineNum">      42 </span>            :                 bool loadComponent(std::string name);
-<span class="lineNum">      43 </span>            :                 bool unloadComponent(std::string name);
-<span class="lineNum">      44 </span>            :                 bool startComponent(std::string name);
-<span class="lineNum">      45 </span>            :                 bool stopComponent(std::string name);
-<span class="lineNum">      46 </span>            : 
-<span class="lineNum">      47 </span>            : 
-<span class="lineNum">      48 </span>            :                 bool startAll();
-<span class="lineNum">      49 </span>            :                 bool stopAll();
-<a name="50"><span class="lineNum">      50 </span>            : </a>
-<span class="lineNum">      51 </span>            :                 template&lt;class T=Component&gt;
-<span class="lineNum">      52 </span><span class="lineCov">        283 :                 std::shared_ptr&lt;T&gt; getComponent(std::string name){</span>
-<span class="lineNum">      53 </span><span class="lineCov">        283 :                         if(components.find(name) == components.end() &amp;&amp; !loadComponent(name)){</span>
-<span class="lineNum">      54 </span><span class="lineNoCov">          0 :                                 return std::shared_ptr&lt;T&gt;{};</span>
-<span class="lineNum">      55 </span>            :                         }
-<span class="lineNum">      56 </span><span class="lineCov">        283 :                         return std::dynamic_pointer_cast&lt;T&gt;(components[name].component);</span>
-<span class="lineNum">      57 </span>            :                 }
-<span class="lineNum">      58 </span>            :         };
-<span class="lineNum">      59 </span>            : }
-<span class="lineNum">      60 </span>            : 
-<span class="lineNum">      61 </span>            : 
-<span class="lineNum">      62 </span>            : }
-<span class="lineNum">      63 </span>            : 
-<span class="lineNum">      64 </span>            : #endif // __COMPONENTMANAGER__
+<span class="lineNum">      21 </span>            : namespace Susi
+<span class="lineNum">      22 </span>            : {
+<span class="lineNum">      23 </span>            :     namespace System
+<a name="24"><span class="lineNum">      24 </span>            :     {</a>
+<span class="lineNum">      25 </span>            : 
+<span class="lineNum">      26 </span><span class="lineCov">         79 :         class ComponentManager</span>
+<span class="lineNum">      27 </span>            :         {
+<a name="28"><span class="lineNum">      28 </span>            :         protected:</a>
+<span class="lineNum">      29 </span>            :             typedef std::function&lt;std::shared_ptr&lt;Component&gt;( ComponentManager * mgr, Susi::Util::Any &amp; config )&gt; RegisterFunction;
+<span class="lineNum">      30 </span><span class="lineCov">       1217 :             struct ComponentData</span>
+<span class="lineNum">      31 </span>            :             {
+<span class="lineNum">      32 </span>            :                 std::shared_ptr&lt;Component&gt; component {nullptr};
+<span class="lineNum">      33 </span>            :                 bool running = false;
+<span class="lineNum">      34 </span>            :             };
+<span class="lineNum">      35 </span>            :             Susi::Util::Any::Object config;
+<span class="lineNum">      36 </span>            :             std::map&lt;std::string,RegisterFunction&gt; registerFunctions;
+<span class="lineNum">      37 </span>            :             std::map&lt;std::string,ComponentData&gt; components;
+<span class="lineNum">      38 </span>            :             std::map&lt;std::string,std::vector&lt;std::string&gt;&gt; dependencies;
+<span class="lineNum">      39 </span>            :             std::map&lt;std::string,std::vector&lt;std::string&gt;&gt; inverseDependencies;
+<a name="40"><span class="lineNum">      40 </span>            :         public:</a>
+<span class="lineNum">      41 </span>            : 
+<span class="lineNum">      42 </span><span class="lineCov">         79 :             ComponentManager( Susi::Util::Any::Object config ) : config {config} {}</span>
+<span class="lineNum">      43 </span>            : 
+<span class="lineNum">      44 </span>            :             void registerComponent( std::string name, RegisterFunction func );
+<span class="lineNum">      45 </span>            :             void registerDependency( std::string subject, std::string dependency );
+<span class="lineNum">      46 </span>            :             bool loadComponent( std::string name );
+<span class="lineNum">      47 </span>            :             bool unloadComponent( std::string name );
+<span class="lineNum">      48 </span>            :             bool startComponent( std::string name );
+<span class="lineNum">      49 </span>            :             bool stopComponent( std::string name );
+<span class="lineNum">      50 </span>            : 
+<span class="lineNum">      51 </span>            : 
+<span class="lineNum">      52 </span>            :             bool startAll();
+<span class="lineNum">      53 </span>            :             bool stopAll();
+<a name="54"><span class="lineNum">      54 </span>            : </a>
+<span class="lineNum">      55 </span>            :             template&lt;class T=Component&gt;
+<span class="lineNum">      56 </span><span class="lineCov">        304 :             std::shared_ptr&lt;T&gt; getComponent( std::string name )</span>
+<span class="lineNum">      57 </span>            :             {
+<span class="lineNum">      58 </span><span class="lineCov">        304 :                 if( components.find( name ) == components.end() &amp;&amp; !loadComponent( name ) )</span>
+<span class="lineNum">      59 </span>            :                 {
+<span class="lineNum">      60 </span><span class="lineNoCov">          0 :                     return std::shared_ptr&lt;T&gt; {};</span>
+<span class="lineNum">      61 </span>            :                 }
+<span class="lineNum">      62 </span><span class="lineCov">        304 :                 return std::dynamic_pointer_cast&lt;T&gt;( components[name].component );</span>
+<span class="lineNum">      63 </span>            :             }
+<span class="lineNum">      64 </span>            :         };
+<span class="lineNum">      65 </span>            :     }
+<span class="lineNum">      66 </span>            : 
+<span class="lineNum">      67 </span>            : 
+<span class="lineNum">      68 </span>            : }
+<span class="lineNum">      69 </span>            : 
+<span class="lineNum">      70 </span>            : #endif // __COMPONENTMANAGER__
 </pre>
       </td>
     </tr>

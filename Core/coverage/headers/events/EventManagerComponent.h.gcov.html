@@ -31,13 +31,13 @@
             <td class="headerValue">coverage.info.cleaned</td>
             <td></td>
             <td class="headerItem">Lines:</td>
-            <td class="headerCovTableEntry">18</td>
-            <td class="headerCovTableEntry">19</td>
-            <td class="headerCovTableEntryHi">94.7 %</td>
+            <td class="headerCovTableEntry">20</td>
+            <td class="headerCovTableEntry">23</td>
+            <td class="headerCovTableEntryMed">87.0 %</td>
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">6</td>
@@ -80,46 +80,50 @@
 <span class="lineNum">      18 </span>            : #include &quot;world/Component.h&quot;
 <span class="lineNum">      19 </span>            : 
 <span class="lineNum">      20 </span>            : namespace Susi {
-<span class="lineNum">      21 </span>            : namespace Events {
+<span class="lineNum">      21 </span>            :     namespace Events {
 <span class="lineNum">      22 </span>            : 
-<span class="lineNum">      23 </span>            : class ManagerComponent : public Manager, public Susi::System::Component
-<span class="lineNum">      24 </span>            : {
-<span class="lineNum">      25 </span>            : protected:
-<span class="lineNum">      26 </span>            :         std::atomic&lt;bool&gt; noPublish;
-<a name="27"><span class="lineNum">      27 </span>            :         std::mutex mutex;</a>
-<span class="lineNum">      28 </span>            : public:
-<a name="29"><span class="lineNum">      29 </span><span class="lineCov">         67 :         ManagerComponent(size_t workers = 4, size_t buffsize = 32) : Manager{workers, buffsize} , noPublish{true}{}</span></a>
+<span class="lineNum">      23 </span>            :         class ManagerComponent : public Manager, public Susi::System::Component
+<span class="lineNum">      24 </span>            :         {
+<span class="lineNum">      25 </span>            :         protected:
+<span class="lineNum">      26 </span>            :             std::atomic&lt;bool&gt; noPublish;
+<a name="27"><span class="lineNum">      27 </span>            :             std::mutex mutex;</a>
+<span class="lineNum">      28 </span>            :         public:
+<a name="29"><span class="lineNum">      29 </span><span class="lineCov">         71 :             ManagerComponent( size_t workers = 4, size_t buffsize = 32 ) : Manager {workers, buffsize} , noPublish {true} {}</span></a>
 <span class="lineNum">      30 </span>            : 
-<span class="lineNum">      31 </span><span class="lineCov">        150 :         void publish(EventPtr event, Consumer finishCallback = Consumer{}) {</span>
-<span class="lineNum">      32 </span><span class="lineCov">        150 :                 if(noPublish.load()) {</span>
-<span class="lineNum">      33 </span><span class="lineCov">          1 :                         std::shared_ptr&lt;Event&gt; sharedEvent{event.release()};</span>
-<span class="lineNum">      34 </span><span class="lineCov">          1 :                         finishCallback(sharedEvent);</span>
-<span class="lineNum">      35 </span><span class="lineCov">        151 :                         return;</span>
+<span class="lineNum">      31 </span><span class="lineCov">        142 :             void publish( EventPtr event, Consumer finishCallback = Consumer {} ) {</span>
+<span class="lineNum">      32 </span><span class="lineCov">        142 :                 if( noPublish.load() ) {</span>
+<span class="lineNum">      33 </span><span class="lineCov">          1 :                     std::shared_ptr&lt;Event&gt; sharedEvent {event.release()};</span>
+<span class="lineNum">      34 </span><span class="lineCov">          1 :                     finishCallback( sharedEvent );</span>
+<span class="lineNum">      35 </span><span class="lineCov">        143 :                     return;</span>
 <span class="lineNum">      36 </span>            :                 }
-<span class="lineNum">      37 </span><span class="lineCov">        149 :                 Manager::publish(std::move(event), std::move(finishCallback));</span>
-<a name="38"><span class="lineNum">      38 </span>            :         }</a>
+<span class="lineNum">      37 </span><span class="lineCov">        141 :                 Manager::publish( std::move( event ), std::move( finishCallback ) );</span>
+<a name="38"><span class="lineNum">      38 </span>            :             }</a>
 <span class="lineNum">      39 </span>            : 
-<span class="lineNum">      40 </span><span class="lineCov">         67 :         virtual void start() override {</span>
-<span class="lineNum">      41 </span><span class="lineCov">         67 :                 noPublish.store(false);</span>
-<a name="42"><span class="lineNum">      42 </span><span class="lineCov">         67 :         }</span></a>
+<span class="lineNum">      40 </span><span class="lineCov">         71 :             virtual void start() override {</span>
+<span class="lineNum">      41 </span><span class="lineCov">         71 :                 noPublish.store( false );</span>
+<a name="42"><span class="lineNum">      42 </span><span class="lineCov">         71 :             }</span></a>
 <span class="lineNum">      43 </span>            : 
-<span class="lineNum">      44 </span><span class="lineCov">         85 :         virtual void stop() override {</span>
-<span class="lineNum">      45 </span><span class="lineCov">         85 :                 if(!noPublish.load()) {</span>
-<span class="lineNum">      46 </span><span class="lineCov">         67 :                         noPublish.store(true);</span>
-<a name="47"><span class="lineNum">      47 </span><span class="lineCov">         67 :                         std::unique_lock&lt;std::mutex&gt; lk(mutex);</span></a>
-<span class="lineNum">      48 </span><span class="lineCov">         67 :                         if(publishProcesses.size()&gt;0){</span>
-<span class="lineNum">      49 </span><span class="lineNoCov">          0 :                                 publishFinished.wait(lk,[this](){return publishProcesses.size() == 0;});</span>
-<span class="lineNum">      50 </span><span class="lineCov">         67 :                         }</span>
-<span class="lineNum">      51 </span>            :                 }
-<a name="52"><span class="lineNum">      52 </span><span class="lineCov">         85 :         }</span></a>
-<span class="lineNum">      53 </span>            : 
-<span class="lineNum">      54 </span><span class="lineCov">        134 :         virtual ~ManagerComponent() {stop();}</span>
-<span class="lineNum">      55 </span>            : };
-<span class="lineNum">      56 </span>            : 
-<span class="lineNum">      57 </span>            : }
-<span class="lineNum">      58 </span>            : }
-<span class="lineNum">      59 </span>            : 
-<span class="lineNum">      60 </span>            : #endif // __EVENTMANAGERCOMPONENT__
+<span class="lineNum">      44 </span><span class="lineCov">         93 :             virtual void stop() override {</span>
+<span class="lineNum">      45 </span><span class="lineCov">         93 :                 if( !noPublish.load() ) {</span>
+<span class="lineNum">      46 </span><span class="lineCov">         71 :                     noPublish.store( true );</span>
+<a name="47"><span class="lineNum">      47 </span><span class="lineCov">         71 :                     std::unique_lock&lt;std::mutex&gt; lk( mutex );</span></a>
+<span class="lineNum">      48 </span><span class="lineCov">         71 :                     if( publishProcesses.size()&gt;0 ) {</span>
+<span class="lineNum">      49 </span><span class="lineNoCov">          0 :                         publishFinished.wait( lk,[this]() {</span>
+<span class="lineNum">      50 </span><span class="lineNoCov">          0 :                             return publishProcesses.size() == 0;</span>
+<span class="lineNum">      51 </span><span class="lineNoCov">          0 :                         } );</span>
+<span class="lineNum">      52 </span><span class="lineCov">         71 :                     }</span>
+<span class="lineNum">      53 </span>            :                 }
+<a name="54"><span class="lineNum">      54 </span><span class="lineCov">         93 :             }</span></a>
+<span class="lineNum">      55 </span>            : 
+<span class="lineNum">      56 </span><span class="lineCov">        213 :             virtual ~ManagerComponent() {</span>
+<span class="lineNum">      57 </span><span class="lineCov">         71 :                 stop();</span>
+<span class="lineNum">      58 </span><span class="lineCov">        142 :             }</span>
+<span class="lineNum">      59 </span>            :         };
+<span class="lineNum">      60 </span>            : 
+<span class="lineNum">      61 </span>            :     }
+<span class="lineNum">      62 </span>            : }
+<span class="lineNum">      63 </span>            : 
+<span class="lineNum">      64 </span>            : #endif // __EVENTMANAGERCOMPONENT__
 </pre>
       </td>
     </tr>

@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">1</td>
@@ -67,7 +67,7 @@
 <span class="lineNum">       5 </span>            :  * complete text in the attached LICENSE file or online at:
 <span class="lineNum">       6 </span>            :  *
 <span class="lineNum">       7 </span>            :  * http://www.opensource.org/licenses/mit-license.php
-<span class="lineNum">       8 </span>            :  * 
+<span class="lineNum">       8 </span>            :  *
 <span class="lineNum">       9 </span>            :  * @author: Thomas Krause (thomas.krause@webvariants.de)
 <span class="lineNum">      10 </span>            :  */
 <span class="lineNum">      11 </span>            : 
@@ -77,17 +77,17 @@
 <span class="lineNum">      15 </span>            : #include &lt;string&gt;
 <span class="lineNum">      16 </span>            : 
 <a name="17"><span class="lineNum">      17 </span>            : namespace Susi {</a>
-<span class="lineNum">      18 </span>            :         namespace Util {
-<span class="lineNum">      19 </span><span class="lineCov">          7 :                 class Glob {</span>
-<span class="lineNum">      20 </span>            :                         protected:
-<span class="lineNum">      21 </span>            :                                 std::string _pattern;
-<span class="lineNum">      22 </span>            :                         public:         
-<span class="lineNum">      23 </span>            :                                 Glob(std::string pattern);
-<span class="lineNum">      24 </span>            :                                 bool match(std::string str);
+<span class="lineNum">      18 </span>            :     namespace Util {
+<span class="lineNum">      19 </span><span class="lineCov">          9 :         class Glob {</span>
+<span class="lineNum">      20 </span>            :         protected:
+<span class="lineNum">      21 </span>            :             std::string _pattern;
+<span class="lineNum">      22 </span>            :         public:
+<span class="lineNum">      23 </span>            :             Glob( std::string pattern );
+<span class="lineNum">      24 </span>            :             bool match( std::string str );
 <span class="lineNum">      25 </span>            : 
-<span class="lineNum">      26 </span>            :                                 static bool isGlob(std::string pattern);
-<span class="lineNum">      27 </span>            :                 };
-<span class="lineNum">      28 </span>            :         }
+<span class="lineNum">      26 </span>            :             static bool isGlob( std::string pattern );
+<span class="lineNum">      27 </span>            :         };
+<span class="lineNum">      28 </span>            :     }
 <span class="lineNum">      29 </span>            : }
 <span class="lineNum">      30 </span>            : 
 <span class="lineNum">      31 </span>            : #endif // __GLOB__

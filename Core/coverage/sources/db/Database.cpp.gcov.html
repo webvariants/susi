@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">3</td>
@@ -62,42 +62,42 @@
 <pre class="source">
 <a name="1"><span class="lineNum">       1 </span>            : #include &quot;db/Database.h&quot;</a>
 <span class="lineNum">       2 </span>            : 
-<span class="lineNum">       3 </span><span class="lineCov">         33 : Susi::Util::Any Susi::DB::Database::query(std::string query){</span>
-<span class="lineNum">       4 </span><span class="lineCov">         34 :         soci::rowset&lt;soci::row&gt; rows = (session.prepare &lt;&lt; query);</span>
-<span class="lineNum">       5 </span><span class="lineCov">         32 :         Susi::Util::Any results{Susi::Util::Any::Array{}};</span>
+<span class="lineNum">       3 </span><span class="lineCov">         45 : Susi::Util::Any Susi::DB::Database::query( std::string query ) {</span>
+<span class="lineNum">       4 </span><span class="lineCov">         52 :     soci::rowset&lt;soci::row&gt; rows = ( session.prepare &lt;&lt; query );</span>
+<span class="lineNum">       5 </span><span class="lineCov">         38 :     Susi::Util::Any results {Susi::Util::Any::Array{}};</span>
 <span class="lineNum">       6 </span>            : 
-<span class="lineNum">       7 </span><span class="lineCov">         40 :         for(soci::row &amp; row : rows){</span>
-<span class="lineNum">       8 </span><span class="lineCov">          8 :                 Susi::Util::Any entry{Susi::Util::Any::Object{}};</span>
-<span class="lineNum">       9 </span><span class="lineCov">         18 :                 for(std::size_t i = 0; i != row.size(); ++i){</span>
-<span class="lineNum">      10 </span><span class="lineCov">         10 :                         const soci::column_properties &amp; props = row.get_properties(i);</span>
-<span class="lineNum">      11 </span><span class="lineCov">         10 :                         std::string name = props.get_name();</span>
-<span class="lineNum">      12 </span><span class="lineCov">         20 :                         Susi::Util::Any value;</span>
-<span class="lineNum">      13 </span><span class="lineCov">         10 :                         switch(props.get_data_type()){</span>
-<span class="lineNum">      14 </span>            :                                 case soci::dt_string:
-<span class="lineNum">      15 </span><span class="lineCov">          4 :                                         value = row.get&lt;std::string&gt;(i);</span>
-<span class="lineNum">      16 </span><span class="lineCov">          4 :                                         break;</span>
-<span class="lineNum">      17 </span>            :                                 case soci::dt_double:
-<span class="lineNum">      18 </span><span class="lineNoCov">          0 :                                         value = row.get&lt;double&gt;(i);</span>
-<span class="lineNum">      19 </span><span class="lineNoCov">          0 :                                         break;</span>
-<span class="lineNum">      20 </span>            :                                 case soci::dt_integer:
-<span class="lineNum">      21 </span><span class="lineCov">          6 :                                         value = row.get&lt;int&gt;(i);</span>
-<span class="lineNum">      22 </span><span class="lineCov">          6 :                                         break;</span>
-<span class="lineNum">      23 </span>            :                                 case soci::dt_long_long:
-<span class="lineNum">      24 </span><span class="lineNoCov">          0 :                                         value = row.get&lt;long long&gt;(i);</span>
-<span class="lineNum">      25 </span><span class="lineNoCov">          0 :                                         break;</span>
-<span class="lineNum">      26 </span>            :                                 case soci::dt_unsigned_long_long:
-<span class="lineNum">      27 </span><span class="lineNoCov">          0 :                                         value = static_cast&lt;long long&gt;(row.get&lt;unsigned long long&gt;(i));</span>
-<span class="lineNum">      28 </span><span class="lineNoCov">          0 :                                         break;</span>
-<span class="lineNum">      29 </span>            :                                 case soci::dt_date:
-<span class="lineNum">      30 </span><span class="lineNoCov">          0 :                                         std::tm when = row.get&lt;std::tm&gt;(i);</span>
-<span class="lineNum">      31 </span><span class="lineNoCov">          0 :                                         value = asctime(&amp;when);</span>
-<span class="lineNum">      32 </span><span class="lineNoCov">          0 :                                         break;</span>
-<span class="lineNum">      33 </span>            :                         }
-<span class="lineNum">      34 </span><span class="lineCov">         10 :                         entry[name] = value;</span>
-<span class="lineNum">      35 </span><span class="lineCov">         10 :                 }</span>
-<span class="lineNum">      36 </span><span class="lineCov">          8 :                 results.push_back(entry);</span>
-<a name="37"><span class="lineNum">      37 </span><span class="lineCov">          8 :         }</span></a>
-<span class="lineNum">      38 </span><span class="lineCov">         32 :         return results;</span>
+<span class="lineNum">       7 </span><span class="lineCov">         46 :     for( soci::row &amp; row : rows ) {</span>
+<span class="lineNum">       8 </span><span class="lineCov">          8 :         Susi::Util::Any entry {Susi::Util::Any::Object{}};</span>
+<span class="lineNum">       9 </span><span class="lineCov">         24 :         for( std::size_t i = 0; i != row.size(); ++i ) {</span>
+<span class="lineNum">      10 </span><span class="lineCov">         16 :             const soci::column_properties &amp; props = row.get_properties( i );</span>
+<span class="lineNum">      11 </span><span class="lineCov">         16 :             std::string name = props.get_name();</span>
+<span class="lineNum">      12 </span><span class="lineCov">         32 :             Susi::Util::Any value;</span>
+<span class="lineNum">      13 </span><span class="lineCov">         16 :             switch( props.get_data_type() ) {</span>
+<span class="lineNum">      14 </span>            :                 case soci::dt_string:
+<span class="lineNum">      15 </span><span class="lineCov">         10 :                     value = row.get&lt;std::string&gt;( i );</span>
+<span class="lineNum">      16 </span><span class="lineCov">         10 :                     break;</span>
+<span class="lineNum">      17 </span>            :                 case soci::dt_double:
+<span class="lineNum">      18 </span><span class="lineNoCov">          0 :                     value = row.get&lt;double&gt;( i );</span>
+<span class="lineNum">      19 </span><span class="lineNoCov">          0 :                     break;</span>
+<span class="lineNum">      20 </span>            :                 case soci::dt_integer:
+<span class="lineNum">      21 </span><span class="lineCov">          6 :                     value = row.get&lt;int&gt;( i );</span>
+<span class="lineNum">      22 </span><span class="lineCov">          6 :                     break;</span>
+<span class="lineNum">      23 </span>            :                 case soci::dt_long_long:
+<span class="lineNum">      24 </span><span class="lineNoCov">          0 :                     value = row.get&lt;long long&gt;( i );</span>
+<span class="lineNum">      25 </span><span class="lineNoCov">          0 :                     break;</span>
+<span class="lineNum">      26 </span>            :                 case soci::dt_unsigned_long_long:
+<span class="lineNum">      27 </span><span class="lineNoCov">          0 :                     value = static_cast&lt;long long&gt;( row.get&lt;unsigned long long&gt;( i ) );</span>
+<span class="lineNum">      28 </span><span class="lineNoCov">          0 :                     break;</span>
+<span class="lineNum">      29 </span>            :                 case soci::dt_date:
+<span class="lineNum">      30 </span><span class="lineNoCov">          0 :                     std::tm when = row.get&lt;std::tm&gt;( i );</span>
+<span class="lineNum">      31 </span><span class="lineNoCov">          0 :                     value = asctime( &amp;when );</span>
+<span class="lineNum">      32 </span><span class="lineNoCov">          0 :                     break;</span>
+<span class="lineNum">      33 </span>            :             }
+<span class="lineNum">      34 </span><span class="lineCov">         16 :             entry[name] = value;</span>
+<span class="lineNum">      35 </span><span class="lineCov">         16 :         }</span>
+<span class="lineNum">      36 </span><span class="lineCov">          8 :         results.push_back( entry );</span>
+<a name="37"><span class="lineNum">      37 </span><span class="lineCov">          8 :     }</span></a>
+<span class="lineNum">      38 </span><span class="lineCov">         38 :     return results;</span>
 <span class="lineNum">      39 </span><span class="lineCov">          3 : }</span>
 </pre>
       </td>

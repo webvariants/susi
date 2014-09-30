@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">1</td>
@@ -67,7 +67,7 @@
 <span class="lineNum">       5 </span>            :  * complete text in the attached LICENSE file or online at:
 <span class="lineNum">       6 </span>            :  *
 <span class="lineNum">       7 </span>            :  * http://www.opensource.org/licenses/mit-license.php
-<span class="lineNum">       8 </span>            :  * 
+<span class="lineNum">       8 </span>            :  *
 <span class="lineNum">       9 </span>            :  * @author: Thomas Krause (thomas.krause@webvariants.de)
 <span class="lineNum">      10 </span>            :  */
 <span class="lineNum">      11 </span>            : 
@@ -86,20 +86,20 @@
 <span class="lineNum">      24 </span>            : #include &quot;logger/Logger.h&quot;
 <span class="lineNum">      25 </span>            : 
 <a name="26"><span class="lineNum">      26 </span>            : namespace Susi {</a>
-<span class="lineNum">      27 </span>            :         namespace DB {
-<span class="lineNum">      28 </span><span class="lineCov">         13 :                 class Manager{</span>
-<span class="lineNum">      29 </span>            :                                 std::map &lt;std::string, Susi::DB::ManagerItem&gt; dbMap;
-<span class="lineNum">      30 </span>            :                         public:
-<span class="lineNum">      31 </span>            :                                 Manager();
-<span class="lineNum">      32 </span>            :                                 Manager(Susi::Util::Any config);
-<span class="lineNum">      33 </span>            :                                 Manager(std::vector&lt;std::tuple&lt;std::string,std::string,std::string&gt;&gt; dbs);
+<span class="lineNum">      27 </span>            :     namespace DB {
+<span class="lineNum">      28 </span><span class="lineCov">         13 :         class Manager {</span>
+<span class="lineNum">      29 </span>            :             std::map &lt;std::string, Susi::DB::ManagerItem&gt; dbMap;
+<span class="lineNum">      30 </span>            :         public:
+<span class="lineNum">      31 </span>            :             Manager();
+<span class="lineNum">      32 </span>            :             Manager( Susi::Util::Any config );
+<span class="lineNum">      33 </span>            :             Manager( std::vector&lt;std::tuple&lt;std::string,std::string,std::string&gt;&gt; dbs );
 <span class="lineNum">      34 </span>            : 
-<span class="lineNum">      35 </span>            :                                 void init(Susi::Util::Any config);
-<span class="lineNum">      36 </span>            :                                 void addDatabase(std::string identifier,std::string dbtype,std::string connectURI);
-<span class="lineNum">      37 </span>            :                                 std::shared_ptr&lt;Database&gt; getDatabase(std::string identifier);
-<span class="lineNum">      38 </span>            :                 };
+<span class="lineNum">      35 </span>            :             void init( Susi::Util::Any config );
+<span class="lineNum">      36 </span>            :             void addDatabase( std::string identifier,std::string dbtype,std::string connectURI );
+<span class="lineNum">      37 </span>            :             std::shared_ptr&lt;Database&gt; getDatabase( std::string identifier );
+<span class="lineNum">      38 </span>            :         };
 <span class="lineNum">      39 </span>            : 
-<span class="lineNum">      40 </span>            :         }
+<span class="lineNum">      40 </span>            :     }
 <span class="lineNum">      41 </span>            : }
 <span class="lineNum">      42 </span>            : 
 <span class="lineNum">      43 </span>            : #endif // __DB_MANAGER__

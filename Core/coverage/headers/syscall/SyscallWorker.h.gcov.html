@@ -37,7 +37,7 @@
           </tr>
           <tr>
             <td class="headerItem">Date:</td>
-            <td class="headerValue">2014-09-24 14:26:01</td>
+            <td class="headerValue">2014-09-30 09:13:33</td>
             <td></td>
             <td class="headerItem">Functions:</td>
             <td class="headerCovTableEntry">6</td>
@@ -67,7 +67,7 @@
 <span class="lineNum">       5 </span>            :  * complete text in the attached LICENSE file or online at:
 <span class="lineNum">       6 </span>            :  *
 <span class="lineNum">       7 </span>            :  * http://www.opensource.org/licenses/mit-license.php
-<span class="lineNum">       8 </span>            :  * 
+<span class="lineNum">       8 </span>            :  *
 <span class="lineNum">       9 </span>            :  * @author: Thomas Krause (thomas.krause@webvariants.de)
 <span class="lineNum">      10 </span>            :  */
 <span class="lineNum">      11 </span>            : 
@@ -85,52 +85,52 @@
 <span class="lineNum">      23 </span>            : #include &lt;iostream&gt;
 <span class="lineNum">      24 </span>            : 
 <a name="25"><span class="lineNum">      25 </span>            : namespace Susi {</a>
-<span class="lineNum">      26 </span>            :         namespace Syscall {
-<span class="lineNum">      27 </span><span class="lineCov">          9 :                 class Worker {</span>
-<span class="lineNum">      28 </span>            :                 protected:
-<span class="lineNum">      29 </span>            :                         Susi::Events::EventPtr _event;
-<span class="lineNum">      30 </span>            :                         std::string _command;
-<a name="31"><span class="lineNum">      31 </span>            :                         std::vector&lt;std::string&gt; _args;</a>
+<span class="lineNum">      26 </span>            :     namespace Syscall {
+<span class="lineNum">      27 </span><span class="lineCov">          9 :         class Worker {</span>
+<span class="lineNum">      28 </span>            :         protected:
+<span class="lineNum">      29 </span>            :             Susi::Events::EventPtr _event;
+<span class="lineNum">      30 </span>            :             std::string _command;
+<a name="31"><span class="lineNum">      31 </span>            :             std::vector&lt;std::string&gt; _args;</a>
 <span class="lineNum">      32 </span>            : 
-<span class="lineNum">      33 </span><span class="lineCov">          6 :                         std::string getContentFromStream(std::istream&amp; stream){</span>
-<span class="lineNum">      34 </span><span class="lineCov">          6 :                                 std::string result{&quot;&quot;};</span>
-<span class="lineNum">      35 </span><span class="lineCov">         21 :                                 while(stream.good()){</span>
-<span class="lineNum">      36 </span>            :                                         char buff[1024];
-<span class="lineNum">      37 </span><span class="lineCov">          9 :                                         stream.getline(buff,1024);</span>
-<span class="lineNum">      38 </span><span class="lineCov">          9 :                                         result += std::string{buff};</span>
-<span class="lineNum">      39 </span>            :                                 }
-<span class="lineNum">      40 </span><span class="lineCov">          6 :                                 return result;</span>
-<span class="lineNum">      41 </span>            :                         }
+<span class="lineNum">      33 </span><span class="lineCov">          6 :             std::string getContentFromStream( std::istream&amp; stream ) {</span>
+<span class="lineNum">      34 </span><span class="lineCov">          6 :                 std::string result {&quot;&quot;};</span>
+<span class="lineNum">      35 </span><span class="lineCov">         21 :                 while( stream.good() ) {</span>
+<span class="lineNum">      36 </span>            :                     char buff[1024];
+<span class="lineNum">      37 </span><span class="lineCov">          9 :                     stream.getline( buff,1024 );</span>
+<span class="lineNum">      38 </span><span class="lineCov">          9 :                     result += std::string {buff};</span>
+<span class="lineNum">      39 </span>            :                 }
+<span class="lineNum">      40 </span><span class="lineCov">          6 :                 return result;</span>
+<span class="lineNum">      41 </span>            :             }
 <a name="42"><span class="lineNum">      42 </span>            : </a>
-<span class="lineNum">      43 </span>            :                 public:
-<span class="lineNum">      44 </span><span class="lineCov">          3 :                         Worker(Susi::Events::EventPtr event, std::string command, std::vector&lt;std::string&gt; args) : </span>
-<span class="lineNum">      45 </span><span class="lineCov">          3 :                                 _event{std::move(event)},</span>
-<span class="lineNum">      46 </span>            :                                 _command{command},
-<a name="47"><span class="lineNum">      47 </span><span class="lineCov">          3 :                                 _args{args} {}</span></a>
-<span class="lineNum">      48 </span>            :                         
-<span class="lineNum">      49 </span><span class="lineCov">          3 :                         Worker(Worker &amp; other) : </span>
-<span class="lineNum">      50 </span><span class="lineCov">          3 :                                 _event{std::move(other._event)},</span>
-<span class="lineNum">      51 </span>            :                                 _command{other._command},
-<a name="52"><span class="lineNum">      52 </span><span class="lineCov">          3 :                                 _args{other._args} {}</span></a>
-<span class="lineNum">      53 </span>            :                         
-<span class="lineNum">      54 </span><span class="lineCov">          3 :                         Worker(Worker &amp;&amp; other) : </span>
-<span class="lineNum">      55 </span><span class="lineCov">          3 :                                 _event{std::move(other._event)},</span>
-<span class="lineNum">      56 </span><span class="lineCov">          3 :                                 _command{std::move(other._command)},</span>
-<a name="57"><span class="lineNum">      57 </span><span class="lineCov">          6 :                                 _args{std::move(other._args)} {}</span></a>
-<span class="lineNum">      58 </span>            :                         
-<span class="lineNum">      59 </span><span class="lineCov">          3 :                         void operator()(){</span>
-<span class="lineNum">      60 </span><span class="lineCov">          3 :                                 Poco::Pipe outPipe;</span>
-<span class="lineNum">      61 </span><span class="lineCov">          6 :                                 Poco::Pipe errPipe;</span>
-<span class="lineNum">      62 </span><span class="lineCov">          6 :                                 Poco::ProcessHandle ph = Poco::Process::launch(_command, _args, 0, &amp;outPipe, &amp;errPipe);</span>
-<span class="lineNum">      63 </span><span class="lineCov">          6 :                                 Poco::PipeInputStream ostr(outPipe);</span>
-<span class="lineNum">      64 </span><span class="lineCov">          6 :                                 Poco::PipeInputStream estr(errPipe);</span>
-<span class="lineNum">      65 </span><span class="lineCov">          3 :                                 _event-&gt;payload[&quot;return&quot;] = ph.wait();</span>
-<span class="lineNum">      66 </span><span class="lineCov">          3 :                                 _event-&gt;payload[&quot;stdout&quot;] = getContentFromStream(ostr);</span>
-<span class="lineNum">      67 </span><span class="lineCov">          6 :                                 _event-&gt;payload[&quot;stderr&quot;] = getContentFromStream(estr);</span>
-<span class="lineNum">      68 </span>            :                                 // when event gets destructed, its acknowledged.
-<span class="lineNum">      69 </span><span class="lineCov">          3 :                         }</span>
-<span class="lineNum">      70 </span>            :                 };
-<span class="lineNum">      71 </span>            :         }
+<span class="lineNum">      43 </span>            :         public:
+<span class="lineNum">      44 </span><span class="lineCov">          3 :             Worker( Susi::Events::EventPtr event, std::string command, std::vector&lt;std::string&gt; args ) :</span>
+<span class="lineNum">      45 </span><span class="lineCov">          3 :                 _event {std::move( event )},</span>
+<span class="lineNum">      46 </span>            :                    _command {command},
+<a name="47"><span class="lineNum">      47 </span><span class="lineCov">          3 :             _args {args} {}</span></a>
+<span class="lineNum">      48 </span>            : 
+<span class="lineNum">      49 </span><span class="lineCov">          3 :             Worker( Worker &amp; other ) :</span>
+<span class="lineNum">      50 </span><span class="lineCov">          3 :                 _event {std::move( other._event )},</span>
+<span class="lineNum">      51 </span>            :                    _command {other._command},
+<a name="52"><span class="lineNum">      52 </span><span class="lineCov">          3 :             _args {other._args} {}</span></a>
+<span class="lineNum">      53 </span>            : 
+<span class="lineNum">      54 </span><span class="lineCov">          3 :             Worker( Worker &amp;&amp; other ) :</span>
+<span class="lineNum">      55 </span><span class="lineCov">          3 :                 _event {std::move( other._event )},</span>
+<span class="lineNum">      56 </span><span class="lineCov">          3 :                    _command {std::move( other._command )},</span>
+<a name="57"><span class="lineNum">      57 </span><span class="lineCov">          6 :             _args {std::move( other._args )} {}</span></a>
+<span class="lineNum">      58 </span>            : 
+<span class="lineNum">      59 </span><span class="lineCov">          3 :             void operator()() {</span>
+<span class="lineNum">      60 </span><span class="lineCov">          3 :                 Poco::Pipe outPipe;</span>
+<span class="lineNum">      61 </span><span class="lineCov">          6 :                 Poco::Pipe errPipe;</span>
+<span class="lineNum">      62 </span><span class="lineCov">          6 :                 Poco::ProcessHandle ph = Poco::Process::launch( _command, _args, 0, &amp;outPipe, &amp;errPipe );</span>
+<span class="lineNum">      63 </span><span class="lineCov">          6 :                 Poco::PipeInputStream ostr( outPipe );</span>
+<span class="lineNum">      64 </span><span class="lineCov">          6 :                 Poco::PipeInputStream estr( errPipe );</span>
+<span class="lineNum">      65 </span><span class="lineCov">          3 :                 _event-&gt;payload[&quot;return&quot;] = ph.wait();</span>
+<span class="lineNum">      66 </span><span class="lineCov">          3 :                 _event-&gt;payload[&quot;stdout&quot;] = getContentFromStream( ostr );</span>
+<span class="lineNum">      67 </span><span class="lineCov">          6 :                 _event-&gt;payload[&quot;stderr&quot;] = getContentFromStream( estr );</span>
+<span class="lineNum">      68 </span>            :                 // when event gets destructed, its acknowledged.
+<span class="lineNum">      69 </span><span class="lineCov">          3 :             }</span>
+<span class="lineNum">      70 </span>            :         };
+<span class="lineNum">      71 </span>            :     }
 <span class="lineNum">      72 </span>            : }
 <span class="lineNum">      73 </span>            : 
 <span class="lineNum">      74 </span>            : #endif // __SYS_CALL_WORKER__
