@@ -9,15 +9,15 @@
 #include "util/Any.h"
 
 namespace Susi {
-	namespace DB{
-		class Database{
-		protected:
-			soci::session session;
-		public:
-			Database(std::string dbtype,std::string connectURI) : session(dbtype,connectURI) {};
-			Susi::Util::Any query(std::string query);
-		};
-	}
+    namespace DB {
+        class Database {
+        protected:
+            soci::session session;
+        public:
+            Database( std::string dbtype,std::string connectURI ) : session( dbtype,connectURI ) {};
+            Susi::Util::Any query( std::string query );
+        };
+    }
 }
 
 #endif // __DATABASE__

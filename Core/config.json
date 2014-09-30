@@ -4,9 +4,7 @@
 		"queuelen": 32
 	},
 
-	"heartbeat": {
-		"fix":"me"
-	},
+	"heartbeat": {},
 
 
 	"dbmanager": [
@@ -31,7 +29,9 @@
 		"path": "./engines"
 	},
 
-	"iocontroller": {},
+	"iocontroller": {
+		"fix":"me"
+	},
 
 	"sessionmanager": {
 		"lifetime": 600000

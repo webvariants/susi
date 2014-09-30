@@ -1,5 +1,5 @@
 #include "logger/Logger.h"
 
 namespace Susi {
-	unsigned char logLevel{255};
+    unsigned char logLevel {255};
 }
