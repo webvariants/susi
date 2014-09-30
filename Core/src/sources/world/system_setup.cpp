@@ -150,6 +150,9 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 	 */
 	manager->registerComponent("httpserver", [](ComponentManager * mgr, Any & config) {
 		std::string address{""};
+		size_t threads{4};
+		size_t backlog{16};
+
 		if(config["address"].isString()){
 			address = static_cast<std::string>(config["address"]);
 		}
@@ -161,7 +164,14 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 		if(config["upload"].isString()){
 			upload = static_cast<std::string>(config["upload"]);
 		}
-		return std::shared_ptr<Component>{new Susi::HttpServerComponent{mgr, address, assetRoot, upload}};
+
+		if(config["threads"].isInteger()){
+			threads =  static_cast<long>(config["threads"]);
+		}
+		if(config["backlog"].isInteger()){
+			backlog =  static_cast<long>(config["backlog"]);
+		}
+		return std::shared_ptr<Component>{new Susi::HttpServerComponent{mgr, address, assetRoot, upload, threads, backlog}};
 	});	
 	manager->registerDependency("httpserver","apiserver");
 	

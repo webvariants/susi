@@ -28,19 +28,29 @@ protected:
 	std::shared_ptr<Susi::Api::ApiServerComponent> _api;
 	Poco::Net::SocketAddress address;
 	Poco::Net::ServerSocket serverSocket;
+	Poco::Net::HTTPServerParams *params;
 	Poco::Net::HTTPServer server;
 
 	std::string _addr;
 public:
-	HttpServerComponent (Susi::System::ComponentManager * mgr, std::string addr,std::string assetRoot,std::string uploadDirectory) :
+	HttpServerComponent (Susi::System::ComponentManager * mgr,
+						 std::string addr,
+						 std::string assetRoot,
+						 std::string uploadDirectory,
+						 size_t threads = 4,
+						 size_t backlog = 16) :
 		Susi::System::BaseComponent{mgr},
 		_api{mgr->getComponent<Susi::Api::ApiServerComponent>("apiserver")},
-		address(addr),
-		serverSocket(address),
-		server(new RequestHandlerFactory(assetRoot, uploadDirectory, _api, mgr->getComponent<Susi::Sessions::SessionManagerComponent>("sessionmanager")),serverSocket,new Poco::Net::HTTPServerParams)
-	{
+		address{addr},
+		serverSocket{address},
+		params{new Poco::Net::HTTPServerParams},
+		server(new RequestHandlerFactory(assetRoot, uploadDirectory, _api, mgr->getComponent<Susi::Sessions::SessionManagerComponent>("sessionmanager")),serverSocket,params)
+		{
 			_addr = addr;
-	}
+			params->setMaxThreads(threads);
+			params->setMaxQueued(backlog);
+			params->setThreadIdleTime(100);
+		}
 
 	virtual void start() override {
 		server.start();
