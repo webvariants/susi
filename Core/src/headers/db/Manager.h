@@ -26,6 +26,7 @@
 namespace Susi {
     namespace DB {
         class Manager {
+        protected:
             std::map <std::string, Susi::DB::ManagerItem> dbMap;
         public:
             Manager();

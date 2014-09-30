@@ -42,11 +42,18 @@ namespace Susi {
                 subscribe( "state::getPersistentState", [this]( ::Susi::Events::EventPtr evt ) {
                     handleGetPersistentState( std::move( evt ) );
                 } );
+                Susi::Logger::info( "started StateControllerComponent" );
             }
 
             virtual void stop() override {
                 unsubscribeAll();
             }
+
+            ~StateControllerComponent(){
+                stop();
+                Susi::Logger::info( "stopped StateControllerComponent" );
+            }
+
         protected:
             void handleAutoSave( Susi::Events::EventPtr event );
             void handleSave( Susi::Events::EventPtr event );

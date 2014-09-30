@@ -42,6 +42,7 @@ namespace Susi {
                 subscribe( "global::stop", [this]( Susi::Events::EventPtr evt ) {
                     handleStop( std::move( evt ) );
                 } );
+                Susi::Logger::info( "started EngineStarterComponent" );
             }
 
             virtual void stop() override {
@@ -51,6 +52,7 @@ namespace Susi {
 
             ~StarterComponent() {
                 stop();
+                Susi::Logger::info( "stopped EngineStarterComponent" );
             }
         protected:
             void handleStart( Susi::Events::EventPtr event );

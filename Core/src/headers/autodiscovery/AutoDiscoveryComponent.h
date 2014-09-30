@@ -61,11 +61,17 @@ namespace Susi {
 
             virtual void start() override {
                 Susi::Autodiscovery::Manager::start();
+                Susi::Logger::info( "started AutodiscoveryComponent" );
             }
 
             virtual void stop() override {
                 Susi::Autodiscovery::Manager::stop();
                 while( _collectors.size() )_collectors.pop_back();
+            }
+
+            ~AutoDiscoveryComponent(){
+                stop();
+                Susi::Logger::info( "stopped AutodiscoveryComponent" );
             }
 
         };

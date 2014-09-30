@@ -64,6 +64,7 @@ namespace Susi {
                 subscribe( "auth::updateUser", [this]( Susi::Events::EventPtr evt ) {
                     handleUpdateUser( std::move( evt ) );
                 }, 0 );
+                Susi::Logger::info( "started AuthControllerComponent" );
             }
 
             virtual void stop() override {
@@ -72,6 +73,7 @@ namespace Susi {
 
             ~ControllerComponent() {
                 stop();
+                Susi::Logger::info( "stopped AuthControllerComponent" );
             }
         };
 
