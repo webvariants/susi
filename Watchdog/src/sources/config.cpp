@@ -1,8 +1,9 @@
 #include "config.h"
 
 Config::Config() {
-	registerCommandLineOption("wd_f", "killFriendly");
-	registerCommandLineOption("wd_r", "restartTrys");
+	registerCommandLineOption("kill_friendly", "killFriendly");
+	registerCommandLineOption("restart_tries", "restartTrys");
+	registerCommandLineOption("crash_restart", "restartChrashed");
 }
 
 std::vector<std::string> & Config::split(const std::string &s, char delim, std::vector<std::string> &elems) {
@@ -42,6 +43,14 @@ bool Config::set(std::string key, std::string value) {
 			return true;
 		}
 
+		if(key_found == "restartChrashed") {
+			if(value == "" || value == "false") {
+				restart_crached = false;
+			} else {
+				restart_crached = true;
+			}			
+			return true;
+		}
 	}
 
 	return false;
@@ -119,4 +128,10 @@ Poco::Path Config::getAbsPathFromString(std::string path) {
 	if(p.isRelative())
 		p.makeAbsolute(this->base_path);
 	return p;
+}
+
+void Config::printArgs(std::vector<std::string> argv_vec) {
+
+  for (std::vector<std::string>::iterator it = argv_vec.begin(); it != argv_vec.end(); ++it)
+    std::cout << ' ' << *it<< std::endl;
 }

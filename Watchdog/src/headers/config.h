@@ -27,8 +27,8 @@ class Config {
 		Poco::Path base_path;
 
 		bool kill_friendly = false;
+		bool restart_crached = false;
 		int  restart_trys = -1; // infinit
-		bool isExecutable = false;
 		std::map<std::string,std::string> _knownCommandLineOptions;
 
 		Config();
@@ -40,6 +40,8 @@ class Config {
 
 		bool getExecutable(std::string path);
 		Poco::Path getAbsPathFromString(std::string path);
+
+		void printArgs(std::vector<std::string> argv_vec);
 
 };
 
