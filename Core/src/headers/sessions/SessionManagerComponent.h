@@ -16,50 +16,64 @@
 #include "sessions/SessionManager.h"
 
 namespace Susi {
-	namespace Sessions {
-		class SessionManagerComponent : public Susi::System::BaseComponent , public SessionManager {
-		public:
-			SessionManagerComponent (Susi::System::ComponentManager * mgr, std::chrono::milliseconds stdSessionLifetime) :
-				Susi::System::BaseComponent{mgr}, SessionManager{} {
-					_stdSessionLifetime = stdSessionLifetime;					
-				}
+    namespace Sessions {
+        class SessionManagerComponent : public Susi::System::BaseComponent , public SessionManager {
+        public:
+            SessionManagerComponent( Susi::System::ComponentManager * mgr, std::chrono::milliseconds stdSessionLifetime ) :
+                Susi::System::BaseComponent {mgr}, SessionManager {} {
+                _stdSessionLifetime = stdSessionLifetime;
+            }
 
-			~SessionManagerComponent() {
-				stop();
-			}
+            ~SessionManagerComponent() {
+                stop();
+            }
 
-			virtual void start() override {
-				init(_stdSessionLifetime);
+            virtual void start() override {
+                init( _stdSessionLifetime );
 
-				// Consumer
-				Susi::Events::Consumer handler = [this](::Susi::Events::SharedEventPtr evt){handleCheckSessions(std::move(evt));};
-				subscribe("heartbeat::one", handler);
+                // Consumer
+                Susi::Events::Consumer handler = [this]( ::Susi::Events::SharedEventPtr evt ) {
+                    handleCheckSessions( std::move( evt ) );
+                };
+                subscribe( "heartbeat::one", handler );
 
-				// Processor
-				subscribe("session::setAttribute", [this](::Susi::Events::EventPtr evt){handleSetAttribute(std::move(evt));});
-				subscribe("session::getAttribute", [this](::Susi::Events::EventPtr evt){handleGetAttribute(std::move(evt));});
-				subscribe("session::pushAttribute", [this](::Susi::Events::EventPtr evt){handlePushAttribute(std::move(evt));});
-				subscribe("session::removeAttribute", [this](::Susi::Events::EventPtr evt){handleRemoveAttribute(std::move(evt));});
-				subscribe("session::update", [this](::Susi::Events::EventPtr evt){handleUpdate(std::move(evt));});
-				subscribe("session::check", [this](::Susi::Events::EventPtr evt){handleCheck(std::move(evt));});
-			}
+                // Processor
+                subscribe( "session::setAttribute", [this]( ::Susi::Events::EventPtr evt ) {
+                    handleSetAttribute( std::move( evt ) );
+                } );
+                subscribe( "session::getAttribute", [this]( ::Susi::Events::EventPtr evt ) {
+                    handleGetAttribute( std::move( evt ) );
+                } );
+                subscribe( "session::pushAttribute", [this]( ::Susi::Events::EventPtr evt ) {
+                    handlePushAttribute( std::move( evt ) );
+                } );
+                subscribe( "session::removeAttribute", [this]( ::Susi::Events::EventPtr evt ) {
+                    handleRemoveAttribute( std::move( evt ) );
+                } );
+                subscribe( "session::update", [this]( ::Susi::Events::EventPtr evt ) {
+                    handleUpdate( std::move( evt ) );
+                } );
+                subscribe( "session::check", [this]( ::Susi::Events::EventPtr evt ) {
+                    handleCheck( std::move( evt ) );
+                } );
+            }
 
-			virtual void stop() override {
-				unsubscribeAll();
-			}
+            virtual void stop() override {
+                unsubscribeAll();
+            }
 
-		protected:
-			std::chrono::milliseconds _stdSessionLifetime;			
+        protected:
+            std::chrono::milliseconds _stdSessionLifetime;
 
-			void handleCheckSessions(Susi::Events::SharedEventPtr event);
-			void handleGetAttribute(Susi::Events::EventPtr event);
-			void handleSetAttribute(Susi::Events::EventPtr event);
-			void handlePushAttribute(Susi::Events::EventPtr event);
-			void handleRemoveAttribute(Susi::Events::EventPtr event);
-			void handleUpdate(Susi::Events::EventPtr event);
-			void handleCheck(Susi::Events::EventPtr event);
-		};
-	}
+            void handleCheckSessions( Susi::Events::SharedEventPtr event );
+            void handleGetAttribute( Susi::Events::EventPtr event );
+            void handleSetAttribute( Susi::Events::EventPtr event );
+            void handlePushAttribute( Susi::Events::EventPtr event );
+            void handleRemoveAttribute( Susi::Events::EventPtr event );
+            void handleUpdate( Susi::Events::EventPtr event );
+            void handleCheck( Susi::Events::EventPtr event );
+        };
+    }
 }
 
 #endif // __SESSION_MANAGER_COMPONENT__

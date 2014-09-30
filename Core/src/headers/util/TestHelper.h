@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
@@ -13,12 +13,12 @@
 #define __TEST_HELPER__
 
 #include <iostream>
- 
-namespace Susi { 
 
-	namespace Util {
-			std::string __createRandomString(std::size_t len);
-	}
+namespace Susi {
+
+    namespace Util {
+        std::string __createRandomString( std::size_t len );
+    }
 }
 
 #endif // __TEST_HELPER__

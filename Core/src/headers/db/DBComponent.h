@@ -16,26 +16,28 @@
 #include "db/Manager.h"
 
 namespace Susi {
-namespace DB {
-	class DBComponent : public Susi::System::BaseComponent , public Manager {
-	public:
-		DBComponent (Susi::System::ComponentManager * mgr, Susi::Util::Any & config) :
-			Susi::System::BaseComponent{mgr}, Manager{config} {}
+    namespace DB {
+        class DBComponent : public Susi::System::BaseComponent , public Manager {
+        public:
+            DBComponent( Susi::System::ComponentManager * mgr, Susi::Util::Any & config ) :
+                Susi::System::BaseComponent {mgr}, Manager {config} {}
 
-		virtual void start() override {
-			subscribe("db::query",[this](::Susi::Events::EventPtr evt){handleQuery(std::move(evt));});
-		}
+            virtual void start() override {
+                subscribe( "db::query",[this]( ::Susi::Events::EventPtr evt ) {
+                    handleQuery( std::move( evt ) );
+                } );
+            }
 
-		virtual void stop() override {
-			unsubscribeAll();
-		}
-		~DBComponent() {
-			stop();
-		}
-	protected:
-		void handleQuery(Susi::Events::EventPtr  event);
-	};
-}
+            virtual void stop() override {
+                unsubscribeAll();
+            }
+            ~DBComponent() {
+                stop();
+            }
+        protected:
+            void handleQuery( Susi::Events::EventPtr  event );
+        };
+    }
 }
 
 #endif // __DBCOMPONENT__

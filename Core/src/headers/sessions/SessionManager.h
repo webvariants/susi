@@ -23,28 +23,28 @@
 #include "util/Any.h"
 #include "events/EventManager.h"
 
-namespace Susi{
-	namespace Sessions {
-		class SessionManager {
-		protected:
-			std::map<std::string, Session> sessions;
-			std::mutex mutex;
-			std::chrono::milliseconds stdLifetime;
-		public:
-			bool checkSession(std::string id);
-			int  checkSessions();
-			void updateSession(std::string id);
-			void updateSession(std::string id, std::chrono::milliseconds lifeTime);
-			bool killSession(std::string id);
-			bool setSessionAttribute(std::string sessionID, std::string key, Susi::Util::Any value);
-			Susi::Util::Any getSessionAttribute(std::string sessionID, std::string key);
-			void init(std::chrono::milliseconds stdSessionLifetime);
-			bool pushSessionAttribute(std::string sessionID, std::string key, Susi::Util::Any value);
-			bool removeSessionAttribute(std::string sessionID, std::string key);
+namespace Susi {
+    namespace Sessions {
+        class SessionManager {
+        protected:
+            std::map<std::string, Session> sessions;
+            std::mutex mutex;
+            std::chrono::milliseconds stdLifetime;
+        public:
+            bool checkSession( std::string id );
+            int  checkSessions();
+            void updateSession( std::string id );
+            void updateSession( std::string id, std::chrono::milliseconds lifeTime );
+            bool killSession( std::string id );
+            bool setSessionAttribute( std::string sessionID, std::string key, Susi::Util::Any value );
+            Susi::Util::Any getSessionAttribute( std::string sessionID, std::string key );
+            void init( std::chrono::milliseconds stdSessionLifetime );
+            bool pushSessionAttribute( std::string sessionID, std::string key, Susi::Util::Any value );
+            bool removeSessionAttribute( std::string sessionID, std::string key );
 
-			~SessionManager();
-		};
-	}
+            ~SessionManager();
+        };
+    }
 }
 
 #endif //__SESSIONMANAGER__

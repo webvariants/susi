@@ -11,7 +11,7 @@
 
 #include "world/system_setup.h"
 
-std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponentManager(Susi::Util::Any::Object config){
+std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponentManager(Susi::Util::Any::Object config) {
 	using Susi::System::ComponentManager;
 	using Susi::System::Component;
 	using Susi::Util::Any;
