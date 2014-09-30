@@ -52,7 +52,9 @@
 
 	"httpserver": {
 		"address": "[::1]:8080",
-		"assets": "./assets"
+		"assets": "./assets",
+		"threads": 4,
+		"backlog": 32
 	},
 
 	"autodiscovery": {
