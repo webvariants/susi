@@ -72,9 +72,9 @@ void showHelp() {
     cout<<"Usage: "<<std::endl;
     cout<<"watchdog <arguments for watchdog> -- [PATH TO EXECUTABLE] <arguments for executable> \n\n";
     cout<<"watchdog arguments ...\n";
-    cout<<"    -kill_friendly=[true,false] | default: false    | kill process friendly with signal or hard kill \n";
-    cout<<"    -restart_tries=[times]      | default: infinite | restart process n times after finish \n";
-    cout<<"    -crash_restart=[true,false] | default: false    | restart a process after it exits abnormally (return code != 0) \n";
+    cout<<" -kf OR -kill_friendly=[true,false] | default: false    | kill process friendly with signal or hard kill \n";
+    cout<<" -rt OR -restart_tries=[times]      | default: infinite | restart process n times after finish \n";
+    cout<<" -cr OR -crash_restart=[true,false] | default: false    | restart a process after it exits abnormally (return code != 0) \n";
     cout<<"\n\n";
     cout<<"Example for susi ...\n";
     cout<<"./watchdog -kill_friendly=true  -- ../../Core/build/susi -config=\"../../Core/config.json\"\n";
@@ -113,7 +113,7 @@ int main(int argc, char** argv){
     for (int i=1; i<argc; i++) {
         std::string option = argv[i];
 
-        if(option.length() == 2 && option[0] == '-' && option[1] == '-') {
+        if(option == "--") {
             delimeter_found = true;
             i++;
 
@@ -127,8 +127,14 @@ int main(int argc, char** argv){
         
     }   
 
+    // check delimeter
+    if(delimeter_found == false) {
+        cout<<"Delimeter \"--\" not found\n";
+        exit(0);
+    }
+
     // check programm
-    if(!config.getExecutable(program_name)) {
+    if(program_name == "" || !config.getExecutable(program_name)) {
         cout<<"Process not found or isn't executable\n";
         exit(0);
     }   
