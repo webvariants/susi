@@ -27,8 +27,8 @@ class Config {
 		Poco::Path base_path;
 
 		bool kill_friendly = false;
+		bool restart_crached = false;
 		int  restart_trys = -1; // infinit
-		bool isExecutable = false;
 		std::map<std::string,std::string> _knownCommandLineOptions;
 
 		Config();
