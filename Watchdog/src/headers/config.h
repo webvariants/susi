@@ -41,6 +41,8 @@ class Config {
 		bool getExecutable(std::string path);
 		Poco::Path getAbsPathFromString(std::string path);
 
+		void printArgs(std::vector<std::string> argv_vec);
+
 };
 
 #endif // __CONFIG__

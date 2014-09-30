@@ -120,3 +120,9 @@ Poco::Path Config::getAbsPathFromString(std::string path) {
 		p.makeAbsolute(this->base_path);
 	return p;
 }
+
+void Config::printArgs(std::vector<std::string> argv_vec) {
+
+  for (std::vector<std::string>::iterator it = argv_vec.begin(); it != argv_vec.end(); ++it)
+    std::cout << ' ' << *it<< std::endl;
+}
