@@ -41,9 +41,11 @@ long Susi::Events::Manager::subscribe( std::string topic, Processor processor, c
     }
     return subscribe( topic,Predicate {},Consumer {},std::move( processor ),minAuthlevel,name );
 }
+
 long Susi::Events::Manager::subscribe( Predicate pred, Processor processor, char minAuthlevel, std::string name ) {
     return subscribe( "",pred,Consumer {},std::move( processor ),minAuthlevel,name );
 }
+
 long Susi::Events::Manager::subscribe( std::string topic, Consumer consumer, char minAuthlevel, std::string name ) {
     if( Susi::Util::Glob::isGlob( topic ) ) {
         auto predicate = [topic]( Susi::Events::Event& event ) {
@@ -54,6 +56,7 @@ long Susi::Events::Manager::subscribe( std::string topic, Consumer consumer, cha
     }
     return subscribe( topic,Predicate {},std::move( consumer ),Processor {},minAuthlevel,name );
 }
+
 long Susi::Events::Manager::subscribe( Predicate pred, Consumer consumer, char minAuthlevel, std::string name ) {
     return subscribe( "",pred,std::move( consumer ),Processor {},minAuthlevel,name );
 }
@@ -192,7 +195,12 @@ void Susi::Events::Manager::ack( EventPtr event ) {
                 for( auto & consumer : process->consumers ) {
                     if( consumer ) manager->pool.add( [consumer,sharedEvent]() {
                         consumer( sharedEvent );
-                    } );
+                    } ,[this](std::string errorMessage){
+                        auto errorEvent = manager->createEvent("consumererror");
+                        Susi::Logger::error("consumer error: "+errorMessage);
+                        errorEvent->payload = errorMessage;
+                        manager->publish(std::move(errorEvent));
+                    });
                 }
                 {
                     std::unique_lock<std::mutex> lock( manager->mutex );

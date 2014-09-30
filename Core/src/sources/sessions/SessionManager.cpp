@@ -32,14 +32,13 @@ int SessionManager::checkSessions() {
     std::lock_guard<std::mutex> lock( mutex );
     //std::cout<<"got sessions mutex"<<std::endl;
     int deleted = 0;
-    for( auto it = std::begin( sessions ); it!=std::end( sessions ); ) {
-        if( it->second.isDead() ) {
-            Susi::Logger::debug( "delete session "+it->first );
-            sessions.erase( it++ );
+    auto it = std::begin(sessions);
+    while( it!=std::end( sessions ) ) {
+        auto current = it++;
+        if( current->second.isDead() ) {
+            Susi::Logger::debug( "delete session "+current->first );
+            sessions.erase( current );
             deleted++;
-        }
-        else {
-            ++it;
         }
     }
 
