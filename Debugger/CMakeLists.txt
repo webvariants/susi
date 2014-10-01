@@ -32,7 +32,7 @@ include_directories( ${CMAKE_SOURCE_DIR}/src/headers )
 include_directories( ${POCO_INCLUDE_DIR} )
 include_directories( ${SOCI_INCLUDE_DIRS} )
 
-file( GLOB SRCFILES ${CMAKE_SOURCE_DIR}/src/sources/**/*.cpp )
+file( GLOB SRCFILES ${CMAKE_SOURCE_DIR}/src/sources/*.cpp )
 
 add_executable( susi-debugger ${SRCFILES} ${CMAKE_SOURCE_DIR}/src/sources/main.cc)
 target_link_libraries(susi-debugger ${CMAKE_SOURCE_DIR}/../CPPEngine/build/libsusicpp.so)
