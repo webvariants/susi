@@ -9,7 +9,10 @@
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
+#include <atomic>
 #include <iostream>
+
+#include "util/Any.h"
 
 #include "CommandlineParser.h"
 
@@ -22,8 +25,19 @@
 	cout<<"Usage ..."<<std::endl;
 	cout<<"susi-debugger <arguments for debugger> -- [Susi-Instance] \n\n";
 	cout<<"susi-debugger arguments ...\n";
-	cout<<"	-subscribe=topic	\n";	
-	cout<<"\n\n";	
+	cout<<"	-help            | -h \n";
+	cout<<"	-verbose         | -v \n";
+	cout<<"	-----------------------\n";
+	cout<<"	-subscribe=topic | -s \n";	
+	cout<<"	-publish=topic   | -p \n";	
+	cout<<"	-payload=JSON    | -pa \n";	
+	cout<<"\n\n";
+
+	cout<<"subcribe example \n";
+	cout<<" ./susi-debugger -s heartbeat::one \n";	
+
+	cout<<"publish example \n";
+	cout<<" ./susi-debugger -s test -p test -pa {\\\"foo\\\":\\\"bar\\\"} \n"<<std::endl;	
 }
 
 int main(int argc, char** argv) {
@@ -32,21 +46,17 @@ int main(int argc, char** argv) {
 	std::vector<std::string> debugger_args;
 	std::vector<std::string> filtered_vec;
 
+	std::condition_variable cond;
+	std::mutex mutex;
+	std::atomic<int> times(0);
+
 	std::string susi_instance = "[::1]:4000"; // default
-	int times = 0; // wait for n times events
+
 
 	// check help
 	if(argc < 2) {		
 		std::cout<<"use -h for help"<<std::endl;
 		exit(0);
-	}
-
-	if(argc == 2) {
-		std::string o = argv[1];
-		if(o == "-h" || o == "-help" || o == "--h" || o == "--help") {
-			showHelp();
-			exit(0);
-		}
 	}
 
 	// get arguments
@@ -70,42 +80,61 @@ int main(int argc, char** argv) {
 		}
 		
 	}
-
-
-	parser.registerCommandLineOption("times", "nz", "0");
-	parser.registerCommandLineOption("subscribe", "sub");
-	parser.registerCommandLineOption("publish", "pub");
+	
+	parser.registerCommandLineOption("verbose", "verbose", "false");
+	parser.registerCommandLineOption("help", "help", "false");
+	parser.registerCommandLineOption("subscribe", "subscribe", "", "multi");
+	parser.registerCommandLineOption("publish", "publish");
+	parser.registerCommandLineOption("paypload", "paypload");
 
 	// shortcuts
-	parser.registerCommandLineOption("t", "nz", "0");
-	parser.registerCommandLineOption("s", "sub");
-	parser.registerCommandLineOption("p", "pub");
+	parser.registerCommandLineOption("v", "verbose", "false");
+	parser.registerCommandLineOption("h", "help", "false");
+	parser.registerCommandLineOption("s", "subscribe", "", "multi");
+	parser.registerCommandLineOption("p", "publish");
+	parser.registerCommandLineOption("pa", "paypload");
 
 	parser.parseCommandLine(debugger_args);
 
-	parser.printParsedArgs();
+	if(parser.getValueByKey("help") != "false") {		
+		showHelp();
+		cout<<"	-----------------------\n";
+	}
 
+	if(parser.getValueByKey("verbose") != "false") {		
+		parser.printParsedArgs();
+		cout<<"	-----------------------\n";
+	}
 
 	// init Engine
 	std::shared_ptr<Debugger::Engine> e{new Debugger::Engine{susi_instance}};
 
-	std::string s_topic = parser.getValueByKey("sub");
-	times = std::stoi(parser.getValueByKey("nz"));
+	std::string s_topic = parser.getValueByKey("subscribe");
 	
 	if(s_topic != "") {
-		e->addController("printController", new Debugger::PrintController{s_topic, times});
+		std::vector<std::string> elems;
+		parser.split(s_topic, ' ', elems);
+
+		for (size_t t=0; t < elems.size(); t++) {
+    		std::cout << ' ' << elems[t] << std::endl;
+			times.store(times.load() + 1);
+			e->addController("printController", new Debugger::PrintController{elems[t], &times, &cond});
+		}
 		e->start();
 	}
 
-	std::string p_topic = parser.getValueByKey("pub");
+	std::string p_topic = parser.getValueByKey("publish");
+	Susi::Util::Any payload{ Susi::Util::Any::fromJSONString(parser.getValueByKey("paypload"))};
 
 	if(p_topic != "") {
-		e->getApi()->publish(std::move(e->getApi()->createEvent(p_topic)));
+		auto event = e->getApi()->createEvent(p_topic);
+		 	 event->payload = payload;
+		e->getApi()->publish(std::move(event));
 	}
 	
-
-	std::condition_variable cond;
-	std::mutex mutex;
+	std::cout<<"TIMES:"<<times.load()<<std::endl;
+	
 	std::unique_lock<std::mutex> lock{mutex};
-	cond.wait(lock, [](){return false;});
+	cond.wait(lock, [&times](){return times.load()==0;});
+	
 }

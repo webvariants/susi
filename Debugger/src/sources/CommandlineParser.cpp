@@ -16,7 +16,14 @@ bool Debugger::Parser::set(std::string key, std::string value) {
 	if(it != _knownCommandLineOptions.end()) {
 		std::string key_found = it->second;
 		
-		_knownCommandLineValues[key_found] = value;
+		if(_knownCommandLineType[key_found] == "multi") {
+			if(_knownCommandLineValues[key_found] == "") 
+				_knownCommandLineValues[key_found] = value;
+			else 
+				_knownCommandLineValues[key_found] = _knownCommandLineValues[key_found] + " " + value;
+		} else {
+			_knownCommandLineValues[key_found] = value;
+		}
 
 		return true;
 	}
@@ -35,9 +42,10 @@ std::string Debugger::Parser::getValueByKey(std::string key) {
 	return "";
 }
 
-void Debugger::Parser::registerCommandLineOption(std::string name, std::string key, std::string _default) {
+void Debugger::Parser::registerCommandLineOption(std::string name, std::string key, std::string _default, std::string _type) {
 	_knownCommandLineOptions[name] = key;
-	_knownCommandLineValues[key] = _default;
+	_knownCommandLineValues[key]   = _default;
+	_knownCommandLineType[key]     = _type; // "single or multi"
 }
 
 std::vector<std::string> Debugger::Parser::parseCommandLine(std::vector<std::string> argv) {
@@ -95,5 +103,5 @@ std::vector<std::string> Debugger::Parser::parseCommandLine(std::vector<std::str
 void Debugger::Parser::printParsedArgs() {
 
   for (std::map<std::string,std::string>::iterator it=_knownCommandLineValues.begin(); it!=_knownCommandLineValues.end(); ++it)
-    std::cout << it->first << " => " << it->second << '\n';
+    std::cout << it->first << " => " << it->second <<std::endl;
 }

@@ -23,13 +23,14 @@ namespace Debugger {
 		public:
 			std::map<std::string,std::string> _knownCommandLineOptions;
 			std::map<std::string,std::string> _knownCommandLineValues;
+			std::map<std::string,std::string> _knownCommandLineType;
 
 
 			bool set(std::string key, std::string value);
 			std::string getValueByKey(std::string key);
 
 			std::vector<std::string> & split(const std::string &s, char delim, std::vector<std::string> &elems);
-			void registerCommandLineOption(std::string name, std::string key, std::string _default="");
+			void registerCommandLineOption(std::string name, std::string key, std::string _default="", std::string _type="single");
 			std::vector<std::string> parseCommandLine(std::vector<std::string> argv);
 
 			void printParsedArgs();

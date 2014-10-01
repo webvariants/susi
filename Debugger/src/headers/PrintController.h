@@ -13,6 +13,7 @@
 #ifndef __DEBUGGER_PRINT_CONTROLLER__
 #define __DEBUGGER_PRINT_CONTROLLER__
 
+#include <atomic>
 #include "engine/BaseController.h"
 
 namespace Debugger {
@@ -20,17 +21,23 @@ namespace Debugger {
 class PrintController : public Susi::Cpp::BaseController {
 protected:
 	std::string topic;
-	int times = 0;
+	std::atomic<int> *times;
+	std::condition_variable *cond;
 public:
-	PrintController(std::string _topic, int _times) : topic{_topic}, times{_times} {};
+	PrintController(std::string _topic, std::atomic<int> *_times, std::condition_variable *_cond) : topic{_topic} {
+		times = _times;
+		cond = _cond;
+	};
 
 	virtual void start() override {
 		Susi::Events::Consumer c = [this](Susi::Events::SharedEventPtr event){
 			//sampleConsumerFunction(event);
-			std::cout<<"EVENT:"<<event->toString()<<std::endl;
+			std::cout<<event->toString()<<std::endl;
 
-			times--;
-			if(times < 0) exit(0);
+			times->store(times->load() -1);
+			if(times->load() == 0) {
+				cond->notify_one();
+			}
 		};
 		/*
 		Susi::Events::Processor p = [this](Susi::Events::EventPtr event){
