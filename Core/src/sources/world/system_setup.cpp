@@ -200,5 +200,13 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 	manager->registerDependency("apiserver","eventsystem");
 	manager->registerDependency("apiserver","sessionmanager");
 
+	/**
+	 * Declare constraints
+	 */
+	manager->registerComponent("constraints", [](ComponentManager * mgr, Any & config) {			
+		return std::shared_ptr<Component>{new Susi::Events::ConstraintControllerComponent{mgr}};
+	});
+	manager->registerDependency("constraints","eventsystem");
+
 	return manager;
 }
