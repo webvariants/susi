@@ -33,7 +33,10 @@ include_directories( ${SOCI_INCLUDE_DIRS} )
 
 file( GLOB SRCFILES ${CMAKE_SOURCE_DIR}/src/source/**/*.cpp )
 
-add_executable( susi-cppengine ${SRCFILES} ${CMAKE_SOURCE_DIR}/src/source/main.cpp)
+add_library( susicpp SHARED ${SRCFILES} )
+
+add_executable( susi-cppengine ${CMAKE_SOURCE_DIR}/src/source/main.cpp)
+target_link_libraries(susi-cppengine susicpp)
 target_link_libraries(susi-cppengine ${CMAKE_SOURCE_DIR}/../Core/build/libsusi.so)
 target_link_libraries(susi-cppengine ${POCO_LIBRARIES})
 target_link_libraries(susi-cppengine ${SOCI_LIBRARY})
