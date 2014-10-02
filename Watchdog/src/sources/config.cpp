@@ -4,6 +4,11 @@ Config::Config() {
 	registerCommandLineOption("kill_friendly", "killFriendly");
 	registerCommandLineOption("restart_tries", "restartTrys");
 	registerCommandLineOption("crash_restart", "restartChrashed");
+
+	// shortcuts
+	registerCommandLineOption("kf", "killFriendly");
+	registerCommandLineOption("rt", "restartTrys");
+	registerCommandLineOption("cr", "restartChrashed");
 }
 
 std::vector<std::string> & Config::split(const std::string &s, char delim, std::vector<std::string> &elems) {
@@ -22,7 +27,7 @@ bool Config::set(std::string key, std::string value) {
 	if(it != _knownCommandLineOptions.end()) {
 		std::string key_found = it->second;
 		if(key_found == "killFriendly") {
-			if(value == "" || value == "false") {
+			if(value == "false") {
 				kill_friendly = false;
 			} else {
 				kill_friendly = true;
@@ -44,7 +49,7 @@ bool Config::set(std::string key, std::string value) {
 		}
 
 		if(key_found == "restartChrashed") {
-			if(value == "" || value == "false") {
+			if(value == "false") {
 				restart_crached = false;
 			} else {
 				restart_crached = true;

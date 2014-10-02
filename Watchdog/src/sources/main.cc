@@ -17,7 +17,6 @@
 #include "config.h"
 
 #include "Poco/Process.h"
-#include "Poco/Foundation.h"
 
 using std::string;
 using std::cout;
@@ -36,148 +35,154 @@ Config config;
 
 
 void signalHandler (int signum) {
-	cout << "Interrupt signal (" << signum << ") received.\n";
+    cout << "Interrupt signal (" << signum << ") received.\n";
 
-	if(processStarted == true && p_id != 0) {
-		processKillRequest = true;
+    if(processStarted == true && p_id != 0) {
+        processKillRequest = true;
 
-		if(signum == 10 || signum == 12) {
-			processRestartRequest = true;
-		}
-		// send signal to process
-		if(config.kill_friendly) {
-			Poco::Process::requestTermination(p_id);
-		} else {
-			Poco::Process::kill(p_id);
-		}
-	}
+        if(signum == 10 || signum == 12) {
+            processRestartRequest = true;
+        }
+        // send signal to process
+        if(config.kill_friendly) {
+            Poco::Process::requestTermination(p_id);
+        } else {
+            Poco::Process::kill(p_id);
+        }
+    }
 }
 
 void init()  {
-	processStarted = false;
-	processKillRequest = false;
-	processRestartRequest = false;
-	p_id = 0;
-	ret_code = 0;
+    processStarted = false;
+    processKillRequest = false;
+    processRestartRequest = false;
+    p_id = 0;
+    ret_code = 0;
 }
 
 
-void startProcess(std::string program, std::vector<std::string> args) {	
-	Poco::ProcessHandle ph = Poco::Process::launch(program, args, 0, 0, 0);
-	processStarted = true;
-	p_id = ph.id();
-	ret_code = ph.wait();	
+void startProcess(std::string program, std::vector<std::string> args) { 
+    Poco::ProcessHandle ph = Poco::Process::launch(program, args, 0, 0, 0);
+    processStarted = true;
+    p_id = ph.id();
+    ret_code = ph.wait();   
 }
 
 void showHelp() {
-	cout<<"Usage ..."<<std::endl;
-	cout<<"watchdog <arguments for watchdog> -- [PATH TO EXECUTABLE] <arguments for executable> \n\n";
-	cout<<"watchdog arguments ...\n";
-	cout<<"	-kill_friendly=[true,false]	;default false; kill process friendly with signal or hard kill \n";
-	cout<<"	-restart_tries=[times]		;default inifine; restart process n times after finish \n";
-	cout<<"	-crash_restart=[true,false] ;default false; restart a process after it exits abnormally (return code != 0) \n";
-	cout<<"\n\n";
-	cout<<"Example for susi ...\n";
-	cout<<"./watchdog -kill_friendly=true  -- ../../Core/build/susi -config=\"../../Core/config.json\"\n";
-	cout<<"Example for test.sh ...\n";
-	cout<<"./watchdog -kill_friendly=true -restart_tries=1 -- ../test/test.sh\n";
+    cout<<"Usage: "<<std::endl;
+    cout<<"watchdog <arguments for watchdog> -- [PATH TO EXECUTABLE] <arguments for executable> \n\n";
+    cout<<"watchdog arguments ...\n";
+    cout<<" -kf OR -kill_friendly=[true,false] | default: false    | kill process friendly with signal or hard kill \n";
+    cout<<" -rt OR -restart_tries=[times]      | default: infinite | restart process n times after finish \n";
+    cout<<" -cr OR -crash_restart=[true,false] | default: false    | restart a process after it exits abnormally (return code != 0) \n";
+    cout<<"\n\n";
+    cout<<"Example for susi ...\n";
+    cout<<"./watchdog -kill_friendly=true  -- ../../Core/build/susi -config=\"../../Core/config.json\"\n";
+    cout<<"Example for test.sh ...\n";
+    cout<<"./watchdog -kill_friendly=true -restart_tries=1 -- ../test/test.sh"<<std::endl;
 }
 
 int main(int argc, char** argv){
-	
-	// register signal handler
-	signal(SIGINT,  signalHandler); // Strg-C  -- kill
-	signal(SIGUSR1, signalHandler); // 10      -- restart
-	signal(SIGUSR2, signalHandler); // 12      -- restart
+    
+    // register signal handler
+    signal(SIGINT,  signalHandler); // Strg-C  -- kill
+    signal(SIGUSR1, signalHandler); // 10      -- restart
+    signal(SIGUSR2, signalHandler); // 12      -- restart
 
-	std::vector<std::string> watchdog_args;
-	std::vector<std::string> filtered_vec;
-	std::vector<std::string> programm_args;
+    std::vector<std::string> watchdog_args;
+    std::vector<std::string> filtered_vec;
+    std::vector<std::string> programm_args;
 
-	// check help
-	if(argc < 2) {		
-		std::cout<<"use -h for help"<<std::endl;
-		exit(0);
-	}
+    // check help
+    if(argc < 2) {      
+        std::cout<<"use -h for help"<<std::endl;
+        exit(0);
+    }
 
-	if(argc == 2) {
-		std::string o = argv[1];
-		if(o == "-h" || o == "-help" || o == "--h" || o == "--help") {
-			showHelp();
-		}
-		exit(0);
-	}
+    if(argc == 2) {
+        std::string o = argv[1];
+        if(o == "-h" || o == "-help" || o == "--h" || o == "--help") {
+            showHelp();
+        }
+        exit(0);
+    }
 
-	// get arguments
-	bool delimeter_found = false; // '--'
+    // get arguments
+    bool delimeter_found = false; // '--'
 
-	for (int i=1; i<argc; i++) {
-		std::string option = argv[i];
+    for (int i=1; i<argc; i++) {
+        std::string option = argv[i];
 
-		if(option.length() == 2 && option[0] == '-' && option[1] == '-') {
-			delimeter_found = true;
-			i++;
+        if(option == "--") {
+            delimeter_found = true;
+            i++;
 
-			if(i < argc) { program_name = argv[i]; i++;	}
-		}
+            if(i < argc) { program_name = argv[i]; i++; }
+        }
 
-		if(i < argc) {
-			if(delimeter_found) { programm_args.push_back(argv[i]); }
-			else{ watchdog_args.push_back(argv[i]);	}
-		}
-		
-	}	
+        if(i < argc) {
+            if(delimeter_found) { programm_args.push_back(argv[i]); }
+            else{ watchdog_args.push_back(argv[i]); }
+        }
+        
+    }   
 
-	// check programm
-	if(!config.getExecutable(program_name)) {
-		cout<<"Process not found or isn't executable\n";
-		exit(0);
-	}	
+    // check delimeter
+    if(delimeter_found == false) {
+        cout<<"Delimeter \"--\" not found\n";
+        exit(0);
+    }
 
-	// check watchdog arguments
-	filtered_vec = config.parseCommandLine(watchdog_args);
+    // check programm
+    if(program_name == "" || !config.getExecutable(program_name)) {
+        cout<<"Process not found or isn't executable\n";
+        exit(0);
+    }   
 
-	if(filtered_vec.size() > 0)	 {
-		cout<<"Some Watchdog commands could not be processed!\n";
-		config.printArgs(filtered_vec);
-		exit(0);
-	}
+    // check watchdog arguments
+    filtered_vec = config.parseCommandLine(watchdog_args);
 
-	cout<<"Watchdog .."<<std::endl;
-	cout<<"        PROGRAM: "<<program_name<<"\n";
-	cout<<"  KILL_FRIENDLY: "<<((config.kill_friendly == true) ? "true" : "false")<<"\n";
-	cout<<"  CRASH_RESTART: "<<((config.restart_crached == true) ? "true" : "false")<<"\n";
-	cout<<"  RESTART_TRIES: "<<((config.restart_trys == -1) ? "infinite" : std::to_string(config.restart_trys))<<"\n";
+    if(filtered_vec.size() > 0)  {
+        cout<<"Some Watchdog commands could not be processed!\n";
+        config.printArgs(filtered_vec);
+        exit(0);
+    }
 
-	for(;;) {
-		init();
+    cout<<"Watchdog .."<<std::endl;
+    cout<<"        PROGRAM: "<<program_name<<"\n";
+    cout<<"  KILL_FRIENDLY: "<<((config.kill_friendly == true) ? "true" : "false")<<"\n";
+    cout<<"  CRASH_RESTART: "<<((config.restart_crached == true) ? "true" : "false")<<"\n";
+    cout<<"  RESTART_TRIES: "<<((config.restart_trys == -1) ? "infinite" : std::to_string(config.restart_trys))<<"\n";
 
-		cout<<"Start Process: "<<program_name<<"\n";
+    for(;;) {
+        init();
 
-		t = std::thread(startProcess, program_name, programm_args);
-		t.join();
+        cout<<"Start Process: "<<program_name<<"\n";
 
-		if(ret_code != 0 && config.restart_crached == false) {
-			break;
-		}
+        t = std::thread(startProcess, program_name, programm_args);
+        t.join();
 
-		cout<<"Thread finished with:"<<ret_code<<"\n";
-		if(processKillRequest == true) {
-			cout<<"processKillRequest after\n";
+        if(ret_code != 0 && config.restart_crached == false) {
+            break;
+        }
 
-			if(processRestartRequest == false) exit(0);
-		}
+        cout<<"Thread finished with:"<<ret_code<<"\n";
+        if(processKillRequest == true) {
+            cout<<"processKillRequest after\n";
 
-		if(config.restart_trys > 0 && config.restart_trys != -1) {
-			config.restart_trys--;
-		} else {
-			if(config.restart_trys == 0) {
-				cout<<"Watchdog finished.\n";
-				exit(0);
-			}
-		}
-	}		
-	
+            if(processRestartRequest == false) exit(0);
+        }
 
-	exit(0);
+        if(config.restart_trys > 0 && config.restart_trys != -1) {
+            config.restart_trys--;
+        } else {
+            if(config.restart_trys == 0) {
+                cout<<"Watchdog finished.\n";
+                exit(0);
+            }
+        }
+    }       
+    
+
+    exit(0);
 }
