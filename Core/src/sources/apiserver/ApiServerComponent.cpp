@@ -25,7 +25,7 @@ void Susi::Api::ApiServerComponent::onClose( std::string & id ) {
 
 void Susi::Api::ApiServerComponent::onMessage( std::string & id, Susi::Util::Any & packet ) {
     try {
-        //std::cout<<"onMessage:"<<packet.toJSONString()<<std::endl;
+        Susi::Logger::debug("onMessage: "+packet.toJSONString());
         auto type = packet["type"];
         if( type.isString() ) {
             if( type=="registerConsumer" ) {

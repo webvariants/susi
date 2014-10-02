@@ -486,7 +486,7 @@ TEST_F(EventManagerTest,Constraints){
 	}
 }
 
-TEST_F(EventManagerTest, ConsumerError){
+/*TEST_F(EventManagerTest, ConsumerError){
 	Susi::Events::Consumer consumerErrorConsumer = [this](Susi::Events::SharedEventPtr evt){
 		EXPECT_EQ("consumererror",evt->topic);
 		EXPECT_EQ("consumer fail",static_cast<std::string>(evt->payload));
@@ -517,4 +517,4 @@ TEST_F(EventManagerTest, ConsumerError){
 		condTwo.wait_for(lock,std::chrono::milliseconds{100},[this](){return callbackCalledTwo;});
 		EXPECT_TRUE(callbackCalledTwo);
 	}
-}
+}*/

@@ -9,6 +9,7 @@ long Susi::Events::Manager::subscribe(
     char authlevel,
     std::string name )
 {
+    //Susi::Logger::debug("subscribe something to topic "+topic+" with autlevel "+std::to_string(int(authlevel)));
     long id = std::chrono::system_clock::now().time_since_epoch().count();
     Subscription sub;
     sub.id = id;
@@ -104,6 +105,8 @@ void Susi::Events::Manager::publish( Susi::Events::EventPtr event, Susi::Events:
                         else if( sub.processor ) {
                             affectedProcessorSubscriptions.push_back( sub );
                         }
+                    }else{
+                        Susi::Logger::debug("can not use sub for this event: processor authlevel: "+std::to_string(sub.authlevel));
                     }
                 }
                 break;
@@ -119,6 +122,8 @@ void Susi::Events::Manager::publish( Susi::Events::EventPtr event, Susi::Events:
                     else if( sub.processor ) {
                         affectedProcessorSubscriptions.push_back( sub );
                     }
+                }else{
+                    Susi::Logger::debug("can not use sub for this event: processor authlevel: "+std::to_string(sub.authlevel));
                 }
             }
         }
@@ -243,7 +248,7 @@ Susi::Events::EventPtr Susi::Events::Manager::createEvent( std::string topic ) {
 }
 
 void Susi::Events::Manager::deleter( Event *event ) {
-    std::cout<<"calling deleter of "<<event<<std::endl;
+    //std::cout<<"calling deleter of "<<event<<std::endl;
     if( event!=nullptr ) {
         Susi::Events::EventPtr ptr( event,[this]( Event *event ) {
             deleter( event );

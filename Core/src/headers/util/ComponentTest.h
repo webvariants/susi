@@ -24,7 +24,7 @@ public:
     std::string base_path;
 
     ComponentTest() {
-        Susi::Logger::setLevel( 0 );
+        Susi::Logger::setLevel( 255 );
 
         base_path = Poco::Path( Poco::Path::current() ).toString() + "component_test";
 
@@ -110,20 +110,20 @@ protected:
         return configString;
     }
 
-    long subscribe( std::string topic, Susi::Events::Processor processor ) {
-        long id = eventManager->subscribe( topic,std::move( processor ) );
+    long subscribe( std::string topic, Susi::Events::Processor processor , char authlevel = 0) {
+        long id = eventManager->subscribe( topic,std::move( processor ) , authlevel);
         return id;
     }
-    long subscribe( Susi::Events::Predicate pred, Susi::Events::Processor processor ) {
-        long id = eventManager->subscribe( pred,std::move( processor ) );
+    long subscribe( Susi::Events::Predicate pred, Susi::Events::Processor processor , char authlevel = 0) {
+        long id = eventManager->subscribe( pred,std::move( processor ) , authlevel);
         return id;
     }
-    long subscribe( std::string topic, Susi::Events::Consumer consumer ) {
-        long id = eventManager->subscribe( topic,std::move( consumer ) );
+    long subscribe( std::string topic, Susi::Events::Consumer consumer , char authlevel = 0) {
+        long id = eventManager->subscribe( topic,std::move( consumer ) , authlevel);
         return id;
     }
-    long subscribe( Susi::Events::Predicate pred, Susi::Events::Consumer consumer ) {
-        long id = eventManager->subscribe( pred,std::move( consumer ) );
+    long subscribe( Susi::Events::Predicate pred, Susi::Events::Consumer consumer , char authlevel = 0) {
+        long id = eventManager->subscribe( pred,std::move( consumer ) , authlevel);
         return id;
     }
     bool unsubscribe( long id ) {

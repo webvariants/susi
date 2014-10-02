@@ -22,8 +22,9 @@ protected:
 			called = true;
 			cond.notify_one();
 		}};
-		subscribe("foo",consumer);
+		subscribe("foo",consumer,3);
 		auto event = createEvent("foo@samplename");
+		event->authlevel = 3;
 		publish(std::move(event));
 		{
 			std::unique_lock<std::mutex> lock{mutex};
