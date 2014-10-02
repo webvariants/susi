@@ -32,5 +32,9 @@ cmake ..
 make -j4
 popd
 
+<<<<<<< HEAD
 exit 23
+=======
+exit 2
+>>>>>>> refs/remotes/origin/experimental
 
