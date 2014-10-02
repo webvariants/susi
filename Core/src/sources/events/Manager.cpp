@@ -13,7 +13,7 @@ long Susi::Events::Manager::subscribe(
     Subscription sub;
     sub.id = id;
     sub.name = name;
-    sub.minAuthlevel = authlevel;
+    sub.authlevel = authlevel;
     sub.topic = topic;
     sub.predicate = std::move( predicate );
     sub.processor = std::move( processor );
@@ -31,34 +31,34 @@ long Susi::Events::Manager::subscribe(
 
 }
 
-long Susi::Events::Manager::subscribe( std::string topic, Processor processor, char minAuthlevel, std::string name ) {
+long Susi::Events::Manager::subscribe( std::string topic, Processor processor, char authlevel, std::string name ) {
     if( Susi::Util::Glob::isGlob( topic ) ) {
         auto predicate = [topic]( Susi::Events::Event& event ) {
             Susi::Util::Glob glob {topic};
             return glob.match( event.topic );
         };
-        return subscribe( "",predicate,Consumer {},std::move( processor ),minAuthlevel,name );
+        return subscribe( "",predicate,Consumer {},std::move( processor ),authlevel,name );
     }
-    return subscribe( topic,Predicate {},Consumer {},std::move( processor ),minAuthlevel,name );
+    return subscribe( topic,Predicate {},Consumer {},std::move( processor ),authlevel,name );
 }
 
-long Susi::Events::Manager::subscribe( Predicate pred, Processor processor, char minAuthlevel, std::string name ) {
-    return subscribe( "",pred,Consumer {},std::move( processor ),minAuthlevel,name );
+long Susi::Events::Manager::subscribe( Predicate pred, Processor processor, char authlevel, std::string name ) {
+    return subscribe( "",pred,Consumer {},std::move( processor ),authlevel,name );
 }
 
-long Susi::Events::Manager::subscribe( std::string topic, Consumer consumer, char minAuthlevel, std::string name ) {
+long Susi::Events::Manager::subscribe( std::string topic, Consumer consumer, char authlevel, std::string name ) {
     if( Susi::Util::Glob::isGlob( topic ) ) {
         auto predicate = [topic]( Susi::Events::Event& event ) {
             Susi::Util::Glob glob {topic};
             return glob.match( event.topic );
         };
-        return subscribe( "",predicate,std::move( consumer ),Processor {},minAuthlevel,name );
+        return subscribe( "",predicate,std::move( consumer ),Processor {},authlevel,name );
     }
-    return subscribe( topic,Predicate {},std::move( consumer ),Processor {},minAuthlevel,name );
+    return subscribe( topic,Predicate {},std::move( consumer ),Processor {},authlevel,name );
 }
 
-long Susi::Events::Manager::subscribe( Predicate pred, Consumer consumer, char minAuthlevel, std::string name ) {
-    return subscribe( "",pred,std::move( consumer ),Processor {},minAuthlevel,name );
+long Susi::Events::Manager::subscribe( Predicate pred, Consumer consumer, char authlevel, std::string name ) {
+    return subscribe( "",pred,std::move( consumer ),Processor {},authlevel,name );
 }
 
 bool Susi::Events::Manager::unsubscribe( long id ) {
@@ -97,7 +97,7 @@ void Susi::Events::Manager::publish( Susi::Events::EventPtr event, Susi::Events:
         for( auto & kv : subscriptionsByTopic ) {
             if( kv.first == event->topic ) {
                 for( auto & sub : kv.second ) {
-                    if( event->authlevel <= sub.minAuthlevel ) {
+                    if( event->authlevel == sub.authlevel ) {
                         if( sub.consumer ) {
                             process->consumers.push_back( sub.consumer );
                         }
@@ -112,7 +112,7 @@ void Susi::Events::Manager::publish( Susi::Events::EventPtr event, Susi::Events:
         //collect consumers, processors by predicate
         for( auto & sub : subscriptionsByPred ) {
             if( sub.predicate( *event ) ) {
-                if( event->authlevel <= sub.minAuthlevel ) {
+                if( event->authlevel == sub.authlevel ) {
                     if( sub.consumer ) {
                         process->consumers.push_back( sub.consumer );
                     }
@@ -195,12 +195,13 @@ void Susi::Events::Manager::ack( EventPtr event ) {
                 for( auto & consumer : process->consumers ) {
                     if( consumer ) manager->pool.add( [consumer,sharedEvent]() {
                         consumer( sharedEvent );
-                    } ,[this](std::string errorMessage){
+                    } /*,[this](std::string errorMessage){
                         auto errorEvent = manager->createEvent("consumererror");
                         Susi::Logger::error("consumer error: "+errorMessage);
                         errorEvent->payload = errorMessage;
                         manager->publish(std::move(errorEvent));
-                    });
+                    }*/);
+                    //@TODO: the error handler results in a segfault. inspect why and solve it!
                 }
                 {
                     std::unique_lock<std::mutex> lock( manager->mutex );
@@ -242,7 +243,7 @@ Susi::Events::EventPtr Susi::Events::Manager::createEvent( std::string topic ) {
 }
 
 void Susi::Events::Manager::deleter( Event *event ) {
-    //std::cout<<"calling deleter of "<<event<<std::endl;
+    std::cout<<"calling deleter of "<<event<<std::endl;
     if( event!=nullptr ) {
         Susi::Events::EventPtr ptr( event,[this]( Event *event ) {
             deleter( event );

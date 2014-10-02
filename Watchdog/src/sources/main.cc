@@ -149,7 +149,7 @@ int main(int argc, char** argv){
     }
 
     cout<<"Watchdog .."<<std::endl;
-    cout<<"        PROGRAM: "<<program_name<<"\n";
+    cout<<"  PROGRAM: "<<program_name<<"\n";
     cout<<"  KILL_FRIENDLY: "<<((config.kill_friendly == true) ? "true" : "false")<<"\n";
     cout<<"  CRASH_RESTART: "<<((config.restart_crached == true) ? "true" : "false")<<"\n";
     cout<<"  RESTART_TRIES: "<<((config.restart_trys == -1) ? "infinite" : std::to_string(config.restart_trys))<<"\n";
