@@ -13,9 +13,9 @@
 
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
-project( "SUSI-CPPENGINE" )
+project( "SUSI-DEBUGGER" )
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/dev")
 
 find_package(POCO REQUIRED PocoFoundation PocoUtil PocoJSON PocoNet)
 find_package(SOCI REQUIRED)
@@ -27,20 +27,19 @@ set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g -Wall --std=c++11 -fPIC -O3" )
 # include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 
 include_directories( ${CMAKE_SOURCE_DIR}/../Core/src/headers )
+include_directories( ${CMAKE_SOURCE_DIR}/../CPPEngine/src/headers )
 include_directories( ${CMAKE_SOURCE_DIR}/src/headers )
 include_directories( ${POCO_INCLUDE_DIR} )
 include_directories( ${SOCI_INCLUDE_DIRS} )
 
-file( GLOB SRCFILES ${CMAKE_SOURCE_DIR}/src/source/**/*.cpp )
+file( GLOB SRCFILES ${CMAKE_SOURCE_DIR}/src/sources/*.cpp )
 
-add_library( susicpp SHARED ${SRCFILES} )
-
-add_executable( susi-cppengine ${CMAKE_SOURCE_DIR}/src/source/main.cpp)
-target_link_libraries(susi-cppengine susicpp)
-target_link_libraries(susi-cppengine ${CMAKE_SOURCE_DIR}/../Core/build/libsusi.so)
-target_link_libraries(susi-cppengine ${POCO_LIBRARIES})
-target_link_libraries(susi-cppengine ${SOCI_LIBRARY})
-target_link_libraries(susi-cppengine ${CMAKE_THREAD_LIBS_INIT})
+add_executable( susi-debugger ${SRCFILES} ${CMAKE_SOURCE_DIR}/src/sources/main.cc)
+target_link_libraries(susi-debugger ${CMAKE_SOURCE_DIR}/../CPPEngine/build/libsusicpp.so)
+target_link_libraries(susi-debugger ${CMAKE_SOURCE_DIR}/../Core/build/libsusi.so)
+target_link_libraries(susi-debugger ${POCO_LIBRARIES})
+target_link_libraries(susi-debugger ${SOCI_LIBRARY})
+target_link_libraries(susi-debugger ${CMAKE_THREAD_LIBS_INIT})
 
 
 # file( GLOB TESTFILES ${CMAKE_SOURCE_DIR}/test/*.cpp )
