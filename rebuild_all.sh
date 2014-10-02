@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 SOFT=true
 
 if test $# -ge 1 && test $1 = hard; then
@@ -32,7 +33,4 @@ make -j4
 popd
 
 exit 0
-
-
-
 
