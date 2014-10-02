@@ -32,5 +32,5 @@ cmake ..
 make -j4
 popd
 
-exit 1
+exit 23
 
