@@ -39,18 +39,26 @@ void Susi::Api::BasicApiClient::sendRegisterProcessor( std::string topic ) {
     JSONTCPClient::send( packet );
 }
 
+void Susi::Api::BasicApiClient::sendShutdown(){
+    Susi::Util::Any packet = Susi::Util::Any::Object{
+        {"type","shutdown"}
+    };
+    JSONTCPClient::send( packet );
+}
 
 void Susi::Api::BasicApiClient::sendUnregisterConsumer( long id ){
     Susi::Util::Any packet = Susi::Util::Any::Object{
         {"type","unregisterConsumer"},
         {"data",id}
     };
+    JSONTCPClient::send( packet );
 }
 void Susi::Api::BasicApiClient::sendUnregisterProcessor( long id ){
     Susi::Util::Any packet = Susi::Util::Any::Object{
         {"type","unregisterProcessor"},
         {"data",id}
     };
+    JSONTCPClient::send( packet );
 }
 
 void Susi::Api::BasicApiClient::onMessage( Susi::Util::Any & message ) {

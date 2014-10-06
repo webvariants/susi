@@ -212,6 +212,10 @@ void Susi::Api::ApiServerComponent::handleAck( std::string & id, Susi::Util::Any
         return;
     }
     long eventID = eventData["id"];
+    if(!(eventsToAck.count(id)>0) || !(eventsToAck[id].count(eventID)>0)){
+        sendFail( id , "unexpected ack" );
+        return;
+    }
     auto event = std::move( eventsToAck[id][eventID] );
     eventsToAck[id].erase( eventID );
     event->headers.clear();

@@ -32,7 +32,10 @@ namespace Susi {
             }
 
             void close() {
-                JSONTCPClient::close();
+                try{
+                    sendShutdown();
+                    JSONTCPClient::close();
+                }catch(...){}
             }
 
             virtual void onConsumerEvent( Susi::Events::Event & event ) {};
@@ -45,6 +48,7 @@ namespace Susi {
             void sendAck( Susi::Events::Event & event );
             void sendUnregisterConsumer( long id );
             void sendUnregisterProcessor( long id );
+            void sendShutdown();
 
         };
 

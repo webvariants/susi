@@ -36,7 +36,9 @@ namespace Susi {
                 TCPClient::send( msg );
             }
             void close() {
-                TCPClient::close();
+                try{
+                    TCPClient::close();
+                }catch(...){}
             }
         protected:
             JSONStreamCollector collector;
