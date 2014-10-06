@@ -1,6 +1,6 @@
 #!/bin/bash
 
-FEATURE_BRANCHES="feature/commandline-debugger feature/core feature/cpp-engine feature/php-engine feature/watchdog"
+FEATURE_BRANCHES="feature/commandline-debugger feature/core feature/cpp-engine feature/php-engine feature/watchdog feature/ddhcp"
 
 git fetch --all
 
