@@ -21,6 +21,8 @@
 #include "apiserver/JSONStreamCollector.h"
 #include "world/BaseComponent.h"
 
+#include <Poco/Thread.h>
+
 namespace Susi {
     namespace Api {
 
@@ -128,7 +130,8 @@ namespace Susi {
                 std::string msg {"started TCPApiServerComponent on "};
                 msg += address.toString();
                 Susi::Logger::info( msg );
-                std::this_thread::sleep_for( std::chrono::milliseconds {250} );
+                //std::this_thread::sleep_for( std::chrono::milliseconds {250} );
+                Poco::Thread::sleep(250);
             }
             virtual void stop() override {
                 tcpServer.stop();

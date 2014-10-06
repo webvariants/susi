@@ -23,7 +23,7 @@ protected:
  		Susi::Events::Consumer c = [&executed](Susi::Events::SharedEventPtr event) {
  			executed = true;
  		};
- 		subscribe("eventmanagertest::stoptest", c);
+ 		subscribe(std::string{"eventmanagertest::stoptest"}, c);
  		publish_sync(std::move(createEvent("eventmanagertest::stoptest")));
  		EXPECT_TRUE(executed);
 

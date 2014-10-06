@@ -14,7 +14,8 @@ protected:
 
 	virtual void GoodCases() override {
 		Susi::Autodiscovery::RemoteEventCollector collector{"[::1]:4000","samplename",eventManager};
-		std::this_thread::sleep_for(std::chrono::milliseconds{100});
+		//std::this_thread::sleep_for(std::chrono::milliseconds{100});
+		Poco::Thread::sleep(100);
 		std::condition_variable cond;
 		bool called = false;
 		std::mutex mutex;
@@ -22,7 +23,7 @@ protected:
 			called = true;
 			cond.notify_one();
 		}};
-		subscribe("foo",consumer,3);
+		subscribe(std::string{"foo"},consumer,3);
 		auto event = createEvent("foo@samplename");
 		event->authlevel = 3;
 		publish(std::move(event));

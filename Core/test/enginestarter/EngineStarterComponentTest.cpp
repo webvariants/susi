@@ -31,8 +31,8 @@ protected:
 		evt->payload["path"] = base_path;
 		publish_sync(std::move(evt));
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
-
+		//std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+		Poco::Thread::sleep(1500);
 		content = io.readFile(output);
 		EXPECT_TRUE(content.length() > 0);
 		io.deletePath(output);
@@ -45,8 +45,8 @@ protected:
 		auto evt3 = createEvent("enginestarter::stop");			
 		publish_sync(std::move(evt3));
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
-
+		//std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+		Poco::Thread::sleep(1500);
 		EXPECT_THROW({
 			content = io.readFile(output);
 		},std::runtime_error);
@@ -56,8 +56,8 @@ protected:
 		evt4->payload["path"] = base_path;
 		publish_sync(std::move(evt4));
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(500));
-
+		//std::this_thread::sleep_for(std::chrono::milliseconds(500));
+		Poco::Thread::sleep(500);
 		auto evt5 = createEvent("enginestarter::stop");			
 		publish_sync(std::move(evt5));
 
@@ -65,8 +65,8 @@ protected:
 		evt6->payload["path"] = base_path;		
 		publish_sync(std::move(evt6));
 
-		std::this_thread::sleep_for(std::chrono::milliseconds(1500));
-
+		//std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+		Poco::Thread::sleep(1500);
 		content = io.readFile(output);	
 		EXPECT_TRUE(content.length() > 0);		
 

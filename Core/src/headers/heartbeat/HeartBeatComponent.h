@@ -35,7 +35,7 @@ namespace Susi {
             t = std::move( std::thread {
                 [this]() {
                     int count = 0;
-                    std::chrono::seconds interval( 1 );
+                    //std::chrono::seconds interval( 1 );
                     while( !this->stopVar.load() ) {
                         ++count %= 300;
                         publish( createEvent( "heartbeat::one" ) );
@@ -51,7 +51,8 @@ namespace Susi {
                         if( count % 300 == 0 ) {
                             publish( createEvent( "heartbeat::fiveMinute" ) );
                         }
-                        std::this_thread::sleep_for( interval );
+                        //std::this_thread::sleep_for( interval );
+                        Poco::Thread::sleep(1000);
                     }
                 }
             } );

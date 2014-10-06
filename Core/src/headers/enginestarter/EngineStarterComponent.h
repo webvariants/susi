@@ -23,25 +23,25 @@ namespace Susi {
                 Susi::System::BaseComponent {mgr}, Starter {} {}
 
             virtual void start() override {
-                subscribe( "enginestarter::start", [this]( Susi::Events::EventPtr evt ) {
+                subscribe( std::string{"enginestarter::start"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleStart( std::move( evt ) );
-                } );
-                subscribe( "enginestarter::restart", [this]( Susi::Events::EventPtr evt ) {
+                }} );
+                subscribe( std::string{"enginestarter::restart"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleRestart( std::move( evt ) );
-                } );
-                subscribe( "enginestarter::stop", [this]( Susi::Events::EventPtr evt ) {
+                }} );
+                subscribe( std::string{"enginestarter::stop"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleStop( std::move( evt ) );
-                } );
+                }} );
 
-                subscribe( "global::start", [this]( Susi::Events::EventPtr evt ) {
+                subscribe( std::string{"global::start"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleStart( std::move( evt ) );
-                } );
-                subscribe( "global::restart", [this]( Susi::Events::EventPtr evt ) {
+                }} );
+                subscribe( std::string{"global::restart"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleRestart( std::move( evt ) );
-                } );
-                subscribe( "global::stop", [this]( Susi::Events::EventPtr evt ) {
+                }} );
+                subscribe( std::string{"global::stop"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleStop( std::move( evt ) );
-                } );
+                }} );
                 Susi::Logger::info( "started EngineStarterComponent" );
             }
 

@@ -130,7 +130,7 @@ void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, S
             sendFail( id,"you are allready subscribed to "+topic );
             return;
         }
-        long subid = eventManager->subscribe( topic,[this,id]( Susi::Events::EventPtr event ) {
+        long subid = eventManager->subscribe( topic,Susi::Events::Processor{[this,id]( Susi::Events::EventPtr event ) {
             Susi::Util::Any::Array headers;
             for( auto & kv : event->headers ) {
                 headers.push_back( Susi::Util::Any::Object {{kv.first,kv.second}} );
@@ -141,7 +141,7 @@ void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, S
             std::string _id = id;
             eventsToAck[_id][event->id] = std::move( event );
             send( _id,packet );
-        },authlevel,subName );
+        }},authlevel,subName );
         subs[topic+std::to_string((int)authlevel)] = subid;
         sendOk( id );
     }

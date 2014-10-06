@@ -1,7 +1,7 @@
 #include "world/ComponentManager.h"
 
 void Susi::System::ComponentManager::registerComponent( std::string name, RegisterFunction func ) {
-    registerFunctions.emplace( name,std::move( func ) );
+    registerFunctions[name]= std::move( func ) ;
 }
 void Susi::System::ComponentManager::registerDependency( std::string subject, std::string dependency ) {
     auto & deps = dependencies[subject];

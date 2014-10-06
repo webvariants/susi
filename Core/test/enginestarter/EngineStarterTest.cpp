@@ -37,7 +37,8 @@ protected:
 
 		// test also multi execution with sub
 		engineStarter->execute(base_path);
-		std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+		//std::this_thread::sleep_for(std::chrono::milliseconds(1100));
+		Poco::Thread::sleep(1100);
 		data = io.readFile(output1);
 		EXPECT_EQ("foobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobar",data);
 
@@ -47,9 +48,11 @@ protected:
 		io.deletePath(output1);
 		
 		engineStarter->execute(base_path);
-		std::this_thread::sleep_for(std::chrono::milliseconds(300));
+		//std::this_thread::sleep_for(std::chrono::milliseconds(300));
+		Poco::Thread::sleep(300);
 		engineStarter->killall();		
-		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		//std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		Poco::Thread::sleep(100);
 		data = io.readFile(output1);
 		EXPECT_NE("foobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobarfoobar",data);		
 	}

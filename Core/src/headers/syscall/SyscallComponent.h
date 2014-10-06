@@ -34,9 +34,9 @@ namespace Susi {
             pool {threads,queuelen} {}
 
             virtual void start() override {
-                subscribe( "syscall::exec", [this]( EventPtr evt ) {
+                subscribe( std::string{"syscall::exec"}, Susi::Events::Processor{[this]( EventPtr evt ) {
                     handleExec( std::move( evt ) );
-                } );
+                }} );
                 Susi::Logger::info( "started SyscallComponent" );
             }
 

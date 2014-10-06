@@ -28,7 +28,7 @@ class ConstraintControllerComponent : public Susi::System::BaseComponent {
 			eventManager->addConstraint({left,right});
 			event->payload["success"] = true;
 		};
-		subscribe("constraints::add",p);
+		subscribe(std::string{"constraints::add"},p);
 	}	
 	
 	virtual void stop() override {

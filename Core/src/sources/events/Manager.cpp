@@ -66,14 +66,14 @@ bool Susi::Events::Manager::unsubscribe( long id ) {
     std::lock_guard<std::mutex> lock( mutex );
     for( auto & kv : subscriptionsByTopic ) {
         auto & subs = kv.second;
-        for( int i=0; i<subs.size(); i++ ) {
+        for( size_t i=0; i<subs.size(); i++ ) {
             if( subs[i].id == id ) {
                 subs.erase( subs.begin()+i );
                 return true;
             }
         }
     }
-    for( int i=0; i<subscriptionsByPred.size(); i++ ) {
+    for( size_t i=0; i<subscriptionsByPred.size(); i++ ) {
         if( subscriptionsByPred[i].id == id ) {
             subscriptionsByPred.erase( subscriptionsByPred.begin()+i );
             return true;

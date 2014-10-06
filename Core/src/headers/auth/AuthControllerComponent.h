@@ -41,32 +41,32 @@ namespace Susi {
             Susi::System::BaseComponent {mgr} {}
 
             virtual void start() override {
-                subscribe( "auth::login", [this]( Susi::Events::EventPtr evt ) {
+                subscribe( std::string{"auth::login"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleLogin( std::move( evt ) );
-                }, 3 );
-                subscribe( "auth::logout", [this]( Susi::Events::EventPtr evt ) {
+                }}, 3 );
+                subscribe( std::string{"auth::logout"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleLogout( std::move( evt ) );
-                }, 3 );
-                subscribe( "auth::isLoggedIn", [this]( Susi::Events::EventPtr evt ) {
+                }}, 3 );
+                subscribe( std::string{"auth::isLoggedIn"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleIsLoggedIn( std::move( evt ) );
-                }, 3 );
-                subscribe( "auth::getUsername", [this]( Susi::Events::EventPtr evt ) {
+                }}, 3 );
+                subscribe( std::string{"auth::getUsername"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleGetUsername( std::move( evt ) );
-                }, 3 );
+                }}, 3 );
 
 
-                subscribe( "auth::addUser", [this]( Susi::Events::EventPtr evt ) {
+                subscribe( std::string{"auth::addUser"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     assertAuthlevel(*evt,0);
                     handleAddUser( std::move( evt ) );
-                }, 0 );
-                subscribe( "auth::delUser", [this]( Susi::Events::EventPtr evt ) {
+                }}, 0 );
+                subscribe( std::string{"auth::delUser"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     assertAuthlevel(*evt,0);
                     handleDelUser( std::move( evt ) );
-                }, 0 );
-                subscribe( "auth::updateUser", [this]( Susi::Events::EventPtr evt ) {
+                }}, 0 );
+                subscribe( std::string{"auth::updateUser"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     assertAuthlevel(*evt,0);
                     handleUpdateUser( std::move( evt ) );
-                }, 0 );
+                }}, 0 );
                 Susi::Logger::info( "started AuthControllerComponent" );
             }
 

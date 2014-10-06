@@ -4,6 +4,8 @@
 #include <vector>
 #include <utility>
 
+#include <Poco/Thread.h>
+
 class AutoDiscoveryManagerTest : public ::testing::Test {
 protected:	
 	std::mutex mutex;
@@ -33,7 +35,8 @@ TEST_F(AutoDiscoveryManagerTest, Basic) {
 	manager1.start();
 	manager2.start();
 	manager3.start();
-	std::this_thread::sleep_for(std::chrono::milliseconds{250});
+	//std::this_thread::sleep_for(std::chrono::milliseconds{250});
+	Poco::Thread::sleep(250);
 	manager1.stop();
 	manager2.stop();
 	manager3.stop();
