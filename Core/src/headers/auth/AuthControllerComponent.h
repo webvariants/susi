@@ -56,12 +56,15 @@ namespace Susi {
 
 
                 subscribe( "auth::addUser", [this]( Susi::Events::EventPtr evt ) {
+                    assertAuthlevel(*evt,0);
                     handleAddUser( std::move( evt ) );
                 }, 0 );
                 subscribe( "auth::delUser", [this]( Susi::Events::EventPtr evt ) {
+                    assertAuthlevel(*evt,0);
                     handleDelUser( std::move( evt ) );
                 }, 0 );
                 subscribe( "auth::updateUser", [this]( Susi::Events::EventPtr evt ) {
+                    assertAuthlevel(*evt,0);
                     handleUpdateUser( std::move( evt ) );
                 }, 0 );
                 Susi::Logger::info( "started AuthControllerComponent" );

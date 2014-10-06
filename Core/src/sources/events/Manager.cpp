@@ -98,7 +98,7 @@ void Susi::Events::Manager::publish( Susi::Events::EventPtr event, Susi::Events:
         for( auto & kv : subscriptionsByTopic ) {
             if( kv.first == event->topic ) {
                 for( auto & sub : kv.second ) {
-                    if( event->authlevel == sub.authlevel ) {
+                    if( event->authlevel >= sub.authlevel ) {
                         if( sub.consumer ) {
                             process->consumers.push_back( sub.consumer );
                         }

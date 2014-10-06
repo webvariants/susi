@@ -431,11 +431,11 @@ TEST_F(EventManagerTest, GlobTest){
 TEST_F(EventManagerTest, Authlevel) {
 	int callCounter = 0;
 
-	//subscribe processor with authlevel 0 (highest authlevel)
+	//subscribe processor with authlevel 1 
 	eventManager->subscribe("test",[this,&callCounter](EventPtr event){
 		callCounter++;
 		condOne.notify_all();
-	},0);
+	},1);
 
 	//create events with authlevel of zero respectivly one
 	auto event_auth0 = eventManager->createEvent("test");

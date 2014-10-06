@@ -6,14 +6,14 @@ void Susi::Api::ApiClient::publish( Susi::Events::EventPtr event, Susi::Events::
     delete event.release();
 }
 
-long Susi::Api::ApiClient::subscribe( std::string topic, Susi::Events::Processor processor , char authlevel) {
-    sendRegisterProcessor( topic );
-    return Susi::Events::Manager::subscribe( topic,processor,authlevel );
+long Susi::Api::ApiClient::subscribe( std::string topic, Susi::Events::Processor processor , char authlevel, std::string name) {
+    sendRegisterProcessor( topic,authlevel,name );
+    return Susi::Events::Manager::subscribe( topic,processor,authlevel,name );
 }
 
-long Susi::Api::ApiClient::subscribe( std::string topic, Susi::Events::Consumer consumer , char authlevel) {
-    sendRegisterConsumer( topic );
-    return Susi::Events::Manager::subscribe( topic,consumer,authlevel );
+long Susi::Api::ApiClient::subscribe( std::string topic, Susi::Events::Consumer consumer , char authlevel, std::string name) {
+    sendRegisterConsumer( topic,authlevel,name );
+    return Susi::Events::Manager::subscribe( topic,consumer,authlevel,name );
 }
 
 

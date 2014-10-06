@@ -63,15 +63,25 @@ void Susi::Api::ApiServerComponent::onMessage( std::string & id, Susi::Util::Any
 
 void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, Susi::Util::Any & packet ) {
     auto & data = packet["data"];
-    if( data.isString() ) {
+    if( data.isObject() ) {
         char authlevel = 3;
         auto sessionAuthlevel = sessionManager->getSessionAttribute( id,"authlevel" );
         if( sessionAuthlevel.isInteger() ) {
             authlevel = static_cast<char>( sessionAuthlevel );
         }
-        std::string topic = data;
+        std::string topic = data["topic"];
+        if(data["authlevel"].isInteger()){
+            char supposedAuthlevel = static_cast<char>(data["authlevel"]);
+            if(supposedAuthlevel > authlevel){
+                authlevel = supposedAuthlevel;
+            }
+        }
+        std::string subName = "";
+        if(data["name"].isString()){
+            subName = static_cast<std::string>(data["name"]);
+        }
         auto & subs = consumerSubscriptions[id];
-        if( subs.find( topic ) != subs.end() ) {
+        if( subs.find( topic+std::to_string((int)authlevel) ) != subs.end() ) {
             sendFail( id,"you are allready subscribed to "+topic );
             return;
         }
@@ -87,26 +97,36 @@ void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, Su
             std::string _id = id;
             send( _id,packet );
         };
-        long subid = eventManager->subscribe( topic,callback,authlevel );
-        subs[topic] = subid;
+        long subid = eventManager->subscribe( topic,callback,authlevel,subName );
+        subs[topic+std::to_string((int)authlevel)] = subid;
         sendOk( id );
     }
     else {
-        sendFail( id,"data is not a string" );
+        sendFail( id,"data is not a object" );
     }
 }
 
 void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, Susi::Util::Any & packet ) {
     auto & data = packet["data"];
-    if( data.isString() ) {
+    if( data.isObject() ) {
         char authlevel = 3;
         auto sessionAuthlevel = sessionManager->getSessionAttribute( id,"authlevel" );
         if( sessionAuthlevel.isInteger() ) {
             authlevel = static_cast<char>( sessionAuthlevel );
         }
-        std::string topic = data;
+        std::string topic = data["topic"];
+        if(data["authlevel"].isInteger()){
+            char supposedAuthlevel = static_cast<char>(data["authlevel"]);
+            if(supposedAuthlevel > authlevel){
+                authlevel = supposedAuthlevel;
+            }
+        }
+        std::string subName = "";
+        if(data["name"].isString()){
+            subName = static_cast<std::string>(data["name"]);
+        }
         auto & subs = processorSubscriptions[id];
-        if( subs.find( topic ) != subs.end() ) {
+        if( subs.find( topic+std::to_string((int)authlevel) ) != subs.end() ) {
             sendFail( id,"you are allready subscribed to "+topic );
             return;
         }
@@ -121,21 +141,28 @@ void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, S
             std::string _id = id;
             eventsToAck[_id][event->id] = std::move( event );
             send( _id,packet );
-        },authlevel );
-        subs[topic] = subid;
+        },authlevel,subName );
+        subs[topic+std::to_string((int)authlevel)] = subid;
         sendOk( id );
     }
     else {
-        sendFail( id,"data is not a string" );
+        sendFail( id,"data is not a object" );
     }
 }
 void Susi::Api::ApiServerComponent::handleUnregisterConsumer( std::string & id, Susi::Util::Any & packet ) {
     auto & data = packet["data"];
-    if( data.isString() ) {
-        std::string topic = data;
+    if( data.isObject() ) {
+        std::string topic = data["topic"];
+        char authlevel = 3;
+        if(data["authlevel"].isInteger()){
+            char supposedAuthlevel = static_cast<char>(data["authlevel"]);
+            if(supposedAuthlevel > authlevel){
+                authlevel = supposedAuthlevel;
+            }
+        }
         auto & subs = consumerSubscriptions[id];
-        if( subs.find( topic )!=subs.end() ) {
-            long subid = subs[topic];
+        if( subs.find( topic+std::to_string((int)authlevel) )!=subs.end() ) {
+            long subid = subs[topic+std::to_string((int)authlevel)];
             eventManager->unsubscribe( subid );
             sendOk( id );
         }
@@ -144,17 +171,24 @@ void Susi::Api::ApiServerComponent::handleUnregisterConsumer( std::string & id, 
         }
     }
     else {
-        sendFail( id,"data is not a string" );
+        sendFail( id,"data is not a object" );
     }
 }
 
 void Susi::Api::ApiServerComponent::handleUnregisterProcessor( std::string & id, Susi::Util::Any & packet ) {
     auto & data = packet["data"];
-    if( data.isString() ) {
-        std::string topic = data;
+    if( data.isObject() ) {
+        std::string topic = data["topic"];
+        char authlevel = 3;
+        if(data["authlevel"].isInteger()){
+            char supposedAuthlevel = static_cast<char>(data["authlevel"]);
+            if(supposedAuthlevel > authlevel){
+                authlevel = supposedAuthlevel;
+            }
+        }
         auto & subs = processorSubscriptions[id];
-        if( subs.find( topic )!=subs.end() ) {
-            long subid = subs[topic];
+        if( subs.find( topic+std::to_string((int)authlevel) )!=subs.end() ) {
+            long subid = subs[topic+std::to_string((int)authlevel)];
             eventManager->unsubscribe( subid );
             sendOk( id );
         }
@@ -163,7 +197,7 @@ void Susi::Api::ApiServerComponent::handleUnregisterProcessor( std::string & id,
         }
     }
     else {
-        sendFail( id,"data is not a string" );
+        sendFail( id,"data is not a object" );
     }
 }
 void Susi::Api::ApiServerComponent::handlePublish( std::string & id, Susi::Util::Any & packet ) {

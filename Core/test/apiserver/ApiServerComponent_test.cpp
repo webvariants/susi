@@ -39,14 +39,18 @@ protected:
 
 		Susi::Util::Any msg = Susi::Util::Any::Object{
 			{"type","registerConsumer"},
-			{"data","sample"}
+			{"data",Susi::Util::Any::Object{
+				{"topic","sample"}
+			}}
 		};
 		apiserver->onMessage(sessionID,msg);
 		waitForCondition(250);
 
 		msg = Susi::Util::Any::Object{
 			{"type","registerProcessor"},
-			{"data","sample"}
+			{"data",Susi::Util::Any::Object{
+				{"topic","sample"}
+			}}
 		};
 		apiserver->onMessage(sessionID,msg);
 		waitForCondition(250);
@@ -93,13 +97,19 @@ protected:
 
 		msg = Susi::Util::Any::Object{
 			{"type","unregisterConsumer"},
-			{"data","sample"}
+			{"data",Susi::Util::Any::Object{
+				{"topic","sample"},
+				{"authlevel",3}
+			}}
 		};
 		apiserver->onMessage(sessionID,msg);
 		waitForCondition(250);//status
 		msg = Susi::Util::Any::Object{
 			{"type","unregisterProcessor"},
-			{"data","sample"}
+			{"data",Susi::Util::Any::Object{
+				{"topic","sample"},
+				{"authlevel",3}
+			}}
 		};
 		apiserver->onMessage(sessionID,msg);
 		waitForCondition(250);//status
@@ -128,7 +138,9 @@ protected:
 		apiserver->onConnect(sessionID);
 		Susi::Util::Any msg = Susi::Util::Any::Object{
 			{"type","registerConsumer"},
-			{"data","sample"}
+			{"data",Susi::Util::Any::Object{
+				{"topic","sample"}
+			}}
 		};
 		apiserver->onMessage(sessionID,msg);
 		waitForCondition(250);
@@ -141,7 +153,9 @@ protected:
 		apiserver->onConnect(sessionID);
 		msg = Susi::Util::Any::Object{
 			{"type","registerProcessor"},
-			{"data","sample"}
+			{"data",Susi::Util::Any::Object{
+				{"topic","sample"}
+			}}
 		};
 		apiserver->onMessage(sessionID,msg);
 		waitForCondition(250);
