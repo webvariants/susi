@@ -47,7 +47,7 @@ void setupLogger(std::shared_ptr<Susi::System::ComponentManager> componentManage
 }
 
 int main(int argc, char** argv){
-
+   	Susi::Logger::setLevel(Susi::Logger::INFO);
 
 	std::vector<std::string> argv_vec;
 
@@ -58,14 +58,25 @@ int main(int argc, char** argv){
 	Susi::Config cfg{};
 	cfg.parseCommandLine(argv_vec);
 
-	try {
+	try{
+	   	auto level = cfg.get("logger.level");
+	   	if(level.isInteger()) {
+	   		Susi::Logger::setLevel((char)level);
+	   	}
+	}catch(...){}
 
+
+	try {
 		std::string config_file = cfg.get("config");
 		cfg.loadConfig(config_file);   		
    	} catch(const std::exception & e){
    		// default fallback
    		cfg.loadConfig("config.json");
    	}
+   	
+	cfg.parseCommandLine(argv_vec);
+
+
 
 	componentManager = Susi::System::createSusiComponentManager(cfg.getConfig());
 	//componentManager = std::make_shared<Susi::System::ComponentManager>(cfg.getConfig());

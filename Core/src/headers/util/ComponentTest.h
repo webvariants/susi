@@ -21,201 +21,242 @@
 
 class ComponentTest : public ::testing::Test {
 public:
-	std::string base_path;
+    std::string base_path;
 
-	ComponentTest(){
-		Susi::Logger::setLevel(0);
+    ComponentTest() {
+        Susi::Logger::setLevel( 0 );
 
-		base_path = Poco::Path(Poco::Path::current()).toString() + "component_test";
+        base_path = Poco::Path( Poco::Path::current() ).toString() + "component_test";
 
-		Susi::Util::Any::Object cfg = Susi::Util::Any::fromJSONString(getConfigString(base_path));
-		componentManager = Susi::System::createSusiComponentManager(cfg);
-		eventManager = componentManager->getComponent<Susi::Events::ManagerComponent>("eventsystem");
+        Susi::Util::Any::Object cfg = Susi::Util::Any::fromJSONString( getConfigString( base_path ) );
+        componentManager = Susi::System::createSusiComponentManager( cfg );
+        eventManager = componentManager->getComponent<Susi::Events::ManagerComponent>( "eventsystem" );
 
 
-		io.makeDir(base_path);
-	}
+        io.makeDir( base_path );
+    }
 
-	virtual ~ComponentTest(){
-		io.deletePath(base_path);
-	}
+    virtual ~ComponentTest() {
+        io.deletePath( base_path );
+    }
 
 protected:
-	std::shared_ptr<Susi::System::ComponentManager> componentManager;
-	std::shared_ptr<Susi::Events::ManagerComponent> eventManager;
+    std::shared_ptr<Susi::System::ComponentManager> componentManager;
+    std::shared_ptr<Susi::Events::ManagerComponent> eventManager;
 
-	Susi::IOController io;
+    Susi::IOController io;
 
-	virtual void GoodCases() = 0;
-	virtual void BadCases() = 0;
-	virtual void EdgeCases() = 0;
+    virtual void GoodCases() = 0;
+    virtual void BadCases() = 0;
+    virtual void EdgeCases() = 0;
 
-	std::string getConfigString(std::string path) {
-		std::string configString ="{"
-				"\"eventsystem\" : {"
-					"\"threads\": 4,"
-					"\"queuelen\": 32"
-				"},"
-				"\"heartbeat\": {"
-					"\"fix\":\"me\""
-				"},"
-				"\"dbmanager\": ["
-					"{"
-					"\"identifier\" : \"auth\","
-					"\"type\": \"sqlite3\","
-					"\"uri\" : \""+path+"/auth.sqlite3\""
-					"},"
-					"{"
-					"\"identifier\" : \"test_db\","
-					"\"type\": \"sqlite3\","
-					"\"uri\" : \""+path+"/test_db.sqlite3\""
-					"}"
-				"],"
-				"\"authcontroller\": {"
-					"\"db\": \"auth\""
-				"},"
-				"\"tcpapiserver\": {"
-					"\"address\": \"[::1]:4000\","
-					"\"threads\": 4,"
-					"\"backlog\": 32"
-				"},"
-				"\"enginestarter\": {"
-					"\"path\": \"./enginestarter_test\""
-				"},"
-				"\"iocontroller\": {},"
-				"\"sessionmanager\": {"
-					"\"lifetime\": 1000"
-				"},"
-				"\"statecontroller\": {"
-					"\"file\": \""+path+"/states.json\""
-				"},"
-				"\"syscallcontroller\": {"
-					"\"threads\": 4,"
-					"\"queuelen\": 16,"
-					"\"commands\": {"
-						"\"TEST1\": \"echo foo\","
-						"\"TEST2\": \"echo foo 1>&2\","
-						"\"TEST3\": \"echo $arg\","
-						"\"PWD\"  : \"pwd\""
-					"}"
-				"},"
-				"\"httpserver\": {"
-					"\"address\": \"[::1]:8080\","
-					"\"assets\": \""+path+"/assets\","
-					"\"upload\": \""+path+"/upload\""
-				"},"
-				"\"apiserver\": {}"
-			"}";
+    std::string getConfigString( std::string path ) {
+        std::string configString ="{"
+                                  "\"eventsystem\" : {"
+                                  "\"threads\": 4,"
+                                  "\"queuelen\": 32"
+                                  "},"
+                                  "\"heartbeat\": {"
+                                  "\"fix\":\"me\""
+                                  "},"
+                                  "\"dbmanager\": ["
+                                  "{"
+                                  "\"identifier\" : \"auth\","
+                                  "\"type\": \"sqlite3\","
+                                  "\"uri\" : \""+path+"/auth.sqlite3\""
+                                  "},"
+                                  "{"
+                                  "\"identifier\" : \"test_db\","
+                                  "\"type\": \"sqlite3\","
+                                  "\"uri\" : \""+path+"/test_db.sqlite3\""
+                                  "}"
+                                  "],"
+                                  "\"authcontroller\": {"
+                                  "\"db\": \"auth\""
+                                  "},"
+                                  "\"tcpapiserver\": {"
+                                  "\"address\": \"[::1]:4000\","
+                                  "\"threads\": 4,"
+                                  "\"backlog\": 32"
+                                  "},"
+                                  "\"enginestarter\": {"
+                                  "\"path\": \"./enginestarter_test\""
+                                  "},"
+                                  "\"iocontroller\": {},"
+                                  "\"sessionmanager\": {"
+                                  "\"lifetime\": 1000"
+                                  "},"
+                                  "\"statecontroller\": {"
+                                  "\"file\": \""+path+"/states.json\""
+                                  "},"
+                                  "\"syscallcontroller\": {"
+                                  "\"threads\": 4,"
+                                  "\"queuelen\": 16,"
+                                  "\"commands\": {"
+                                  "\"TEST1\": \"echo foo\","
+                                  "\"TEST2\": \"echo foo 1>&2\","
+                                  "\"TEST3\": \"echo $arg\","
+                                  "\"PWD\"  : \"pwd\""
+                                  "}"
+                                  "},"
+                                  "\"httpserver\": {"
+                                  "\"address\": \"[::1]:8080\","
+                                  "\"assets\": \""+path+"/assets\","
+                                  "\"upload\": \""+path+"/upload\""
+                                  "},"
+                                  "\"apiserver\": {}"
+                                  "}";
 
-		return configString;
-	}
+        return configString;
+    }
 
-	long subscribe(std::string topic, Susi::Events::Processor processor){
-		long id = eventManager->subscribe(topic,std::move(processor));
-		return id;
-	}
-	long subscribe(Susi::Events::Predicate pred, Susi::Events::Processor processor){
-		long id = eventManager->subscribe(pred,std::move(processor));
-		return id;
-	}
-	long subscribe(std::string topic, Susi::Events::Consumer consumer){
-		long id = eventManager->subscribe(topic,std::move(consumer));
-		return id;
-	}
-	long subscribe(Susi::Events::Predicate pred, Susi::Events::Consumer consumer){
-		long id = eventManager->subscribe(pred,std::move(consumer));
-		return id;
-	}
-	bool unsubscribe(long id){
-		return eventManager->unsubscribe(id);
-	}
-	void publish(Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer{}){
-		eventManager->publish(std::move(event),finishCallback);
-	}
-	Susi::Events::EventPtr createEvent(std::string topic){
-		return eventManager->createEvent(topic);
-	}
+    long subscribe( std::string topic, Susi::Events::Processor processor , char authlevel = 0) {
+        long id = eventManager->subscribe( topic,std::move( processor ) , authlevel);
+        return id;
+    }
+    long subscribe( Susi::Events::Predicate pred, Susi::Events::Processor processor , char authlevel = 0) {
+        long id = eventManager->subscribe( pred,std::move( processor ) , authlevel);
+        return id;
+    }
+    long subscribe( std::string topic, Susi::Events::Consumer consumer , char authlevel = 0) {
+        long id = eventManager->subscribe( topic,std::move( consumer ) , authlevel);
+        return id;
+    }
+    long subscribe( Susi::Events::Predicate pred, Susi::Events::Consumer consumer , char authlevel = 0) {
+        long id = eventManager->subscribe( pred,std::move( consumer ) , authlevel);
+        return id;
+    }
+    bool unsubscribe( long id ) {
+        return eventManager->unsubscribe( id );
+    }
+    void publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer {} ) {
+        eventManager->publish( std::move( event ),finishCallback );
+    }
+    Susi::Events::EventPtr createEvent( std::string topic ) {
+        return eventManager->createEvent( topic );
+    }
 
-	Susi::Events::SharedEventPtr waitForConsumerEvent(std::string topic,std::chrono::milliseconds timeout){
-		callbackCalled = false;
-		sharedEvent.reset();
-		Susi::Events::Consumer consumer = [this](Susi::Events::SharedEventPtr event){
-			onConsumerEvent(event);
-		};
-		long id = subscribe(topic,consumer);
-		{
-			std::unique_lock<std::mutex> lock{mutex};
-			cv.wait_for(lock,timeout,[this](){return callbackCalled;});
-		}
-		unsubscribe(id);
-		return sharedEvent;
-	}
-
-
-	Susi::Events::EventPtr waitForProcessorEvent(std::string topic,std::chrono::milliseconds timeout){
-		callbackCalled = false;
-		event.reset();
-		Susi::Events::Processor processor = [this](Susi::Events::EventPtr event){
-			onProcessorEvent(std::move(event));
-		};
-		long id = subscribe(topic,processor);
-		{
-			std::unique_lock<std::mutex> lock{mutex};
-			cv.wait_for(lock,timeout,[this](){return callbackCalled;});
-		}
-		unsubscribe(id);
-		return std::move(event);
-	}
-
-	Susi::Events::SharedEventPtr publish_sync(Susi::Events::EventPtr event){
-		Susi::Events::SharedEventPtr result;
-		std::condition_variable cv;
-		bool called = false;
-		std::mutex mutex;
-		publish(std::move(event),[&cv, &called, &result](Susi::Events::SharedEventPtr evt){
-			result = evt;
-			called = true;
-			cv.notify_one();
-		});
-		{
-			std::unique_lock<std::mutex> lock{mutex};
-			cv.wait(lock,[&called](){return called;});
-		}
-		return result;
-	}
+    Susi::Events::SharedEventPtr waitForConsumerEvent( std::string topic,std::chrono::milliseconds timeout ) {
+        callbackCalled = false;
+        sharedEvent.reset();
+        Susi::Events::Consumer consumer = [this]( Susi::Events::SharedEventPtr event ) {
+            onConsumerEvent( event );
+        };
+        long id = subscribe( topic,consumer );
+        {
+            std::unique_lock<std::mutex> lock {mutex};
+            cv.wait_for( lock,timeout,[this]() {
+                return callbackCalled;
+            } );
+        }
+        unsubscribe( id );
+        return sharedEvent;
+    }
 
 
-	bool hasErrorHeader(Susi::Events::SharedEventPtr event) {
-		auto headers = event->getHeaders();
-		bool error_found = false;
+    Susi::Events::EventPtr waitForProcessorEvent( std::string topic,std::chrono::milliseconds timeout ) {
+        callbackCalled = false;
+        event.reset();
+        Susi::Events::Processor processor = [this]( Susi::Events::EventPtr event ) {
+            onProcessorEvent( std::move( event ) );
+        };
+        long id = subscribe( topic,processor );
+        {
+            std::unique_lock<std::mutex> lock {mutex};
+            cv.wait_for( lock,timeout,[this]() {
+                return callbackCalled;
+            } );
+        }
+        unsubscribe( id );
+        return std::move( event );
+    }
 
-		for(size_t i=0; i<headers.size(); ++i) {
-			if(headers[i].first == "error") {
-				error_found = true;
-				break;
-			}
-		}
+    Susi::Events::SharedEventPtr publish_sync( Susi::Events::EventPtr event ) {
+        Susi::Events::SharedEventPtr result;
+        std::condition_variable cv;
+        bool called = false;
+        std::mutex mutex;
+        publish( std::move( event ),[&cv, &called, &result]( Susi::Events::SharedEventPtr evt ) {
+            result = evt;
+            called = true;
+            cv.notify_one();
+        } );
+        {
+            std::unique_lock<std::mutex> lock {mutex};
+            cv.wait( lock,[&called]() {
+                return called;
+            } );
+        }
+        return result;
+    }
 
-		return error_found;
-	}
+
+    bool hasErrorHeader( Susi::Events::SharedEventPtr event ) {
+        auto headers = event->getHeaders();
+        bool error_found = false;
+
+        for( size_t i=0; i<headers.size(); ++i ) {
+            if( headers[i].first == "error" ) {
+                error_found = true;
+                break;
+            }
+        }
+
+        return error_found;
+    }
+
+    int countSetCookieInHeaders( std::vector<std::pair<std::string,std::string>> headers ) {
+        int set_cookie_count = 0;
+
+        for( size_t i=0; i<headers.size(); ++i ) {
+            if( headers[i].first == "Set-Cookie" ) {
+                set_cookie_count++;
+            }
+        }
+
+        return set_cookie_count;
+    }
+
+    std::string getSessionIDFromHeaders( std::vector<std::pair<std::string,std::string>> headers ) {
+
+        int last_set_cookie_idx = -1;
+        std::string sessionID = "";
+
+        for( size_t i=0; i<headers.size(); ++i ) {
+            if( headers[i].first == "Set-Cookie" ) {
+                last_set_cookie_idx = i;
+            }
+        }
+
+        if( last_set_cookie_idx > -1 ) {
+            std::string splitStr = headers[last_set_cookie_idx].second;
+            std::vector<std::string> elems_1;
+            std::vector<std::string> elems_2;
+            Susi::Util::Helpers::split( splitStr, ';', elems_1 );
+            Susi::Util::Helpers::split( elems_1[0], '=', elems_2 );
+            sessionID = elems_2[1];
+        }
+
+        return sessionID;
+    }
 
 private:
-	Susi::Events::EventPtr event;
-	Susi::Events::SharedEventPtr sharedEvent;
-	std::condition_variable cv;
-	std::mutex mutex;
-	bool callbackCalled;
+    Susi::Events::EventPtr event;
+    Susi::Events::SharedEventPtr sharedEvent;
+    std::condition_variable cv;
+    std::mutex mutex;
+    bool callbackCalled;
 
-	void onConsumerEvent(Susi::Events::SharedEventPtr evt){
-		sharedEvent = evt;
-		callbackCalled = true;
-		cv.notify_one();
-	}
-	void onProcessorEvent(Susi::Events::EventPtr evt){
-		event = std::move(evt);
-		callbackCalled = true;
-		cv.notify_one();
-	}
+    void onConsumerEvent( Susi::Events::SharedEventPtr evt ) {
+        sharedEvent = evt;
+        callbackCalled = true;
+        cv.notify_one();
+    }
+    void onProcessorEvent( Susi::Events::EventPtr evt ) {
+        event = std::move( evt );
+        callbackCalled = true;
+        cv.notify_one();
+    }
 
 
 };

@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
@@ -24,18 +24,18 @@
 
 namespace Susi {
 
-	class FormRequestHandler: public Poco::Net::HTTPRequestHandler {
-		private:
-			std::string _uploadDirectory;
-		public:
-			FormRequestHandler(std::string uploadDirectory) :
-				_uploadDirectory(uploadDirectory) {
-				Susi::Logger::debug("init form handler");
-			}			
-			
-			virtual void handleRequest(Poco::Net::HTTPServerRequest& request,
-				Poco::Net::HTTPServerResponse& response) override;
-};
+    class FormRequestHandler: public Poco::Net::HTTPRequestHandler {
+    private:
+        std::string _uploadDirectory;
+    public:
+        FormRequestHandler( std::string uploadDirectory ) :
+            _uploadDirectory( uploadDirectory ) {
+            Susi::Logger::debug( "init form handler" );
+        }
+
+        virtual void handleRequest( Poco::Net::HTTPServerRequest& request,
+                                    Poco::Net::HTTPServerResponse& response ) override;
+    };
 
 }
 

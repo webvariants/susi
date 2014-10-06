@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
@@ -17,60 +17,66 @@
 #include "world/BaseComponent.h"
 
 namespace Susi {
-namespace Autodiscovery {
-	
-class AutoDiscoveryComponent : public Susi::System::BaseComponent, public Susi::Autodiscovery::Manager {
-protected:
-	
-	class Collector : public Susi::Autodiscovery::RemoteEventCollector {
-	protected:
-		AutoDiscoveryComponent* _autodiscoveryComponent;
-	public:
-		Collector(AutoDiscoveryComponent *autodiscoveryComponent,
-							 std::string addr, 
-							 std::string ownId, 
-							 std::shared_ptr<Susi::Events::ManagerComponent> eventsystem) :
-			Susi::Autodiscovery::RemoteEventCollector{addr,ownId,eventsystem},
-			_autodiscoveryComponent{autodiscoveryComponent} {}
-		
-		virtual void onClose() override {
-			_autodiscoveryComponent->removeCollector(this);
-		}
-	};
-	
-	std::vector<std::shared_ptr<Collector>> _collectors;
-	std::string _ownAddr;
+    namespace Autodiscovery {
 
-	virtual void onNewHost(std::string & addr) override {
-		_collectors.emplace_back(new Collector{this,addr,_ownAddr,eventManager});
-	}
+        class AutoDiscoveryComponent : public Susi::System::BaseComponent, public Susi::Autodiscovery::Manager {
+        protected:
 
-	void removeCollector(Collector* collector){
-		for(size_t i=0;i<_collectors.size();++i){
-			if(_collectors[i].get() == collector){
-				_collectors.erase(_collectors.begin()+i);
-				break;
-			}
-		}
-	}
+            class Collector : public Susi::Autodiscovery::RemoteEventCollector {
+            protected:
+                AutoDiscoveryComponent* _autodiscoveryComponent;
+            public:
+                Collector( AutoDiscoveryComponent *autodiscoveryComponent,
+                           std::string addr,
+                           std::string ownId,
+                           std::shared_ptr<Susi::Events::ManagerComponent> eventsystem ) :
+                    Susi::Autodiscovery::RemoteEventCollector {addr,ownId,eventsystem},
+                _autodiscoveryComponent {autodiscoveryComponent} {}
 
-public:
+                virtual void onClose() override {
+                    _autodiscoveryComponent->removeCollector( this );
+                }
+            };
 
-	AutoDiscoveryComponent(std::string mcastGroup, std::string ownAddr, Susi::System::ComponentManager* componentManager) :
-		Susi::System::BaseComponent{componentManager}, Susi::Autodiscovery::Manager{mcastGroup,ownAddr}, _ownAddr{ownAddr} {}
+            std::vector<std::shared_ptr<Collector>> _collectors;
+            std::string _ownAddr;
 
-	virtual void start() override {
-		Susi::Autodiscovery::Manager::start();
-	}
+            virtual void onNewHost( std::string & addr ) override {
+                _collectors.emplace_back( new Collector {this,addr,_ownAddr,eventManager} );
+            }
 
-	virtual void stop() override {
-		Susi::Autodiscovery::Manager::stop();
-		while(_collectors.size())_collectors.pop_back();
-	}
+            void removeCollector( Collector* collector ) {
+                for( size_t i=0; i<_collectors.size(); ++i ) {
+                    if( _collectors[i].get() == collector ) {
+                        _collectors.erase( _collectors.begin()+i );
+                        break;
+                    }
+                }
+            }
 
-};
+        public:
 
-}
+            AutoDiscoveryComponent( std::string mcastGroup, std::string ownAddr, Susi::System::ComponentManager* componentManager ) :
+                Susi::System::BaseComponent {componentManager}, Susi::Autodiscovery::Manager {mcastGroup,ownAddr}, _ownAddr {ownAddr} {}
+
+            virtual void start() override {
+                Susi::Autodiscovery::Manager::start();
+                Susi::Logger::info( "started AutodiscoveryComponent" );
+            }
+
+            virtual void stop() override {
+                Susi::Autodiscovery::Manager::stop();
+                while( _collectors.size() )_collectors.pop_back();
+            }
+
+            ~AutoDiscoveryComponent(){
+                stop();
+                Susi::Logger::info( "stopped AutodiscoveryComponent" );
+            }
+
+        };
+
+    }
 }
 
 #endif // __AUTODISCOVERYCOMPONENT__

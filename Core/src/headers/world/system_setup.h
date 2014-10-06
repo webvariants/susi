@@ -28,13 +28,14 @@
 #include "syscall/SyscallComponent.h"
 #include "webstack/HttpServerComponent.h"
 #include "autodiscovery/AutoDiscoveryComponent.h"
+#include "events/ConstraintController.h"
 
 namespace Susi {
-namespace System {
+    namespace System {
 
-std::shared_ptr<Susi::System::ComponentManager> createSusiComponentManager(Susi::Util::Any::Object config);
+        std::shared_ptr<Susi::System::ComponentManager> createSusiComponentManager( Susi::Util::Any::Object config );
 
-}
+    }
 }
 
 #endif // __SYSTEMSETUP__

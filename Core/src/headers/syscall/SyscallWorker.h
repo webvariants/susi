@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
@@ -23,52 +23,52 @@
 #include <iostream>
 
 namespace Susi {
-	namespace Syscall {
-		class Worker {
-		protected:
-			Susi::Events::EventPtr _event;
-			std::string _command;
-			std::vector<std::string> _args;
+    namespace Syscall {
+        class Worker {
+        protected:
+            Susi::Events::EventPtr _event;
+            std::string _command;
+            std::vector<std::string> _args;
 
-			std::string getContentFromStream(std::istream& stream){
-				std::string result{""};
-				while(stream.good()){
-					char buff[1024];
-					stream.getline(buff,1024);
-					result += std::string{buff};
-				}
-				return result;
-			}
+            std::string getContentFromStream( std::istream& stream ) {
+                std::string result {""};
+                while( stream.good() ) {
+                    char buff[1024];
+                    stream.getline( buff,1024 );
+                    result += std::string {buff};
+                }
+                return result;
+            }
 
-		public:
-			Worker(Susi::Events::EventPtr event, std::string command, std::vector<std::string> args) : 
-				_event{std::move(event)},
-				_command{command},
-				_args{args} {}
-			
-			Worker(Worker & other) : 
-				_event{std::move(other._event)},
-				_command{other._command},
-				_args{other._args} {}
-			
-			Worker(Worker && other) : 
-				_event{std::move(other._event)},
-				_command{std::move(other._command)},
-				_args{std::move(other._args)} {}
-			
-			void operator()(){
-				Poco::Pipe outPipe;
-				Poco::Pipe errPipe;
-				Poco::ProcessHandle ph = Poco::Process::launch(_command, _args, 0, &outPipe, &errPipe);
-				Poco::PipeInputStream ostr(outPipe);
-				Poco::PipeInputStream estr(errPipe);
-				_event->payload["return"] = ph.wait();
-				_event->payload["stdout"] = getContentFromStream(ostr);
-				_event->payload["stderr"] = getContentFromStream(estr);
-				// when event gets destructed, its acknowledged.
-			}
-		};
-	}
+        public:
+            Worker( Susi::Events::EventPtr event, std::string command, std::vector<std::string> args ) :
+                _event {std::move( event )},
+                   _command {command},
+            _args {args} {}
+
+            Worker( Worker & other ) :
+                _event {std::move( other._event )},
+                   _command {other._command},
+            _args {other._args} {}
+
+            Worker( Worker && other ) :
+                _event {std::move( other._event )},
+                   _command {std::move( other._command )},
+            _args {std::move( other._args )} {}
+
+            void operator()() {
+                Poco::Pipe outPipe;
+                Poco::Pipe errPipe;
+                Poco::ProcessHandle ph = Poco::Process::launch( _command, _args, 0, &outPipe, &errPipe );
+                Poco::PipeInputStream ostr( outPipe );
+                Poco::PipeInputStream estr( errPipe );
+                _event->payload["return"] = ph.wait();
+                _event->payload["stdout"] = getContentFromStream( ostr );
+                _event->payload["stderr"] = getContentFromStream( estr );
+                // when event gets destructed, its acknowledged.
+            }
+        };
+    }
 }
 
 #endif // __SYS_CALL_WORKER__

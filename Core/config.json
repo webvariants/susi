@@ -4,9 +4,7 @@
 		"queuelen": 32
 	},
 
-	"heartbeat": {
-		"fix":"me"
-	},
+	"heartbeat": {},
 
 
 	"dbmanager": [
@@ -31,9 +29,7 @@
 		"path": "./engines"
 	},
 
-	"iocontroller": {
-		"fix":"me"
-	},
+	"iocontroller": {},
 
 	"sessionmanager": {
 		"lifetime": 600000
@@ -54,7 +50,9 @@
 
 	"httpserver": {
 		"address": "[::1]:8080",
-		"assets": "./assets"
+		"assets": "./assets",
+		"threads": 4,
+		"backlog": 32
 	},
 
 	"autodiscovery": {
@@ -62,7 +60,8 @@
 		"address": "[::1]:4000"
 	},
 
-	"apiserver": {
-		"fix":"me"
-	}
+	"apiserver": {},
+
+	"constraints": {}
+
 }

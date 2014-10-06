@@ -6,7 +6,7 @@
  *
  * http://www.opensource.org/licenses/mit-license.php
  *
- * @author: Christian Sonderfeld (christian.sonderfeld@webvariants.de)
+ * @author: Christian Sonderfeld (christian.sonderfeld@webvariants.de), Tino Rusch (tino.rusch@webvariants.de)
  */
 
 
@@ -18,14 +18,13 @@
 
 #include "apiserver/ApiClient.h"
 #include "BaseController.h"
-#include "controller/SampleController.h"
 
 namespace Susi {
 namespace Cpp {
 
-class Engine{
+
+class Engine {
 protected:
-	static std::shared_ptr<Susi::Cpp::Engine> engineptr;
 
 	std::shared_ptr<Susi::Api::ApiClient> susi_api;
 
@@ -36,33 +35,31 @@ protected:
 		controller[name]->setApi(susi_api);
 	}
 
-	Engine(std::string address = "[::1]:4000") : susi_api{ new Susi::Api::ApiClient{address}} {
-	}
 
 public:
-	static std::shared_ptr<Susi::Cpp::Engine> getInstance() {
-		if(!engineptr) {
-			engineptr = std::shared_ptr<Engine>{new Engine()};
-		}
-		return engineptr;
-	}
-
+	Engine(std::string address = "[::1]:4000") : susi_api{ new Susi::Api::ApiClient{address}} {}
 	void populateController();
 
 	std::shared_ptr<Susi::Api::ApiClient> getApi() {
 		return susi_api;
 	}
 
-	void start() {}
+	void start() {
+		for(auto & kv : controller){
+			kv.second->start();
+		}
+	}
 
-	void stop() {}
+	void stop() {
+		for(auto & kv : controller){
+			kv.second->stop();
+		}
+	}
 
 	~Engine() {
 		stop();
 	}
 };
-
-std::shared_ptr<Engine> Engine::engineptr{};
 
 }
 }

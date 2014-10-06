@@ -18,43 +18,49 @@
 #include "world/Component.h"
 
 namespace Susi {
-namespace Events {
+    namespace Events {
 
-class ManagerComponent : public Manager, public Susi::System::Component
-{
-protected:
-	std::atomic<bool> noPublish;
-	std::mutex mutex;
-public:
-	ManagerComponent(size_t workers = 4, size_t buffsize = 32) : Manager{workers, buffsize} , noPublish{true}{}
+        class ManagerComponent : public Manager, public Susi::System::Component
+        {
+        protected:
+            std::atomic<bool> noPublish;
+            std::mutex mutex;
+        public:
+            ManagerComponent( size_t workers = 4, size_t buffsize = 32 ) : Manager {workers, buffsize} , noPublish {true} {}
 
-	void publish(EventPtr event, Consumer finishCallback = Consumer{}) {
-		if(noPublish.load()) {
-			std::shared_ptr<Event> sharedEvent{event.release()};
-			finishCallback(sharedEvent);
-			return;
-		}
-		Manager::publish(std::move(event), std::move(finishCallback));
-	}
+            void publish( EventPtr event, Consumer finishCallback = Consumer {} ) {
+                if( noPublish.load() ) {
+                    std::shared_ptr<Event> sharedEvent {event.release()};
+                    finishCallback( sharedEvent );
+                    return;
+                }
+                Manager::publish( std::move( event ), std::move( finishCallback ) );
+            }
 
-	virtual void start() override {
-		noPublish.store(false);
-	}
+            virtual void start() override {
+                noPublish.store( false );
+                Susi::Logger::info( "started EventManagerComponent" );
+            }
 
-	virtual void stop() override {
-		if(!noPublish.load()) {
-			noPublish.store(true);
-			std::unique_lock<std::mutex> lk(mutex);
-			if(publishProcesses.size()>0){
-				publishFinished.wait(lk,[this](){return publishProcesses.size() == 0;});
-			}
-		}
-	}
+            virtual void stop() override {
+                if( !noPublish.load() ) {
+                    noPublish.store( true );
+                    std::unique_lock<std::mutex> lk( mutex );
+                    if( publishProcesses.size()>0 ) {
+                        publishFinished.wait( lk,[this]() {
+                            return publishProcesses.size() == 0;
+                        } );
+                    }
+                }
+            }
 
-	virtual ~ManagerComponent() {stop();}
-};
+            virtual ~ManagerComponent() {
+                stop();
+                Susi::Logger::info( "stopped EventManagerComponent" );
+            }
+        };
 
-}
+    }
 }
 
 #endif // __EVENTMANAGERCOMPONENT__

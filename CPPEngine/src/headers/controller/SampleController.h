@@ -6,7 +6,7 @@
  *
  * http://www.opensource.org/licenses/mit-license.php
  *
- * @author: Christian Sonderfeld (christian.sonderfeld@webvariants.de)
+ * @author: Christian Sonderfeld (christian.sonderfeld@webvariants.de), Tino Rusch (tino.rusch@webvariants.de)
  */
 
 
@@ -20,11 +20,23 @@ namespace Cpp {
 
 class SampleController : public Susi::Cpp::BaseController {
 public:
-	SampleController() {
-		Susi::Events::Consumer c = [this](Susi::Events::SharedEventPtr event) {
-			log("Funktioniert!");
+	virtual void start() override {
+		Susi::Events::Consumer c = [this](Susi::Events::SharedEventPtr event){
+			sampleConsumerFunction(event);
 		};
-		subscribe("samplecontroller::test", c);
+		Susi::Events::Processor p = [this](Susi::Events::EventPtr event){
+			sampleProcessorFunction(std::move(event));
+		};
+		subscribe("samplecontroller::test1", c , 3);
+		subscribe("samplecontroller::test2", p , 3);
+	}
+
+	void sampleConsumerFunction(Susi::Events::SharedEventPtr event){
+		log("Funktioniert!");
+	}
+
+	void sampleProcessorFunction(Susi::Events::EventPtr event){
+		event->payload = "processed!";
 	}
 };
 

@@ -17,36 +17,42 @@
 #include "util/Any.h"
 
 namespace Susi {
-namespace Api {
+    namespace Api {
 
-	class BasicApiClient : protected JSONTCPClient {
-	protected:
+        class BasicApiClient : protected JSONTCPClient {
+        protected:
 
-		virtual void onMessage(Susi::Util::Any & message) override;
+            virtual void onMessage( Susi::Util::Any & message ) override;
 
-	public:
-		BasicApiClient(std::string addr) : JSONTCPClient{addr} {}
+        public:
+            BasicApiClient( std::string addr ) : JSONTCPClient {addr} {}
 
-		virtual ~BasicApiClient(){
-			close();
-		}
+            virtual ~BasicApiClient() {
+                close();
+            }
 
-		void close(){
-			JSONTCPClient::close();
-		}
+            void close() {
+                try{
+                    sendShutdown();
+                    JSONTCPClient::close();
+                }catch(...){}
+            }
 
-		virtual void onConsumerEvent(Susi::Events::Event & event){};
-		virtual void onProcessorEvent(Susi::Events::Event & event){};
-		virtual void onAck(Susi::Events::Event & event){};
+            virtual void onConsumerEvent( Susi::Events::Event & event ) {};
+            virtual void onProcessorEvent( Susi::Events::Event & event ) {};
+            virtual void onAck( Susi::Events::Event & event ) {};
 
-		void sendPublish(Susi::Events::Event & event);
-		void sendRegisterConsumer(std::string topic);
-		void sendRegisterProcessor(std::string topic);
-		void sendAck(Susi::Events::Event & event);
+            void sendPublish( Susi::Events::Event & event );
+            void sendRegisterConsumer( std::string topic );
+            void sendRegisterProcessor( std::string topic );
+            void sendAck( Susi::Events::Event & event );
+            void sendUnregisterConsumer( long id );
+            void sendUnregisterProcessor( long id );
+            void sendShutdown();
 
-	};
+        };
 
-}
+    }
 }
 
 #endif // __BASICAPICLIENT__

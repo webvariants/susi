@@ -62,27 +62,21 @@ protected:
 
 		apiserver->registerSender(sessionID,[this,&procEvent](Susi::Util::Any & packet){
 			if(packet["type"]=="status"){
+				
 				Susi::Util::Any expect = Susi::Util::Any::Object{
 					{"type","status"},
 					{"error",false}
 				};
 				EXPECT_EQ(expect.toJSONString(),packet.toJSONString());
-				Susi::Logger::debug("in status");
 			}else if(packet["type"]=="ack"){
 				EXPECT_EQ(Susi::Util::Any{"sample"},packet["data"]["topic"]);
 				EXPECT_EQ(Susi::Util::Any{"123"},packet["data"]["sessionid"]);
-				EXPECT_EQ(size_t{0},packet["data"]["headers"].size());
-				Susi::Logger::debug("in ack");
 			}else if(packet["type"]=="consumerEvent"){
 				EXPECT_EQ(Susi::Util::Any{"sample"},packet["data"]["topic"]);
 				EXPECT_EQ(Susi::Util::Any{"123"},packet["data"]["sessionid"]);
-				EXPECT_EQ(size_t{0},packet["data"]["headers"].size());
-				Susi::Logger::debug("in consumer");
 			}else if(packet["type"]=="processorEvent"){
 				EXPECT_EQ(Susi::Util::Any{"sample"},packet["data"]["topic"]);
 				EXPECT_EQ(Susi::Util::Any{"123"},packet["data"]["sessionid"]);
-				EXPECT_EQ(size_t{0},packet["data"]["headers"].size());
-				Susi::Logger::debug("in processor");
 				procEvent = packet;
 			}
 			called = true;

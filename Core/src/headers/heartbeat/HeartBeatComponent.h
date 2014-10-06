@@ -17,50 +17,53 @@
 #include "world/BaseComponent.h"
 
 namespace Susi {
-	class HeartBeatComponent : public System::BaseComponent {
-	protected:
-		std::atomic<bool> stopVar;
-		std::thread t;
-	public:
-		HeartBeatComponent(System::ComponentManager * mgr) :
-			System::BaseComponent{mgr},
-			stopVar{false} {}
+    class HeartBeatComponent : public System::BaseComponent {
+    protected:
+        std::atomic<bool> stopVar;
+        std::thread t;
+    public:
+        HeartBeatComponent( System::ComponentManager * mgr ) :
+            System::BaseComponent {mgr},
+        stopVar {false} {}
 
-		~HeartBeatComponent() {
-			stop();
-		}
+        ~HeartBeatComponent() {
+            stop();
+            Susi::Logger::info( "stopped HeartBeatComponent" );
+        }
 
-		virtual void start() override {
-			t = std::move(std::thread{
-				[this](){
-					int count = 0;
-					std::chrono::seconds interval(1);
-					while(!this->stopVar.load()){
-						++count %= 300;
-						publish(createEvent("heartbeat::one"));
-						if(count % 5 == 0){
-							publish(createEvent("heartbeat::five"));
-						}
-						if(count % 10 == 0){
-							publish(createEvent("heartbeat::ten"));
-						}
-						if(count % 60 == 0){
-							publish(createEvent("heartbeat::minute"));
-						}
-						if(count % 300 == 0){
-							publish(createEvent("heartbeat::fiveMinute"));
-						}
-						std::this_thread::sleep_for(interval);
-					}
-				}
-			});
-		}
+        virtual void start() override {
+            t = std::move( std::thread {
+                [this]() {
+                    int count = 0;
+                    std::chrono::seconds interval( 1 );
+                    while( !this->stopVar.load() ) {
+                        ++count %= 300;
+                        publish( createEvent( "heartbeat::one" ) );
+                        if( count % 5 == 0 ) {
+                            publish( createEvent( "heartbeat::five" ) );
+                        }
+                        if( count % 10 == 0 ) {
+                            publish( createEvent( "heartbeat::ten" ) );
+                        }
+                        if( count % 60 == 0 ) {
+                            publish( createEvent( "heartbeat::minute" ) );
+                        }
+                        if( count % 300 == 0 ) {
+                            publish( createEvent( "heartbeat::fiveMinute" ) );
+                        }
+                        std::this_thread::sleep_for( interval );
+                    }
+                }
+            } );
 
-		virtual void stop() override {
-			stopVar.store(true);
-			if(t.joinable())t.join();
-		}
-	};
+            Susi::Logger::info( "started HeartBeatComponent" );
+        }
+
+        virtual void stop() override {
+            stopVar.store( true );
+            if( t.joinable() )t.join();
+        }
+    };
 }
 
 #endif // __HEARTBEATCOMPONENT__

@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
@@ -20,29 +20,29 @@
 #include <iostream>
 
 namespace Susi {
-namespace Util {
+    namespace Util {
 
-class ThreadPool {
-protected:
-	struct Work {
-		std::function<void()> 				work;
-		std::function<void(std::string)> 	error;
-	};
+        class ThreadPool {
+        protected:
+            struct Work {
+                std::function<void()>               work;
+                std::function<void( std::string )>    error;
+            };
 
-	Channel<Work> _workChannel;
-	std::vector<std::thread> _threads;
-	
-	void startThread();
+            Channel<Work> _workChannel;
+            std::vector<std::thread> _threads;
 
-public:
-	ThreadPool() : ThreadPool{4,16} {};
-	ThreadPool(size_t workers, size_t buffsize);
-	void add(std::function<void()> work, 
-			 std::function<void(std::string)> error = std::function<void(std::string)>{});
-	~ThreadPool();
-};
-	
-} //ns::Util
+            void startThread();
+
+        public:
+            ThreadPool() : ThreadPool {4,16} {};
+            ThreadPool( size_t workers, size_t buffsize );
+            void add( std::function<void()> work,
+                      std::function<void( std::string )> error = std::function<void( std::string )> {} );
+            ~ThreadPool();
+        };
+
+    } //ns::Util
 } //ns::Susi
 
 

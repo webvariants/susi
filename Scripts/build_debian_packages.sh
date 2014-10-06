@@ -1,16 +1,16 @@
 #!/bin/bash
 
 pushd Core/build
-rm -rvf *
+#rm -rvf *
 cmake ..
 make -j4
 popd
 
-# pushd JSEngine/v8/build
-# #rm -rvf *
-# cmake ..
-# make -j4
-# popd
+pushd JSEngine/v8/build
+#rm -rvf *
+cmake ..
+make -j4
+popd
 
 mkdir -p susi_package/DEBIAN
 mkdir -p susi_package/usr/bin
@@ -24,7 +24,7 @@ Priority: optional
 Section: devel
 Maintainer: Tino Rusch <tino.rusch@webvariants.de>
 Architecture: all
-Version: 0.1.4b
+Version: 0.1.4a
 Description: The SUSI server
 EOF
 
