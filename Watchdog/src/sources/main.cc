@@ -35,7 +35,7 @@ Config config;
 
 
 void signalHandler (int signum) {
-    cout << "Interrupt signal (" << signum << ") received.\n";
+    std::cout << "Watchdog: Interrupt signal (" << signum << ") received."<<std::endl;
 
     if(processStarted == true && p_id != 0) {
         processKillRequest = true;
@@ -45,8 +45,10 @@ void signalHandler (int signum) {
         }
         // send signal to process
         if(config.kill_friendly) {
+            std::cout<<"friendly killing of process...";
             Poco::Process::requestTermination(p_id);
         } else {
+            std::cout<<"hard killing of process...";
             Poco::Process::kill(p_id);
         }
     }
@@ -69,17 +71,14 @@ void startProcess(std::string program, std::vector<std::string> args) {
 }
 
 void showHelp() {
-    cout<<"Usage: "<<std::endl;
-    cout<<"watchdog <arguments for watchdog> -- [PATH TO EXECUTABLE] <arguments for executable> \n\n";
-    cout<<"watchdog arguments ...\n";
-    cout<<" -kf OR -kill_friendly=[true,false] | default: false    | kill process friendly with signal or hard kill \n";
-    cout<<" -rt OR -restart_tries=[times]      | default: infinite | restart process n times after finish \n";
-    cout<<" -cr OR -crash_restart=[true,false] | default: false    | restart a process after it exits abnormally (return code != 0) \n";
-    cout<<"\n\n";
-    cout<<"Example for susi ...\n";
-    cout<<"./watchdog -kill_friendly=true  -- ../../Core/build/susi -config=\"../../Core/config.json\"\n";
-    cout<<"Example for test.sh ...\n";
-    cout<<"./watchdog -kill_friendly=true -restart_tries=1 -- ../test/test.sh"<<std::endl;
+    cout<<"watchdog <arguments for watchdog> -- [PATH TO EXECUTABLE] <arguments for executable>"<<std::endl;
+    cout<<"  -kf OR -kill_friendly=[true,false] | default: true     | kill process friendly with signal or hard kill "<<std::endl;
+    cout<<"  -rt OR -restart_tries=[times]      | default: infinite | restart process n times after finish "<<std::endl;
+    cout<<"  -cr OR -crash_restart=[true,false] | default: true     | restart a process after it exits abnormally (return code != 0) "<<std::endl;
+    cout<<"Use signals to stop or restart the monitored process:"<<std::endl;
+    cout<<"  watchdog  -- /usr/bin/susi &"<<std::endl;;
+    cout<<"  kill -2 $!  # stops the monitored service"<<std::endl;
+    cout<<"  kill -10 $! # restarts the monitored service"<<std::endl;
 }
 
 int main(int argc, char** argv){
@@ -94,9 +93,9 @@ int main(int argc, char** argv){
     std::vector<std::string> programm_args;
 
     // check help
-    if(argc < 2) {      
-        std::cout<<"use -h for help"<<std::endl;
-        exit(0);
+    if(argc < 2 ) {      
+        showHelp();
+        exit(1);
     }
 
     if(argc == 2) {
