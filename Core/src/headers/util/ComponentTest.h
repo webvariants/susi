@@ -24,7 +24,7 @@ public:
     std::string base_path;
 
     ComponentTest() {
-        Susi::Logger::setLevel( 255 );
+        Susi::Logger::setLevel( 0 );
 
         base_path = Poco::Path( Poco::Path::current() ).toString() + "component_test";
 
