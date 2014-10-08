@@ -3,7 +3,6 @@
 
 #include <soci.h>
 #include <sqlite3/soci-sqlite3.h>
-#include <firebird/soci-firebird.h>
 #include <iostream>
 
 #include "util/Any.h"
