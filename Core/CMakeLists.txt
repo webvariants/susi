@@ -16,7 +16,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 project( "SUSI" )
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/dev")
-set(CMAKE_FIND_LIBRARY_SUFFIXES .a ${CMAKE_STATIC_LIBRARY_SUFFIX})
+
 find_package(POCO REQUIRED PocoFoundation PocoUtil PocoJSON PocoNet)
 find_package(SOCI REQUIRED)
 find_package(Threads REQUIRED)
