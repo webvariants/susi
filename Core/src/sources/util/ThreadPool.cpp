@@ -27,7 +27,6 @@ void Susi::Util::ThreadPool::startThread() {
             }
         }
     }};
-    
     _threads.push_back( std::move( t ) );
 }
 
