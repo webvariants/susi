@@ -44,7 +44,7 @@ namespace Susi {
             void put( T data ) {
                 std::unique_lock<std::mutex> lock( mutex );
                 not_full.wait( lock,[this]() {
-                    return ( size()<capacity || closed );
+                    return ( this->size()<capacity || this->closed );
                 } );
                 if( closed )throw ChannelClosedException {};
                 this->push_back( std::move( data ) );
@@ -54,7 +54,7 @@ namespace Susi {
             T get() {
                 std::unique_lock<std::mutex> lock( mutex );
                 not_empty.wait( lock,[this]() {
-                    return ( size()>0 || closed );
+                    return ( this->size()>0 || this->closed );
                 } );
                 if( closed && this->size()==0 )throw ChannelClosedException {};
                 T result = std::move( this->front() );
