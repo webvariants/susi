@@ -23,7 +23,7 @@ require _DIR.'/../config.php';
 /*
  * create Susi Instance
  */
-$susi = new Susi($CONFIG["SUSI_ADDR"], $CONFIG["SUSI_PORT"], false);
+$susi = new Susi($CONFIG["SUSI_ADDR"], $CONFIG["SUSI_PORT"], true);
 
 
 /*
@@ -129,7 +129,7 @@ $c1 = $susi->registerConsumer("test_event",
 	);
 
 
-$GLOBALS['test_starter_id'] = $susi->registerProcessor("heartbeat::five",
+$GLOBALS['test_starter_id'] = $susi->registerProcessor("heartbeat::one",
 
 		// handler
 		function(&$event) use($susi, $p1, $p2, $c1) {
