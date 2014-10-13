@@ -28,8 +28,8 @@ namespace Susi {
                 close();
             }
             void publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer {} );
-            long subscribe( std::string topic, Susi::Events::Processor processor , char minAuthLevel = 0);
-            long subscribe( std::string topic, Susi::Events::Consumer consumer , char minAuthLevel = 0);
+            long subscribe( std::string topic, Susi::Events::Processor processor , char authlevel = 0, std::string name = "");
+            long subscribe( std::string topic, Susi::Events::Consumer consumer , char authlevel = 0, std::string name = "");
             bool unsubscribe( long id ) {
                 return Susi::Events::Manager::unsubscribe( id );
             }

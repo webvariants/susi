@@ -17,7 +17,7 @@ project( "WATCHDOG" )
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/dev")
 
-find_package(POCO REQUIRED PocoFoundation PocoUtil PocoJSON PocoNet)
+find_package(POCO REQUIRED PocoFoundation)
 find_package(Threads REQUIRED)
 
 #add_subdirectory( ${CMAKE_SOURCE_DIR}/test/gtest-1.7.0 )
@@ -33,25 +33,11 @@ include_directories( ${POCO_INCLUDE_DIR} )
 include_directories( ${SOCI_INCLUDE_DIRS} )
 
 file( GLOB SRCFILES ${CMAKE_SOURCE_DIR}/src/sources/*.cpp )
-#file( GLOB TESTFILES ${CMAKE_SOURCE_DIR}/test/*/*.cpp )
-
-#LIBRARY
-add_library( libwatchdog SHARED ${SRCFILES} )
-set_target_properties(libwatchdog PROPERTIES OUTPUT_NAME watchdog)
 
 #WATCHDOG BINARY
-add_executable( watchdog ${CMAKE_SOURCE_DIR}/src/sources/main.cc )
-target_link_libraries(watchdog libwatchdog)
+add_executable( watchdog ${SRCFILES} ${CMAKE_SOURCE_DIR}/src/sources/main.cc )
 target_link_libraries(watchdog ${POCO_LIBRARIES})
 target_link_libraries(watchdog ${CMAKE_THREAD_LIBS_INIT})
 
-#SUSI TESTS
-#add_executable( susi_test ${TESTFILES})
-#target_link_libraries(susi_test libsusi)
-#target_link_libraries(susi_test ${CMAKE_THREAD_LIBS_INIT})
-#target_link_libraries(susi_test ${SOCI_LIBRARY})
-#target_link_libraries(susi_test ${POCO_LIBRARIES})
-#target_link_libraries(susi_test gtest)
-#target_link_libraries(susi_test gtest_main)
 
 

@@ -23,34 +23,56 @@ void Susi::Api::BasicApiClient::sendAck( Susi::Events::Event & event ) {
     //std::cout<<"sended ack"<<std::endl;
 }
 
-void Susi::Api::BasicApiClient::sendRegisterConsumer( std::string topic ) {
+void Susi::Api::BasicApiClient::sendRegisterConsumer( std::string topic , char authlevel, std::string name) {
     Susi::Util::Any packet = Susi::Util::Any::Object {
         {"type","registerConsumer"},
-        {"data",topic}
+        {"data",Susi::Util::Any::Object{
+            {"topic",topic},
+            {"authlevel",authlevel},
+            {"name",name}
+        }}
     };
     JSONTCPClient::send( packet );
 }
 
-void Susi::Api::BasicApiClient::sendRegisterProcessor( std::string topic ) {
+void Susi::Api::BasicApiClient::sendRegisterProcessor( std::string topic , char authlevel, std::string name) {
     Susi::Util::Any packet = Susi::Util::Any::Object {
         {"type","registerProcessor"},
-        {"data",topic}
+        {"data",Susi::Util::Any::Object{
+            {"topic",topic},
+            {"authlevel",authlevel},
+            {"name",name}
+        }}
     };
     JSONTCPClient::send( packet );
 }
 
+void Susi::Api::BasicApiClient::sendShutdown(){
+    Susi::Util::Any packet = Susi::Util::Any::Object{
+        {"type","shutdown"}
+    };
+    JSONTCPClient::send( packet );
+}
 
-void Susi::Api::BasicApiClient::sendUnregisterConsumer( long id ){
+void Susi::Api::BasicApiClient::sendUnregisterConsumer( std::string topic , char authlevel){
     Susi::Util::Any packet = Susi::Util::Any::Object{
         {"type","unregisterConsumer"},
-        {"data",id}
+        {"data",Susi::Util::Any::Object{
+            {"topic",topic},
+            {"authlevel",authlevel}
+        }}
     };
+    JSONTCPClient::send( packet );
 }
-void Susi::Api::BasicApiClient::sendUnregisterProcessor( long id ){
+void Susi::Api::BasicApiClient::sendUnregisterProcessor( std::string topic , char authlevel){
     Susi::Util::Any packet = Susi::Util::Any::Object{
         {"type","unregisterProcessor"},
-        {"data",id}
+        {"data",Susi::Util::Any::Object{
+            {"topic",topic},
+            {"authlevel",authlevel}
+        }}
     };
+    JSONTCPClient::send( packet );
 }
 
 void Susi::Api::BasicApiClient::onMessage( Susi::Util::Any & message ) {

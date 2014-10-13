@@ -78,6 +78,12 @@ namespace Susi {
                 return result;
             }
 
+            void assertAuthlevel(Susi::Events::Event & evt, char authlevel){
+                if(evt.authlevel > authlevel){
+                    throw std::runtime_error{"insufficient authlevel"};
+                }
+            }
+
         };
 
     }

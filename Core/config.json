@@ -62,5 +62,8 @@
 		"address": "[::1]:4000"
 	},
 
-	"apiserver": {}
+	"apiserver": {},
+
+	"constraints": {}
+
 }

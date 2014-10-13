@@ -73,6 +73,8 @@ int main(int argc, char** argv){
    		// default fallback
    		cfg.loadConfig("config.json");
    	}
+   	
+	cfg.parseCommandLine(argv_vec);
 
 
 

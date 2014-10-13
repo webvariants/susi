@@ -28,8 +28,7 @@
 #include "syscall/SyscallComponent.h"
 #include "webstack/HttpServerComponent.h"
 #include "autodiscovery/AutoDiscoveryComponent.h"
-
-#include "util/ConstrainedScheduler.h"
+#include "events/ConstraintController.h"
 
 namespace Susi {
     namespace System {
