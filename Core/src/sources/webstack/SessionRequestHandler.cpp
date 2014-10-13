@@ -8,9 +8,9 @@ void Susi::SessionRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& r
         Poco::Net::NameValueCollection cookies;
         request.getCookies( cookies );
         id = cookies["susisession"];
-        Susi::Logger::info( "sessionid: "+id );
+        Susi::Logger::debug( "sessionid: "+id );
         if( !_sessionManager->checkSession( id ) ) {
-            Susi::Logger::info( "No valid session" );
+            Susi::Logger::debug( "No valid session" );
             auto oldCookie = Poco::Net::HTTPCookie {"susisession",id};
             oldCookie.setMaxAge( 0 );
             response.addCookie( oldCookie );

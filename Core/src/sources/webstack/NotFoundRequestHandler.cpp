@@ -17,6 +17,7 @@ void Susi::NotFoundRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& 
     response.setContentType( "text/html" );
     response.setStatus( Poco::Net::HTTPServerResponse::HTTPStatus::HTTP_NOT_FOUND );
     std::ostream& ostr = response.send();
+    Susi::Logger::debug("404 handler...");
     ostr << "<html><head><title>SUSI</title></head> ";
     ostr << "<body><p style=\"text-align: center;font-size: 48px;\"></br></br></br>";
     ostr << "(404) Not found.";

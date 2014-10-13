@@ -13,7 +13,7 @@ void Susi::FormRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& requ
     if( !partHandler.name().empty() )
     {
         response.setStatus( Poco::Net::HTTPServerResponse::HTTPStatus::HTTP_OK );
-
+        Susi::Logger::debug("upload success");
         ostr << "<html><head><title>SUSI</title></head> ";
         ostr << "<body>";
         ostr << "<h2>Upload</h2>\n";
@@ -27,7 +27,7 @@ void Susi::FormRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& requ
     }
     else {
         response.setStatus( Poco::Net::HTTPServerResponse::HTTPStatus::HTTP_NOT_FOUND );
-
+        Susi::Logger::debug("upload failed");
         ostr << "<html><head><title>SUSI</title></head> ";
         ostr << "<body><p style=\"text-align: center;font-size: 48px;\"></br></br></br>";
         ostr << "(404) Upload Failed";
