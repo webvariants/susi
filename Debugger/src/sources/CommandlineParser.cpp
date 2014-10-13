@@ -15,7 +15,7 @@ bool Debugger::Parser::set(std::string key, std::string value) {
 
 	if(it != _knownCommandLineOptions.end()) {
 		std::string key_found = it->second;
-		
+			
 		if(_knownCommandLineType[key_found] == "multi") {
 			if(_knownCommandLineValues[key_found] == "") 
 				_knownCommandLineValues[key_found] = value;

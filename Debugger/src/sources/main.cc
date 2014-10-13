@@ -37,7 +37,10 @@
 	cout<<" ./susi-debugger -s heartbeat::one \n";	
 
 	cout<<"publish example \n";
-	cout<<" ./susi-debugger -s test -p test -pa {\\\"foo\\\":\\\"bar\\\"} \n"<<std::endl;	
+	cout<<" ./susi-debugger -s test -p test -pa \"{\\\"foo\\\":\\\"bar\\\",\\\"foo2\\\":\\\"bar2\\\"}\" \n"<<std::endl;	
+
+	cout<<"login example \n";
+	cout<<" ./susi-debugger -s test -p test -pa \"{\\\"foo\\\":\\\"bar\\\",\\\"foo2\\\":\\\"bar2\\\"}\" -v -user root -pass toor\n"<<std::endl;	
 }
 
 int main(int argc, char** argv) {
@@ -47,8 +50,11 @@ int main(int argc, char** argv) {
 	std::vector<std::string> filtered_vec;
 
 	std::condition_variable cond;
+	std::condition_variable login_cond;
 	std::mutex mutex;
+	std::mutex login_mutex;
 	std::atomic<int> times(0);
+	std::atomic<int> login_times(1);
 
 	std::string susi_instance = "[::1]:4000"; // default
 
@@ -64,7 +70,6 @@ int main(int argc, char** argv) {
 
 	for (int i=1; i<argc; i++) {
 		std::string option = argv[i];
-
 		if(option == "--") {
 			delimeter_found = true;
 			i++;
@@ -85,14 +90,17 @@ int main(int argc, char** argv) {
 	parser.registerCommandLineOption("help", "help", "false");
 	parser.registerCommandLineOption("subscribe", "subscribe", "", "multi");
 	parser.registerCommandLineOption("publish", "publish");
-	parser.registerCommandLineOption("paypload", "paypload");
+	parser.registerCommandLineOption("payload", "payload");
+
+	parser.registerCommandLineOption("user", "user");
+	parser.registerCommandLineOption("pass", "pass");
 
 	// shortcuts
 	parser.registerCommandLineOption("v", "verbose", "false");
 	parser.registerCommandLineOption("h", "help", "false");
 	parser.registerCommandLineOption("s", "subscribe", "", "multi");
 	parser.registerCommandLineOption("p", "publish");
-	parser.registerCommandLineOption("pa", "paypload");
+	parser.registerCommandLineOption("pa", "payload");	
 
 	parser.parseCommandLine(debugger_args);
 
@@ -109,6 +117,25 @@ int main(int argc, char** argv) {
 	// init Engine
 	std::shared_ptr<Debugger::Engine> e{new Debugger::Engine{susi_instance}};
 
+
+	if(parser.getValueByKey("user") != "" && parser.getValueByKey("pass") != "") {
+
+		std::cout<<"Login -->"<<std::endl;
+		e->addController("printController", new Debugger::PrintController{"auth::login", &login_times, &login_cond});
+
+		e->start();
+
+		auto login_event = e->getApi()->createEvent("auth::login");
+		 	 login_event->payload = Susi::Util::Any::fromJSONString("{\"username\":\""+parser.getValueByKey("user") + "\",\"password\":\"" +  parser.getValueByKey("pass") +"\"}");
+		e->getApi()->publish(std::move(login_event));
+
+
+		std::unique_lock<std::mutex> login_lock{login_mutex};
+		login_cond.wait(login_lock, [&login_times](){return login_times.load()==0;});
+
+		std::cout<<"<--- LogedIn"<<std::endl;	
+	} 
+	
 	std::string s_topic = parser.getValueByKey("subscribe");
 	
 	if(s_topic != "") {
@@ -124,14 +151,16 @@ int main(int argc, char** argv) {
 	}
 
 	std::string p_topic = parser.getValueByKey("publish");
-	Susi::Util::Any payload{ Susi::Util::Any::fromJSONString(parser.getValueByKey("paypload"))};
+	Susi::Util::Any payload{ Susi::Util::Any::fromJSONString(parser.getValueByKey("payload"))};
 
+	cout<<"payload:"<<parser.getValueByKey("payload")<<" --> "<<payload.toJSONString()<<std::endl;
 	if(p_topic != "") {
 		auto event = e->getApi()->createEvent(p_topic);
 		 	 event->payload = payload;
 		e->getApi()->publish(std::move(event));
 	}
-	
+
+
 	std::cout<<"TIMES:"<<times.load()<<std::endl;
 	
 	std::unique_lock<std::mutex> lock{mutex};
