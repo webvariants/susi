@@ -29,7 +29,8 @@
 #include "webstack/HttpServerComponent.h"
 #include "autodiscovery/AutoDiscoveryComponent.h"
 #include "events/ConstraintController.h"
-
+#include "ddhcp/DDHCPComponent.h"
+ 
 namespace Susi {
     namespace System {
 
