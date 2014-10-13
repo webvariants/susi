@@ -65,7 +65,8 @@ $p1 = $susi->registerProcessor("test_event",
 			$event->setPayload($payload);
 
 			
-		}
+		},
+		4
 	);
 
 $p2 = $susi->registerProcessor("test_event",
@@ -96,7 +97,8 @@ $p2 = $susi->registerProcessor("test_event",
 			$payload["mult_five"] = $payload["add_one"] * 5;
 			$payload["test_payload"] .= "_ok2";
 			$event->setPayload($payload);
-		}
+		},
+		4
 	);
 
 /*
@@ -125,7 +127,8 @@ $c1 = $susi->registerConsumer("test_event",
  			} else {
  				echo "FAILED \n";
  			}
-		}
+		},
+		4
 	);
 
 
@@ -138,7 +141,8 @@ $GLOBALS['test_starter_id'] = $susi->registerProcessor("heartbeat::one",
 			// Publish Event
 			$evt = new Event("test_event", 
 				array("number" => 1),
-				array(array("header_info" => "en_en"))
+				array(array("header_info" => "en_en")),
+				4
 			);
 
 			$susi->publish($evt, 

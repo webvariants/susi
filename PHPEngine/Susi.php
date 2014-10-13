@@ -111,41 +111,57 @@ class Susi {
 
 	protected function unregister($type, $register_id) {
 		$found      = false;
-		$tkey_found = null;
+		$hash_found = null;
+		$topic      = "";
+		$authlevel  = 3;
 
 		if($type == "registerConsumer") {			
-			foreach ($this->consumer_callbacks as $tkey => $topics) {
-				foreach ($topics as $ckey => $callback) {
+			foreach ($this->consumer_callbacks as $hash => $callbacks) {
+				foreach ($callbacks as $ckey => $callback) {
 					if($callback["id"] == $register_id) {
-						unset($this->consumer_callbacks[$tkey][$ckey]);
+						$topic     = $callback["topic"];
+						$authlevel = $callback["authlevel"];
+						unset($this->consumer_callbacks[$hash][$ckey]);
 						$found = true;
-						$tkey_found = $tkey;
+						$hash_found = $hash;
 						break;
 					}
 				}
 			}	
 
-			if($found === true && count($this->consumer_callbacks[$tkey_found]) == 0) {				
-				$this->debug("unregisterConsumer: ".$tkey_found);
+			if($found === true && count($this->consumer_callbacks[$hash_found]) == 0) {				
+				$this->debug("unregisterConsumer: ".$hash_found);
+
+				unset($this->consumer_callbacks[$hash_found]);
 				if($this->connected) 
-					fwrite($this->socket,json_encode(array("type" => "unregisterConsumer", "data" => $tkey_found)));
+					fwrite($this->socket,json_encode(array("type" => "unregisterConsumer", "data" => array(
+							"topic" => $topic,
+							"authlevel" => $authlevel
+						))));
 			}
 		} else {			
-			foreach ($this->processor_callbacks as $tkey => $topics) {
+			foreach ($this->processor_callbacks as $hash => $topics) {
 				foreach ($topics as $ckey => $callback) {
 					if($callback["id"] == $register_id) {
-						unset($this->processor_callbacks[$tkey][$ckey]);
+						$topic     = $callback["topic"];
+						$authlevel = $callback["authlevel"];
+						unset($this->processor_callbacks[$hash][$ckey]);
 						$found = true;
-						$tkey_found = $tkey;
+						$hash_found = $hash;
 						break;
 					}
 				}
 			}
 
-			if($found === true && count($this->processor_callbacks[$tkey_found]) == 0) {
-				$this->debug("unregisterProcessor: ".$tkey_found);
+			if($found === true && count($this->processor_callbacks[$hash_found]) == 0) {
+				$this->debug("unregisterProcessor: ".$hash_found);
+
+				unset($this->processor_callbacks[$hash_found]);
 				if($this->connected)
-					fwrite($this->socket,json_encode(array("type" => "unregisterProcessor", "data" => $tkey_found)));
+					fwrite($this->socket,json_encode(array("type" => "unregisterProcessor", "data" => array(
+							"topic" => $topic,
+							"authlevel" => $authlevel
+						))));
 			}
 		}
 
@@ -175,10 +191,12 @@ class Susi {
 		
 		if($evt->getType() === "consumerEvent"){
 
-			$topic = $evt->getTopic();
+			$topic     = $evt->getTopic();
+			$authlevel = $evt->getAuthlevel();
+			$hash      = $this->calcHash($topic, $authlevel);
 
-			if(array_key_exists($topic, $this->consumer_callbacks)){
-				$consumer_callbacks = $this->consumer_callbacks[$topic];
+			if(array_key_exists($hash, $this->consumer_callbacks)){
+				$consumer_callbacks = $this->consumer_callbacks[$hash];
 				foreach ($consumer_callbacks as $callback) {
 					try{						
 						$callback["handler"]($evt);
@@ -192,10 +210,12 @@ class Susi {
 
 		if($evt->getType() === "processorEvent"){		
 
-			$topic = $evt->getTopic();
+			$topic     = $evt->getTopic();
+			$authlevel = $evt->getAuthlevel();
+			$hash      = $this->calcHash($topic, $authlevel);
 			
-			if(array_key_exists($topic, $this->processor_callbacks)){
-				$processor_callbacks = $this->processor_callbacks[$topic];
+			if(array_key_exists($hash, $this->processor_callbacks)){
+				$processor_callbacks = $this->processor_callbacks[$hash];
 				foreach ($processor_callbacks as $callback) {
 					try{
 						$callback["handler"]($evt);						
@@ -275,7 +295,7 @@ class Susi {
 
 
 		// register consumers
-		foreach ($this->consumer_callbacks as $hash => $callbacks) {			
+		foreach ($this->consumer_callbacks as $hash => $callbacks) {
 			$callback = $callbacks[0];		
 
 			//fwrite($this->socket,json_encode(array("type" => "registerConsumer", "data" => $topic)));
