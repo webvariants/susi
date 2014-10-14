@@ -25,12 +25,17 @@
 	cout<<"Usage ..."<<std::endl;
 	cout<<"susi-debugger <arguments for debugger> -- [Susi-Instance] \n\n";
 	cout<<"susi-debugger arguments ...\n";
-	cout<<"	-help            | -h \n";
-	cout<<"	-verbose         | -v \n";
+	cout<<"	-help            | -h  \n";
+	cout<<"	-verbose         | -v  \n";
 	cout<<"	-----------------------\n";
-	cout<<"	-subscribe=topic | -s \n";	
-	cout<<"	-publish=topic   | -p \n";	
+	cout<<"	-subscribe=topic | -s  \n";	
+	cout<<"	-publish=topic   | -p  \n";	
 	cout<<"	-payload=JSON    | -pa \n";	
+	cout<<"	-times           | -t  \n";	
+	cout<<"	-authlevel       | -a  | default 3, will not be uses on login \n";
+	cout<<"	-----------------------\n";
+	cout<<"	-user            | username for login \n";
+	cout<<"	-pass            | password for login \n";
 	cout<<"\n\n";
 
 	cout<<"subcribe example \n";
@@ -51,10 +56,14 @@ int main(int argc, char** argv) {
 
 	std::condition_variable cond;
 	std::condition_variable login_cond;
+	std::condition_variable publish_cond;
 	std::mutex mutex;
-	std::mutex login_mutex;
 	std::atomic<int> times(0);
 	std::atomic<int> login_times(1);
+	std::atomic<int> publish_times(1);
+
+	char authlevel = 3;
+	bool use_subscribe = false;
 
 	std::string susi_instance = "[::1]:4000"; // default
 
@@ -91,6 +100,8 @@ int main(int argc, char** argv) {
 	parser.registerCommandLineOption("subscribe", "subscribe", "", "multi");
 	parser.registerCommandLineOption("publish", "publish");
 	parser.registerCommandLineOption("payload", "payload");
+	parser.registerCommandLineOption("times", "times", "-1");
+	parser.registerCommandLineOption("authlevel", "authlevel", "3");
 
 	parser.registerCommandLineOption("user", "user");
 	parser.registerCommandLineOption("pass", "pass");
@@ -100,7 +111,9 @@ int main(int argc, char** argv) {
 	parser.registerCommandLineOption("h", "help", "false");
 	parser.registerCommandLineOption("s", "subscribe", "", "multi");
 	parser.registerCommandLineOption("p", "publish");
-	parser.registerCommandLineOption("pa", "payload");	
+	parser.registerCommandLineOption("pa","payload");	
+	parser.registerCommandLineOption("t", "times", "-1");
+	parser.registerCommandLineOption("a", "authlevel", "3");
 
 	parser.parseCommandLine(debugger_args);
 
@@ -118,61 +131,81 @@ int main(int argc, char** argv) {
 	std::shared_ptr<Debugger::Engine> e{new Debugger::Engine{susi_instance}};
 
 
-	if(parser.getValueByKey("user") != "" && parser.getValueByKey("pass") != "") {
-
-		std::cout<<"Login -->"<<std::endl;
-		e->addController("printController", new Debugger::PrintController{"auth::login", &login_times, &login_cond});
-
-		e->start();
-
+	// try to login
+	if(parser.getValueByKey("user") != "" && parser.getValueByKey("pass") != "") {		
 		auto login_event = e->getApi()->createEvent("auth::login");
 		 	 login_event->payload = Susi::Util::Any::fromJSONString("{\"username\":\""+parser.getValueByKey("user") + "\",\"password\":\"" +  parser.getValueByKey("pass") +"\"}");
-		e->getApi()->publish(std::move(login_event));
+		
+		 	 Susi::Events::Consumer login_consumer = [&authlevel, &login_cond, &login_times](Susi::Events::SharedEventPtr event){				
 
-		/*	 
-		 	 Susi::Events::Consumer login_consumer = [](Susi::Events::SharedEventPtr event){
-				std::cout<<"Login Consumer:"<<event->toString()<<std::endl;
+		 	 	std::cout<<"Login Consumer:"<<event->toString()<<std::endl;
+				Susi::Util::Any payload = event->getPayload();
+				bool success = payload["success"];
+
+				if(success)	{
+					authlevel = 0;
+					std::cout<<"Login success!"<<std::endl;
+				} else {
+					std::cout<<"Login failed!"<<std::endl;
+				}
+
+				login_times.store(0);
+				login_cond.notify_one();
 			 };
 			 
 
 		e->getApi()->publish(std::move(login_event), login_consumer);
-		*/
 
-
-		std::unique_lock<std::mutex> login_lock{login_mutex};
-		login_cond.wait(login_lock, [&login_times](){return login_times.load()==0;});
-
-		std::cout<<"<--- LogedIn"<<std::endl;	
-	} 
+		std::unique_lock<std::mutex> login_lock{mutex};
+		login_cond.wait(login_lock, [&login_times](){return login_times.load()==0;});		
+	} else {
+		if(parser.getValueByKey("authlevel") != "3")
+			authlevel = static_cast<int>(std::stoi(parser.getValueByKey("authlevel")));
+	}
 	
-	std::string s_topic = parser.getValueByKey("subscribe");
-	
+	// SUBSCRIBE
+	if(parser.getValueByKey("times") == "-1") times.store(-1);
+
+	std::string s_topic = parser.getValueByKey("subscribe");	
 	if(s_topic != "") {
+		use_subscribe = true;
 		std::vector<std::string> elems;
 		parser.split(s_topic, ' ', elems);
 
 		for (size_t t=0; t < elems.size(); t++) {
-    		std::cout << ' ' << elems[t] << std::endl;
-			times.store(times.load() + 1);
-			e->addController("printController", new Debugger::PrintController{elems[t], &times, &cond});
+			//std::cout << ' ' << elems[t] << std::endl;
+			if(times.load() != -1) {
+				times.store(times.load() + 1);
+			}
+			e->addController("printController_"+t, new Debugger::PrintController{elems[t], &times, &cond, &authlevel});
 		}
 		e->start();
 	}
 
+	// PUBLISH
 	std::string p_topic = parser.getValueByKey("publish");
-	Susi::Util::Any payload{ Susi::Util::Any::fromJSONString(parser.getValueByKey("payload"))};
-
-	cout<<"payload:"<<parser.getValueByKey("payload")<<" --> "<<payload.toJSONString()<<std::endl;
 	if(p_topic != "") {
 		auto event = e->getApi()->createEvent(p_topic);
-		 	 event->payload = payload;
-		e->getApi()->publish(std::move(event));
+		 	 event->payload = Susi::Util::Any::fromJSONString(parser.getValueByKey("payload"));
+		 	 event->authlevel = authlevel;
+
+		Susi::Events::Consumer publish_consumer = [&publish_cond, &publish_times](Susi::Events::SharedEventPtr event){				
+				std::cout<<"Publish Consumer:"<<event->toString()<<std::endl;
+
+				publish_times.store(0);
+				publish_cond.notify_one();
+			 };
+
+		e->getApi()->publish(std::move(event), publish_consumer);
+
+		std::unique_lock<std::mutex> publish_lock{mutex};
+		publish_cond.wait(publish_lock, [&publish_times](){return publish_times.load()==0;});
 	}
 
 
-	std::cout<<"TIMES:"<<times.load()<<std::endl;
-	
-	std::unique_lock<std::mutex> lock{mutex};
-	cond.wait(lock, [&times](){return times.load()==0;});
-	
+	//std::cout<<"TIMES:"<<times.load()<<std::endl;
+	if(use_subscribe == true) {
+		std::unique_lock<std::mutex> lock{mutex};
+		cond.wait(lock, [&times](){return times.load()==0;});
+	}
 }
