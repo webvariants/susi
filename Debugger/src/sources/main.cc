@@ -129,6 +129,15 @@ int main(int argc, char** argv) {
 		 	 login_event->payload = Susi::Util::Any::fromJSONString("{\"username\":\""+parser.getValueByKey("user") + "\",\"password\":\"" +  parser.getValueByKey("pass") +"\"}");
 		e->getApi()->publish(std::move(login_event));
 
+		/*	 
+		 	 Susi::Events::Consumer login_consumer = [](Susi::Events::SharedEventPtr event){
+				std::cout<<"Login Consumer:"<<event->toString()<<std::endl;
+			 };
+			 
+
+		e->getApi()->publish(std::move(login_event), login_consumer);
+		*/
+
 
 		std::unique_lock<std::mutex> login_lock{login_mutex};
 		login_cond.wait(login_lock, [&login_times](){return login_times.load()==0;});
