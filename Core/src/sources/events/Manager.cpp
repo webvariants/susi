@@ -91,7 +91,7 @@ void Susi::Events::Manager::publish( Susi::Events::EventPtr event, Susi::Events:
         return;
     }
 
-    Susi::Logger::debug("publish!");
+    //Susi::Logger::debug("publish!");
     {
         std::lock_guard<std::mutex> lock( mutex );
         auto process = std::make_shared<PublishProcess>();
@@ -157,7 +157,7 @@ void Susi::Events::Manager::ack( EventPtr event ) {
         event.release();
         return;
     }
-    Susi::Logger::debug("ack!");
+    //Susi::Logger::debug("ack!");
     struct Work {
         EventPtr event;
         Manager *manager;

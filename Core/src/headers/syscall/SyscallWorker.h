@@ -22,6 +22,8 @@
 #include <fstream>
 #include <iostream>
 
+#include "logger/Logger.h"
+
 namespace Susi {
     namespace Syscall {
         class Worker {
@@ -59,12 +61,17 @@ namespace Susi {
             void operator()() {
                 Poco::Pipe outPipe;
                 Poco::Pipe errPipe;
-                Poco::ProcessHandle ph = Poco::Process::launch( _command, _args, 0, &outPipe, &errPipe );
-                Poco::PipeInputStream ostr( outPipe );
-                Poco::PipeInputStream estr( errPipe );
-                _event->payload["return"] = ph.wait();
-                _event->payload["stdout"] = getContentFromStream( ostr );
-                _event->payload["stderr"] = getContentFromStream( estr );
+                try{
+                    Poco::ProcessHandle ph = Poco::Process::launch( _command, _args, 0, &outPipe, &errPipe );
+                    Poco::PipeInputStream ostr( outPipe );
+                    Poco::PipeInputStream estr( errPipe );
+                    _event->payload["return"] = ph.wait();
+                    _event->payload["stdout"] = getContentFromStream( ostr );
+                    _event->payload["stderr"] = getContentFromStream( estr );
+                }catch(const std::exception & e){
+                    Susi::Logger::error("Error while executing syscall command");
+                    throw e;
+                }
                 // when event gets destructed, its acknowledged.
             }
         };
