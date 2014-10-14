@@ -37,7 +37,7 @@ namespace Susi {
                 while( stream.good() ) {
                     char buff[1024];
                     stream.getline( buff,1024 );
-                    result += std::string {buff};
+                    result += std::string {buff}+"\n";
                 }
                 return result;
             }
