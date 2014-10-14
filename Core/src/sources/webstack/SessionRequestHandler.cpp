@@ -37,11 +37,13 @@ void Susi::SessionRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& r
     }
     try {
         defaultHandler->handleRequest( request,response );
+        response.send().flush();
     }
     catch( const std::exception & e ) {
         std::string msg = "error in http handler: ";
         msg += e.what();
         Susi::Logger::error( msg );
     }
+
     Susi::Logger::debug( "finished in SessionRequestHandler" );
 }
