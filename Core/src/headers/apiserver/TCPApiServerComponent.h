@@ -120,7 +120,6 @@ namespace Susi {
             tcpServer {new ConnectionFactory{api,eventsystem}, serverSocket, params} {
                 params->setMaxThreads( threads );
                 params->setMaxQueued( backlog );
-                params->setThreadIdleTime( 100 );
             }
 
             virtual void start() override {
