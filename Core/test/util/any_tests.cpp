@@ -1109,3 +1109,23 @@ TEST (Any, SetGet) {
 		Any e = d.get("foo.bar");
 	},Any::WrongTypeException);
 }
+
+
+TEST (Any, unescapeJSON) {
+	Any test = Any::Object{
+		{"foo\'bla\'" , "bar\n"},
+		{"john", "doe"}
+	};
+
+	Any test2 = Any( Any::fromJSONString(test.toJSONString()));
+
+	std::string result1 = test.toJSONString();
+	std::string result2 = test2.toJSONString();
+	
+	EXPECT_EQ(result1,result2);
+
+	std::string test3        = "\"foo\"";	
+	Any test4 = Any::fromJSONString(test3);
+
+	EXPECT_EQ(test4.toJSONString(), test3);
+}
