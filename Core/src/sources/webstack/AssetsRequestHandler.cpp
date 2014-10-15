@@ -38,6 +38,7 @@ void Susi::AssetsRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& re
         else {
             throw std::runtime_error {"cannot find file"};
         }
+        Susi::Logger::debug("correctly leaving assets handler");
     }
     catch( const std::exception & e ) {
         Susi::Logger::debug( "got error "+std::string {e.what()} );
