@@ -57,6 +57,9 @@ namespace Susi {
                                 //std::cout<<"timeout!"<<std::endl;
                                 if( isClosed )break;
                             }
+                            catch( const Poco::Net::NetException & e){
+                                std::cout<<"TCPClient NetException:"<<e.what()<<std::endl;
+                            }
                             catch( const std::exception & e ) {
                                 std::cout<<"Exception: "<<e.what()<<std::endl;
                                 break;
