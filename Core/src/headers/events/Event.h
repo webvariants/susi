@@ -30,10 +30,10 @@ namespace Susi {
             Susi::Util::Any payload;
             std::string sessionID;
             Event() {
-                id = std::chrono::system_clock::now().time_since_epoch().count();
+                id = std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
             }
             Event( std::string topic_ ) {
-                id = std::chrono::system_clock::now().time_since_epoch().count();
+                id = std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
                 topic = topic_;
             }
             Event( const Event & other ) {
