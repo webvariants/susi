@@ -31,7 +31,7 @@ namespace Susi {
             std::map<std::string,std::function<void( Susi::Util::Any& )>> senders;
             std::map<std::string,std::map<std::string,long>> consumerSubscriptions;
             std::map<std::string,std::map<std::string,long>> processorSubscriptions;
-            std::map<std::string,std::map<long,Susi::Events::EventPtr>> eventsToAck;
+            std::map<std::string,std::map<std::string,Susi::Events::EventPtr>> eventsToAck;
 
             std::mutex mutex;
 

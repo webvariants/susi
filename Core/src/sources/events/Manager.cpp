@@ -165,7 +165,7 @@ void Susi::Events::Manager::ack( EventPtr event ) {
         Work( Work && other ) : event {std::move( other.event )}, manager {other.manager} {}
         Work( Work & other ) : event {std::move( other.event )}, manager {other.manager} {}
         void operator()() {
-            long id = event->id;
+            std::string id = event->id;
             std::shared_ptr<PublishProcess> process;
             {
                 std::unique_lock<std::mutex> lock( manager->mutex );
@@ -227,7 +227,7 @@ void Susi::Events::Manager::ack( EventPtr event ) {
         }
     };
 
-    long id = event->id;
+    std::string id = event->id;
     auto error = [id,this]( std::string msg ) {
         std::unique_lock<std::mutex> lock( mutex );
         std::shared_ptr<PublishProcess> process;

@@ -217,8 +217,8 @@ void Susi::Api::ApiServerComponent::handlePublish( std::string & id, Susi::Util:
     auto event = eventManager->createEvent( eventData["topic"] );
     Susi::Events::Event rawEvent {eventData};
     rawEvent.sessionID = id;
-    if( rawEvent.id == 0 ) {
-        rawEvent.id = std::chrono::system_clock::now().time_since_epoch().count();
+    if( rawEvent.id == "" ) {
+        rawEvent.id = std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
     }
     *event = rawEvent;
     if( event->authlevel < authlevel ) {
@@ -245,7 +245,7 @@ void Susi::Api::ApiServerComponent::handleAck( std::string & id, Susi::Util::Any
         sendFail( id,"ack handler: data is not an object or topic is not set correctly" );
         return;
     }
-    long eventID = eventData["id"];
+    std::string eventID = static_cast<std::string>(eventData["id"]);
     if(!(eventsToAck.count(id)>0) || !(eventsToAck[id].count(eventID)>0)){
         sendFail( id , "unexpected ack" );
         return;
