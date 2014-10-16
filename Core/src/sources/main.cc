@@ -84,6 +84,10 @@ int main(int argc, char** argv){
 	//componentManager->startComponent("heartbeat");
 	componentManager->startAll();
 
+	auto eventsystem = componentManager->getComponent<Susi::Events::ManagerComponent>("eventsystem");
+	auto event = eventsystem->createEvent("global::start");
+	eventSystem->publish(std::move(event));
+
 	//setupLogger(componentManager,"syscall::exec");
 	
 

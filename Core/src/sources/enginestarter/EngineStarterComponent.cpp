@@ -13,8 +13,12 @@
 
 void Susi::EngineStarter::StarterComponent::handleStart( Susi::Events::EventPtr event ) {
     try {
-        std::string path = event->getPayload()["path"];
-        execute( path );
+        if(event->payload["path"].isString()){
+            std::string path = static_cast<std::string>(event->payload["path"]);
+            execute( path );
+        }else{
+            execute( _defaultPath );
+        }
     }
     catch( const std::exception & e ) {
         std::string msg = "Error in handleStart(): ";
@@ -25,9 +29,14 @@ void Susi::EngineStarter::StarterComponent::handleStart( Susi::Events::EventPtr 
 
 void Susi::EngineStarter::StarterComponent::handleRestart( Susi::Events::EventPtr event ) {
     try {
-        std::string path = event->getPayload()["path"];
-        killall();
-        execute( path );
+        if(event->payload["path"].isString()){
+            std::string path = static_cast<std::string>(event->payload["path"]);
+            killall();
+            execute( path );
+        }else{
+            killall();
+            execute( _defaultPath );
+        }
     }
     catch( const std::exception & e ) {
         std::string msg = "Error in handleRestart(): ";

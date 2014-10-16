@@ -19,8 +19,8 @@ namespace Susi {
     namespace EngineStarter {
         class StarterComponent : public Susi::System::BaseComponent , public Starter {
         public:
-            StarterComponent( Susi::System::ComponentManager * mgr ) :
-                Susi::System::BaseComponent {mgr}, Starter {} {}
+            StarterComponent( Susi::System::ComponentManager * mgr, std::string defaultPath = "" ) :
+                Susi::System::BaseComponent {mgr}, Starter {}, _defaultPath{defaultPath} {}
 
             virtual void start() override {
                 subscribe( std::string{"enginestarter::start"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
@@ -55,6 +55,7 @@ namespace Susi {
                 Susi::Logger::info( "stopped EngineStarterComponent" );
             }
         protected:
+            std::string _defaultPath;
             void handleStart( Susi::Events::EventPtr event );
             void handleRestart( Susi::Events::EventPtr event );
             void handleStop( Susi::Events::EventPtr event );
