@@ -59,7 +59,7 @@ namespace Susi {
                                 if( isClosed )break;
                             }
                             catch( const Poco::Net::NetException & e){
-                                std::cout<<"TCPClient NetException: "<<e.what()<<std::endl;
+                                std::cout<<"TCPClient NetException: "<<e.displayText()<<std::endl;
                                 break;
                             }
                             catch( const std::exception & e ) {
