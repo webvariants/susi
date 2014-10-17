@@ -48,6 +48,7 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 		return std::shared_ptr<Component>{new Susi::DB::DBComponent{mgr, config}};
 	});
 	manager->registerDependency("dbmanager","eventsystem");
+	manager->registerDependency("dbmanager","sessionmanager");
 
 	/**
 	 * Declare authcontroller
@@ -61,6 +62,7 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 	});
 	manager->registerDependency("authcontroller","eventsystem");
 	manager->registerDependency("authcontroller","dbmanager");
+	manager->registerDependency("authcontroller","sessionmanager");
 
 	/**
 	 * TCP Api Server
@@ -93,6 +95,7 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 		return std::shared_ptr<Component>{new Susi::EngineStarter::StarterComponent{mgr,path}};
 	});
 	manager->registerDependency("enginestarter","eventsystem");
+	manager->registerDependency("enginestarter","sessionmanager");
 
 	/**
 	 * Declare iocontroller
@@ -101,6 +104,7 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 		return std::shared_ptr<Component>{new Susi::IOControllerComponent{mgr}};
 	});
 	manager->registerDependency("iocontroller","eventsystem");
+	manager->registerDependency("iocontroller","sessionmanager");
 
 	/**
 	 * Declare sessionmanager
@@ -114,7 +118,6 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 	});
 	manager->registerDependency("sessionmanager","eventsystem");
 	manager->registerDependency("sessionmanager","heartbeat");
-
 	/**
 	 * Declare statecontroller
 	 */
@@ -128,6 +131,7 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 	manager->registerDependency("statecontroller","eventsystem");
 	manager->registerDependency("statecontroller","iocontroller");
 	manager->registerDependency("statecontroller","heartbeat");
+	manager->registerDependency("statecontroller","sessionmanager");
 
 	/**
 	 * Declare syscallcontroller
@@ -148,6 +152,7 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 	});
 	manager->registerDependency("syscallcontroller","eventsystem");
 	manager->registerDependency("syscallcontroller","iocontroller");
+	manager->registerDependency("syscallcontroller","sessionmanager");
 
 	/**
 	 * Declare httpserver
@@ -178,6 +183,7 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 		return std::shared_ptr<Component>{new Susi::HttpServerComponent{mgr, address, assetRoot, upload, threads, backlog}};
 	});	
 	manager->registerDependency("httpserver","apiserver");
+	manager->registerDependency("httpserver","sessionmanager");
 	
 	/**
 	 * Declare Autodiscovery
@@ -194,6 +200,7 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 		return std::shared_ptr<Component>{new Susi::Autodiscovery::AutoDiscoveryComponent{mcast,ownName,mgr}};
 	});
 	manager->registerDependency("autodiscovery","eventsystem");
+	manager->registerDependency("autodiscovery","sessionmanager");
 
 	/**
 	 * Declare apiserver
@@ -211,6 +218,20 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 		return std::shared_ptr<Component>{new Susi::Events::ConstraintControllerComponent{mgr}};
 	});
 	manager->registerDependency("constraints","eventsystem");
+	manager->registerDependency("constraints","sessionmanager");
+
+	/**
+	 * Declare DDHCP
+	 */
+	manager->registerComponent("ddhcp", [](ComponentManager * mgr, Any & config) {			
+		unsigned short port = 1704;
+		try{
+			port = (unsigned short)(int)config[port];
+		}catch(...){}
+		return std::shared_ptr<Component>{new Susi::Ddhcp::DDHCPComponent{mgr,port}};
+	});
+	manager->registerDependency("ddhcp","eventsystem");
+	manager->registerDependency("ddhcp","sessionmanager");
 
 	return manager;
 }

@@ -31,14 +31,14 @@ protected:
         Susi::Logger::log(any.toJSONString());
     }
 	
-	long subscribe( std::string topic, Susi::Events::Processor processor, char authlevel=0) {
-        long id = api->subscribe( topic,std::move( processor ),authlevel );
+	long subscribe( std::string topic, Susi::Events::Processor processor) {
+        long id = api->subscribe( topic,std::move( processor ) );
         subscriptions.push_back(id);
         return id;
     }
     
-    long subscribe( std::string topic, Susi::Events::Consumer consumer, char authlevel=0) {
-        long id = api->subscribe( topic,std::move( consumer ),authlevel );
+    long subscribe( std::string topic, Susi::Events::Consumer consumer) {
+        long id = api->subscribe( topic,std::move( consumer ) );
         subscriptions.push_back(id);
         return id;
     }

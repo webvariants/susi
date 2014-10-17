@@ -27,6 +27,7 @@ class Event {
 	protected $str_id    = "";
 
 	protected $topic     = "";
+	protected $authlevel = 3;
 	protected $payload   = array();
 	protected $headers   = array();	
 	protected $sessionID = "";
@@ -36,12 +37,13 @@ class Event {
 	protected $errMsg    = "";
 
 
-	public function __construct($topic = "", $payload = array(), $headers = array()) {
+	public function __construct($topic = "", $payload = array(), $headers = array(), $authlevel = 3) {
 
 		$this->str_id    = base_convert(uniqid(), 11, 10);
 		$this->id        = intval($this->str_id);
 
 		$this->topic     = $topic;
+		$this->authlevel = $authlevel;
 		$this->payload   = $payload;
 		$this->headers   = $headers;
 	}
@@ -58,6 +60,10 @@ class Event {
 
 	public function getTopic() {
 		return $this->topic;
+	}
+
+	public function getAuthlevel() {
+		return $this->authlevel;
 	}
 
 	public function getHeaders() {
@@ -112,14 +118,17 @@ class Event {
 	public function fromString($msg) {
 		$msg = json_decode($msg, true);
 
-		$this->type      = $msg["type"];
+		$this->type  = $msg["type"];
+		$this->error = array_key_exists("error", $msg) ? $msg["error"] : false;
 
-		if(array_key_exists('data', $msg)) {
+		// if error is true, data will contain a string 
+		if(array_key_exists('data', $msg) && $this->error === false) {
 
 			$data = $msg['data'];
 
 			$this->str_id    = array_key_exists('id', $data)        ? "" + $data["id"]   : "";
 			$this->topic     = array_key_exists('topic', $data)     ? $data["topic"]     : "";
+			$this->authlevel = array_key_exists('authlevel', $data) ? $data["authlevel"] : 3;
 			$this->headers   = array_key_exists('headers', $data)   ? $data["headers"]   : array();
 			$this->payload   = array_key_exists('payload', $data)   ? $data["payload"]   : array();
 			$this->sessionID = array_key_exists('sessionid', $data) ? $data["sessionid"] : "";
@@ -129,7 +138,7 @@ class Event {
 		}
 
 		$this->id    = intval($this->str_id);
-		$this->error = array_key_exists("error", $msg) ? $msg["error"] : false;
+		
 
 		if($this->error === true && array_key_exists("data", $msg)) {
 			$this->errMsg = $msg["data"];
@@ -150,6 +159,7 @@ class Event {
 	public function getData() {
 		return $data = array(
 			"topic"     => $this->topic,
+			"authlevel" => $this->authlevel,
 			"payload"   => $this->payload,
 			"id"        => $this->id,
 			"sessionid" => $this->sessionID,

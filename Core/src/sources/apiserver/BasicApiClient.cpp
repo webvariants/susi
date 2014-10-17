@@ -23,24 +23,22 @@ void Susi::Api::BasicApiClient::sendAck( Susi::Events::Event & event ) {
     //std::cout<<"sended ack"<<std::endl;
 }
 
-void Susi::Api::BasicApiClient::sendRegisterConsumer( std::string topic , char authlevel, std::string name) {
+void Susi::Api::BasicApiClient::sendRegisterConsumer( std::string topic , std::string name) {
     Susi::Util::Any packet = Susi::Util::Any::Object {
         {"type","registerConsumer"},
         {"data",Susi::Util::Any::Object{
             {"topic",topic},
-            {"authlevel",authlevel},
             {"name",name}
         }}
     };
     JSONTCPClient::send( packet );
 }
 
-void Susi::Api::BasicApiClient::sendRegisterProcessor( std::string topic , char authlevel, std::string name) {
+void Susi::Api::BasicApiClient::sendRegisterProcessor( std::string topic , std::string name) {
     Susi::Util::Any packet = Susi::Util::Any::Object {
         {"type","registerProcessor"},
         {"data",Susi::Util::Any::Object{
             {"topic",topic},
-            {"authlevel",authlevel},
             {"name",name}
         }}
     };
@@ -54,22 +52,20 @@ void Susi::Api::BasicApiClient::sendShutdown(){
     JSONTCPClient::send( packet );
 }
 
-void Susi::Api::BasicApiClient::sendUnregisterConsumer( std::string topic , char authlevel){
+void Susi::Api::BasicApiClient::sendUnregisterConsumer( std::string topic){
     Susi::Util::Any packet = Susi::Util::Any::Object{
         {"type","unregisterConsumer"},
         {"data",Susi::Util::Any::Object{
-            {"topic",topic},
-            {"authlevel",authlevel}
+            {"topic",topic}
         }}
     };
     JSONTCPClient::send( packet );
 }
-void Susi::Api::BasicApiClient::sendUnregisterProcessor( std::string topic , char authlevel){
+void Susi::Api::BasicApiClient::sendUnregisterProcessor( std::string topic ){
     Susi::Util::Any packet = Susi::Util::Any::Object{
         {"type","unregisterProcessor"},
         {"data",Susi::Util::Any::Object{
-            {"topic",topic},
-            {"authlevel",authlevel}
+            {"topic",topic}
         }}
     };
     JSONTCPClient::send( packet );

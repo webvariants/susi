@@ -98,17 +98,14 @@ protected:
 		msg = Susi::Util::Any::Object{
 			{"type","unregisterConsumer"},
 			{"data",Susi::Util::Any::Object{
-				{"topic","sample"},
-				{"authlevel",3}
-			}}
+				{"topic","sample"}			}}
 		};
 		apiserver->onMessage(sessionID,msg);
 		waitForCondition(250);//status
 		msg = Susi::Util::Any::Object{
 			{"type","unregisterProcessor"},
 			{"data",Susi::Util::Any::Object{
-				{"topic","sample"},
-				{"authlevel",3}
+				{"topic","sample"}
 			}}
 		};
 		apiserver->onMessage(sessionID,msg);

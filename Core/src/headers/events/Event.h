@@ -24,7 +24,6 @@ namespace Susi {
         protected:
         public:
             std::string id;
-            char authlevel = 0;
             std::string topic;
             std::vector<Header> headers;
             Susi::Util::Any payload;
@@ -42,7 +41,6 @@ namespace Susi {
                 headers = other.headers;
                 payload = other.payload;
                 sessionID = other.sessionID;
-                authlevel = other.authlevel;
             }
             Event& operator=( Event & other ) {
                 setID( other.getID() );
@@ -50,12 +48,11 @@ namespace Susi {
                 setTopic( other.getTopic() );
                 setHeaders( other.getHeaders() );
                 setPayload( other.getPayload() );
-                setAuthlevel( other.getAuthlevel() );
                 return *this;
             }
             Event( Susi::Util::Any & any ) {
                 if( !any["id"].isNull() ) {
-                    id = static_cast<std::string>(any["id"]);
+                    id = static_cast<std::string>( any["id"] );
                 }
                 else {
                     id = std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
@@ -77,16 +74,13 @@ namespace Susi {
                 if( !any["sessionid"].isNull() ) {
                     sessionID = static_cast<std::string>( any["sessionid"] );
                 }
-                if( !any["authlevel"].isNull() ) {
-                    authlevel = static_cast<char>( any["authlevel"] );
-                }
+               
             }
             Susi::Util::Any toAny() {
                 Susi::Util::Any obj = Susi::Util::Any::Object {
                     {"id",id},
                     {"sessionid",sessionID},
-                    {"topic",topic},
-                    {"authlevel",authlevel}
+                    {"topic",topic}
                 };
                 if( !payload.isNull() ) {
                     obj["payload"] = payload;
@@ -112,9 +106,6 @@ namespace Susi {
             inline std::vector<Header> & getHeaders() {
                 return headers;
             }
-            inline char getAuthlevel() {
-                return authlevel;
-            }
             inline Susi::Util::Any & getPayload() {
                 return payload;
             }
@@ -134,10 +125,6 @@ namespace Susi {
             inline void setPayload( Susi::Util::Any _payload ) {
                 payload = _payload;
             }
-            inline void setAuthlevel( char _authlevel ) {
-                authlevel = _authlevel;
-            }
-
             std::string toString() {
                 return toAny().toJSONString();
             }

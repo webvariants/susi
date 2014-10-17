@@ -890,3 +890,9 @@ std::string Any::unescapeJSON(const std::string& input) {
     }
     return output;
 }
+
+void Susi::Util::Any::reset(){
+    type = UNDEFINED;
+    objectValue.clear();
+    arrayValue.clear();
+}

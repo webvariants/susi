@@ -14,12 +14,12 @@
 #define __AUTH_CONTROLLERCOMPONENT__
 
 #include "auth/AuthController.h"
-#include "world/BaseComponent.h"
+#include "world/SessionAwareComponent.h"
 
 namespace Susi {
     namespace Auth {
 
-        class ControllerComponent : public Controller, public Susi::System::BaseComponent
+        class ControllerComponent : public Controller, public Susi::System::SessionAwareComponent
         {
         protected:
             void handleLogin( Susi::Events::EventPtr event );
@@ -34,39 +34,42 @@ namespace Susi {
         public:
             ControllerComponent( Susi::System::ComponentManager * mgr, std::string db_identifier ) :
                 Controller {
-                mgr->getComponent<Susi::DB::DBComponent>( "dbmanager" ),
-                mgr->getComponent<Susi::Sessions::SessionManagerComponent>( "sessionmanager" ),
-                db_identifier
-            },
-            Susi::System::BaseComponent {mgr} {}
+                    mgr->getComponent<Susi::DB::DBComponent>( "dbmanager" ),
+                    mgr->getComponent<Susi::Sessions::SessionManagerComponent>( "sessionmanager" ),
+                    db_identifier
+                },
+                Susi::System::SessionAwareComponent {mgr} {}
 
             virtual void start() override {
                 subscribe( std::string{"auth::login"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleLogin( std::move( evt ) );
-                }}, 3 );
-                subscribe( std::string{"auth::logout"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
+
+                });
+                subscribe( "auth::logout", [this]( Susi::Events::EventPtr evt ) {
                     handleLogout( std::move( evt ) );
-                }}, 3 );
-                subscribe( std::string{"auth::isLoggedIn"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
+                });
+                subscribe( "auth::isLoggedIn", [this]( Susi::Events::EventPtr evt ) {
                     handleIsLoggedIn( std::move( evt ) );
-                }}, 3 );
-                subscribe( std::string{"auth::getUsername"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
+                });
+                subscribe( "auth::getUsername", [this]( Susi::Events::EventPtr evt ) {
                     handleGetUsername( std::move( evt ) );
-                }}, 3 );
+                });
 
-
-                subscribe( std::string{"auth::addUser"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
+                subscribe( "auth::addUser", [this]( Susi::Events::EventPtr evt ) {
+                    markConfidential(*evt,0);
                     assertAuthlevel(*evt,0);
                     handleAddUser( std::move( evt ) );
-                }}, 0 );
-                subscribe( std::string{"auth::delUser"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
+                });
+                subscribe( "auth::delUser", [this]( Susi::Events::EventPtr evt ) {
+                    markConfidential(*evt,0);
                     assertAuthlevel(*evt,0);
                     handleDelUser( std::move( evt ) );
-                }}, 0 );
-                subscribe( std::string{"auth::updateUser"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
+                });
+                subscribe( "auth::updateUser", [this]( Susi::Events::EventPtr evt ) {
+                    markConfidential(*evt,0);
                     assertAuthlevel(*evt,0);
                     handleUpdateUser( std::move( evt ) );
-                }}, 0 );
+                });
                 Susi::Logger::info( "started AuthControllerComponent" );
             }
 

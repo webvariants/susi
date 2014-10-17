@@ -23,36 +23,28 @@ protected:
 	std::string topic;
 	std::atomic<int> *times;
 	std::condition_variable *cond;
+	char *authlevel;
 public:
-	PrintController(std::string _topic, std::atomic<int> *_times, std::condition_variable *_cond) : topic{_topic} {
+	PrintController(std::string _topic, std::atomic<int> *_times, std::condition_variable *_cond, char *_authlevel) : topic{_topic} {
 		times = _times;
 		cond = _cond;
+		authlevel = _authlevel;
 	};
 
 	virtual void start() override {
 		Susi::Events::Consumer c = [this](Susi::Events::SharedEventPtr event){
-			//sampleConsumerFunction(event);
 			std::cout<<event->toString()<<std::endl;
 
-			times->store(times->load() -1);
-			if(times->load() == 0) {
-				cond->notify_one();
+			// -1 means no break
+			if(times->load() > -1) {
+				times->store(times->load() -1);
+				if(times->load() == 0) {
+					cond->notify_one();
+				}
 			}
 		};
-		/*
-		Susi::Events::Processor p = [this](Susi::Events::EventPtr event){
-			sampleProcessorFunction(std::move(event));
-		};
-		*/
-		subscribe(topic, c , 3);		
-	}
-
-	void sampleConsumerFunction(Susi::Events::SharedEventPtr event){
-		log("Funktioniert!");
-	}
-
-	void sampleProcessorFunction(Susi::Events::EventPtr event){
-		event->payload = "processed!";
+		
+		subscribe(topic, c , *authlevel);		
 	}
 };
 

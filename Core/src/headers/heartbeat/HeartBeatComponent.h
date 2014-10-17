@@ -35,20 +35,22 @@ namespace Susi {
             t = std::move( std::thread {
                 [this]() {
                     int count = 0;
-                    //std::chrono::seconds interval( 1 );
+                    std::chrono::milliseconds interval( 100 );
                     while( !this->stopVar.load() ) {
-                        ++count %= 300;
-                        publish( createEvent( "heartbeat::one" ) );
-                        if( count % 5 == 0 ) {
+                        ++count %= 3000;
+                        if( count % 10 == 0) {
+                            publish( createEvent( "heartbeat::one" ) );
+                        }
+                        if( count % 50 == 0 ) {
                             publish( createEvent( "heartbeat::five" ) );
                         }
-                        if( count % 10 == 0 ) {
+                        if( count % 100 == 0 ) {
                             publish( createEvent( "heartbeat::ten" ) );
                         }
-                        if( count % 60 == 0 ) {
+                        if( count % 600 == 0 ) {
                             publish( createEvent( "heartbeat::minute" ) );
                         }
-                        if( count % 300 == 0 ) {
+                        if( count % 3000 == 0 ) {
                             publish( createEvent( "heartbeat::fiveMinute" ) );
                         }
                         //std::this_thread::sleep_for( interval );
