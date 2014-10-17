@@ -41,7 +41,7 @@ public:
 		susi_api->subscribe(std::string{"heartbeat::minute"},Susi::Events::Consumer{[this](){
 			auto event = susi_api->createEvent("session::update");
 			susi_api->publish(std::move(event));
-		}}});
+		}});
 	}
 	void populateController();
 
