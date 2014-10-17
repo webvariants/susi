@@ -28,10 +28,10 @@ namespace Susi {
         public:
             Manager( size_t workers = 4, size_t buffsize = 32 ) : pool {workers,buffsize} {};
             // public subscribe api
-            long subscribe( std::string topic, Processor processor, char authlevel=0, std::string name="" );
-            long subscribe( Predicate pred, Processor processor, char authlevel=0, std::string name="" );
-            long subscribe( std::string topic, Consumer consumer, char authlevel=0, std::string name="" );
-            long subscribe( Predicate pred, Consumer consumer, char authlevel=0, std::string name="" );
+            long subscribe( std::string topic, Processor processor, std::string name="" );
+            long subscribe( Predicate pred, Processor processor, std::string name="" );
+            long subscribe( std::string topic, Consumer consumer, std::string name="" );
+            long subscribe( Predicate pred, Consumer consumer, std::string name="" );
             bool unsubscribe( long id );
             // public publish api function
             void publish( EventPtr event, Consumer finishCallback = Consumer {} );
@@ -55,7 +55,6 @@ namespace Susi {
                             Predicate predicate,
                             Consumer consumer,
                             Processor processor,
-                            char authlevel,
                             std::string name );
 
             struct PublishProcess {
@@ -71,7 +70,6 @@ namespace Susi {
                 //identifier
                 long id = 0;
                 std::string name = "";
-                char authlevel = 0;
                 //select statements
                 std::string topic = "";
                 Predicate predicate = Predicate {};

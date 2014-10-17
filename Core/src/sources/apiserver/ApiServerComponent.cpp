@@ -64,24 +64,13 @@ void Susi::Api::ApiServerComponent::onMessage( std::string & id, Susi::Util::Any
 void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, Susi::Util::Any & packet ) {
     auto & data = packet["data"];
     if( data.isObject() ) {
-        char authlevel = 3;
-        auto sessionAuthlevel = sessionManager->getSessionAttribute( id,"authlevel" );
-        if( sessionAuthlevel.isInteger() ) {
-            authlevel = static_cast<char>( sessionAuthlevel );
-        }
         std::string topic = data["topic"];
-        if(data["authlevel"].isInteger()){
-            char supposedAuthlevel = static_cast<char>(data["authlevel"]);
-            if(supposedAuthlevel > authlevel){
-                authlevel = supposedAuthlevel;
-            }
-        }
         std::string subName = "";
         if(data["name"].isString()){
             subName = static_cast<std::string>(data["name"]);
         }
         auto & subs = consumerSubscriptions[id];
-        if( subs.find( topic+std::to_string((int)authlevel) ) != subs.end() ) {
+        if( subs.find( topic ) != subs.end() ) {
             sendFail( id,"you are allready subscribed to "+topic );
             return;
         }
@@ -97,8 +86,8 @@ void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, Su
             std::string _id = id;
             send( _id,packet );
         };
-        long subid = eventManager->subscribe( topic,callback,authlevel,subName );
-        subs[topic+std::to_string((int)authlevel)] = subid;
+        long subid = eventManager->subscribe( topic,callback,subName );
+        subs[topic] = subid;
         sendOk( id );
     }
     else {
@@ -109,24 +98,13 @@ void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, Su
 void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, Susi::Util::Any & packet ) {
     auto & data = packet["data"];
     if( data.isObject() ) {
-        char authlevel = 3;
-        auto sessionAuthlevel = sessionManager->getSessionAttribute( id,"authlevel" );
-        if( sessionAuthlevel.isInteger() ) {
-            authlevel = static_cast<char>( sessionAuthlevel );
-        }
         std::string topic = data["topic"];
-        if(data["authlevel"].isInteger()){
-            char supposedAuthlevel = static_cast<char>(data["authlevel"]);
-            if(supposedAuthlevel > authlevel){
-                authlevel = supposedAuthlevel;
-            }
-        }
         std::string subName = "";
         if(data["name"].isString()){
             subName = static_cast<std::string>(data["name"]);
         }
         auto & subs = processorSubscriptions[id];
-        if( subs.find( topic+std::to_string((int)authlevel) ) != subs.end() ) {
+        if( subs.find( topic ) != subs.end() ) {
             sendFail( id,"you are allready subscribed to "+topic );
             return;
         }
@@ -141,8 +119,8 @@ void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, S
             std::string _id = id;
             eventsToAck[_id][event->id] = std::move( event );
             send( _id,packet );
-        },authlevel,subName );
-        subs[topic+std::to_string((int)authlevel)] = subid;
+        },subName );
+        subs[topic] = subid;
         sendOk( id );
     }
     else {
@@ -153,16 +131,9 @@ void Susi::Api::ApiServerComponent::handleUnregisterConsumer( std::string & id, 
     auto & data = packet["data"];
     if( data.isObject() ) {
         std::string topic = data["topic"];
-        char authlevel = 3;
-        if(data["authlevel"].isInteger()){
-            char supposedAuthlevel = static_cast<char>(data["authlevel"]);
-            if(supposedAuthlevel > authlevel){
-                authlevel = supposedAuthlevel;
-            }
-        }
         auto & subs = consumerSubscriptions[id];
-        if( subs.find( topic+std::to_string((int)authlevel) )!=subs.end() ) {
-            long subid = subs[topic+std::to_string((int)authlevel)];
+        if( subs.find( topic )!=subs.end() ) {
+            long subid = subs[topic];
             eventManager->unsubscribe( subid );
             sendOk( id );
         }
@@ -179,16 +150,9 @@ void Susi::Api::ApiServerComponent::handleUnregisterProcessor( std::string & id,
     auto & data = packet["data"];
     if( data.isObject() ) {
         std::string topic = data["topic"];
-        char authlevel = 3;
-        if(data["authlevel"].isInteger()){
-            char supposedAuthlevel = static_cast<char>(data["authlevel"]);
-            if(supposedAuthlevel > authlevel){
-                authlevel = supposedAuthlevel;
-            }
-        }
         auto & subs = processorSubscriptions[id];
-        if( subs.find( topic+std::to_string((int)authlevel) )!=subs.end() ) {
-            long subid = subs[topic+std::to_string((int)authlevel)];
+        if( subs.find( topic )!=subs.end() ) {
+            long subid = subs[topic];
             eventManager->unsubscribe( subid );
             sendOk( id );
         }
@@ -206,14 +170,6 @@ void Susi::Api::ApiServerComponent::handlePublish( std::string & id, Susi::Util:
         sendFail( id,"publish handler: data is not an object or topic is not set correctly" );
         return;
     }
-    char authlevel = 3;
-    auto sessionAuthlevel = sessionManager->getSessionAttribute( id, "authlevel" );
-    if( sessionAuthlevel.isInteger() ) {
-        authlevel = static_cast<char>( sessionAuthlevel );
-    }
-    else {
-        Susi::Logger::debug( "sessionAuthlevelValue: "+sessionAuthlevel.toJSONString() );
-    }
     auto event = eventManager->createEvent( eventData["topic"] );
     Susi::Events::Event rawEvent {eventData};
     rawEvent.sessionID = id;
@@ -221,9 +177,6 @@ void Susi::Api::ApiServerComponent::handlePublish( std::string & id, Susi::Util:
         rawEvent.id = std::chrono::system_clock::now().time_since_epoch().count();
     }
     *event = rawEvent;
-    if( event->authlevel < authlevel ) {
-        event->authlevel = authlevel;
-    }
     eventManager->publish( std::move( event ),[this,id]( Susi::Events::SharedEventPtr event ) {
         Susi::Util::Any::Array headers;
         for( auto & kv : event->headers ) {

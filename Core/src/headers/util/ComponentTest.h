@@ -110,20 +110,20 @@ protected:
         return configString;
     }
 
-    long subscribe( std::string topic, Susi::Events::Processor processor , char authlevel = 0) {
-        long id = eventManager->subscribe( topic,std::move( processor ) , authlevel);
+    long subscribe( std::string topic, Susi::Events::Processor processor ) {
+        long id = eventManager->subscribe( topic,std::move( processor ));
         return id;
     }
-    long subscribe( Susi::Events::Predicate pred, Susi::Events::Processor processor , char authlevel = 0) {
-        long id = eventManager->subscribe( pred,std::move( processor ) , authlevel);
+    long subscribe( Susi::Events::Predicate pred, Susi::Events::Processor processor ) {
+        long id = eventManager->subscribe( pred,std::move( processor ));
         return id;
     }
-    long subscribe( std::string topic, Susi::Events::Consumer consumer , char authlevel = 0) {
-        long id = eventManager->subscribe( topic,std::move( consumer ) , authlevel);
+    long subscribe( std::string topic, Susi::Events::Consumer consumer ) {
+        long id = eventManager->subscribe( topic,std::move( consumer ));
         return id;
     }
-    long subscribe( Susi::Events::Predicate pred, Susi::Events::Consumer consumer , char authlevel = 0) {
-        long id = eventManager->subscribe( pred,std::move( consumer ) , authlevel);
+    long subscribe( Susi::Events::Predicate pred, Susi::Events::Consumer consumer ) {
+        long id = eventManager->subscribe( pred,std::move( consumer ));
         return id;
     }
     bool unsubscribe( long id ) {

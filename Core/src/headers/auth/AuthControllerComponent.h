@@ -43,30 +43,30 @@ namespace Susi {
             virtual void start() override {
                 subscribe( "auth::login", [this]( Susi::Events::EventPtr evt ) {
                     handleLogin( std::move( evt ) );
-                }, 3 );
+                });
                 subscribe( "auth::logout", [this]( Susi::Events::EventPtr evt ) {
                     handleLogout( std::move( evt ) );
-                }, 3 );
+                });
                 subscribe( "auth::isLoggedIn", [this]( Susi::Events::EventPtr evt ) {
                     handleIsLoggedIn( std::move( evt ) );
-                }, 3 );
+                });
                 subscribe( "auth::getUsername", [this]( Susi::Events::EventPtr evt ) {
                     handleGetUsername( std::move( evt ) );
-                }, 3 );
+                });
 
 
                 subscribe( "auth::addUser", [this]( Susi::Events::EventPtr evt ) {
-                    assertAuthlevel(*evt,0);
+                    //assertAuthlevel(*evt,0); //@TODO: fixme!
                     handleAddUser( std::move( evt ) );
-                }, 0 );
+                });
                 subscribe( "auth::delUser", [this]( Susi::Events::EventPtr evt ) {
-                    assertAuthlevel(*evt,0);
+                    //assertAuthlevel(*evt,0); //@TODO: fixme!
                     handleDelUser( std::move( evt ) );
-                }, 0 );
+                });
                 subscribe( "auth::updateUser", [this]( Susi::Events::EventPtr evt ) {
-                    assertAuthlevel(*evt,0);
+                    //assertAuthlevel(*evt,0); //@TODO: fixme!
                     handleUpdateUser( std::move( evt ) );
-                }, 0 );
+                });
                 Susi::Logger::info( "started AuthControllerComponent" );
             }
 

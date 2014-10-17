@@ -43,11 +43,11 @@ namespace Susi {
             virtual void onAck( Susi::Events::Event & event ) {};
 
             void sendPublish( Susi::Events::Event & event );
-            void sendRegisterConsumer( std::string topic , char authlevel = 0, std::string name = "");
-            void sendRegisterProcessor( std::string topic , char authlevel = 0, std::string name = "");
+            void sendRegisterConsumer( std::string topic , std::string name = "");
+            void sendRegisterProcessor( std::string topic , std::string name = "");
             void sendAck( Susi::Events::Event & event );
-            void sendUnregisterConsumer( std::string topic , char authlevel = 0 );
-            void sendUnregisterProcessor( std::string topic , char authlevel = 0 );
+            void sendUnregisterConsumer( std::string topic  );
+            void sendUnregisterProcessor( std::string topic  );
             void sendShutdown();
 
         };
