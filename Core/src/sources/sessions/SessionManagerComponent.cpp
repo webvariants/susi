@@ -64,10 +64,16 @@ void Susi::Sessions::SessionManagerComponent::handleRemoveAttribute( Susi::Event
 }
 void Susi::Sessions::SessionManagerComponent::handleUpdate( Susi::Events::EventPtr event ) {
     try {
-        std::string sessionID = event->payload["id"];
+        std::string sessionID = event->sessionID;
+        if(event->payload["id"].isString()){
+            std::string sessionID = event->payload["id"];
+        }
         std::chrono::seconds secs;
 
-        int seconds = event->payload["seconds"];
+        int seconds = 0;
+        if(event->payload["seconds"].isInteger()){
+            seconds = event->payload["seconds"];
+        }
 
         if( seconds > 0 ) {
             secs = std::chrono::seconds( seconds );
