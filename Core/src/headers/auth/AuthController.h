@@ -49,9 +49,9 @@ namespace Susi {
             Controller( std::shared_ptr<Susi::DB::DBComponent> dbManager,
                         std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager,
                         std::string db_identifier ) :
-                _dbIdentifier {db_identifier},
-                          _dbManager {dbManager},
-            _sessionManager {sessionManager} {
+                    _dbIdentifier {db_identifier},
+                    _dbManager {dbManager},
+                    _sessionManager {sessionManager} {
                 setup();
             }
             bool login( std::string sessionID, std::string username, std::string password ); // return true on success

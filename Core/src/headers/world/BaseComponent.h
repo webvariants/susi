@@ -31,23 +31,23 @@ namespace Susi {
             BaseComponent( ComponentManager * manager ) : componentManager {manager} {
                 eventManager = componentManager->getComponent<Susi::Events::ManagerComponent>( "eventsystem" );
             }
-            long subscribe( std::string topic, Susi::Events::Processor processor, char authlevel=0, std::string name="" ) {
-                long id = eventManager->subscribe( topic,std::move( processor ),authlevel,name );
+            long subscribe( std::string topic, Susi::Events::Processor processor, std::string name="" ) {
+                long id = eventManager->subscribe( topic,std::move( processor ),name );
                 evtIdPool.push_back( id );
                 return id;
             }
-            long subscribe( Susi::Events::Predicate pred, Susi::Events::Processor processor, char authlevel=0, std::string name="" ) {
-                long id = eventManager->subscribe( pred,std::move( processor ),authlevel,name );
+            long subscribe( Susi::Events::Predicate pred, Susi::Events::Processor processor, std::string name="" ) {
+                long id = eventManager->subscribe( pred,std::move( processor ),name );
                 evtIdPool.push_back( id );
                 return id;
             }
-            long subscribe( std::string topic, Susi::Events::Consumer consumer, char authlevel=0, std::string name="" ) {
-                long id = eventManager->subscribe( topic,std::move( consumer ),authlevel,name );
+            long subscribe( std::string topic, Susi::Events::Consumer consumer, std::string name="" ) {
+                long id = eventManager->subscribe( topic,std::move( consumer ),name );
                 evtIdPool.push_back( id );
                 return id;
             }
-            long subscribe( Susi::Events::Predicate pred, Susi::Events::Consumer consumer, char authlevel=0, std::string name="" ) {
-                long id = eventManager->subscribe( pred,std::move( consumer ),authlevel,name );
+            long subscribe( Susi::Events::Predicate pred, Susi::Events::Consumer consumer, std::string name="" ) {
+                long id = eventManager->subscribe( pred,std::move( consumer ),name );
                 evtIdPool.push_back( id );
                 return id;
             }
@@ -61,6 +61,9 @@ namespace Susi {
                 return eventManager->createEvent( topic );
             }
 
+            void markConfidential(Susi::Events::Event & event, char authlevel){
+                event.headers.push_back({"confidential",std::to_string(authlevel)});
+            }
 
             bool unsubscribeAll() {
 
@@ -76,12 +79,6 @@ namespace Susi {
                 evtIdPool.clear();
 
                 return result;
-            }
-
-            void assertAuthlevel(Susi::Events::Event & evt, char authlevel){
-                if(evt.authlevel > authlevel){
-                    throw std::runtime_error{"insufficient authlevel"};
-                }
             }
 
         };

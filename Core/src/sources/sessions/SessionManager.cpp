@@ -133,6 +133,7 @@ void SessionManager::updateSession( std::string id ) {
     else {
         Susi::Logger::debug( "create new session with "+std::to_string( this->stdLifetime.count() ) );
         sessions[id] = Session( this->stdLifetime );
+        sessions[id].setAttribute("authlevel",3);
     }
 }
 

@@ -13,9 +13,10 @@
 
 void Susi::Auth::ControllerComponent::handleLogin( Susi::Events::EventPtr event ) {
     try {
-        std::string username = event->getPayload()["username"];
-        std::string password  = event->getPayload()["password"];
-        event->getPayload()["success"] = login( event->getSessionID(), username, password );
+        std::string username = event->payload["username"];
+        std::string password  = event->payload["password"];
+        event->payload.reset();
+        event->payload["success"] = login( event->getSessionID(), username, password );
     }
     catch( const std::exception & e ) {
         event->getPayload()["success"] = false;
@@ -26,30 +27,34 @@ void Susi::Auth::ControllerComponent::handleLogin( Susi::Events::EventPtr event 
 }
 
 void Susi::Auth::ControllerComponent::handleLogout( Susi::Events::EventPtr event ) {
-    event->getPayload()["success"] = logout( event->getSessionID() );
+    event->payload["success"] = logout( event->getSessionID() );
 }
 
 void Susi::Auth::ControllerComponent::handleIsLoggedIn( Susi::Events::EventPtr event ) {
-    event->getPayload()["success"] = isLoggedIn( event->getSessionID() );
+    event->payload["success"] = isLoggedIn( event->getSessionID() );
 }
 
 void Susi::Auth::ControllerComponent::handleGetUsername( Susi::Events::EventPtr event ) {
-    event->getPayload()["username"] = getUsername( event->getSessionID() );
+    event->payload["username"] = getUsername( event->getSessionID() );
 }
 
-
-
 void Susi::Auth::ControllerComponent::handleAddUser( Susi::Events::EventPtr event ) {
-    auto & payload = event->payload;
-    event->getPayload()["success"] = addUser( payload["username"], payload["password"], payload["authlevel"] );
+    std::string username = event->payload["username"];
+    std::string password  = event->payload["password"];
+    long authlevel  = event->payload["authlevel"];
+    event->payload.reset();
+    event->payload["success"] = addUser( username,password,authlevel );
 }
 
 void Susi::Auth::ControllerComponent::handleDelUser( Susi::Events::EventPtr event ) {
     auto & payload = event->payload;
-    event->getPayload()["success"] = delUser( payload["username"] );
+    event->payload["success"] = delUser( payload["username"] );
 }
 
 void Susi::Auth::ControllerComponent::handleUpdateUser( Susi::Events::EventPtr event ) {
-    auto & payload = event->payload;
-    event->getPayload()["success"] = updateUser( payload["username"], payload["password"], payload["authlevel"] );
+    std::string username = event->payload["username"];
+    std::string password  = event->payload["password"];
+    long authlevel  = event->payload["authlevel"];
+    event->payload.reset();
+    event->payload["success"] = updateUser( username,password,authlevel );
 }
