@@ -189,6 +189,7 @@ namespace Susi {
             void pop_front();
             size_t size() const;
 
+            void reset();
 
             // used to set a value in the object
             void set( std::string key, Any value );

@@ -27,7 +27,9 @@ namespace Susi {
             void assertAuthlevel(Susi::Events::Event & event, char authlevel){
                 std::string & sessionID = event.sessionID;
                 auto sessionAuthlevel = sessionManager->getSessionAttribute(sessionID,"authlevel");
-                if(std::stoi(sessionAuthlevel) > authlevel){
+                Susi::Logger::debug("check authlevel: "+sessionAuthlevel.toJSONString());
+                if(!sessionAuthlevel.isNull() && static_cast<long long>(sessionAuthlevel) > authlevel){
+                	Susi::Logger::debug("insufficient authlevel");
                     throw std::runtime_error{"insufficient authlevel"};
             	}
         	}
