@@ -18,15 +18,13 @@
 #include "events/EventManagerComponent.h"
 #include "sessions/SessionManagerComponent.h"
 
-#include "world/BaseComponent.h"
+#include "world/SessionAwareComponent.h"
 
 namespace Susi {
     namespace Api {
 
-        class ApiServerComponent : public Susi::System::BaseComponent {
+        class ApiServerComponent : public Susi::System::SessionAwareComponent {
         protected:
-            std::shared_ptr<Susi::Events::ManagerComponent> eventManager;
-            std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager;
 
             std::map<std::string,std::function<void( Susi::Util::Any& )>> senders;
             std::map<std::string,std::map<std::string,long>> consumerSubscriptions;
@@ -45,6 +43,8 @@ namespace Susi {
             void sendOk( std::string & id );
             void sendFail( std::string & id,std::string error = "" );
 
+            bool checkIfConfidentialHeaderMatchesSession(Susi::Events::Event & event, std::string sessionID);
+
             void send( std::string & id, Susi::Util::Any & msg ) {
                 std::lock_guard<std::mutex> lock {mutex};
                 auto & sender = senders[id];
@@ -53,10 +53,7 @@ namespace Susi {
 
         public:
 
-            ApiServerComponent( Susi::System::ComponentManager * mgr ) : Susi::System::BaseComponent {mgr} {
-                eventManager   = mgr->getComponent<Susi::Events::ManagerComponent>( "eventsystem" );
-                sessionManager = mgr->getComponent<Susi::Sessions::SessionManagerComponent>( "sessionmanager" );
-            }
+            ApiServerComponent( Susi::System::ComponentManager * mgr ) : Susi::System::SessionAwareComponent {mgr} {}
 
             ~ApiServerComponent(){
                 stop();

@@ -75,14 +75,12 @@ void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, Su
             return;
         }
         Susi::Events::Consumer callback = [this,id]( Susi::Events::SharedEventPtr event ) {
-            Susi::Util::Any::Array headers;
-            for( auto & kv : event->headers ) {
-                headers.push_back( Susi::Util::Any::Object {{kv.first,kv.second}} );
-            }
             Susi::Util::Any packet;
             packet["type"] = "consumerEvent";
             packet["data"] = event->toAny();
-            std::cout<<"got consumer event, try to send it "+packet.toJSONString()<<std::endl;
+            if(!checkIfConfidentialHeaderMatchesSession(*event,id)){
+                return;
+            }
             std::string _id = id;
             send( _id,packet );
         };
@@ -109,13 +107,12 @@ void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, S
             return;
         }
         long subid = eventManager->subscribe( topic,[this,id]( Susi::Events::EventPtr event ) {
-            Susi::Util::Any::Array headers;
-            for( auto & kv : event->headers ) {
-                headers.push_back( Susi::Util::Any::Object {{kv.first,kv.second}} );
-            }
             Susi::Util::Any packet;
             packet["type"] = "processorEvent";
             packet["data"] = event->toAny();
+            if(!checkIfConfidentialHeaderMatchesSession(*event,id)){
+                return;
+            }
             std::string _id = id;
             eventsToAck[_id][event->id] = std::move( event );
             send( _id,packet );
@@ -235,4 +232,18 @@ void Susi::Api::ApiServerComponent::sendFail( std::string & id,std::string error
     response["error"] = true;
     response["data"] = error;
     send( id,response );
+}
+
+
+bool Susi::Api::ApiServerComponent::checkIfConfidentialHeaderMatchesSession(Susi::Events::Event & event, std::string sessionID){
+    long sessionAuthlevel = sessionManager->getSessionAttribute(sessionID,"authlevel");
+    for(auto & pair : event.headers){
+        if(pair.first == "confidential"){
+            long eventAuthlevel = std::stol(pair.second);
+            if(eventAuthlevel<sessionAuthlevel){
+                return false;
+            }
+        }
+    }
+    return true;
 }
