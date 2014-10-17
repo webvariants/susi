@@ -38,6 +38,9 @@ namespace Susi {
                     std::chrono::seconds interval( 1 );
                     while( !this->stopVar.load() ) {
                         ++count %= 300;
+                        auto evt = createEvent("heartbeat::one");
+                        evt->authlevel = 3;
+                        publish( std::move(evt) );
                         publish( createEvent( "heartbeat::one" ) );
                         if( count % 5 == 0 ) {
                             publish( createEvent( "heartbeat::five" ) );
