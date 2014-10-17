@@ -21,18 +21,54 @@ namespace Ddhcp {
 
 	class DDHCPComponent : public Susi::System::BaseComponent {
 	protected:
-		Poco::Net::DatagramSocket _socket;
+		Poco::Net::SocketAddress _localAddr;
+		Poco::Net::DatagramSocket _serverSocket;
+		Poco::Net::SocketAddress _lastPacketAddr;
+
+		std::shared_ptr<std::thread> _runLoop;
+		std::atomic<bool> _stop{false};
+		char _buff[1<<16];
+
+		std::string recv(){
+			size_t bs = _serverSocket.receiveFrom(_buff,sizeof(_buff),_lastPacketAddr);
+			return std::string{_buff,bs};	
+		}
+
+		void awnser(const std::string & msg){
+			_serverSocket.sendTo(msg.c_str(),msg.size(),_lastPacketAddr);
+		}
+
 	public:
-		DDHCPComponent(Susi::System::ComponentManager * mgr, unsigned short port) : Susi::System::BaseComponent{mgr} {
-			_socket.bind(Poco::Net::SocketAddress{"localhost",port})
+		DDHCPComponent(Susi::System::ComponentManager * mgr, unsigned short port) : 
+		  Susi::System::BaseComponent{mgr}, 
+		  _localAddr{Poco::Net::IPAddress(),port}, 
+		  _serverSocket{_localAddr} {
+			_serverSocket.setReceiveTimeout(Poco::Timespan(0,100000));
 		}
 		virtual void start() override {
-
+			_runLoop.reset(new std::thread{[this](){
+				try{
+					std::string message;
+					while(!_stop.load()){
+						try{
+							message = recv();
+							Susi::Logger::debug("got ddhcp message");
+							awnser(message);
+						}catch(const Poco::TimeoutException & e){}
+					}
+				}catch(const std::exception & e){
+					Susi::Logger::error(std::string{"DDHCP: "}+e.what());
+				}
+			}});
+			Susi::Logger::info("started DDHCP Component on addr "+_serverSocket.address().toString());
 		}
 		virtual void stop() override {
-			
+			_serverSocket.close();
+			_stop.store(true);
+			_runLoop->join();
+			Susi::Logger::info("stopped DDHCP Component");
 		}
-	}
+	};
 
 }
 }

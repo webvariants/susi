@@ -695,6 +695,7 @@ Any Any::fromJSONString( std::string str ) {
             }
             else {
                 //value is String
+                str = unescapeJSON(str);
                 v = str;
             }
 
@@ -758,6 +759,7 @@ Any Any::tokenToAny( jsmntok_t * & t, const  char *js ) {
         }
         case JSMN_STRING: {
             std::string value {js+( t->start ),js+( t->end )};
+            value = unescapeJSON(value);
             result = value;
             t++;
             break;
@@ -827,7 +829,7 @@ std::string Any::escapeJSON( const std::string& input ) {
     return output;
 }
 
-/*std::string Any::unescapeJSON(const std::string& input) {
+std::string Any::unescapeJSON(const std::string& input) {
     Any::State s = Any::UNESCAPED;
     std::string output;
     output.reserve(input.length());
@@ -887,4 +889,4 @@ std::string Any::escapeJSON( const std::string& input ) {
         }
     }
     return output;
-}*/
+}

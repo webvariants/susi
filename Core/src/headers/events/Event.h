@@ -23,17 +23,17 @@ namespace Susi {
         class Event {
         protected:
         public:
-            long id = 0;
+            std::string id;
             char authlevel = 0;
             std::string topic;
             std::vector<Header> headers;
             Susi::Util::Any payload;
             std::string sessionID;
             Event() {
-                id = std::chrono::system_clock::now().time_since_epoch().count();
+                id = std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
             }
             Event( std::string topic_ ) {
-                id = std::chrono::system_clock::now().time_since_epoch().count();
+                id = std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
                 topic = topic_;
             }
             Event( const Event & other ) {
@@ -55,10 +55,10 @@ namespace Susi {
             }
             Event( Susi::Util::Any & any ) {
                 if( !any["id"].isNull() ) {
-                    id = any["id"];
+                    id = static_cast<std::string>( any["id"] );
                 }
                 else {
-                    id = std::chrono::system_clock::now().time_since_epoch().count();
+                    id = std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
                 }
                 if( !any["topic"].isNull() ) {
                     topic = static_cast<std::string>( any["topic"] );
@@ -100,7 +100,7 @@ namespace Susi {
                 return obj;
             }
 
-            inline long getID() {
+            inline std::string getID() {
                 return id;
             }
             inline std::string getSessionID() {
@@ -119,7 +119,7 @@ namespace Susi {
                 return payload;
             }
 
-            inline void setID( long _id ) {
+            inline void setID( std::string _id ) {
                 id = _id;
             }
             inline void setSessionID( std::string _sessionID ) {
