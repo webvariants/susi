@@ -14,12 +14,12 @@
 #define __AUTH_CONTROLLERCOMPONENT__
 
 #include "auth/AuthController.h"
-#include "world/BaseComponent.h"
+#include "world/SessionAwareComponent.h"
 
 namespace Susi {
     namespace Auth {
 
-        class ControllerComponent : public Controller, public Susi::System::BaseComponent
+        class ControllerComponent : public Controller, public Susi::System::SessionAwareComponent
         {
         protected:
             void handleLogin( Susi::Events::EventPtr event );
@@ -34,11 +34,11 @@ namespace Susi {
         public:
             ControllerComponent( Susi::System::ComponentManager * mgr, std::string db_identifier ) :
                 Controller {
-                mgr->getComponent<Susi::DB::DBComponent>( "dbmanager" ),
-                mgr->getComponent<Susi::Sessions::SessionManagerComponent>( "sessionmanager" ),
-                db_identifier
-            },
-            Susi::System::BaseComponent {mgr} {}
+                    mgr->getComponent<Susi::DB::DBComponent>( "dbmanager" ),
+                    mgr->getComponent<Susi::Sessions::SessionManagerComponent>( "sessionmanager" ),
+                    db_identifier
+                },
+                Susi::System::SessionAwareComponent {mgr} {}
 
             virtual void start() override {
                 subscribe( "auth::login", [this]( Susi::Events::EventPtr evt ) {
@@ -54,17 +54,16 @@ namespace Susi {
                     handleGetUsername( std::move( evt ) );
                 });
 
-
                 subscribe( "auth::addUser", [this]( Susi::Events::EventPtr evt ) {
-                    //assertAuthlevel(*evt,0); //@TODO: fixme!
+                    assertAuthlevel(*evt,0); //@TODO: fixme!
                     handleAddUser( std::move( evt ) );
                 });
                 subscribe( "auth::delUser", [this]( Susi::Events::EventPtr evt ) {
-                    //assertAuthlevel(*evt,0); //@TODO: fixme!
+                    assertAuthlevel(*evt,0); //@TODO: fixme!
                     handleDelUser( std::move( evt ) );
                 });
                 subscribe( "auth::updateUser", [this]( Susi::Events::EventPtr evt ) {
-                    //assertAuthlevel(*evt,0); //@TODO: fixme!
+                    assertAuthlevel(*evt,0); //@TODO: fixme!
                     handleUpdateUser( std::move( evt ) );
                 });
                 Susi::Logger::info( "started AuthControllerComponent" );

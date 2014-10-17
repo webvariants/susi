@@ -61,6 +61,9 @@ namespace Susi {
                 return eventManager->createEvent( topic );
             }
 
+            void markConfidental(Susi::Events::Event & event, char authlevel){
+                event.headers.push_back({"confidential",std::to_string(authlevel)});
+            }
 
             bool unsubscribeAll() {
 
