@@ -45,27 +45,27 @@ namespace Susi {
                     handleLogin( std::move( evt ) );
 
                 }});
-                subscribe( "auth::logout", Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
+                subscribe( std::string{"auth::logout"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleLogout( std::move( evt ) );
                 }});
-                subscribe( "auth::isLoggedIn", Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
+                subscribe( std::string{"auth::isLoggedIn"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleIsLoggedIn( std::move( evt ) );
                 }});
-                subscribe( "auth::getUsername", Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
+                subscribe( std::string{"auth::getUsername"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleGetUsername( std::move( evt ) );
                 }});
 
-                subscribe( "auth::addUser", Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
+                subscribe( std::string{"auth::addUser"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     markConfidential(*evt,0);
                     assertAuthlevel(*evt,0);
                     handleAddUser( std::move( evt ) );
                 }});
-                subscribe( "auth::delUser", Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
+                subscribe( std::string{"auth::delUser"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     markConfidential(*evt,0);
                     assertAuthlevel(*evt,0);
                     handleDelUser( std::move( evt ) );
                 }});
-                subscribe( "auth::updateUser", Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
+                subscribe( std::string{"auth::updateUser"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     markConfidential(*evt,0);
                     assertAuthlevel(*evt,0);
                     handleUpdateUser( std::move( evt ) );
