@@ -208,5 +208,17 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 	});
 	manager->registerDependency("constraints","eventsystem");
 
+	/**
+	 * Declare DDHCP
+	 */
+	manager->registerComponent("ddhcp", [](ComponentManager * mgr, Any & config) {			
+		unsigned short port = 1704;
+		try{
+			port = (unsigned short)(int)config[port];
+		}catch(...){}
+		return std::shared_ptr<Component>{new Susi::Ddhcp::DDHCPComponent{mgr,port}};
+	});
+	manager->registerDependency("ddhcp","eventsystem");
+
 	return manager;
 }
