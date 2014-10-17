@@ -235,6 +235,7 @@ void Susi::Events::Manager::ack( EventPtr event ) {
             process->errors.push_back( msg );
         }
     };
+    
     Work work {std::move( event ),this};
     pool.add( std::move( work ),error );
 }
