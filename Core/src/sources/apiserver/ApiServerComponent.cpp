@@ -175,10 +175,6 @@ void Susi::Api::ApiServerComponent::handlePublish( std::string & id, Susi::Util:
     }
     *event = rawEvent;
     eventManager->publish( std::move( event ),[this,id]( Susi::Events::SharedEventPtr event ) {
-        Susi::Util::Any::Array headers;
-        for( auto & kv : event->headers ) {
-            headers.push_back( Susi::Util::Any::Object {{kv.first,kv.second}} );
-        }
         Susi::Util::Any packet;
         packet["type"] = "ack";
         packet["data"] = event->toAny();
