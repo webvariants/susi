@@ -65,7 +65,7 @@ namespace Susi {
                 std::mutex               mutex;
                 size_t current = 0;
             };
-            std::map<long,std::shared_ptr<PublishProcess>> publishProcesses;
+            std::map<std::string,std::shared_ptr<PublishProcess>> publishProcesses;
 
             struct Subscription {
                 //identifier

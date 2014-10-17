@@ -49,7 +49,6 @@ public:
 			_addr = addr;
 			params->setMaxThreads(threads);
 			params->setMaxQueued(backlog);
-			params->setThreadIdleTime(100);
 		}
 
 	virtual void start() override {
