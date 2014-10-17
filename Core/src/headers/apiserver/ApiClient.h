@@ -47,7 +47,7 @@ namespace Susi {
             virtual void onConnect() override {};
             virtual void onClose() override {};
 
-            std::map<long,Susi::Events::Consumer> finishCallbacks;
+            std::map<std::string,Susi::Events::Consumer> finishCallbacks;
 
         };
 
