@@ -32,7 +32,6 @@
 	cout<<"	-publish=topic   | -p  \n";	
 	cout<<"	-payload=JSON    | -pa \n";	
 	cout<<"	-times           | -t  \n";	
-	cout<<"	-authlevel       | -a  | default 3, will not be uses on login \n";
 	cout<<"	-----------------------\n";
 	cout<<"	-user            | username for login \n";
 	cout<<"	-pass            | password for login \n";
@@ -62,7 +61,6 @@ int main(int argc, char** argv) {
 	std::atomic<int> login_times(1);
 	std::atomic<int> publish_times(1);
 
-	char authlevel = 3;
 	bool use_subscribe = false;
 
 	std::string susi_instance = "[::1]:4000"; // default
@@ -101,7 +99,6 @@ int main(int argc, char** argv) {
 	parser.registerCommandLineOption("publish", "publish");
 	parser.registerCommandLineOption("payload", "payload");
 	parser.registerCommandLineOption("times", "times", "-1");
-	parser.registerCommandLineOption("authlevel", "authlevel", "3");
 
 	parser.registerCommandLineOption("user", "user");
 	parser.registerCommandLineOption("pass", "pass");
@@ -113,7 +110,6 @@ int main(int argc, char** argv) {
 	parser.registerCommandLineOption("p", "publish");
 	parser.registerCommandLineOption("pa","payload");	
 	parser.registerCommandLineOption("t", "times", "-1");
-	parser.registerCommandLineOption("a", "authlevel", "3");
 
 	parser.parseCommandLine(debugger_args);
 
@@ -136,14 +132,13 @@ int main(int argc, char** argv) {
 		auto login_event = e->getApi()->createEvent("auth::login");
 		 	 login_event->payload = Susi::Util::Any::fromJSONString("{\"username\":\""+parser.getValueByKey("user") + "\",\"password\":\"" +  parser.getValueByKey("pass") +"\"}");
 		
-		 	 Susi::Events::Consumer login_consumer = [&authlevel, &login_cond, &login_times](Susi::Events::SharedEventPtr event){				
+		 	 Susi::Events::Consumer login_consumer = [&login_cond, &login_times](Susi::Events::SharedEventPtr event){				
 
 		 	 	std::cout<<"Login Consumer:"<<event->toString()<<std::endl;
 				Susi::Util::Any payload = event->getPayload();
 				bool success = payload["success"];
 
 				if(success)	{
-					authlevel = 0;
 					std::cout<<"Login success!"<<std::endl;
 				} else {
 					std::cout<<"Login failed!"<<std::endl;
@@ -158,9 +153,6 @@ int main(int argc, char** argv) {
 
 		std::unique_lock<std::mutex> login_lock{mutex};
 		login_cond.wait(login_lock, [&login_times](){return login_times.load()==0;});		
-	} else {
-		if(parser.getValueByKey("authlevel") != "3")
-			authlevel = static_cast<int>(std::stoi(parser.getValueByKey("authlevel")));
 	}
 	
 	// SUBSCRIBE
@@ -177,7 +169,7 @@ int main(int argc, char** argv) {
 			if(times.load() != -1) {
 				times.store(times.load() + 1);
 			}
-			e->addController("printController_"+t, new Debugger::PrintController{elems[t], &times, &cond, &authlevel});
+			e->addController("printController", new Debugger::PrintController{elems[t], &times, &cond});
 		}
 		e->start();
 	}
@@ -186,8 +178,7 @@ int main(int argc, char** argv) {
 	std::string p_topic = parser.getValueByKey("publish");
 	if(p_topic != "") {
 		auto event = e->getApi()->createEvent(p_topic);
-		 	 event->payload = Susi::Util::Any::fromJSONString(parser.getValueByKey("payload"));
-		 	 event->authlevel = authlevel;
+	 	event->payload = Susi::Util::Any::fromJSONString(parser.getValueByKey("payload"));
 
 		Susi::Events::Consumer publish_consumer = [&publish_cond, &publish_times](Susi::Events::SharedEventPtr event){				
 				std::cout<<"Publish Consumer:"<<event->toString()<<std::endl;

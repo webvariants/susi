@@ -23,18 +23,15 @@ protected:
 	std::string topic;
 	std::atomic<int> *times;
 	std::condition_variable *cond;
-	char *authlevel;
 public:
-	PrintController(std::string _topic, std::atomic<int> *_times, std::condition_variable *_cond, char *_authlevel) : topic{_topic} {
+	PrintController(std::string _topic, std::atomic<int> *_times, std::condition_variable *_cond) : topic{_topic} {
 		times = _times;
 		cond = _cond;
-		authlevel = _authlevel;
 	};
 
 	virtual void start() override {
 		Susi::Events::Consumer c = [this](Susi::Events::SharedEventPtr event){
 			std::cout<<event->toString()<<std::endl;
-
 			// -1 means no break
 			if(times->load() > -1) {
 				times->store(times->load() -1);
@@ -44,7 +41,7 @@ public:
 			}
 		};
 		
-		subscribe(topic, c , *authlevel);		
+		subscribe(topic, c);		
 	}
 };
 
