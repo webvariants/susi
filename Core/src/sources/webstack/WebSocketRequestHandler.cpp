@@ -36,15 +36,17 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
     size_t n;
 
     while( true ) {
-        n = socket.receiveFrame( buffer, sizeof( buffer ), flags );
-        Susi::Logger::debug( "got frame" );
-        Susi::Logger::debug( std::to_string( n ) );
-        if( n==0 || ( flags & Poco::Net::WebSocket::FRAME_OP_BITMASK ) == Poco::Net::WebSocket::FRAME_OP_CLOSE ) {
-            break;
-        }
-        std::string str( buffer, n );
-        Susi::Util::Any packet = Susi::Util::Any::fromJSONString( str );
-        _apiServer->onMessage( id,packet );
+        try{
+            n = socket.receiveFrame( buffer, sizeof( buffer ), flags );
+            Susi::Logger::debug( "got frame" );
+            Susi::Logger::debug( std::to_string( n ) );
+            if( n==0 || ( flags & Poco::Net::WebSocket::FRAME_OP_BITMASK ) == Poco::Net::WebSocket::FRAME_OP_CLOSE ) {
+                break;
+            }
+            std::string str( buffer, n );
+            Susi::Util::Any packet = Susi::Util::Any::fromJSONString( str );
+            _apiServer->onMessage( id,packet );
+        }catch(const Poco::TimeoutException &){}
     }
     Susi::Logger::debug( "closing websocket" );
     _apiServer->onClose( id );
