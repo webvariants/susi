@@ -27,8 +27,8 @@ public:
 		Susi::Events::Processor p = [this](Susi::Events::EventPtr event){
 			sampleProcessorFunction(std::move(event));
 		};
-		subscribe("samplecontroller::test1", c , 3);
-		subscribe("samplecontroller::test2", p , 3);
+		subscribe("samplecontroller::test1", c);
+		subscribe("samplecontroller::test2", p);
 	}
 
 	void sampleConsumerFunction(Susi::Events::SharedEventPtr event){
