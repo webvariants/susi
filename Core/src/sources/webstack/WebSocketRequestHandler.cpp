@@ -23,7 +23,7 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
     request.getCookies( cookies );
     std::string id = cookies["susisession"];
     Susi::Logger::debug( "register sender in ws" );
-    _apiServer->registerSender( id,[&socket]( Susi::Util::Any & arg ) {
+    long connId = _apiServer->registerSender( id,[&socket]( Susi::Util::Any & arg ) {
         std::string msg = arg.toJSONString();
         Susi::Logger::debug( "send frame to websocket" );
         socket.sendFrame( msg.data(), msg.length(), Poco::Net::WebSocket::FRAME_TEXT );
@@ -49,5 +49,6 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
         }catch(const Poco::TimeoutException &){}
     }
     Susi::Logger::debug( "closing websocket" );
-    _apiServer->onClose( id );
+
+    _apiServer->unregisterSender( id, connId );
 }
