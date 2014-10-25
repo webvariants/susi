@@ -2,6 +2,8 @@ Core/test/gtest-1.7.0/
 Core/src/objects/
 Core/build/
 bin/
+build/
 cppcheck_output.txt
 /.project
 /susi_package.deb
+/node_modules

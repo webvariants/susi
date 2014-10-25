@@ -38,7 +38,7 @@ protected:
 
 public:
 	Engine(std::string address = "[::1]:4000") : susi_api{ new Susi::Api::ApiClient{address}} {
-		susi_api->subscribe(std::string{"heartbeat::minute"},Susi::Events::Consumer{[this](){
+		susi_api->subscribe(std::string{"heartbeat::minute"},Susi::Events::Consumer{[this](Susi::Events::SharedEventPtr){
 			auto event = susi_api->createEvent("session::update");
 			susi_api->publish(std::move(event));
 		}});
