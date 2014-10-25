@@ -70,6 +70,9 @@ module.exports = function(grunt) {
 
     copy: {
       core: {
+        options: {
+          mode: true
+        },
         files: [
           {
             expand: true,
@@ -83,6 +86,9 @@ module.exports = function(grunt) {
         ]
       },
       cppengine: {
+        options: {
+          mode: true
+        },
         files: [
           {
             expand: true,
@@ -131,7 +137,7 @@ module.exports = function(grunt) {
   ]);
 
   grunt.registerTask('test', 'run the susi tests', ['development','shell:test_core']);
-
+  grunt.registerTask('dev', ['development']);
   grunt.registerTask('default', ['development']);
 
 };
