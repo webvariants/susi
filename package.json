@@ -8,7 +8,9 @@
     "grunt-contrib-watch": "*",
     "grunt-shell": "^0.7.0",
     "grunt-newer": "*",
-    "grunt-mkdir": "*"
+    "grunt-mkdir": "*",
+    "soci": "0.0.1",
+    "poco": "0.0.1"
   },  
   "project": {
     "directories": {

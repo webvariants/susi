@@ -23,7 +23,7 @@ module.exports = function(grunt) {
 
     shell: {
       cmake_core: {
-        command: 'cmake ../../<%= pkg.project.directories.core %>',
+        command: 'cmake -DPOCO_INCLUDE_DIR=../../node_modules/poco/include -DSOCI_INCLUDE_DIR=../../node_modules/soci/include/soci -DCMAKE_LIBRARY_PATH=../../node_modules/ ../../<%= pkg.project.directories.core %>',
         options: {
           stderr: false,
           execOptions: {
@@ -32,7 +32,7 @@ module.exports = function(grunt) {
         }
       },
       cmake_cppengine: {
-        command: 'cmake ../../<%= pkg.project.directories.cppengine %>',
+        command: 'cmake -DPOCO_INCLUDE_DIR=../../node_modules/poco/include -DSOCI_INCLUDE_DIR=../../node_modules/soci/include/soci -DCMAKE_LIBRARY_PATH=../../node_modules/ ../../<%= pkg.project.directories.cppengine %>',
         options: {
           stderr: false,
           execOptions: {

@@ -60,7 +60,7 @@ endfunction()
 
 # Find the main Poco header.
 set( POCO_INCLUDE_DIR )
-find_path( POCO_INCLUDE_DIR Poco/Poco.h )
+find_path( POCO_INCLUDE_DIR Poco/Poco.h)
 
 
 # Set POCO_VERSION in format MM.mm.vv.pp, where each component is a decimal
@@ -99,6 +99,7 @@ foreach( lib ${_requestedComponents} )
     find_library( POCO_${lib}_LIBRARY
         NAMES ${lib}
         PATH_SUFFIXES lib
+        HINTS ${POCO_INCLUDE_DIR}/../lib
     )
     if( NOT POCO_${lib}_LIBRARY )
         message( WARNING "Could not find Poco component library ${lib}" )
