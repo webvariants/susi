@@ -12,7 +12,7 @@
 #ifndef __SUSI_ANY__
 #define __SUSI_ANY__
 
-#define JSON_TOKENS 1024
+#define JSON_TOKENS 8192    
 
 #include <stdexcept>
 #include <memory>
