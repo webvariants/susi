@@ -35,12 +35,14 @@ file( GLOB SRCFILES ${CMAKE_SOURCE_DIR}/src/source/**/*.cpp )
 
 add_library( susicpp SHARED ${SRCFILES} )
 
-add_executable( susi-cppengine ${CMAKE_SOURCE_DIR}/src/source/main.cpp)
-target_link_libraries(susi-cppengine susicpp)
-target_link_libraries(susi-cppengine ${CMAKE_SOURCE_DIR}/../Core/build/libsusi.so)
-target_link_libraries(susi-cppengine ${POCO_LIBRARIES})
-target_link_libraries(susi-cppengine ${SOCI_LIBRARY})
-target_link_libraries(susi-cppengine ${CMAKE_THREAD_LIBS_INIT})
+# find_library(SUSILIB susi HINTS ${CMAKE_SOURCE_DIR}/../..)
+
+# add_executable( susi-cppengine ${CMAKE_SOURCE_DIR}/src/source/main.cpp)
+# target_link_libraries(susi-cppengine susicpp)
+# target_link_libraries(susi-cppengine ${SUSILIB})
+# target_link_libraries(susi-cppengine ${POCO_LIBRARIES})
+# target_link_libraries(susi-cppengine ${SOCI_LIBRARY})
+# target_link_libraries(susi-cppengine ${CMAKE_THREAD_LIBS_INIT})
 
 
 # file( GLOB TESTFILES ${CMAKE_SOURCE_DIR}/test/*.cpp )
