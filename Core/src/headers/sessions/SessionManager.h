@@ -28,8 +28,14 @@ namespace Susi {
         class SessionManager {
         protected:
             std::map<std::string, Session> sessions;
+            std::map<std::string, std::string> alias;
             std::mutex mutex;
             std::chrono::milliseconds stdLifetime;
+            void resolveSessionID(std::string & sessionID){
+                if(alias.count(sessionID)>0){
+                    sessionID = alias[sessionID];
+                }
+            }
         public:
             bool checkSession( std::string id );
             int  checkSessions();
@@ -41,6 +47,7 @@ namespace Susi {
             void init( std::chrono::milliseconds stdSessionLifetime );
             bool pushSessionAttribute( std::string sessionID, std::string key, Susi::Util::Any value );
             bool removeSessionAttribute( std::string sessionID, std::string key );
+            void addAlias(std::string alias, std::string sessionID);
 
             ~SessionManager();
         };

@@ -104,3 +104,9 @@ void Susi::Sessions::SessionManagerComponent::handleCheck( Susi::Events::EventPt
         throw std::runtime_error( msg );
     }
 }
+
+void Susi::Sessions::SessionManagerComponent::handleAddAlias( Susi::Events::EventPtr event ){
+    std::string sessionID = event->payload["sessionid"];
+    std::string alias = event->payload["alias"];
+    SessionManager::addAlias(alias,sessionID);
+}
