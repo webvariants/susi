@@ -52,7 +52,7 @@ namespace Susi {
                 }
                 else if( request.getURI() == "/ws" ) {
                     Susi::Logger::debug( "using websocket handler" );
-                    return new SessionRequestHandler( new WebSocketRequestHandler( _apiServer ), _sessionManager );
+                    return new SessionRequestHandler( new WebSocketRequestHandler( _apiServer, _sessionManager ), _sessionManager );
                 }/*else if(request.getURI() == "/compability"){
                 return new SessionRequestHandler(new CompabilityRequestHandler());
             }*/else if( request.getURI() == "/form" ) {

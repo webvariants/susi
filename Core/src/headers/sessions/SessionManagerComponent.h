@@ -57,6 +57,9 @@ namespace Susi {
                 subscribe( "session::check", [this]( ::Susi::Events::EventPtr evt ) {
                     handleCheck( std::move( evt ) );
                 } );
+                subscribe( "session::addAlias", [this]( ::Susi::Events::EventPtr evt ) {
+                    handleAddAlias( std::move( evt ) );
+                } );
                 Susi::Logger::info( "started SessionManagerComponent" );
             }
 
@@ -74,6 +77,7 @@ namespace Susi {
             void handleRemoveAttribute( Susi::Events::EventPtr event );
             void handleUpdate( Susi::Events::EventPtr event );
             void handleCheck( Susi::Events::EventPtr event );
+            void handleAddAlias( Susi::Events::EventPtr event );
         };
     }
 }
