@@ -59,7 +59,7 @@ module.exports = function(grunt) {
         }
       },
       test_core: {
-        command: './susi_test',
+        command: './susi_test --gtest_filter="'+(grunt.option("filter")||"*")+'"',
         options: {
           execOptions: {
             cwd: '<%= pkg.project.directories.build %>/core'
@@ -104,7 +104,7 @@ module.exports = function(grunt) {
         files: ['**/*.cpp','**/*.h'],
         tasks: ['development','watch:sources']
       }
-    }
+    },
   });
 
   grunt.loadNpmTasks('grunt-shell');
@@ -113,6 +113,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-newer');
+  grunt.loadNpmTasks('grunt-debian-package');
 
   grunt.registerTask('build', 'generate a clean build of everything', [
     'clean:bin',
