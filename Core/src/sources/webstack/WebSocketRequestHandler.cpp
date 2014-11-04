@@ -11,9 +11,9 @@
 
 #include "webstack/WebSocketRequestHandler.h"
 
-Susi::WebSocketRequestHandler::WebSocketRequestHandler( std::shared_ptr<Susi::Api::ApiServerComponent> apiServer ) {
-    _apiServer = apiServer;
-}
+Susi::WebSocketRequestHandler::WebSocketRequestHandler( std::shared_ptr<Susi::Api::ApiServerComponent> apiServer, std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager) :
+    _apiServer{apiServer},
+    _sessionManager{sessionManager} {}
 
 void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& request,
         Poco::Net::HTTPServerResponse& response ) {
@@ -22,14 +22,19 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
     Poco::Net::NameValueCollection cookies;
     request.getCookies( cookies );
     std::string id = cookies["susisession"];
+    Poco::Timestamp now;
+    
+    std::string connId = std::to_string( now.epochMicroseconds() );
+    _sessionManager->addAlias(connId,id);
+
     Susi::Logger::debug( "register sender in ws" );
-    long connId = _apiServer->registerSender( id,[&socket]( Susi::Util::Any & arg ) {
+    _apiServer->registerSender( connId,[&socket]( Susi::Util::Any & arg ) {
         std::string msg = arg.toJSONString();
         Susi::Logger::debug( "send frame to websocket" );
         socket.sendFrame( msg.data(), msg.length(), Poco::Net::WebSocket::FRAME_TEXT );
     } );
 
-    _apiServer->onConnect( id );
+    _apiServer->onConnect( connId );
 
     char buffer[4096];
     int flags;
@@ -45,10 +50,10 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
             }
             std::string str( buffer, n );
             Susi::Util::Any packet = Susi::Util::Any::fromJSONString( str );
-            _apiServer->onMessage( id,packet );
+            _apiServer->onMessage( connId, packet );
         }catch(const Poco::TimeoutException &){}
     }
     Susi::Logger::debug( "closing websocket" );
 
-    _apiServer->unregisterSender( id, connId );
+    _apiServer->onClose( connId );
 }
