@@ -56,10 +56,10 @@ namespace Susi {
                 }} );
                 subscribe( std::string{"session::check"}, Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                     handleCheck( std::move( evt ) );
-                } );
-                subscribe( "session::addAlias", [this]( ::Susi::Events::EventPtr evt ) {
+                }} );
+                subscribe( std::string{"session::addAlias"}, Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                     handleAddAlias( std::move( evt ) );
-                } );
+                }} );
                 LOG(INFO) <<  "started SessionManagerComponent" ;
             }
 
