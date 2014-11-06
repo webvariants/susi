@@ -166,7 +166,6 @@ void Susi::Api::ApiServerComponent::handleUnregisterProcessor( std::string & id,
     }
 }
 void Susi::Api::ApiServerComponent::handlePublish( std::string & id, Susi::Util::Any & packet ) {
-    Susi::Logger::debug("in publish: "+packet.toJSONString());
     auto & eventData = packet["data"];
     if( !eventData.isObject() || !eventData["topic"].isString() ) {
         sendFail( id,"publish handler: data is not an object or topic is not set correctly" );
