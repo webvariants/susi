@@ -69,7 +69,7 @@ namespace Susi {
                     markConfidential(*evt,0);
                     assertAuthlevel(*evt,0);
                     handleUpdateUser( std::move( evt ) );
-                });
+                }});
                 LOG(INFO) <<  "started AuthControllerComponent" ;
             }
 
