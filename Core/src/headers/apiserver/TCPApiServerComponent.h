@@ -16,7 +16,7 @@
 #include "Poco/Net/TCPServerConnectionFactory.h"
 #include "Poco/Net/TCPServerConnection.h"
 #include "Poco/Net/Socket.h"
-#include "logger/Logger.h"
+#include "logger/easylogging++.h"
 #include "apiserver/ApiServerComponent.h"
 #include "apiserver/JSONStreamCollector.h"
 #include "world/BaseComponent.h"

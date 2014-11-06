@@ -21,7 +21,7 @@
 #include <chrono>
 #include "apiserver/ApiServerComponent.h"
 #include "util/Any.h"
-#include "logger/Logger.h"
+#include "logger/easylogging++.h"
 
 namespace Susi {
 

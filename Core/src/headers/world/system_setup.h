@@ -30,12 +30,11 @@
 #include "autodiscovery/AutoDiscoveryComponent.h"
 #include "events/ConstraintController.h"
 #include "ddhcp/DDHCPComponent.h"
- 
+#include "logger/Logger.h"
+
 namespace Susi {
     namespace System {
-
         std::shared_ptr<Susi::System::ComponentManager> createSusiComponentManager( Susi::Util::Any::Object config );
-
     }
 }
 

@@ -1,5 +1,5 @@
 #include "logger/Logger.h"
 
-namespace Susi {
-    unsigned char logLevel {255};
+void Susi::rolloutHandler(const char* filename, std::size_t size) {
+    std::cout<<"LOGFILE ROTATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"<<std::endl;
 }

@@ -14,7 +14,7 @@
 
 #include "util/Any.h"
 #include "world/Component.h"
-#include "logger/Logger.h"
+#include "logger/easylogging++.h"
 
 #include <functional>
 

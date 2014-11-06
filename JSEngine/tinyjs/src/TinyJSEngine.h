@@ -17,7 +17,7 @@
 #include "tiny-js-read-only/TinyJS_MathFunctions.h"
 
 #include <iostream>
-#include "logger/Logger.h"
+#include "logger/easylogging++.h"
 #include "util/Any.h"
 #include "apiserver/ApiClient.h"
 

@@ -16,7 +16,7 @@
 #include "world/system_setup.h"
 #include "config/Config.h"
 #include "iocontroller/IOController.h"
-#include "logger/Logger.h"
+#include "logger/easylogging++.h"
 #include "events/EventManagerComponent.h"
 
 class ComponentTest : public ::testing::Test {
@@ -24,7 +24,7 @@ public:
     std::string base_path;
 
     ComponentTest() {
-        Susi::Logger::setLevel( 0 );
+        
 
         base_path = Poco::Path( Poco::Path::current() ).toString() + "component_test";
 

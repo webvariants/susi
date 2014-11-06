@@ -5,67 +5,42 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- *
+ * 
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
 #ifndef __LOGGER__
 #define __LOGGER__
 
-#include <iostream>
-#include <Poco/LocalDateTime.h>
-#include <Poco/DateTimeFormatter.h>
-#include <Poco/DateTimeFormat.h>
-
+#include "world/ComponentManager.h"
 #include "logger/easylogging++.h"
+
 
 namespace Susi {
 
-    extern unsigned char logLevel;
+void rolloutHandler(const char* filename, std::size_t size);
 
-    class Logger {
-    protected:
-        static void log( std::string message,unsigned char level ) {
-            if( level & logLevel ) {
-                Poco::LocalDateTime now;
-                std::string prefix = "";
-                if( level & INFO ) prefix = "INFO";
-                if( level & WARN ) prefix = "WARN";
-                if( level & ERROR ) prefix = "ERROR";
-                if( level & DEBUG ) prefix = "DEBUG";
-                std::string date = Poco::DateTimeFormatter::format( now,Poco::DateTimeFormat::HTTP_FORMAT );
-                std::cerr<<prefix<<" : "<<date<<" : "<<message<<std::endl;
-            }
-        }
-    public:
-        static const unsigned char NOTHING = 0;
-        static const unsigned char INFO = 1;
-        static const unsigned char WARN = 2;
-        static const unsigned char ERROR = 4;
-        static const unsigned char DEBUG = 8;
-        static const unsigned char ALL = INFO | WARN | ERROR | DEBUG;
+class LoggerComponent : public Susi::System::Component {
+protected:
+    
+public:
+    LoggerComponent(){}
 
-        static void log( std::string msg ) {
-            info( msg );
-        }
-        static void info( std::string msg ) {
-            LOG(INFO) << msg;
-        }
-        static void warn( std::string msg ) {
-            LOG(WARNING) << msg;
-        }
-        static void debug( std::string msg ) {
-            LOG(DEBUG) << msg; 
-        }
-        static void error( std::string msg ) {
-            LOG(ERROR) << msg;
-        }
-        static void setLevel( unsigned char level ) {
-            logLevel = level;
-        }
-    };
+    virtual void start() override {
+        el::Loggers::addFlag(el::LoggingFlag::StrictLogFileSizeCheck);
+        el::Helpers::installPreRollOutCallback(rolloutHandler);
+        LOG(INFO) <<  "started LoggerComponent" ;
+    }
 
+    virtual void stop() override {}
+
+    ~LoggerComponent() {
+        stop();
+        LOG(INFO) <<  "stopped LoggerComponent" ;
+    }
+};
 
 }
+
 
 #endif // __LOGGER__

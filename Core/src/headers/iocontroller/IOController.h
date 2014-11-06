@@ -21,7 +21,7 @@
 #include <fstream>
 #include <stdexcept>
 
-#include "logger/Logger.h"
+#include "logger/easylogging++.h"
 
 namespace Susi {
 

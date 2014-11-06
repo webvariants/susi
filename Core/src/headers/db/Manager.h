@@ -21,7 +21,7 @@
 
 #include <db/Database.h>
 #include <db/ManagerItem.h>
-#include "logger/Logger.h"
+#include "logger/easylogging++.h"
 
 namespace Susi {
     namespace DB {

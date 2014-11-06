@@ -19,6 +19,13 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 	auto manager = std::make_shared<Susi::System::ComponentManager>(config);
 
 	/**
+	 * Declare logger
+	 */
+	manager->registerComponent("logger",[](ComponentManager * mgr, Any & config){
+		return std::shared_ptr<Component>{new Susi::LoggerComponent{}};
+	});
+
+	/**
 	 * Declare event system
 	 */
 	manager->registerComponent("eventsystem",[](ComponentManager * mgr, Any & config){
@@ -32,6 +39,7 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 		}
 		return std::shared_ptr<Component>{new Susi::Events::ManagerComponent{threads,queuelen}};
 	});
+	manager->registerDependency("eventsystem","logger");
 
 	/**
 	 * Declare heartbeat

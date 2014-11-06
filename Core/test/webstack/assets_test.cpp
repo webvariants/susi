@@ -9,7 +9,7 @@
 class WebstackAssetsTest : public ::testing::Test {
 protected:
 	virtual void SetUp() override {
-		Susi::Logger::setLevel(255);
+		"";
 		Susi::IOController io;
 		io.makeDir("./assets/");
 		io.writeFile("./assets/test.txt","foobar");

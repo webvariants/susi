@@ -16,17 +16,14 @@
 #include <condition_variable>
 #include <csignal>
 #include <iostream>
+#include <zlib.h>
 
 #include "config/Config.h"
 #include "world/ComponentManager.h"
 #include "world/system_setup.h"
 
 #include "logger/easylogging++.h"
-
-#ifndef __EASYLOGGING__
-    #define __EASYLOGGING__
-    _INITIALIZE_EASYLOGGINGPP
-#endif
+_INITIALIZE_EASYLOGGINGPP
 
 std::condition_variable waitCond;
 
@@ -44,16 +41,8 @@ void signalHandler (int signum) {
 	exit(0);
 }
 
-void setupLogger(std::shared_ptr<Susi::System::ComponentManager> componentManager,std::string topic){
-	Susi::Events::Consumer heartbeatPrinter = [](Susi::Events::SharedEventPtr event){
-		LOG(INFO) << event->toString();
-	};
-	auto eventsystem = componentManager->getComponent<Susi::Events::ManagerComponent>("eventsystem");
-	eventsystem->subscribe(topic,heartbeatPrinter);
-}
-
 int main(int argc, char** argv){
-   	Susi::Logger::setLevel(Susi::Logger::INFO);
+   	
 
 	std::vector<std::string> argv_vec;
 
@@ -63,14 +52,6 @@ int main(int argc, char** argv){
 
 	Susi::Config cfg{};
 	cfg.parseCommandLine(argv_vec);
-
-	try{
-	   	auto level = cfg.get("logger.level");
-	   	if(level.isInteger()) {
-	   		Susi::Logger::setLevel((char)level);
-	   	}
-	}catch(...){}
-
 
 	try {
 		std::string config_file = cfg.get("config");
@@ -95,9 +76,6 @@ int main(int argc, char** argv){
 	auto eventsystem = componentManager->getComponent<Susi::Events::ManagerComponent>("eventsystem");
 	auto event = eventsystem->createEvent("global::start");
 	eventsystem->publish(std::move(event));
-
-	//setupLogger(componentManager,"syscall::exec");
-	
 
 	// register signal SIGINT and signal handler  
     signal(SIGINT, signalHandler); 
