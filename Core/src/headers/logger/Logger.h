@@ -27,6 +27,7 @@ public:
     LoggerComponent(){}
 
     virtual void start() override {
+        el::Loggers::addFlag(el::LoggingFlag::StrictLogFileSizeCheck);
         el::Helpers::installPreRollOutCallback(rolloutHandler);
         LOG(INFO) <<  "started LoggerComponent" ;
     }
