@@ -17,7 +17,7 @@ Susi::WebSocketRequestHandler::WebSocketRequestHandler( std::shared_ptr<Susi::Ap
 
 void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& request,
         Poco::Net::HTTPServerResponse& response ) {
-    LOG(DEBUG) <<  "in ws handler" ;
+    //LOG(DEBUG) <<  "in ws handler" ;
     Poco::Net::WebSocket socket( request,response );
     Poco::Net::NameValueCollection cookies;
     request.getCookies( cookies );
@@ -27,10 +27,10 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
     std::string connId = std::to_string( now.epochMicroseconds() );
     _sessionManager->addAlias(connId,id);
 
-    LOG(DEBUG) <<  "register sender in ws" ;
+    LOG(DEBUG) <<  "register sender in ws-handler for session "<<id<<" with connection id "<<connId;
     _apiServer->registerSender( connId,[&socket]( Susi::Util::Any & arg ) {
         std::string msg = arg.toJSONString();
-        LOG(DEBUG) <<  "send frame to websocket" ;
+        //LOG(DEBUG) <<  "send frame to websocket" ;
         socket.sendFrame( msg.data(), msg.length(), Poco::Net::WebSocket::FRAME_TEXT );
     } );
 
@@ -43,8 +43,8 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
     while( true ) {
         try{
             n = socket.receiveFrame( buffer, sizeof( buffer ), flags );
-            LOG(DEBUG) <<  "got frame" ;
-            LOG(DEBUG) <<  std::to_string( n ) ;
+            //LOG(DEBUG) <<  "got frame" ;
+            //LOG(DEBUG) <<  std::to_string( n ) ;
             if( n==0 || ( flags & Poco::Net::WebSocket::FRAME_OP_BITMASK ) == Poco::Net::WebSocket::FRAME_OP_CLOSE ) {
                 break;
             }
@@ -53,7 +53,7 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
             _apiServer->onMessage( connId, packet );
         }catch(const Poco::TimeoutException &){}
     }
-    LOG(DEBUG) <<  "closing websocket" ;
+    LOG(DEBUG) <<  "closing websocket with connection id "<<connId ;
 
     _apiServer->onClose( connId );
 }
