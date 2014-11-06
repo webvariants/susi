@@ -41,7 +41,7 @@ namespace Susi {
                 }} );
                 subscribe( std::string{"global::stop"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleStop( std::move( evt ) );
-                } );
+                }} );
                 LOG(INFO) <<  "started EngineStarterComponent" ;
             }
 
