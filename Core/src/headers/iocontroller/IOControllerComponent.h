@@ -50,7 +50,7 @@ namespace Susi {
             }} );
             subscribe( std::string{"io::getExecutable"}, Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                 handleGetExecutable( std::move( evt ) );
-            } );
+            }} );
             LOG(INFO) <<  "started IOControllerComponent" ;
         }
 
