@@ -53,7 +53,7 @@ public:
 
 	virtual void start() override {
 		server.start();
-		Susi::Logger::info("started HTTP server on addr "+_addr);
+		LOG(INFO) << "started HTTP server on addr "+_addr;
 	}
 
     virtual void stop() override {
@@ -62,7 +62,7 @@ public:
 
     ~HttpServerComponent() {
         stop();
-        Susi::Logger::info( "stopped HTTPServerComponent" );
+        LOG(INFO) <<  "stopped HTTPServerComponent" ;
     }
 };
 

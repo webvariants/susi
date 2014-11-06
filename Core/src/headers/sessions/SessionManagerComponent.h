@@ -26,7 +26,7 @@ namespace Susi {
 
             ~SessionManagerComponent() {
                 stop();
-                Susi::Logger::info( "stopped SessionManagerComponent" );
+                LOG(INFO) <<  "stopped SessionManagerComponent" ;
             }
 
             virtual void start() override {
@@ -60,7 +60,7 @@ namespace Susi {
                 subscribe( "session::addAlias", [this]( ::Susi::Events::EventPtr evt ) {
                     handleAddAlias( std::move( evt ) );
                 } );
-                Susi::Logger::info( "started SessionManagerComponent" );
+                LOG(INFO) <<  "started SessionManagerComponent" ;
             }
 
             virtual void stop() override {

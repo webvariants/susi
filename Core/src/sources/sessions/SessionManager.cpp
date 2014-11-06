@@ -36,7 +36,7 @@ int SessionManager::checkSessions() {
     while( it!=std::end( sessions ) ) {
         auto current = it++;
         if( current->second.isDead() ) {
-            Susi::Logger::debug( "delete session "+current->first );
+            LOG(DEBUG) <<  "delete session "+current->first ;
             sessions.erase( current );
             for(auto ait = alias.begin(); ait != alias.end();){
                 if(ait->second == current->first){
@@ -70,11 +70,11 @@ bool SessionManager::checkSession( std::string id ) {
     resolveSessionID(id);
     try {
         bool alive = !sessions.at( id ).isDead();
-        Susi::Logger::debug( "session is alive: "+std::to_string( alive ) );
+        LOG(DEBUG) <<  "session is alive: "+std::to_string( alive ) ;
         return alive;
     }
     catch( const std::exception & e ) {
-        Susi::Logger::debug( "session is not known" );
+        LOG(DEBUG) <<  "session is not known" ;
         return false;
     }
 }
@@ -144,7 +144,7 @@ void SessionManager::updateSession( std::string id ) {
         sessions[id].addTime( stdLifetime );
     }
     else {
-        Susi::Logger::debug( "create new session with "+std::to_string( this->stdLifetime.count() ) );
+        LOG(DEBUG) <<  "create new session with "+std::to_string( this->stdLifetime.count() ) ;
         sessions[id] = Session( this->stdLifetime );
         sessions[id].setAttribute("authlevel",3);
     }

@@ -52,21 +52,21 @@ namespace Ddhcp {
 					while(!_stop.load()){
 						try{
 							message = recv();
-							Susi::Logger::debug("got ddhcp message");
+							LOG(DEBUG) << "got ddhcp message";
 							awnser(message);
 						}catch(const Poco::TimeoutException & e){}
 					}
 				}catch(const std::exception & e){
-					Susi::Logger::error(std::string{"DDHCP: "}+e.what());
+					LOG(ERROR) << std::string{"DDHCP: "}+e.what();
 				}
 			}});
-			Susi::Logger::info("started DDHCP Component on addr "+_serverSocket.address().toString());
+			LOG(INFO) << "started DDHCP Component on addr "+_serverSocket.address().toString();
 		}
 		virtual void stop() override {
 			_serverSocket.close();
 			_stop.store(true);
 			_runLoop->join();
-			Susi::Logger::info("stopped DDHCP Component");
+			LOG(INFO) << "stopped DDHCP Component";
 		}
 	};
 

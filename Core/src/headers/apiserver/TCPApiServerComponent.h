@@ -39,7 +39,7 @@ namespace Susi {
                     _eventsystem{eventsystem},
                     sessionID {std::to_string( std::chrono::system_clock::now().time_since_epoch().count() )},
                     collector {[this]( std::string & msg ) {
-                        Susi::Logger::debug( "got message in collector!" );
+                        LOG(DEBUG) <<  "got message in collector!" ;
                         std::string s = sessionID;
                         auto message = Susi::Util::Any::fromJSONString( msg );
                         if(message["type"]=="shutdown"){
@@ -47,7 +47,7 @@ namespace Susi {
                         }
                         _api->onMessage( s,message );
                     }} {
-                    Susi::Logger::debug( "Connection constructor" );
+                    LOG(DEBUG) <<  "Connection constructor" ;
                     _api->onConnect( sessionID );
                     _api->registerSender( sessionID,[this]( Susi::Util::Any & msg ) {
                         if( this==nullptr ) return;
@@ -57,14 +57,14 @@ namespace Susi {
                 }
                 ~Connection() {
                     _api->onClose( sessionID );
-                    Susi::Logger::debug( "deleting tcp connection" );
+                    LOG(DEBUG) <<  "deleting tcp connection" ;
                 }
                 void run() {
                     char buff[1024];
                     while( true ) {
                         int bs = socket().receiveBytes( buff,sizeof( buff ) );
                         if( bs<=0 ) {
-                            Susi::Logger::debug( "tcp connection failed while receive." );
+                            LOG(DEBUG) <<  "tcp connection failed while receive." ;
                             auto evt = _eventsystem->createEvent("connection::die");
                             evt->payload = Susi::Util::Any::Object{{"sessionid",sessionID}};
                             _eventsystem->publish(std::move(evt));
@@ -95,7 +95,7 @@ namespace Susi {
 
                 ConnectionFactory( std::shared_ptr<Susi::Api::ApiServerComponent> api, std::shared_ptr<Susi::Events::ManagerComponent> eventsystem ) : _api {api}, _eventsystem{eventsystem} {}
                 virtual Poco::Net::TCPServerConnection * createConnection( const Poco::Net::StreamSocket& s ) {
-                    Susi::Logger::debug( "creating new tcp connection" );
+                    LOG(DEBUG) <<  "creating new tcp connection" ;
                     return new Connection {s, _api, _eventsystem};
                 }
             };
@@ -126,7 +126,7 @@ namespace Susi {
                 tcpServer.start();
                 std::string msg {"started TCPApiServerComponent on "};
                 msg += address.toString();
-                Susi::Logger::info( msg );
+                LOG(INFO) <<  msg ;
                 std::this_thread::sleep_for( std::chrono::milliseconds {250} );
             }
             virtual void stop() override {
@@ -134,7 +134,7 @@ namespace Susi {
             }
             ~TCPApiServerComponent() {
                 stop();
-                Susi::Logger::info( "stopped TCPApiServerComponent" );
+                LOG(INFO) <<  "stopped TCPApiServerComponent" ;
             }
 
         };

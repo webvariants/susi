@@ -69,7 +69,7 @@ namespace Susi {
                     assertAuthlevel(*evt,0);
                     handleUpdateUser( std::move( evt ) );
                 });
-                Susi::Logger::info( "started AuthControllerComponent" );
+                LOG(INFO) <<  "started AuthControllerComponent" ;
             }
 
             virtual void stop() override {
@@ -78,7 +78,7 @@ namespace Susi {
 
             ~ControllerComponent() {
                 stop();
-                Susi::Logger::info( "stopped AuthControllerComponent" );
+                LOG(INFO) <<  "stopped AuthControllerComponent" ;
             }
         };
 

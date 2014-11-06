@@ -37,7 +37,7 @@ namespace Susi {
                 subscribe( "syscall::exec", [this]( EventPtr evt ) {
                     handleExec( std::move( evt ) );
                 } );
-                Susi::Logger::info( "started SyscallComponent" );
+                LOG(INFO) <<  "started SyscallComponent" ;
             }
 
             virtual void stop() override {
@@ -46,7 +46,7 @@ namespace Susi {
 
             ~SyscallComponent() {
                 stop();
-                Susi::Logger::info( "stopped SyscallComponent" );
+                LOG(INFO) <<  "stopped SyscallComponent" ;
             }
 
         protected:
@@ -54,7 +54,7 @@ namespace Susi {
             Susi::Util::ThreadPool pool;
 
             void handleExec( EventPtr event ) {
-                Susi::Logger::debug( "entering syscall::exec handler" );
+                LOG(DEBUG) <<  "entering syscall::exec handler" ;
                 std::string commandSpecifier = event->payload["cmd"];
                 std::string commandline = commands[commandSpecifier];
                 Any args = event->payload["args"];

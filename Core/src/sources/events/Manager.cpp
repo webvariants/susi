@@ -191,7 +191,7 @@ void Susi::Events::Manager::ack( EventPtr event ) {
                         consumer( sharedEvent );
                     } /*,[this](std::string errorMessage){
                         auto errorEvent = manager->createEvent("consumererror");
-                        Susi::Logger::error("consumer error: "+errorMessage);
+                        LOG(ERROR) << "consumer error: "+errorMessage;
                         errorEvent->payload = errorMessage;
                         manager->publish(std::move(errorEvent));
                     }*/);

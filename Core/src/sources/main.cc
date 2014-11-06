@@ -21,6 +21,13 @@
 #include "world/ComponentManager.h"
 #include "world/system_setup.h"
 
+#include "logger/easylogging++.h"
+
+#ifndef __EASYLOGGING__
+    #define __EASYLOGGING__
+    _INITIALIZE_EASYLOGGINGPP
+#endif
+
 std::condition_variable waitCond;
 
 std::shared_ptr<Susi::System::ComponentManager> componentManager;
@@ -31,7 +38,6 @@ void waitForEver(){
 	waitCond.wait(lk,[](){return false;});
 }
 
-
 void signalHandler (int signum) {
 	std::cout << "Interrupt signal (" << signum << ") received.\n";
 	componentManager->stopAll();
@@ -40,7 +46,7 @@ void signalHandler (int signum) {
 
 void setupLogger(std::shared_ptr<Susi::System::ComponentManager> componentManager,std::string topic){
 	Susi::Events::Consumer heartbeatPrinter = [](Susi::Events::SharedEventPtr event){
-		Susi::Logger::info(event->toString());
+		LOG(INFO) << event->toString();
 	};
 	auto eventsystem = componentManager->getComponent<Susi::Events::ManagerComponent>("eventsystem");
 	eventsystem->subscribe(topic,heartbeatPrinter);
@@ -74,9 +80,11 @@ int main(int argc, char** argv){
    		cfg.loadConfig("config.json");
    	}
    	
-	cfg.parseCommandLine(argv_vec);
-
-
+   	auto easylogFile = cfg.get("logger.easylogging++");
+   	if(easylogFile.isString()){
+   		el::Configurations conf(easylogFile);
+   		el::Loggers::reconfigureAllLoggers(conf);
+   	}
 
 	componentManager = Susi::System::createSusiComponentManager(cfg.getConfig());
 	//componentManager = std::make_shared<Susi::System::ComponentManager>(cfg.getConfig());

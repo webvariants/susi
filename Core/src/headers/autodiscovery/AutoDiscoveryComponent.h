@@ -61,7 +61,7 @@ namespace Susi {
 
             virtual void start() override {
                 Susi::Autodiscovery::Manager::start();
-                Susi::Logger::info( "started AutodiscoveryComponent" );
+                LOG(INFO) <<  "started AutodiscoveryComponent" ;
             }
 
             virtual void stop() override {
@@ -71,7 +71,7 @@ namespace Susi {
 
             ~AutoDiscoveryComponent(){
                 stop();
-                Susi::Logger::info( "stopped AutodiscoveryComponent" );
+                LOG(INFO) <<  "stopped AutodiscoveryComponent" ;
             }
 
         };

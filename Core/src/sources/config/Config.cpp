@@ -18,7 +18,7 @@ void Susi::Config::loadConfig( std::string path ) {
     if( !io.checkDir( path ) && !io.checkFile( path ) ) {
         std::string msg = "Susi::Config::loadConfig ";
         msg += ( "File: " + path + " file doesn't exist!" );
-        Susi::Logger::error( msg );
+        LOG(ERROR) <<  msg ;
         throw std::runtime_error( "file doesn't exist!" );
     }
 
@@ -30,7 +30,7 @@ void Susi::Config::loadConfig( std::string path ) {
             std::string msg = "Susi::Config::loadConfig ";
             msg += "Error reading Config File: " + path;
             msg += e.what();
-            Susi::Logger::error( msg );
+            LOG(ERROR) <<  msg ;
             throw std::runtime_error( msg );
         }
 
@@ -41,7 +41,7 @@ void Susi::Config::loadConfig( std::string path ) {
             std::string msg = "Susi::Config::loadConfig ";
             msg += ( "File: " + path + " file cant be parsed as json!" );
             msg += e.what();
-            Susi::Logger::error( msg );
+            LOG(ERROR) <<  msg ;
 
             throw std::runtime_error( msg );
         }
@@ -49,25 +49,25 @@ void Susi::Config::loadConfig( std::string path ) {
         if( configVar.getType() != Susi::Util::Any::OBJECT ) {
             std::string msg = "Susi::Config::loadConfig ";
             msg += ( "File: " + path + " file doesn't contain a (json) object" );
-            Susi::Logger::error( msg );
+            LOG(ERROR) <<  msg ;
             throw std::runtime_error( "file doesn't contain a (json) object" );
         }
 
         if( _configVar.isNull() ) {
             // first load or empty
-            Susi::Logger::debug("first load of config");
+            LOG(DEBUG) << "first load of config";
             _configVar = configVar;
         }
         else {
             //merge vars
-            Susi::Logger::debug("merge config");
+            LOG(DEBUG) << "merge config";
             //mergeOptions( "", configVar );
             merge(_configVar,configVar);
         }
 
         /*std::string msg = "Susi::Config::loadConfig ";
         msg += ( "File: " + path );
-        Susi::Logger::info( msg );*/
+        LOG(INFO) <<  msg ;*/
         load_count++;
 
     }
@@ -117,7 +117,7 @@ void Susi::Config::merge( Susi::Util::Any & ref, Susi::Util::Any & other ){
 
 // used to set a value in the config object (should be used by parseCommandLine())
 void Susi::Config::set( std::string key, Any value ) {
-    Susi::Logger::debug( "set "+key+" to "+value.toJSONString() );
+    LOG(DEBUG) <<  "set "+key+" to "+value.toJSONString() ;
     std::vector<std::string> elems;
     Susi::Util::Helpers::split( key, '.', elems );
     auto * current = &_configVar;

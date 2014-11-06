@@ -13,7 +13,7 @@ Susi::DB::Manager::Manager( std::vector<std::tuple<std::string,std::string,std::
     std::string msg = "initialized database manager with ";
     msg += std::to_string( dbs.size() );
     msg += " databases";
-    Susi::Logger::info( msg );
+    LOG(INFO) <<  msg ;
 }
 
 void Susi::DB::Manager::init( Susi::Util::Any config ) {
@@ -22,7 +22,7 @@ void Susi::DB::Manager::init( Susi::Util::Any config ) {
             try {
                 Susi::Util::Any entry = config[i];
 
-                //Susi::Logger::info( "INIT:" + entry.toJSONString() +" TYPE:" + ( entry.isObject() ? "Object" : "Wrong Type" ) );
+                //LOG(INFO) <<  "INIT:" + entry.toJSONString() +" TYPE:" + ( entry.isObject() ? "Object" : "Wrong Type" ) ;
 
                 std::string identifier = entry["identifier"];
                 std::string dbtype     = entry["type"];
@@ -30,7 +30,7 @@ void Susi::DB::Manager::init( Susi::Util::Any config ) {
                 addDatabase( identifier, dbtype, connectURI );
             }
             catch( const std::exception & e ) {
-                Susi::Logger::error( "malformed config file" );
+                LOG(ERROR) <<  "malformed config file" ;
             }
         }
     }
@@ -55,7 +55,7 @@ std::shared_ptr<Susi::DB::Database> Susi::DB::Manager::getDatabase( std::string 
     else {
         std::string msg = "DB not found: ";
         msg += identifier;
-        Susi::Logger::error( msg );
+        LOG(ERROR) <<  msg ;
     }
 
     return nullptr;

@@ -24,7 +24,7 @@ protected:
 	virtual void GoodCases() override {
 		std::string content;
 
-		Susi::Logger::debug("OUTPUT PATH:"+output);
+		LOG(DEBUG) << "OUTPUT PATH:"+output;
 
 		//create event
 		auto evt = createEvent("enginestarter::start");	

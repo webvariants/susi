@@ -57,11 +57,11 @@ namespace Susi {
 
             ~ApiServerComponent(){
                 stop();
-                Susi::Logger::info( "stopped ApiServerComponent" );
+                LOG(INFO) <<  "stopped ApiServerComponent" ;
             }
 
             virtual void start() override {
-                Susi::Logger::info( "started ApiServerComponent" );
+                LOG(INFO) <<  "started ApiServerComponent" ;
             }
             virtual void stop() override {
                 unsubscribeAll();

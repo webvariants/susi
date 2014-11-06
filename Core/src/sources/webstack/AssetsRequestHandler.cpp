@@ -13,10 +13,10 @@
 
 void Susi::AssetsRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& request,
         Poco::Net::HTTPServerResponse& response ) {
-    Susi::Logger::debug( "Assets request from " + request.clientAddress().toString()+" "+request.getURI() );
+    LOG(DEBUG) <<  "Assets request from " + request.clientAddress().toString()+" "+request.getURI() ;
     try {
         std::string fileLocation = _rootDirectory.path()+"/"+request.getURI().substr( 8 );
-        Susi::Logger::debug( "Target file: "+fileLocation );
+        LOG(DEBUG) <<  "Target file: "+fileLocation ;
         Poco::File f( fileLocation );
 
         Poco::Timestamp dateTime    = f.getLastModified();
@@ -38,10 +38,10 @@ void Susi::AssetsRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& re
         else {
             throw std::runtime_error {"cannot find file"};
         }
-        Susi::Logger::debug("correctly leaving assets handler");
+        LOG(DEBUG) << "correctly leaving assets handler";
     }
     catch( const std::exception & e ) {
-        Susi::Logger::debug( "got error "+std::string {e.what()} );
+        LOG(DEBUG) <<  "got error "+std::string {e.what()} ;
         response.setChunkedTransferEncoding( true );
         response.setContentType( "text/html" );
         response.setStatus( Poco::Net::HTTPServerResponse::HTTPStatus::HTTP_NOT_FOUND );

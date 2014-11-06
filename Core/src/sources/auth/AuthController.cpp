@@ -20,7 +20,7 @@ void Susi::Auth::Controller::setup() {
         db->query( "SELECT id,username,password,salt,authlevel FROM users;" );
     }
     catch( const std::exception & e ) {
-        Susi::Logger::debug( "AuthDB not ready!" );
+        LOG(DEBUG) <<  "AuthDB not ready!" ;
         SHA3 hasher;
         db->query( "CREATE TABLE users(id INTEGER PRIMARY KEY AUTOINCREMENT, username VARCHAR UNIQUE, password VARCHAR, salt VARCHAR, authlevel INTEGER);" );
         if( !addUser( "root","toor",0 ) ) {
@@ -37,7 +37,7 @@ bool Susi::Auth::Controller::addUser( std::string username, std::string password
         SHA3 hasher;
         std::string pwHash = hasher( password+salt );
         if( !checkForSqlSafety( username ) ) {
-            Susi::Logger::error( "username seems to be an sql injection: "+username );
+            LOG(ERROR) <<  "username seems to be an sql injection: "+username ;
             return false;
         }
         db->query( "INSERT INTO users(username,password,salt,authlevel) "
@@ -57,7 +57,7 @@ bool Susi::Auth::Controller::updateUser( std::string username, std::string passw
         SHA3 hasher;
         std::string pwHash = hasher( password+salt );
         if( !checkForSqlSafety( username ) ) {
-            Susi::Logger::error( "username seems to be an sql injection: "+username );
+            LOG(ERROR) <<  "username seems to be an sql injection: "+username ;
             return false;
         }
         db->query( "UPDATE INTO users(password,salt,authlevel) "
@@ -84,16 +84,16 @@ bool Susi::Auth::Controller::delUser( std::string username ) {
 }
 
 bool Susi::Auth::Controller::login( std::string sessionID, std::string username, std::string password ) {
-    Susi::Logger::debug( "handle login request" );
+    LOG(DEBUG) <<  "handle login request" ;
     if( this->isLoggedIn( sessionID ) == false ) {
-        Susi::Logger::debug( "user is not allready logged in" );
+        LOG(DEBUG) <<  "user is not allready logged in" ;
         auto db = _dbManager->getDatabase( this->_dbIdentifier );
         if( !checkForSqlSafety( username ) ) {
             return false;
         }
         Susi::Util::Any result = db->query( "SELECT authlevel,salt,password FROM users WHERE username='"+username+"';" );
         if( result.size()==0 ) {
-            Susi::Logger::debug( "username and password does not match" );
+            LOG(DEBUG) <<  "username and password does not match" ;
             return false;
         }
         std::string salt = result[0]["salt"];
@@ -101,7 +101,7 @@ bool Susi::Auth::Controller::login( std::string sessionID, std::string username,
         std::string pwHash = hasher( password+salt );
         std::string expectedHash = result[0]["password"];
         if( pwHash == expectedHash ) {
-            Susi::Logger::debug( "Login success: "+result.toJSONString() );
+            LOG(DEBUG) <<  "Login success: "+result.toJSONString() ;
             _sessionManager->setSessionAttribute( sessionID, "User", Susi::Util::Any::Object( {{"username",username}} ) );
             _sessionManager->setSessionAttribute( sessionID, "authlevel", result[0]["authlevel"] );
             return true;

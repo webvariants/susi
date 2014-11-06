@@ -27,7 +27,7 @@ namespace Susi {
                     handleQuery( std::move( evt ) );
                 } );
                 std::string msg = "started DatabaseComponent with "+std::to_string(Manager::dbMap.size())+" databases";
-                Susi::Logger::info( msg );
+                LOG(INFO) <<  msg ;
             }
 
             virtual void stop() override {
@@ -35,7 +35,7 @@ namespace Susi {
             }
             ~DBComponent() {
                 stop();
-                Susi::Logger::info( "stopped DatabaseComponent" );
+                LOG(INFO) <<  "stopped DatabaseComponent" ;
             }
         protected:
             void handleQuery( Susi::Events::EventPtr  event );

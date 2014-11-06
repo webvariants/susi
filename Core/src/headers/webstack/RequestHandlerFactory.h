@@ -44,30 +44,30 @@ namespace Susi {
                    _apiServer {apiServer},
         _sessionManager {sessionManager} {}
         Poco::Net::HTTPRequestHandler* createRequestHandler( const Poco::Net::HTTPServerRequest& request ) {
-            Susi::Logger::debug( "got request with URI: "+request.getURI() );
+            LOG(DEBUG) <<  "got request with URI: "+request.getURI() ;
             try {
                 if( request.getURI().find( "/assets/" )==0 ) {
-                    Susi::Logger::debug( "using assets handler" );
+                    LOG(DEBUG) <<  "using assets handler" ;
                     return new SessionRequestHandler( new AssetsRequestHandler( _assetRoot ), _sessionManager );
                 }
                 else if( request.getURI() == "/ws" ) {
-                    Susi::Logger::debug( "using websocket handler" );
+                    LOG(DEBUG) <<  "using websocket handler" ;
                     return new SessionRequestHandler( new WebSocketRequestHandler( _apiServer, _sessionManager ), _sessionManager );
                 }/*else if(request.getURI() == "/compability"){
                 return new SessionRequestHandler(new CompabilityRequestHandler());
             }*/else if( request.getURI() == "/form" ) {
-                    Susi::Logger::debug( "using form handler" );
+                    LOG(DEBUG) <<  "using form handler" ;
                     return new SessionRequestHandler( new FormRequestHandler( _uploadDirectory ), _sessionManager );
                 }
                 else if( request.getURI() == "/" ) {
-                    Susi::Logger::debug( "using redirect handler" );
+                    LOG(DEBUG) <<  "using redirect handler" ;
                     return new SessionRequestHandler( new RedirectRequestHandler(), _sessionManager );
                 }
-                Susi::Logger::debug( "using not found handler" );
+                LOG(DEBUG) <<  "using not found handler" ;
                 return new SessionRequestHandler( new NotFoundRequestHandler(), _sessionManager );
             }
             catch( const std::exception & e ) {
-                Susi::Logger::error( std::string( "error in request handler factory: " )+e.what() );
+                LOG(ERROR) <<  std::string( "error in request handler factory: " )+e.what() ;
                 return nullptr;
             }
         }

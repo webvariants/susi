@@ -40,12 +40,12 @@ namespace Susi {
                 _fileName = params.get( "filename", "(unnamed)" );
             }
 
-            Susi::Logger::debug( "in part handler: name: "+_fileName );
+            LOG(DEBUG) <<  "in part handler: name: "+_fileName ;
 
             Poco::CountingInputStream istr( stream );
 
             if( _fileName != "" ) {
-                Susi::Logger::debug( "target filepath: "+_uploadDirectory + _fileName );
+                LOG(DEBUG) <<  "target filepath: "+_uploadDirectory + _fileName ;
                 Poco::FileOutputStream fos( _uploadDirectory + _fileName, std::ios::binary );
                 Poco::StreamCopier::copyStream( istr, fos );
                 fos.close();
