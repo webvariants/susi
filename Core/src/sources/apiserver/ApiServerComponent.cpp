@@ -90,7 +90,6 @@ void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, Su
         sendOk( id );
     }
     else {
-        LOG(DEBUG) << "failed registering consumer for topic "<<topic<<" to session "<<id;
         sendFail( id,"data is not a object" );
     }
 }
@@ -124,7 +123,6 @@ void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, S
         sendOk( id );
     }
     else {
-        LOG(DEBUG) << "failed registering processor for topic "<<topic<<" to session "<<id;
         sendFail( id,"data is not a object" );
     }
 }
@@ -183,7 +181,7 @@ void Susi::Api::ApiServerComponent::handlePublish( std::string & id, Susi::Util:
     }
     *event = rawEvent;
 
-    LOG(DEBUG) << "publish event for topic "<<topic<<" from session "<<id;
+    LOG(DEBUG) << "publish event for topic "<<event->topic<<" from session "<<id;
     eventManager->publish( std::move( event ),[this,id]( Susi::Events::SharedEventPtr event ) {
         Susi::Util::Any packet;
         packet["type"] = "ack";
