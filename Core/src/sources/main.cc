@@ -26,6 +26,7 @@
 #ifndef __EASYLOGGING__
     #define __EASYLOGGING__
     _INITIALIZE_EASYLOGGINGPP
+    _ELPP_THREAD_SAFE
 #endif
 
 std::condition_variable waitCond;
