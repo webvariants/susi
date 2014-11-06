@@ -16,6 +16,7 @@
 #include <atomic>
 #include "events/EventManager.h"
 #include "world/Component.h"
+#include "logger/easylogging++.h"
 
 namespace Susi {
     namespace Events {

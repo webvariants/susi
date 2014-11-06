@@ -20,7 +20,7 @@
 #include <streambuf>
 
 #include "util/Channel.h"
-#include "logger/Logger.h"
+#include "logger/easylogging++.h"
 #include "util/Any.h"
 #include "events/EventManager.h"
 #include "apiserver/BasicApiClient.h"
@@ -44,7 +44,7 @@ protected:
 				Handle<External> data = Handle<External>::Cast(args.Data());
 				auto self = static_cast<Susi::JS::V8::Engine*>(data->Value());
 
-				Susi::Logger::log(self->fromJS(args[0]).toJSONString());
+				LOG(INFO) << self->fromJS(args[0]).toJSONString();
 				return Undefined();
 			},
 			External::New(this)
@@ -84,7 +84,7 @@ protected:
 				auto self = static_cast<Susi::JS::V8::Engine*>(data->Value());
 
 				if(args.Length() < 2) {
-					Susi::Logger::log("JSEngine - subscribeConsumer: wrong number of Arguments");
+					LOG(INFO) << "JSEngine - subscribeConsumer: wrong number of Arguments";
 					return Undefined();
 				}
 				Locker v8Locker;
@@ -96,11 +96,11 @@ protected:
 				Persistent<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[1]));
 
 				if(callback.IsEmpty()) {
-					Susi::Logger::log("JSEngine - subscribeConsumer: Topic: "+topic+" , failed - callback not found");
+					LOG(INFO) << "JSEngine - subscribeConsumer: Topic: "+topic+" , failed - callback not found";
 					return ThrowException(String::New("subscribeConsumer: you have to specify a callback function as second argument"));
 				}
 
-				Susi::Logger::log("JSEngine - subscribeConsumer: Topic: "+topic);
+				LOG(INFO) << "JSEngine - subscribeConsumer: Topic: "+topic;
 
 				if(self->consumers.count(topic) == 0) {
 					self->sendRegisterConsumer(topic);
@@ -116,7 +116,7 @@ protected:
 				auto self = static_cast<Susi::JS::V8::Engine*>(data->Value());
 
 				if(args.Length() < 2) {
-					Susi::Logger::log("JSEngine - subscribeProcessor: wrong number of Arguments");
+					LOG(INFO) << "JSEngine - subscribeProcessor: wrong number of Arguments";
 					return Undefined();
 				}
 				Locker v8Locker;
@@ -128,11 +128,11 @@ protected:
 				Persistent<Function> callback = Persistent<Function>::New(Handle<Function>::Cast(args[1]));
 
 				if(callback.IsEmpty()) {
-					Susi::Logger::log("JSEngine - subscribeProcessor: Topic: "+topic+" , failed - callback not found");
+					LOG(INFO) << "JSEngine - subscribeProcessor: Topic: "+topic+" , failed - callback not found";
 					return ThrowException(String::New("subscribeProcessor: you have to specify a callback function as second argument"));
 				}
 
-				Susi::Logger::log("JSEngine - subscribeProcessor: Topic: "+topic);
+				LOG(INFO) << "JSEngine - subscribeProcessor: Topic: "+topic;
 
 				if(self->processors.count(topic) == 0) {
 					self->sendRegisterProcessor(topic);
@@ -237,7 +237,7 @@ protected:
 		TryCatch try_catch;
 		bool return_val = false;
 		if (context.IsEmpty()) {
-			Susi::Logger::log("JS::Engine.run: context is Empty");
+			LOG(INFO) << "JS::Engine.run: context is Empty";
 			return_val = false;
 	    }
 	    else {
@@ -245,7 +245,7 @@ protected:
 			Context::Scope context_scope{context};
 			Handle<Script> script = Script::New(source, String::New("script"));
 			if (script.IsEmpty()) {
-				Susi::Logger::log("JS::Engine.run: Script is Empty");
+				LOG(INFO) << "JS::Engine.run: Script is Empty";
 				return_val = false;
 			} else {
 				Handle<Value> result = script->Run();

@@ -20,7 +20,7 @@
 #include <chrono>
 #include <thread>
 
-#include "logger/Logger.h"
+#include "logger/easylogging++.h"
 
 namespace Susi {
     namespace EngineStarter {

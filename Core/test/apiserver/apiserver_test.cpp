@@ -13,7 +13,7 @@ protected:
 		world.setupSessionManager();
 		world.setupTCPServer();
 		world.setupLogger();
-		Susi::Logger::setLevel(0);
+		"";
 	}
 	virtual void TearDown() override {}
 };

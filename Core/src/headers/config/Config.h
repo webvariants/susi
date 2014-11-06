@@ -18,7 +18,7 @@
 #include "util/Any.h"
 #include "util/Helpers.h"
 #include "iocontroller/IOController.h"
-#include "logger/Logger.h"
+#include "logger/easylogging++.h"
 
 namespace Susi {
 

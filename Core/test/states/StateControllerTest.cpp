@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 #include "iocontroller/IOController.h"
-#include "logger/Logger.h"
+#include "logger/easylogging++.h"
 #include "states/StateController.h"
 
 using Susi::Util::Any;

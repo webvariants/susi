@@ -15,7 +15,7 @@
 
 #include "events/Event.h"
 #include "util/Any.h"
-#include "logger/Logger.h"
+#include "logger/easylogging++.h"
 #include "apiserver/ApiClient.h"
 
 namespace Susi {
@@ -28,7 +28,7 @@ protected:
 	std::vector<long> subscriptions;
 
 	void log(Susi::Util::Any any){
-        Susi::Logger::log(any.toJSONString());
+        LOG(INFO) << any.toJSONString();
     }
 	
 	long subscribe( std::string topic, Susi::Events::Processor processor) {

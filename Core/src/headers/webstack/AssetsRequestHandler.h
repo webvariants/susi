@@ -22,7 +22,7 @@
 #include "Poco/FileStream.h"
 #include "Poco/StreamCopier.h"
 
-#include "logger/Logger.h"
+#include "logger/easylogging++.h"
 
 namespace Susi {
 

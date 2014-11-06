@@ -18,7 +18,7 @@
 #include "Poco/Util/Application.h"
 
 #include "Poco/Net/HTMLForm.h"
-#include "logger/Logger.h"
+#include "logger/easylogging++.h"
 
 #include "webstack/MyPartHandler.h"
 

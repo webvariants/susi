@@ -16,7 +16,7 @@
 #include "Poco/Foundation.h"
 
 #include "syscall/SyscallWorker.h"
-#include "logger/Logger.h"
+#include "logger/easylogging++.h"
 
 namespace Susi {
     namespace Syscall {

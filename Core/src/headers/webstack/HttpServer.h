@@ -18,7 +18,7 @@
 
 #include "apiserver/ApiServer.h"
 #include "webstack/RequestHandlerFactory.h"
-#include "logger/Logger.h"
+#include "logger/easylogging++.h"
 #include "sessions/SessionManagerComponent.h"
 
 namespace Susi {
