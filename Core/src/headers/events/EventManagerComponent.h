@@ -39,7 +39,7 @@ namespace Susi {
 
             virtual void start() override {
                 noPublish.store( false );
-                Susi::Logger::info( "started EventManagerComponent" );
+                LOG(INFO) <<  "started EventManagerComponent" ;
             }
 
             virtual void stop() override {
@@ -56,7 +56,7 @@ namespace Susi {
 
             virtual ~ManagerComponent() {
                 stop();
-                Susi::Logger::info( "stopped EventManagerComponent" );
+                LOG(INFO) <<  "stopped EventManagerComponent" ;
             }
         };
 

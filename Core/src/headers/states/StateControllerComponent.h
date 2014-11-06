@@ -41,8 +41,8 @@ namespace Susi {
                 }} );
                 subscribe( std::string{"state::getPersistentState"}, Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                     handleGetPersistentState( std::move( evt ) );
-                }} );
-                Susi::Logger::info( "started StateControllerComponent" );
+                } );
+                LOG(INFO) <<  "started StateControllerComponent" ;
             }
 
             virtual void stop() override {
@@ -51,7 +51,7 @@ namespace Susi {
 
             ~StateControllerComponent(){
                 stop();
-                Susi::Logger::info( "stopped StateControllerComponent" );
+                LOG(INFO) <<  "stopped StateControllerComponent" ;
             }
 
         protected:

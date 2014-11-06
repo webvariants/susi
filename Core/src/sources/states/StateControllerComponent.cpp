@@ -37,7 +37,7 @@ void Susi::States::StateControllerComponent::handleSave( Susi::Events::EventPtr 
 }
 
 void Susi::States::StateControllerComponent::handleSetState( Susi::Events::EventPtr event ) {
-    Susi::Logger::debug( "got state event" );
+    LOG(DEBUG) <<  "got state event" ;
     try {
         std::string stateID  = event->payload["stateID"];
         Susi::Util::Any value = event->payload["value"];
@@ -79,7 +79,7 @@ void Susi::States::StateControllerComponent::handleGetState( Susi::Events::Event
 }
 
 void Susi::States::StateControllerComponent::handleSetPersistentState( Susi::Events::EventPtr event ) {
-    Susi::Logger::debug( "got persitent state event" );
+    LOG(DEBUG) <<  "got persitent state event" ;
     try {
         std::string stateID  = event->payload["stateID"];
         Susi::Util::Any value = event->payload["value"];

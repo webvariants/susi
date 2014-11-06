@@ -1,6 +1,5 @@
 #include "sessions/SessionManagerComponent.h"
 
-
 void Susi::Sessions::SessionManagerComponent::handleCheckSessions( Susi::Events::SharedEventPtr event ) {
     checkSessions();
 }
@@ -18,6 +17,7 @@ void Susi::Sessions::SessionManagerComponent::handleGetAttribute( Susi::Events::
         throw std::runtime_error( msg );
     }
 }
+
 void Susi::Sessions::SessionManagerComponent::handleSetAttribute( Susi::Events::EventPtr event ) {
     try {
         std::string sessionID = event->payload["id"];
@@ -103,4 +103,10 @@ void Susi::Sessions::SessionManagerComponent::handleCheck( Susi::Events::EventPt
         msg += e.what();
         throw std::runtime_error( msg );
     }
+}
+
+void Susi::Sessions::SessionManagerComponent::handleAddAlias( Susi::Events::EventPtr event ){
+    std::string sessionID = event->payload["sessionid"];
+    std::string alias = event->payload["alias"];
+    SessionManager::addAlias(alias,sessionID);
 }

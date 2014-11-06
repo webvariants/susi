@@ -41,8 +41,8 @@ namespace Susi {
                 }} );
                 subscribe( std::string{"global::stop"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleStop( std::move( evt ) );
-                }} );
-                Susi::Logger::info( "started EngineStarterComponent" );
+                } );
+                LOG(INFO) <<  "started EngineStarterComponent" ;
             }
 
             virtual void stop() override {
@@ -52,7 +52,7 @@ namespace Susi {
 
             ~StarterComponent() {
                 stop();
-                Susi::Logger::info( "stopped EngineStarterComponent" );
+                LOG(INFO) <<  "stopped EngineStarterComponent" ;
             }
         protected:
             std::string _defaultPath;

@@ -61,7 +61,7 @@ namespace Susi {
 
         void httpServerStart() {
             server.start();
-            Susi::Logger::info( "started HTTP server on addr "+_addr );
+            LOG(INFO) <<  "started HTTP server on addr "+_addr ;
         }
 
         void httpServerStop() {

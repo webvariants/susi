@@ -31,7 +31,7 @@ std::size_t Susi::IOController::writeFile( std::string filename,char* ptr, std::
         std::string msg = "WriteFile: Dir ";
         msg += dir.current();
         msg += " don't exists!";
-        Susi::Logger::error( msg );
+        LOG(ERROR) <<  msg ;
         throw std::runtime_error {"WriteFile: Dir don't exists!"+filename};
     }
 }
@@ -67,7 +67,7 @@ std::string Susi::IOController::readFile( std::string filename ) {
         std::string msg = "ReadFile: ";
         msg += filename;
         msg += " don't exists!";
-        Susi::Logger::error( msg );
+        LOG(ERROR) <<  msg ;
         throw std::runtime_error {"ReadFile: File don't exists!"};
     }
 }
@@ -84,7 +84,7 @@ bool Susi::IOController::movePath( std::string source_path, std::string dest_pat
         std::string msg = "movePath: SOURCE_PATH ";
         msg += source_path;
         msg += " don't exists!";
-        Susi::Logger::error( msg );
+        LOG(ERROR) <<  msg ;
         throw std::runtime_error {"movePath: SOURCE_PATH don't exist!"};
     }
 }
@@ -101,7 +101,7 @@ bool Susi::IOController::copyPath( std::string source_path, std::string dest_pat
         std::string msg = "copyPath: SOURCE_PATH ";
         msg += source_path;
         msg += " don't exists!";
-        Susi::Logger::error( msg );
+        LOG(ERROR) <<  msg ;
         throw std::runtime_error {"copyPath: SOURCE_PATH don't exist!"};
     }
 }
@@ -125,7 +125,7 @@ bool Susi::IOController::deletePath( std::string path ) {
             std::string msg = "Delete: PATH ";
             msg += path;
             msg += " is no FILE or DIR! (maybe PATH is LINK or DEVICE)";
-            Susi::Logger::error( msg );
+            LOG(ERROR) <<  msg ;
             throw std::runtime_error {"Delete: PATH is no FILE or DIR! (maybe PATH is LINK or DEVICE)"};
         }
     }
@@ -158,7 +158,7 @@ bool Susi::IOController::setExecutable( std::string path, bool isExecutable ) {
         std::string msg = "setExecutable: PATH ";
         msg += path;
         msg += " is no FILE or DIR!";
-        Susi::Logger::error( msg );
+        LOG(ERROR) <<  msg ;
         throw std::runtime_error {"setExecutable: PATH is no FILE or DIR!"};
     }
 }
@@ -173,7 +173,7 @@ bool Susi::IOController::getExecutable( std::string path ) {
         std::string msg = "getExecutable: PATH ";
         msg += path;
         msg += " is no FILE or DIR!";
-        Susi::Logger::error( msg );
+        LOG(ERROR) <<  msg ;
         throw std::runtime_error {"getExecutable: PATH is no FILE or DIR!"};
     }
 }

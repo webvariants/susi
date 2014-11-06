@@ -1,12 +1,12 @@
 #include "apiserver/ApiServerComponent.h"
 
 void Susi::Api::ApiServerComponent::onConnect( std::string & id ) {
-    Susi::Logger::info( "got new connection!" );
+    LOG(INFO) <<  "got new connection!" ;
     sessionManager->updateSession( id );
 }
 
 void Susi::Api::ApiServerComponent::onClose( std::string & id ) {
-    Susi::Logger::info( "lost connection..." );
+    LOG(INFO) <<  "lost connection..." ;
     sessionManager->killSession( id );
     senders.erase( id );
     eventsToAck.erase( id );
@@ -25,7 +25,7 @@ void Susi::Api::ApiServerComponent::onClose( std::string & id ) {
 
 void Susi::Api::ApiServerComponent::onMessage( std::string & id, Susi::Util::Any & packet ) {
     try {
-        Susi::Logger::debug("onMessage: "+packet.toJSONString());
+        LOG(DEBUG) << "onMessage: "+packet.toJSONString();
         auto type = packet["type"];
         if( type.isString() ) {
             if( type=="registerConsumer" ) {

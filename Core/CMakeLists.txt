@@ -48,7 +48,7 @@ target_link_libraries(susi ${SOCI_LIBRARY})
 target_link_libraries(susi ${POCO_LIBRARIES})
 
 #SUSI TESTS
-add_executable( susi_test ${TESTFILES})
+add_executable( susi_test ${CMAKE_SOURCE_DIR}/test/easylogging++_init.cpp ${TESTFILES})
 target_link_libraries(susi_test libsusi)
 target_link_libraries(susi_test ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(susi_test ${SOCI_LIBRARY})

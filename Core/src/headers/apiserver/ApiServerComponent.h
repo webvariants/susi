@@ -26,7 +26,7 @@ namespace Susi {
         class ApiServerComponent : public Susi::System::SessionAwareComponent {
         protected:
 
-            std::map<std::string,std::map<long,std::function<void( Susi::Util::Any& )>>> senders;
+            std::map<std::string,std::function<void( Susi::Util::Any& )>> senders;
             std::map<std::string,std::map<std::string,long>> consumerSubscriptions;
             std::map<std::string,std::map<std::string,long>> processorSubscriptions;
             std::map<std::string,std::map<std::string,Susi::Events::EventPtr>> eventsToAck; //sessionid -> eventid -> event
@@ -47,10 +47,8 @@ namespace Susi {
 
             void send( std::string & id, Susi::Util::Any & msg ) {
                 std::lock_guard<std::mutex> lock {mutex};
-                auto & senderList = senders[id];
-                for(auto & kv : senderList){
-                    if( kv.second ) kv.second(msg);
-                }
+                auto & sender = senders[id];
+                if( sender ) sender(msg);
             }
 
         public:
@@ -59,11 +57,11 @@ namespace Susi {
 
             ~ApiServerComponent(){
                 stop();
-                Susi::Logger::info( "stopped ApiServerComponent" );
+                LOG(INFO) <<  "stopped ApiServerComponent" ;
             }
 
             virtual void start() override {
-                Susi::Logger::info( "started ApiServerComponent" );
+                LOG(INFO) <<  "started ApiServerComponent" ;
             }
             virtual void stop() override {
                 unsubscribeAll();
@@ -73,19 +71,13 @@ namespace Susi {
             void onMessage( std::string & id, Susi::Util::Any & packet );
             void onClose( std::string & id );
 
-            inline long registerSender( std::string id , std::function<void( Susi::Util::Any& )> sender ) {
+            inline void registerSender( std::string id , std::function<void( Susi::Util::Any& )> sender ) {
                 std::lock_guard<std::mutex> lock {mutex};
-                long connId = std::chrono::system_clock::now().time_since_epoch().count();
-                senders[id][connId] = sender;
-                return connId;
+                senders[id] = sender;
             }
-            inline void unregisterSender( std::string id, long connId ) {
+            inline void unregisterSender( std::string id ) {
                 std::lock_guard<std::mutex> lock {mutex};
-                auto & senderList = senders[id];
-                senderList.erase(connId);
-                if(senderList.size()==0){
-                    onClose(id);
-                }
+                senders.erase(id);
             }
 
         };

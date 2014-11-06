@@ -14,16 +14,16 @@ bool Susi::System::ComponentManager::loadComponent( std::string name ) {
     if( components.find( name ) == components.end() && registerFunctions[name] ) {
         ComponentData data;
         if( config[name].isNull() ) {
-            Susi::Logger::error( "cant find config for component "+name );
+            LOG(ERROR) <<  "cant find config for component "+name ;
             return false;
         }
         data.component = registerFunctions[name]( this,config[name] );
         components[name] = data;
-        //Susi::Logger::debug( "loaded component "+name+"!" );
+        //LOG(DEBUG) <<  "loaded component "+name+"!" ;
         return true;
     }
     else {
-        //Susi::Logger::debug("cant find register-function for component "+name);
+        //LOG(DEBUG) << "cant find register-function for component "+name;
     }
 
     return false;
@@ -39,27 +39,27 @@ bool Susi::System::ComponentManager::unloadComponent( std::string name ) {
 }
 
 bool Susi::System::ComponentManager::startComponent( std::string name ) {
-    //Susi::Logger::debug( "starting component "+name+"..." );
+    //LOG(DEBUG) <<  "starting component "+name+"..." ;
     if( components.find( name ) == components.end() && !loadComponent( name ) ) {
-        Susi::Logger::error( "can't start component "+name+", component is not loadable." );
+        LOG(ERROR) <<  "can't start component "+name+", component is not loadable." ;
         return false;
     }
     auto & data = components[name];
     if( data.running ) {
-        //Susi::Logger::debug( "can't start component "+name+", component is allready ruuning." );
+        //LOG(DEBUG) <<  "can't start component "+name+", component is allready ruuning." ;
         return false;
     }
     for( std::string & dep : dependencies[name] ) {
-        //Susi::Logger::debug( "need dependency "+dep );
+        //LOG(DEBUG) <<  "need dependency "+dep ;
         startComponent( dep );
         if( components.find( dep ) == components.end() || !components[dep].running ) {
-            //Susi::Logger::debug( "can't start component "+name+", dependency "+dep+" is not startable." );
+            //LOG(DEBUG) <<  "can't start component "+name+", dependency "+dep+" is not startable." ;
             return false;
         }
     }
     data.component->start();
     data.running = true;
-    //Susi::Logger::debug( "started component "+name+"!" );
+    //LOG(DEBUG) <<  "started component "+name+"!" ;
     return true;
 }
 
@@ -90,7 +90,7 @@ bool Susi::System::ComponentManager::startAll() {
             runningComponents+=kv.first+" ";
         }
     }
-    Susi::Logger::info( "successfully started these components: "+runningComponents );
+    LOG(INFO) <<  "successfully started these components: "+runningComponents ;
 
     // test all started
     for( auto kv: config ) {

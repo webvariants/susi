@@ -23,7 +23,7 @@ namespace Susi {
 
         ~IOControllerComponent() {
             stop();
-            Susi::Logger::info( "stopped IOControllerComponent" );
+            LOG(INFO) <<  "stopped IOControllerComponent" ;
         }
 
         virtual void start() override {
@@ -50,8 +50,8 @@ namespace Susi {
             }} );
             subscribe( std::string{"io::getExecutable"}, Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                 handleGetExecutable( std::move( evt ) );
-            }} );
-            Susi::Logger::info( "started IOControllerComponent" );
+            } );
+            LOG(INFO) <<  "started IOControllerComponent" ;
         }
 
         virtual void stop() override {

@@ -32,7 +32,7 @@ namespace Susi {
     public:
         AssetsRequestHandler( std::string rootDirectory ) :
             _rootDirectory( rootDirectory ) {
-            Susi::Logger::debug( "init assets handler" );
+            LOG(DEBUG) <<  "init assets handler" ;
         }
         virtual void handleRequest( Poco::Net::HTTPServerRequest& request,
                                     Poco::Net::HTTPServerResponse& response ) override;

@@ -289,7 +289,7 @@ public:
 			context = Persistent<Context>(setupContext());
 			if(try_catch.HasCaught()) {
 				String::Utf8Value exception{try_catch.Exception()};
-				Susi::Logger::error(std::string(*exception));
+				LOG(ERROR) << std::string(*exception);
 			}
 		}
 	}

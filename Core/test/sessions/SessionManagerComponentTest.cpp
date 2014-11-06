@@ -22,7 +22,7 @@ TEST_F(SessionManagerComponentTest, checkSessions) {
 
 	//create event
 	auto evt = createEvent("session::update");
-	evt->payload["id"] = sessionID;
+	evt->sessionID = sessionID;
 	evt->payload["seconds"] = 120;
 	//fire event
 	auto result = publish_sync(std::move(evt));
@@ -43,7 +43,7 @@ TEST_F(SessionManagerComponentTest, updateAndCheck) {
 
 	//create event
 	auto evt = createEvent("session::update");
-	evt->payload["id"] = sessionID;
+	evt->sessionID = sessionID;
 	evt->payload["seconds"] = 120;
 	auto result = publish_sync(std::move(evt));
 	EXPECT_TRUE(static_cast<bool>(result->payload["success"]));
@@ -55,19 +55,19 @@ TEST_F(SessionManagerComponentTest, updateAndCheck) {
 
 	// seconds 0
 	auto evt3 = createEvent("session::update");
-	evt3->payload["id"] = sessionID;
+	evt3->sessionID = sessionID;
 	evt3->payload["seconds"] = 0;
 	auto result3 = publish_sync(std::move(evt3));
 	EXPECT_TRUE(static_cast<bool>(result3->payload["success"]));
 
 	// seconds missing seconds
 	auto evt4 = createEvent("session::update");
-	evt4->payload["id"] = sessionID;
+	evt4->sessionID = sessionID;
 	auto result4 = publish_sync(std::move(evt4));
 	EXPECT_TRUE(static_cast<bool>(result3->payload["success"]));
 
 	// missing sessionid
-	auto evt5 = createEvent("session::update");
+	auto evt5 = createEvent("session::check");
 	auto result5 = publish_sync(std::move(evt5));
 	EXPECT_FALSE(static_cast<bool>(result5->payload["success"]));
 	EXPECT_TRUE(hasErrorHeader(result5));

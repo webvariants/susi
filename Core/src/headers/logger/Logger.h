@@ -17,6 +17,8 @@
 #include <Poco/DateTimeFormatter.h>
 #include <Poco/DateTimeFormat.h>
 
+#include "logger/easylogging++.h"
+
 namespace Susi {
 
     extern unsigned char logLevel;
@@ -47,16 +49,16 @@ namespace Susi {
             info( msg );
         }
         static void info( std::string msg ) {
-            log( msg,INFO );
+            LOG(INFO) << msg;
         }
         static void warn( std::string msg ) {
-            log( msg,WARN );
+            LOG(WARNING) << msg;
         }
         static void debug( std::string msg ) {
-            log( msg,DEBUG );
+            LOG(DEBUG) << msg; 
         }
         static void error( std::string msg ) {
-            log( msg,ERROR );
+            LOG(ERROR) << msg;
         }
         static void setLevel( unsigned char level ) {
             logLevel = level;

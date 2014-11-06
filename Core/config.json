@@ -64,6 +64,10 @@
 
 	"apiserver": {},
 
-	"constraints": {}
+	"constraints": {},
+
+	"logger": {
+		"easylogging++": "../Core/easylogging++.conf"
+	}
 
 }

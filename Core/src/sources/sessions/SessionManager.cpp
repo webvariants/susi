@@ -36,8 +36,15 @@ int SessionManager::checkSessions() {
     while( it!=std::end( sessions ) ) {
         auto current = it++;
         if( current->second.isDead() ) {
-            Susi::Logger::debug( "delete session "+current->first );
+            LOG(DEBUG) <<  "delete session "+current->first ;
             sessions.erase( current );
+            for(auto ait = alias.begin(); ait != alias.end();){
+                if(ait->second == current->first){
+                    alias.erase(ait++);
+                }else{
+                    ++ait;
+                }
+            }
             deleted++;
         }
     }
@@ -60,19 +67,21 @@ int SessionManager::checkSessions() {
 
 bool SessionManager::checkSession( std::string id ) {
     std::lock_guard<std::mutex> lock( mutex );
+    resolveSessionID(id);
     try {
         bool alive = !sessions.at( id ).isDead();
-        Susi::Logger::debug( "session is alive: "+std::to_string( alive ) );
+        LOG(DEBUG) <<  "session is alive: "+std::to_string( alive ) ;
         return alive;
     }
     catch( const std::exception & e ) {
-        Susi::Logger::debug( "session is not known" );
+        LOG(DEBUG) <<  "session is not known" ;
         return false;
     }
 }
 
 bool SessionManager::setSessionAttribute( std::string sessionID, std::string key, Susi::Util::Any value ) {
     std::lock_guard<std::mutex> lock( mutex );
+    resolveSessionID(sessionID);
     if( sessionID.length() > 0 )
     {
         if( sessions.count( sessionID ) > 0 ) {
@@ -90,6 +99,7 @@ bool SessionManager::setSessionAttribute( std::string sessionID, std::string key
 
 bool SessionManager::pushSessionAttribute( std::string sessionID, std::string key, Susi::Util::Any value ) {
     std::lock_guard<std::mutex> lock( mutex );
+    resolveSessionID(sessionID);
     if( sessionID.length() > 0 )
     {
         if( sessions.count( sessionID ) > 0 ) {
@@ -107,6 +117,7 @@ bool SessionManager::pushSessionAttribute( std::string sessionID, std::string ke
 
 bool SessionManager::removeSessionAttribute( std::string sessionID, std::string key ) {
     std::lock_guard<std::mutex> lock( mutex );
+    resolveSessionID(sessionID);
     if( sessionID.length() > 0 )
     {
         if( sessions.count( sessionID ) > 0 ) {
@@ -118,6 +129,7 @@ bool SessionManager::removeSessionAttribute( std::string sessionID, std::string 
 
 Susi::Util::Any SessionManager::getSessionAttribute( std::string sessionID, std::string key ) {
     std::lock_guard<std::mutex> lock( mutex );
+    resolveSessionID(sessionID);
     if( sessionID.length() > 0 && sessions.count( sessionID ) > 0 )
     {
         return sessions[sessionID].getAttribute( key );
@@ -127,11 +139,12 @@ Susi::Util::Any SessionManager::getSessionAttribute( std::string sessionID, std:
 
 void SessionManager::updateSession( std::string id ) {
     std::lock_guard<std::mutex> lock( mutex );
+    resolveSessionID(id);
     if( sessions.count( id ) > 0 && !sessions[id].isDead() ) {
         sessions[id].addTime( stdLifetime );
     }
     else {
-        Susi::Logger::debug( "create new session with "+std::to_string( this->stdLifetime.count() ) );
+        LOG(DEBUG) <<  "create new session with "+std::to_string( this->stdLifetime.count() ) ;
         sessions[id] = Session( this->stdLifetime );
         sessions[id].setAttribute("authlevel",3);
     }
@@ -139,6 +152,7 @@ void SessionManager::updateSession( std::string id ) {
 
 void SessionManager::updateSession( std::string id, std::chrono::milliseconds lifetime ) {
     std::lock_guard<std::mutex> lock( mutex );
+    resolveSessionID(id);
     if( sessions.count( id ) > 0 ) {
         sessions[id].addTime( lifetime );
     }
@@ -149,8 +163,14 @@ void SessionManager::updateSession( std::string id, std::chrono::milliseconds li
 
 bool SessionManager::killSession( std::string id ) {
     std::lock_guard<std::mutex> lock( mutex );
+    resolveSessionID(id);
     if( sessions.count( id ) > 0 ) {
         return sessions[id].die();
     }
     return false;
+}
+
+void SessionManager::addAlias(std::string alias_, std::string sessionID){
+    std::lock_guard<std::mutex> lock( mutex );
+    alias[alias_] = sessionID;
 }
