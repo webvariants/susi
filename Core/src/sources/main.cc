@@ -25,8 +25,8 @@
 
 #ifndef __EASYLOGGING__
     #define __EASYLOGGING__
+    #define _ELPP_THREAD_SAFE
     _INITIALIZE_EASYLOGGINGPP
-    _ELPP_THREAD_SAFE
 #endif
 
 std::condition_variable waitCond;
@@ -92,6 +92,10 @@ int main(int argc, char** argv){
 	//componentManager->startComponent("eventsystem");
 	//componentManager->startComponent("heartbeat");
 	componentManager->startAll();
+
+	auto eventsystem = componentManager->getComponent<Susi::Events::ManagerComponent>("eventsystem");
+	auto event = eventsystem->createEvent("global::start");
+	eventsystem->publish(std::move(event));
 
 	//setupLogger(componentManager,"syscall::exec");
 	
