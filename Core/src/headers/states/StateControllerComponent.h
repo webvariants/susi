@@ -41,7 +41,7 @@ namespace Susi {
                 }} );
                 subscribe( std::string{"state::getPersistentState"}, Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                     handleGetPersistentState( std::move( evt ) );
-                } );
+                }} );
                 LOG(INFO) <<  "started StateControllerComponent" ;
             }
 
