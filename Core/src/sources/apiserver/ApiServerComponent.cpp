@@ -25,7 +25,6 @@ void Susi::Api::ApiServerComponent::onClose( std::string & id ) {
 
 void Susi::Api::ApiServerComponent::onMessage( std::string & id, Susi::Util::Any & packet ) {
     try {
-        LOG(DEBUG) << "onMessage: "+packet.toJSONString();
         auto type = packet["type"];
         if( type.isString() ) {
             if( type=="registerConsumer" ) {
@@ -57,6 +56,7 @@ void Susi::Api::ApiServerComponent::onMessage( std::string & id, Susi::Util::Any
     catch( const std::exception & e ) {
         std::string msg = "exception while processing: ";
         msg += e.what();
+        LOG(ERROR) << msg;
         sendFail( id,msg );
     }
 }
@@ -86,9 +86,11 @@ void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, Su
         };
         long subid = eventManager->subscribe( topic,callback,subName );
         subs[topic] = subid;
+        LOG(DEBUG) << "register consumer for topic "<<topic<<" to session "<<id;
         sendOk( id );
     }
     else {
+        LOG(DEBUG) << "failed registering consumer for topic "<<topic<<" to session "<<id;
         sendFail( id,"data is not a object" );
     }
 }
@@ -118,9 +120,11 @@ void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, S
             send( _id,packet );
         }},subName );
         subs[topic] = subid;
+        LOG(DEBUG) << "register processor for topic "<<topic<<" to session "<<id;
         sendOk( id );
     }
     else {
+        LOG(DEBUG) << "failed registering processor for topic "<<topic<<" to session "<<id;
         sendFail( id,"data is not a object" );
     }
 }
@@ -132,6 +136,7 @@ void Susi::Api::ApiServerComponent::handleUnregisterConsumer( std::string & id, 
         if( subs.find( topic )!=subs.end() ) {
             long subid = subs[topic];
             eventManager->unsubscribe( subid );
+            LOG(DEBUG) << "unregister consumer for topic "<<topic<<" from session "<<id;
             sendOk( id );
         }
         else {
@@ -151,6 +156,7 @@ void Susi::Api::ApiServerComponent::handleUnregisterProcessor( std::string & id,
         if( subs.find( topic )!=subs.end() ) {
             long subid = subs[topic];
             eventManager->unsubscribe( subid );
+            LOG(DEBUG) << "unregister processor for topic "<<topic<<" from session "<<id;
             sendOk( id );
         }
         else {
@@ -176,6 +182,8 @@ void Susi::Api::ApiServerComponent::handlePublish( std::string & id, Susi::Util:
         rawEvent.id = std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
     }
     *event = rawEvent;
+
+    LOG(DEBUG) << "publish event for topic "<<topic<<" from session "<<id;
     eventManager->publish( std::move( event ),[this,id]( Susi::Events::SharedEventPtr event ) {
         Susi::Util::Any packet;
         packet["type"] = "ack";
@@ -213,6 +221,8 @@ void Susi::Api::ApiServerComponent::handleAck( std::string & id, Susi::Util::Any
     if( !eventData["payload"].isNull() ) {
         event->payload = eventData["payload"];
     }
+
+    LOG(DEBUG) << "received ack for topic "<<event->topic<<" from session "<<id;
     eventManager->ack( std::move( event ) );
     sendOk( id );
 }
