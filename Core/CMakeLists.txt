@@ -36,6 +36,9 @@ include_directories( ${SOCI_INCLUDE_DIRS} )
 file( GLOB SRCFILES ${CMAKE_SOURCE_DIR}/src/sources/**/*.cpp )
 file( GLOB TESTFILES ${CMAKE_SOURCE_DIR}/test/*/*.cpp )
 
+#easylogging++ defines 
+add_definitions(-D_ELPP_THREAD_SAFE)
+
 #LIBRARY
 add_library( libsusi SHARED ${SRCFILES} )
 set_target_properties(libsusi PROPERTIES OUTPUT_NAME susi)
