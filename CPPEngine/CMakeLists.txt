@@ -31,6 +31,9 @@ include_directories( ${CMAKE_SOURCE_DIR}/src/headers )
 include_directories( ${POCO_INCLUDE_DIR} )
 include_directories( ${SOCI_INCLUDE_DIRS} )
 
+#easylogging++ defines 
+add_definitions(-D_ELPP_THREAD_SAFE)
+
 file( GLOB SRCFILES ${CMAKE_SOURCE_DIR}/src/source/**/*.cpp )
 
 add_library( susicpp SHARED ${SRCFILES} )

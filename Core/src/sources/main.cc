@@ -25,7 +25,6 @@
 
 #ifndef __EASYLOGGING__
     #define __EASYLOGGING__
-    #define _ELPP_THREAD_SAFE
     _INITIALIZE_EASYLOGGINGPP
 #endif
 
