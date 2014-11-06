@@ -36,7 +36,7 @@ namespace Susi {
             virtual void start() override {
                 subscribe( std::string{"syscall::exec"}, Susi::Events::Processor{[this]( EventPtr evt ) {
                     handleExec( std::move( evt ) );
-                } );
+                }} );
                 LOG(INFO) <<  "started SyscallComponent" ;
             }
 
