@@ -82,13 +82,13 @@ bool Susi::Events::Manager::unsubscribe( long id ) {
 // public publish api function
 void Susi::Events::Manager::publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback ) {
     if( event.get()==nullptr ) {
-        Susi::Logger::debug("publish: event is nullptr");
+        LOG(DEBUG) << "publish: event is nullptr";
         //std::cout<<"event is nullptr"<<std::endl;
         event.release();
         return;
     }
 
-    //Susi::Logger::debug("publish!");
+    //LOG(DEBUG) << "publish!";
     {
         std::lock_guard<std::mutex> lock( mutex );
         auto process = std::make_shared<PublishProcess>();
@@ -142,11 +142,11 @@ void Susi::Events::Manager::publish( Susi::Events::EventPtr event, Susi::Events:
 // pass event back to system
 void Susi::Events::Manager::ack( EventPtr event ) {
     if( event.get()==nullptr ) {
-        Susi::Logger::debug("ack: event is nullptr");
+        LOG(DEBUG) << "ack: event is nullptr";
         event.release();
         return;
     }
-    //Susi::Logger::debug("ack!");
+    //LOG(DEBUG) << "ack!";
     struct Work {
         EventPtr event;
         Manager *manager;

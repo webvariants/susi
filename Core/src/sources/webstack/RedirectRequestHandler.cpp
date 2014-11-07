@@ -13,6 +13,6 @@
 
 void Susi::RedirectRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& request,
         Poco::Net::HTTPServerResponse& response ) {
-	Susi::Logger::debug("redirect");
+	LOG(DEBUG) << "redirect to main.html";
     response.redirect( "/assets/main.html" );
 }

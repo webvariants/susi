@@ -69,7 +69,7 @@ namespace Susi {
                     _event->payload["stdout"] = getContentFromStream( ostr );
                     _event->payload["stderr"] = getContentFromStream( estr );
                 }catch(const std::exception & e){
-                    Susi::Logger::error("Error while executing syscall command");
+                    LOG(ERROR) << "Error while executing syscall command";
                     throw e;
                 }
                 // when event gets destructed, its acknowledged.
