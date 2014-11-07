@@ -19,6 +19,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/dev")
 
 find_package(POCO REQUIRED PocoFoundation PocoUtil PocoJSON PocoNet)
 find_package(SOCI REQUIRED)
+
+find_package(LibLZMA REQUIRED)
+
 find_package(Threads REQUIRED)
 
 add_subdirectory( ${CMAKE_SOURCE_DIR}/test/gtest-1.7.0 )
@@ -48,6 +51,7 @@ add_executable( susi ${CMAKE_SOURCE_DIR}/src/sources/main.cc )
 target_link_libraries(susi libsusi)
 target_link_libraries(susi ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(susi ${SOCI_LIBRARY})
+target_link_libraries(susi ${LIBLZMA_LIBRARIES})
 target_link_libraries(susi ${POCO_LIBRARIES})
 
 #SUSI TESTS
@@ -55,6 +59,7 @@ add_executable( susi_test ${CMAKE_SOURCE_DIR}/test/easylogging++_init.cpp ${TEST
 target_link_libraries(susi_test libsusi)
 target_link_libraries(susi_test ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(susi_test ${SOCI_LIBRARY})
+target_link_libraries(susi_test ${LIBLZMA_LIBRARIES})
 target_link_libraries(susi_test ${POCO_LIBRARIES})
 target_link_libraries(susi_test gtest)
 target_link_libraries(susi_test gtest_main)

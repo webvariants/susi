@@ -16,7 +16,12 @@
 
 #include "engine/Engine.h"
 
+#include "logger/Logger.h"
+
 int main(int argc, char** argv){
+
+	auto logger = Susi::LoggerComponent{};
+	logger.start();
 
 	std::shared_ptr<Susi::Cpp::Engine> e{new Susi::Cpp::Engine{}};
 	e->populateController();
