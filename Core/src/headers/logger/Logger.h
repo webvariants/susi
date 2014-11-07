@@ -14,15 +14,17 @@
 
 #include "world/ComponentManager.h"
 #include "logger/easylogging++.h"
-
+/*#include "zlib.h"*/
+#include "lzma.h"
 
 namespace Susi {
 
 void rolloutHandler(const char* filename, std::size_t size);
+bool fileExists(const std::string & filename);
+/*bool compress_zlib(std::string infile, std::string outfile);*/
+bool compress_lzma(std::string infile, std::string outfile);
 
 class LoggerComponent : public Susi::System::Component {
-protected:
-    
 public:
     LoggerComponent(){}
 
