@@ -10,6 +10,8 @@
 #include "util/Glob.h"
 #include "util/ConstrainedScheduler.h"
 
+#include "logger/easylogging++.h"
+
 namespace Susi {
     namespace Events {
 
