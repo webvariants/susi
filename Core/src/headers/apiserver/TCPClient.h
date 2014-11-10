@@ -35,8 +35,41 @@ namespace Susi {
                 std::swap( runloop,other.runloop );
             }
 
-            TCPClient( std::string address ) : sa {address} {
-                reconnect();
+            TCPClient( std::string address ) : sa {address}, sock {sa} {
+                sock.setReceiveTimeout( Poco::Timespan{0,1000000} );
+                runloop = std::move( std::thread{
+                    [this]() {
+                        onConnect();
+                        char buff[1024];
+                        int bs;
+                        while( !isClosed ) {
+                            try {
+                                //std::cout<<"wait for bytes"<<std::endl;
+                                bs = sock.receiveBytes( buff,1024 );
+                                //std::cout<<"got "<<bs<<std::endl;
+                                if( bs<=0 ) {
+                                    onClose();
+                                    break;
+                                }
+                                std::string data {buff,static_cast<size_t>( bs )};
+                                onData( data );
+                            }
+                            catch( const Poco::TimeoutException & e ) {
+                                //std::cout<<"timeout!"<<std::endl;
+                                if( isClosed )break;
+                            }
+                            catch( const Poco::Net::NetException & e){
+                                std::cout<<"TCPClient NetException: "<<e.displayText()<<std::endl;
+                                break;
+                            }
+                            catch( const std::exception & e ) {
+                                std::cout<<"Exception: "<<e.what()<<std::endl;
+                                break;
+                            }
+                        }
+                        //std::cout<<"runloop end"<<std::endl;
+                    }
+                } );
             }
 
             void close() {
@@ -61,46 +94,11 @@ namespace Susi {
             }
             void join() {
                 runloop.join();
-            }       
-            void reconnect() {
-                std::cout<<"reconnect!"<<std::endl;
-                sock.connect(sa);
-                if(isClosed){
-                    isClosed = false;
-                    runloop = std::move( std::thread{
-                        [this]() {
-                            onConnect();
-                            char buff[1024];
-                            int bs;
-                            while( !isClosed ) {
-                                try {
-                                    std::cout<<"wait for bytes"<<std::endl;
-                                    bs = sock.receiveBytes( buff,1024 );
-                                    std::cout<<"got "<<bs<<std::endl;
-                                    if( bs<=0 ) {
-                                        onClose();
-                                        break;
-                                    }
-                                    std::string data {buff,static_cast<size_t>( bs )};
-                                    onData( data );
-                                }
-                                catch( const Poco::TimeoutException & e ) {
-                                    //std::cout<<"timeout!"<<std::endl;
-                                    if( isClosed )break;
-                                }
-                                catch( const std::exception & e ) {
-                                    std::cout<<"Exception: "<<e.what()<<std::endl;
-                                    break;
-                                }
-                            }
-                            isClosed = true;
-                        }
-                    } );
-                }
             }
             virtual ~TCPClient() {
                 close();
             }
+
         private:
             bool isClosed = false;
             Poco::Net::SocketAddress sa;

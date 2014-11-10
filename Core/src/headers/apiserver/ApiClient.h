@@ -31,7 +31,6 @@ namespace Susi {
             long subscribe( std::string topic, Susi::Events::Processor processor , std::string name = "");
             long subscribe( std::string topic, Susi::Events::Consumer consumer , std::string name = "");
             bool unsubscribe( long id ) {
-                subscribes.erase(id);
                 return Susi::Events::Manager::unsubscribe( id );
             }
             void ack( Susi::Events::EventPtr event ) {
@@ -46,33 +45,10 @@ namespace Susi {
             virtual void onAck( Susi::Events::Event & event ) override;
 
             virtual void onConnect() override {};
-            virtual void onClose() override {
-                reconnect();
-                for(auto & kv : subscribes) {
-                    auto & sub = kv.second;
-                    if(sub.processor){
-                        sendRegisterProcessor(sub.topic, sub.name);
-                    }else{
-                        sendRegisterConsumer(sub.topic, sub.name);
-                    }
-                }
-                for(auto & kv : publishData) {
-                    sendPublish(*(kv.second.event));
-                }
-            };
+            virtual void onClose() override {};
 
-            //remember for reconnect
-            struct PublishData {
-                Susi::Events::EventPtr event;
-                Susi::Events::Consumer finishCallback;
-            };
-            std::map<std::string,PublishData> publishData;
-            struct SubscribeData {
-                std::string topic;
-                std::string name;
-                bool processor;
-            };
-            std::map<long,SubscribeData> subscribes;
+            std::map<std::string,Susi::Events::Consumer> finishCallbacks;
+
         };
 
     }
