@@ -16,7 +16,6 @@
 #include <condition_variable>
 #include <csignal>
 #include <iostream>
-#include <zlib.h>
 
 #include "config/Config.h"
 #include "world/ComponentManager.h"
@@ -68,9 +67,6 @@ int main(int argc, char** argv){
    	}
 
 	componentManager = Susi::System::createSusiComponentManager(cfg.getConfig());
-	//componentManager = std::make_shared<Susi::System::ComponentManager>(cfg.getConfig());
-	//componentManager->startComponent("eventsystem");
-	//componentManager->startComponent("heartbeat");
 	componentManager->startAll();
 
 	auto eventsystem = componentManager->getComponent<Susi::Events::ManagerComponent>("eventsystem");
