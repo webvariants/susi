@@ -431,11 +431,11 @@ TEST_F(EventManagerTest, GlobTest){
 TEST_F(EventManagerTest,Constraints){
 	eventManager->subscribe(std::string{"test"},Susi::Events::Processor{[](Susi::Events::EventPtr evt){
 		evt->headers.push_back({"foo","foo"});
-	},"fooAdder");
+	}},"fooAdder");
 	
 	eventManager->subscribe(std::string{"test"},Susi::Events::Processor{[](Susi::Events::EventPtr evt){
 		evt->headers.push_back({"bar","bar"});
-	},"barAdder");
+	}},"barAdder");
 	
 	eventManager->addConstraint({"barAdder","fooAdder"});
 	
