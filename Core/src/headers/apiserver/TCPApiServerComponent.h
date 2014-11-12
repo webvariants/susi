@@ -34,7 +34,7 @@ namespace Susi {
                 std::shared_ptr<Susi::Events::ManagerComponent> _eventsystem;
                 std::string sessionID = "";
                 Susi::Api::JSONStreamCollector collector;
-                std::atomic<bool> & close;
+                const std::atomic<bool> & close;
                 TCPApiServerComponent *tcpApiServer;
             public:
                 Connection( const Poco::Net::StreamSocket& s,std::shared_ptr<Susi::Api::ApiServerComponent> api, std::shared_ptr<Susi::Events::ManagerComponent> eventsystem, std::atomic<bool> & _close,TCPApiServerComponent *tcpserver) :

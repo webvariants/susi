@@ -115,7 +115,6 @@ bool Susi::System::ComponentManager::stopAll() {
 }
 
 void Susi::System::ComponentManager::unloadAll() {
-    bool result = true;
     for( auto kv: config ) {
         unloadComponent( kv.first );
     }
