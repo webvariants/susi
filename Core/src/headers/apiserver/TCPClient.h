@@ -16,6 +16,9 @@
 #include <Poco/Net/SocketAddress.h>
 #include <thread>
 #include <iostream>
+#include <atomic>
+#include "logger/easylogging++.h"
+
 namespace Susi {
     namespace Api {
 
@@ -24,81 +27,36 @@ namespace Susi {
 
             //These functions are not pure virtual, because of destruction problems.
             virtual void onConnect() {};
+            virtual void onReconnect() {onConnect();};
             virtual void onData( std::string & data ) {};
             virtual void onClose() {};
 
-            TCPClient( TCPClient && other ) {
-                std::swap( isClosed,other.isClosed );
-                std::swap( sa,other.sa );
-                std::swap( sock,other.sock );
-                std::swap( runloop,other.runloop );
-            }
+            TCPClient( std::string address );
+            
+            TCPClient( TCPClient && other );
 
-            TCPClient( std::string address ) : sa {address}, sock {sa} {
-                sock.setReceiveTimeout( Poco::Timespan{0,1000000} );
-                runloop = std::move( std::thread{
-                    [this]() {
-                        onConnect();
-                        char buff[1024];
-                        int bs;
-                        while( !isClosed ) {
-                            try {
-                                //std::cout<<"wait for bytes"<<std::endl;
-                                bs = sock.receiveBytes( buff,1024 );
-                                //std::cout<<"got "<<bs<<std::endl;
-                                if( bs<=0 ) {
-                                    onClose();
-                                    break;
-                                }
-                                std::string data {buff,static_cast<size_t>( bs )};
-                                onData( data );
-                            }
-                            catch( const Poco::TimeoutException & e ) {
-                                //std::cout<<"timeout!"<<std::endl;
-                                if( isClosed )break;
-                            }
-                            catch( const std::exception & e ) {
-                                std::cout<<"Exception: "<<e.what()<<std::endl;
-                                break;
-                            }
-                        }
-                        //std::cout<<"runloop end"<<std::endl;
-                    }
-                } );
-            }
 
-            void close() {
-                if( !isClosed ) {
-                    try {
-                        sock.shutdown();
-                        sock.close();
-                        isClosed = true;
-                        //std::cout<<"isClosed = true" <<std::endl;
-                        runloop.join();
-                        onClose();
-                    }
-                    catch( const std::exception & e ) {
-                        std::cout<<"error while closing/joining: "<<e.what()<<std::endl;
-                        onClose();
-                    }
-                }
-            }
-            void send( std::string msg ) {
-                /*auto bs = */sock.sendBytes( msg.c_str(),msg.size() );
-                //std::cout<<"sended "<<bs<<"/"<<msg.size()<<" bytes"<<std::endl;
-            }
-            void join() {
-                runloop.join();
-            }
-            virtual ~TCPClient() {
-                close();
+            void close() ;
+            void send( std::string msg ) ;
+            void join() ;
+            virtual ~TCPClient() ;
+
+            void setMaxReconnectCount(size_t count) {
+                maxReconnectCount = count;
             }
 
         private:
-            bool isClosed = false;
+
+            void startRunloop();
+
+            size_t maxReconnectCount = 0;
+
+            std::atomic<bool> isClosed{false};
             Poco::Net::SocketAddress sa;
             Poco::Net::StreamSocket sock;
             std::thread runloop;
+
+            std::string sendbuff;
         };
 
     }

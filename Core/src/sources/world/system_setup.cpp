@@ -22,7 +22,11 @@ std::shared_ptr<Susi::System::ComponentManager> Susi::System::createSusiComponen
 	 * Declare logger
 	 */
 	manager->registerComponent("logger",[](ComponentManager * mgr, Any & config){
-		return std::shared_ptr<Component>{new Susi::LoggerComponent{}};
+		std::string configFile;
+		if(config["easylogging++"].isString()){
+			configFile = static_cast<std::string>(config["easylogging++"]);
+		}
+		return std::shared_ptr<Component>{new Susi::LoggerComponent{configFile}};
 	});
 
 	/**

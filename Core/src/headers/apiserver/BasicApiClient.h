@@ -21,7 +21,6 @@ namespace Susi {
 
         class BasicApiClient : protected JSONTCPClient {
         protected:
-
             virtual void onMessage( Susi::Util::Any & message ) override;
 
         public:

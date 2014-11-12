@@ -113,3 +113,10 @@ bool Susi::System::ComponentManager::stopAll() {
     }
     return result;
 }
+
+void Susi::System::ComponentManager::unloadAll() {
+    bool result = true;
+    for( auto kv: config ) {
+        unloadComponent( kv.first );
+    }
+}

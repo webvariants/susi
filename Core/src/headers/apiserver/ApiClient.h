@@ -20,7 +20,9 @@ namespace Susi {
 
         class ApiClient : protected BasicApiClient, protected Susi::Events::Manager {
         public:
-            ApiClient( std::string addr ) : BasicApiClient {addr} {}
+            ApiClient( std::string addr ) : BasicApiClient {addr} {
+                setMaxReconnectCount(5);
+            }
             void close() {
                 BasicApiClient::close();
             }
@@ -46,8 +48,20 @@ namespace Susi {
 
             virtual void onConnect() override {};
             virtual void onClose() override {};
+            virtual void onReconnect() override;
 
-            std::map<std::string,Susi::Events::Consumer> finishCallbacks;
+            struct PublishData {
+                Susi::Events::Event event;
+                Susi::Events::Consumer finishCallback;
+            };
+            std::map<std::string,PublishData> publishs;
+            
+            struct SubscribeData {
+                std::string topic;
+                std::string name;
+                bool processor;
+            };
+            std::vector<SubscribeData> subscribes;
 
         };
 

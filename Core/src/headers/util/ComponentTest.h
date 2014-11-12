@@ -104,7 +104,8 @@ protected:
                                   "\"assets\": \""+path+"/assets\","
                                   "\"upload\": \""+path+"/upload\""
                                   "},"
-                                  "\"apiserver\": {}"
+                                  "\"apiserver\": {},"
+                                  "\"logger\": {\"easylogging++\": \"../../Core/easylogging++.conf\"}"
                                   "}";
 
         return configString;
