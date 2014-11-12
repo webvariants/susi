@@ -34,10 +34,10 @@ namespace Susi {
                 std::shared_ptr<Susi::Events::ManagerComponent> _eventsystem;
                 std::string sessionID = "";
                 Susi::Api::JSONStreamCollector collector;
-                const std::atomic<bool> & close;
+                std::atomic<bool> * close;
                 TCPApiServerComponent *tcpApiServer;
             public:
-                Connection( const Poco::Net::StreamSocket& s,std::shared_ptr<Susi::Api::ApiServerComponent> api, std::shared_ptr<Susi::Events::ManagerComponent> eventsystem, std::atomic<bool> & _close,TCPApiServerComponent *tcpserver) :
+                Connection( const Poco::Net::StreamSocket& s,std::shared_ptr<Susi::Api::ApiServerComponent> api, std::shared_ptr<Susi::Events::ManagerComponent> eventsystem, std::atomic<bool> * _close,TCPApiServerComponent *tcpserver) :
                     Poco::Net::TCPServerConnection {s},
                     _api {api},
                     _eventsystem{eventsystem},
@@ -70,7 +70,7 @@ namespace Susi {
                 void run() {
                     char buff[1024];
                     bool shutdownCalled = false;
-                    while( !close.load() ) {
+                    while( !close->load() ) {
                         try{
                             std::string s;
                             try{
@@ -111,9 +111,9 @@ namespace Susi {
             public:
                 std::shared_ptr<Susi::Api::ApiServerComponent> _api;
                 std::shared_ptr<Susi::Events::ManagerComponent> _eventsystem;
-                std::atomic<bool> & _close;
+                std::atomic<bool> * _close;
                 TCPApiServerComponent *tcpApiServer;
-                ConnectionFactory( std::shared_ptr<Susi::Api::ApiServerComponent> api, std::shared_ptr<Susi::Events::ManagerComponent> eventsystem, std::atomic<bool> & close, TCPApiServerComponent *tcpserver ) : 
+                ConnectionFactory( std::shared_ptr<Susi::Api::ApiServerComponent> api, std::shared_ptr<Susi::Events::ManagerComponent> eventsystem, std::atomic<bool> * close, TCPApiServerComponent *tcpserver ) : 
                     _api {api}, 
                     _eventsystem{eventsystem},
                     _close{close},
@@ -143,7 +143,7 @@ namespace Susi {
                  address {addr},
                  serverSocket {address},
             params {new Poco::Net::TCPServerParams},
-            tcpServer {new ConnectionFactory{api,eventsystem,close,this}, serverSocket, params} {
+            tcpServer {new ConnectionFactory{api,eventsystem,&close,this}, serverSocket, params} {
                 params->setMaxThreads( threads );
                 params->setMaxQueued( backlog );
             }
