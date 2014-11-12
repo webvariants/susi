@@ -52,6 +52,8 @@ namespace Susi
             bool startAll();
             bool stopAll();
 
+            void unloadAll();
+
             template<class T=Component>
             std::shared_ptr<T> getComponent( std::string name )
             {

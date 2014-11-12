@@ -25,10 +25,16 @@ bool fileExists(const std::string & filename);
 bool compress_lzma(std::string infile, std::string outfile);
 
 class LoggerComponent : public Susi::System::Component {
+protected:
+    std::string configFile;
 public:
-    LoggerComponent(){}
+    LoggerComponent(std::string cfg) : configFile{cfg} {}
 
     virtual void start() override {
+        if(configFile!=""){
+            el::Configurations conf(configFile);
+            el::Loggers::reconfigureAllLoggers(conf);
+        }
         el::Loggers::addFlag(el::LoggingFlag::StrictLogFileSizeCheck);
         el::Helpers::installPreRollOutCallback(rolloutHandler);
         LOG(INFO) <<  "started LoggerComponent" ;
