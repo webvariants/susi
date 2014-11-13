@@ -39,7 +39,7 @@ class ConstraintControllerComponent : public Susi::System::Component {
 				eventManager->addConstraint({left,right});
 				event->payload["success"] = true;
 			};
-			subId = eventManager->subscribe("constraints::add",p);
+			subId = eventManager->subscribe(std::string{"constraints::add"},p);
 		}
 	}	
 	

@@ -87,7 +87,7 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	/**
 	 * Declare enginestarter
 	 */
-	manager->registerComponent("enginestarter", [](ComponentManager * mgr, Any & config) {	
+	registerComponent("enginestarter", [](ComponentManager * mgr, Any & config) {	
 		std::string path{""};
 		if(config["path"].isString()){
 			path = static_cast<std::string>(config["path"]);
