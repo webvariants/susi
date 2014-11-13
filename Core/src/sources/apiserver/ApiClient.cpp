@@ -1,6 +1,7 @@
 #include "apiserver/ApiClient.h"
 
 void Susi::Api::ApiClient::publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback ) {
+    LOG(DEBUG) << "publish called";
     PublishData data{*event,finishCallback};
     publishs[event->getID()] = data;
     sendPublish( *event );
@@ -44,6 +45,7 @@ void Susi::Api::ApiClient::onAck( Susi::Events::Event & event ) {
 }
 
 void Susi::Api::ApiClient::onReconnect() {
+    LOG(DEBUG) << "we had a reconnect -> resubscribing everything";
     for(auto it : subscribes){
         if(it.processor){
             sendRegisterProcessor(it.topic,it.name);

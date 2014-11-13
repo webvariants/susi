@@ -13,7 +13,7 @@
 #define __REMOTEEVENTCOLLECTOR__
 
 #include "apiserver/BasicApiClient.h"
-#include "events/EventManager.h"
+#include "events/IEventSystem.h"
 
 namespace Susi {
     namespace Autodiscovery {
@@ -21,7 +21,7 @@ namespace Susi {
         class RemoteEventCollector : protected Susi::Api::BasicApiClient {
         protected:
             std::string _ownId;
-            std::shared_ptr<Susi::Events::ManagerComponent> _eventsystem;
+            std::shared_ptr<Susi::Events::IEventSystem> _eventsystem;
 
             virtual void onProcessorEvent( Susi::Events::Event & event ) {
                 auto eventPtr = _eventsystem->createEvent( event.topic );
@@ -38,7 +38,7 @@ namespace Susi {
             RemoteEventCollector(
                 std::string addr,
                 std::string ownId,
-                std::shared_ptr<Susi::Events::ManagerComponent> eventsystem ) :
+                std::shared_ptr<Susi::Events::IEventSystem> eventsystem ) :
                 Susi::Api::BasicApiClient {addr}, _ownId {ownId}, _eventsystem {eventsystem}
             {
                 if( _eventsystem.get() == nullptr ) {

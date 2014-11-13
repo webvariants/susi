@@ -5,17 +5,16 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- *
- * @author: Christian Sonderfeld (christian.sonderfeld@webvariants.de)
+ * 
+ * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
+#ifndef __SUSISERVERCOMPONENTMANAGER__
+#define __SUSISERVERCOMPONENTMANAGER__
 
-#ifndef __SYSTEMSETUP__
-#define __SYSTEMSETUP__
-
-#include "util/Any.h"
 #include "world/ComponentManager.h"
-
+#include "util/Any.h"
+ 
 #include "apiserver/TCPApiServerComponent.h"
 #include "auth/AuthControllerComponent.h"
 #include "db/DBComponent.h"
@@ -33,9 +32,14 @@
 #include "logger/Logger.h"
 
 namespace Susi {
-    namespace System {
-        std::shared_ptr<Susi::System::ComponentManager> createSusiComponentManager( Susi::Util::Any::Object config );
-    }
+namespace System {
+
+class SusiServerComponentManager : public ComponentManager {
+public:
+	SusiServerComponentManager(Susi::Util::Any::Object config);
+};
+
+}
 }
 
-#endif // __SYSTEMSETUP__
+#endif // __SUSISERVERCOMPONENTMANAGER__

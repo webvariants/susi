@@ -31,19 +31,19 @@ namespace Susi {
             class Connection : public Poco::Net::TCPServerConnection {
             protected:
                 std::shared_ptr<Susi::Api::ApiServerComponent> _api;
-                std::shared_ptr<Susi::Events::ManagerComponent> _eventsystem;
+                std::shared_ptr<Susi::Events::IEventSystem> _eventsystem;
                 std::string sessionID = "";
                 Susi::Api::JSONStreamCollector collector;
                 std::atomic<bool> * close;
                 TCPApiServerComponent *tcpApiServer;
             public:
-                Connection( const Poco::Net::StreamSocket& s,std::shared_ptr<Susi::Api::ApiServerComponent> api, std::shared_ptr<Susi::Events::ManagerComponent> eventsystem, std::atomic<bool> * _close,TCPApiServerComponent *tcpserver) :
+                Connection( const Poco::Net::StreamSocket& s,std::shared_ptr<Susi::Api::ApiServerComponent> api, std::shared_ptr<Susi::Events::IEventSystem> eventsystem, std::atomic<bool> & _close,TCPApiServerComponent *tcpserver) :
                     Poco::Net::TCPServerConnection {s},
                     _api {api},
                     _eventsystem{eventsystem},
                     sessionID {std::to_string( std::chrono::system_clock::now().time_since_epoch().count() )},
                     collector {[this]( std::string & msg ) {
-                        LOG(DEBUG) <<  "got message in collector!" ;
+                        LOG(DEBUG) <<  "got message in collector:" << msg;
                         std::string s = sessionID;
                         auto message = Susi::Util::Any::fromJSONString( msg );
                         if(message["type"]=="shutdown"){
@@ -89,7 +89,8 @@ namespace Susi {
                                 continue;
                             }
                             collector.collect( s );
-                        }catch(...){
+                        }catch(const std::exception & e){
+                            LOG(DEBUG) << "got exception in apiclient connection: "<<e.what();
                             Susi::Util::Any msg{Susi::Util::Any::Object{
                                 {"type","shutdown"}
                             }};
@@ -110,10 +111,10 @@ namespace Susi {
             class ConnectionFactory : public Poco::Net::TCPServerConnectionFactory {
             public:
                 std::shared_ptr<Susi::Api::ApiServerComponent> _api;
-                std::shared_ptr<Susi::Events::ManagerComponent> _eventsystem;
-                std::atomic<bool> * _close;
+                std::shared_ptr<Susi::Events::IEventSystem> _eventsystem;
+                std::atomic<bool> & _close;
                 TCPApiServerComponent *tcpApiServer;
-                ConnectionFactory( std::shared_ptr<Susi::Api::ApiServerComponent> api, std::shared_ptr<Susi::Events::ManagerComponent> eventsystem, std::atomic<bool> * close, TCPApiServerComponent *tcpserver ) : 
+                ConnectionFactory( std::shared_ptr<Susi::Api::ApiServerComponent> api, std::shared_ptr<Susi::Events::IEventSystem> eventsystem, std::atomic<bool> & close, TCPApiServerComponent *tcpserver ) : 
                     _api {api}, 
                     _eventsystem{eventsystem},
                     _close{close},
@@ -125,7 +126,7 @@ namespace Susi {
             };
 
             std::shared_ptr<Susi::Api::ApiServerComponent> api;
-            std::shared_ptr<Susi::Events::ManagerComponent> eventsystem;
+            std::shared_ptr<Susi::Events::IEventSystem> eventsystem;
             Poco::Net::SocketAddress address;
             Poco::Net::ServerSocket serverSocket;
             Poco::Net::TCPServerParams *params;
@@ -139,7 +140,7 @@ namespace Susi {
                                    size_t backlog = 16 ) :
                 Susi::System::BaseComponent {mgr},
                  api {componentManager->getComponent<Susi::Api::ApiServerComponent>( "apiserver" )},
-                 eventsystem {componentManager->getComponent<Susi::Events::ManagerComponent>( "eventsystem" )},
+                 eventsystem {componentManager->getComponent<Susi::Events::IEventSystem>( "eventsystem" )},
                  address {addr},
                  serverSocket {address},
             params {new Poco::Net::TCPServerParams},

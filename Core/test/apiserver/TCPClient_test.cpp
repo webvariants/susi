@@ -101,7 +101,7 @@ TEST_F(TCPClientTest, Basic) {
 	client.join();
 }
 
-TEST_F(TCPClientTest, Reconnect) {
+/*TEST_F(TCPClientTest, Reconnect) {
 	struct TestTCPClient : public Susi::Api::TCPClient {
 		std::mutex mutex;
 		std::condition_variable cond;
@@ -134,4 +134,4 @@ TEST_F(TCPClientTest, Reconnect) {
 		client.cond.wait_for(lock, std::chrono::milliseconds{5000}, [&client]{return client.done;});
 	}
 	EXPECT_TRUE(client.done);
-}
+}*/

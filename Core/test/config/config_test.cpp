@@ -1,6 +1,5 @@
 #include "gtest/gtest.h"
 #include "world/ComponentManager.h"
-#include "world/system_setup.h"
 #include "config/Config.h"
 #include "iocontroller/IOController.h"
 
