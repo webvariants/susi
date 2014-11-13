@@ -66,15 +66,18 @@ void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, Su
     if( data.isObject() ) {
         std::string topic = data["topic"];
         std::string subName = "";
+        LOG(DEBUG) << "trying to subscribe"<<id<<"to topic"<<topic;
         if(data["name"].isString()){
             subName = static_cast<std::string>(data["name"]);
         }
         auto & subs = consumerSubscriptions[id];
         if( subs.find( topic ) != subs.end() ) {
+            LOG(DEBUG) << "failed to subscribe"<<id<<"to topic"<<topic<<": allready subscribed";
             sendFail( id,"you are allready subscribed to "+topic );
             return;
         }
         Susi::Events::Consumer callback = [this,id]( Susi::Events::SharedEventPtr event ) {
+            LOG(DEBUG) << "got consumer event, forwarding it to api client.";
             Susi::Util::Any packet;
             packet["type"] = "consumerEvent";
             packet["data"] = event->toAny();
@@ -85,6 +88,7 @@ void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, Su
             send( _id,packet );
         };
         long subid = eventManager->subscribe( topic,callback,subName );
+        LOG(DEBUG) << "subscribed"<<id<<"to topic"<<topic;
         subs[topic] = subid;
         sendOk( id );
     }

@@ -12,21 +12,12 @@
 
 #include "logger/easylogging++.h"
 
+#include "events/IEventSystem.h"
+
 namespace Susi {
     namespace Events {
 
-//Event pointer types
-        typedef std::unique_ptr<Event,std::function<void( Event* )>> EventPtr;
-        typedef std::shared_ptr<Event> SharedEventPtr;
-
-//Callback types
-        typedef std::function<void( EventPtr )> Processor;
-        typedef std::function<void( SharedEventPtr )> Consumer;
-
-//a event predicate
-        typedef std::function<bool( Event& )> Predicate;
-
-        class Manager {
+        class Manager : public IEventSystem {
         public:
             Manager( size_t workers = 4, size_t buffsize = 32 ) : pool {workers,buffsize} {};
             // public subscribe api

@@ -14,19 +14,22 @@
 
 #include "apiserver/BasicApiClient.h"
 #include "events/EventManager.h"
+#include "logger/easylogging++.h"
 
 namespace Susi {
     namespace Api {
 
-        class ApiClient : protected BasicApiClient, protected Susi::Events::Manager {
+        class ApiClient : protected BasicApiClient, protected Susi::Events::Manager, Susi::Events::IEventSystem {
         public:
             ApiClient( std::string addr ) : BasicApiClient {addr} {
                 setMaxReconnectCount(5);
             }
             void close() {
+                LOG(DEBUG) << "close called";
                 BasicApiClient::close();
             }
             virtual ~ApiClient() {
+                LOG(DEBUG) << "destructor called";
                 close();
             }
             void publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer {} );

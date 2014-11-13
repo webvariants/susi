@@ -13,11 +13,11 @@
 #define __COMPONENTTEST__
 
 #include "gtest/gtest.h"
-#include "world/system_setup.h"
 #include "config/Config.h"
 #include "iocontroller/IOController.h"
 #include "logger/easylogging++.h"
-#include "events/EventManagerComponent.h"
+#include "events/IEventSystem.h"
+#include "world/SusiServerComponentManager.h"
 
 class ComponentTest : public ::testing::Test {
 public:
@@ -29,8 +29,8 @@ public:
         base_path = Poco::Path( Poco::Path::current() ).toString() + "component_test";
 
         Susi::Util::Any::Object cfg = Susi::Util::Any::fromJSONString( getConfigString( base_path ) );
-        componentManager = Susi::System::createSusiComponentManager( cfg );
-        eventManager = componentManager->getComponent<Susi::Events::ManagerComponent>( "eventsystem" );
+        componentManager.reset(dynamic_cast<Susi::System::ComponentManager*>(new Susi::System::SusiServerComponentManager{cfg}));
+        eventManager = componentManager->getComponent<Susi::Events::IEventSystem>( "eventsystem" );
 
 
         io.makeDir( base_path );
@@ -42,7 +42,7 @@ public:
 
 protected:
     std::shared_ptr<Susi::System::ComponentManager> componentManager;
-    std::shared_ptr<Susi::Events::ManagerComponent> eventManager;
+    std::shared_ptr<Susi::Events::IEventSystem> eventManager;
 
     Susi::IOController io;
 
@@ -115,18 +115,18 @@ protected:
         long id = eventManager->subscribe( topic,std::move( processor ));
         return id;
     }
-    long subscribe( Susi::Events::Predicate pred, Susi::Events::Processor processor ) {
+    /*long subscribe( Susi::Events::Predicate pred, Susi::Events::Processor processor ) {
         long id = eventManager->subscribe( pred,std::move( processor ));
         return id;
-    }
+    }*/
     long subscribe( std::string topic, Susi::Events::Consumer consumer ) {
         long id = eventManager->subscribe( topic,std::move( consumer ));
         return id;
     }
-    long subscribe( Susi::Events::Predicate pred, Susi::Events::Consumer consumer ) {
+    /*long subscribe( Susi::Events::Predicate pred, Susi::Events::Consumer consumer ) {
         long id = eventManager->subscribe( pred,std::move( consumer ));
         return id;
-    }
+    }*/
     bool unsubscribe( long id ) {
         return eventManager->unsubscribe( id );
     }

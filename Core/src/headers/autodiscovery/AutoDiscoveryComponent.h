@@ -29,7 +29,7 @@ namespace Susi {
                 Collector( AutoDiscoveryComponent *autodiscoveryComponent,
                            std::string addr,
                            std::string ownId,
-                           std::shared_ptr<Susi::Events::ManagerComponent> eventsystem ) :
+                           std::shared_ptr<Susi::Events::IEventSystem> eventsystem ) :
                     Susi::Autodiscovery::RemoteEventCollector {addr,ownId,eventsystem},
                 _autodiscoveryComponent {autodiscoveryComponent} {}
 

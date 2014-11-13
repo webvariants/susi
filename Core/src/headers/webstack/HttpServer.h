@@ -29,7 +29,7 @@ namespace Susi {
         Poco::Net::ServerSocket serverSocket;
 
         std::shared_ptr<Susi::Sessions::SessionManagerComponent> _sessionManager;
-        std::shared_ptr<Susi::Events::ManagerComponent> _eventManager;
+        std::shared_ptr<Susi::Events::IEventSystem> _eventManager;
         Susi::Api::ApiServerForComponent _apiServer;
         Poco::Net::HTTPServer server;
         std::string _addr;
@@ -37,7 +37,7 @@ namespace Susi {
         HttpServer( std::string addr,
                     std::string assetRoot,
                     std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager,
-                    std::shared_ptr<Susi::Events::ManagerComponent> eventManager ) :
+                    std::shared_ptr<Susi::Events::IEventSystem> eventManager ) :
             address( addr ),
             serverSocket( address ),
             _sessionManager {sessionManager},

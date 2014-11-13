@@ -17,6 +17,7 @@
 #include "world/Component.h"
 #include "world/ComponentManager.h"
 #include "events/EventManagerComponent.h"
+#include "events/IEventSystem.h"
 
 namespace Susi {
     namespace System {
@@ -24,33 +25,33 @@ namespace Susi {
         class BaseComponent : public Component {
         protected:
             ComponentManager * componentManager;
-            std::shared_ptr<Susi::Events::ManagerComponent> eventManager;
+            std::shared_ptr<Susi::Events::IEventSystem> eventManager;
             std::vector<long> evtIdPool;
 
         public:
             BaseComponent( ComponentManager * manager ) : componentManager {manager} {
-                eventManager = componentManager->getComponent<Susi::Events::ManagerComponent>( "eventsystem" );
+                eventManager = componentManager->getComponent<Susi::Events::IEventSystem>( "eventsystem" );
             }
             long subscribe( std::string topic, Susi::Events::Processor processor, std::string name="" ) {
                 long id = eventManager->subscribe( topic,std::move( processor ),name );
                 evtIdPool.push_back( id );
                 return id;
             }
-            long subscribe( Susi::Events::Predicate pred, Susi::Events::Processor processor, std::string name="" ) {
+            /*long subscribe( Susi::Events::Predicate pred, Susi::Events::Processor processor, std::string name="" ) {
                 long id = eventManager->subscribe( pred,std::move( processor ),name );
                 evtIdPool.push_back( id );
                 return id;
-            }
+            }*/
             long subscribe( std::string topic, Susi::Events::Consumer consumer, std::string name="" ) {
                 long id = eventManager->subscribe( topic,std::move( consumer ),name );
                 evtIdPool.push_back( id );
                 return id;
             }
-            long subscribe( Susi::Events::Predicate pred, Susi::Events::Consumer consumer, std::string name="" ) {
+            /*long subscribe( Susi::Events::Predicate pred, Susi::Events::Consumer consumer, std::string name="" ) {
                 long id = eventManager->subscribe( pred,std::move( consumer ),name );
                 evtIdPool.push_back( id );
                 return id;
-            }
+            }*/
             bool unsubscribe( long id ) {
                 return eventManager->unsubscribe( id );
             }

@@ -49,7 +49,6 @@ void Susi::Api::TCPClient::startRunloop(){
     sock.connect(sa);
     onConnect();
     sock.setReceiveTimeout( Poco::Timespan{0,100000} );
-    sock.setSendTimeout( Poco::Timespan{0,100000} );
     runloop = std::move( std::thread{
         [this]() {
             char buff[1024];
@@ -66,7 +65,7 @@ void Susi::Api::TCPClient::startRunloop(){
                     onData( data );
                 }
                 catch( const Poco::TimeoutException & e ) {
-                    //std::cout<<"timeout!"<<std::endl;
+                    
                 }
                 catch( const std::exception & e ) {
                     LOG(DEBUG)<<"Exception in receive loop: "<<e.what();

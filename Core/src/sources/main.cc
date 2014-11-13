@@ -19,15 +19,14 @@
 #include <zlib.h>
 
 #include "config/Config.h"
-#include "world/ComponentManager.h"
-#include "world/system_setup.h"
+#include "world/SusiServerComponentManager.h"
 
 #include "logger/easylogging++.h"
 _INITIALIZE_EASYLOGGINGPP
 
 std::condition_variable waitCond;
 
-std::shared_ptr<Susi::System::ComponentManager> componentManager;
+std::shared_ptr<Susi::System::SusiServerComponentManager> componentManager;
 
 void waitForEver(){
 	std::mutex mutex;
@@ -67,13 +66,10 @@ int main(int argc, char** argv){
    		el::Loggers::reconfigureAllLoggers(conf);
    	}
 
-	componentManager = Susi::System::createSusiComponentManager(cfg.getConfig());
-	//componentManager = std::make_shared<Susi::System::ComponentManager>(cfg.getConfig());
-	//componentManager->startComponent("eventsystem");
-	//componentManager->startComponent("heartbeat");
+	componentManager.reset(new Susi::System::SusiServerComponentManager{cfg.getConfig()});
 	componentManager->startAll();
 
-	auto eventsystem = componentManager->getComponent<Susi::Events::ManagerComponent>("eventsystem");
+	auto eventsystem = componentManager->getComponent<Susi::Events::IEventSystem>("eventsystem");
 	auto event = eventsystem->createEvent("global::start");
 	eventsystem->publish(std::move(event));
 
