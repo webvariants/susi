@@ -37,7 +37,7 @@ namespace Susi {
                 std::atomic<bool> * close;
                 TCPApiServerComponent *tcpApiServer;
             public:
-                Connection( const Poco::Net::StreamSocket& s,std::shared_ptr<Susi::Api::ApiServerComponent> api, std::shared_ptr<Susi::Events::IEventSystem> eventsystem, std::atomic<bool> & _close,TCPApiServerComponent *tcpserver) :
+                Connection( const Poco::Net::StreamSocket& s,std::shared_ptr<Susi::Api::ApiServerComponent> api, std::shared_ptr<Susi::Events::IEventSystem> eventsystem, std::atomic<bool> * _close,TCPApiServerComponent *tcpserver) :
                     Poco::Net::TCPServerConnection {s},
                     _api {api},
                     _eventsystem{eventsystem},
@@ -112,9 +112,9 @@ namespace Susi {
             public:
                 std::shared_ptr<Susi::Api::ApiServerComponent> _api;
                 std::shared_ptr<Susi::Events::IEventSystem> _eventsystem;
-                std::atomic<bool> & _close;
+                std::atomic<bool> * _close;
                 TCPApiServerComponent *tcpApiServer;
-                ConnectionFactory( std::shared_ptr<Susi::Api::ApiServerComponent> api, std::shared_ptr<Susi::Events::IEventSystem> eventsystem, std::atomic<bool> & close, TCPApiServerComponent *tcpserver ) : 
+                ConnectionFactory( std::shared_ptr<Susi::Api::ApiServerComponent> api, std::shared_ptr<Susi::Events::IEventSystem> eventsystem, std::atomic<bool> * close, TCPApiServerComponent *tcpserver ) : 
                     _api {api}, 
                     _eventsystem{eventsystem},
                     _close{close},
