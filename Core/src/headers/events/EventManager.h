@@ -21,21 +21,21 @@ namespace Susi {
         public:
             Manager( size_t workers = 4, size_t buffsize = 32 ) : pool {workers,buffsize} {};
             // public subscribe api
-            long subscribe( std::string topic, Processor processor, std::string name="" );
-            long subscribe( Predicate pred, Processor processor, std::string name="" );
-            long subscribe( std::string topic, Consumer consumer, std::string name="" );
-            long subscribe( Predicate pred, Consumer consumer, std::string name="" );
-            bool unsubscribe( long id );
+            virtual long subscribe( std::string topic, Processor processor, std::string name="" );
+            virtual long subscribe( Predicate pred, Processor processor, std::string name="" );
+            virtual long subscribe( std::string topic, Consumer consumer, std::string name="" );
+            virtual long subscribe( Predicate pred, Consumer consumer, std::string name="" );
+            virtual bool unsubscribe( long id );
             // public publish api function
-            void publish( EventPtr event, Consumer finishCallback = Consumer {} );
+            virtual void publish( EventPtr event, Consumer finishCallback = Consumer {} );
             // pass event back to system
-            void ack( EventPtr event );
+            virtual void ack( EventPtr event );
 
             void addConstraint( std::pair<std::string,std::string> constraint ) {
                 scheduler.addConstraint( constraint );
             }
 
-            EventPtr createEvent( std::string topic );
+            virtual EventPtr createEvent( std::string topic );
 
         protected:
             Susi::Util::ThreadPool pool;

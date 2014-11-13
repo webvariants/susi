@@ -12,6 +12,7 @@
 #ifndef __APICLIENT__
 #define __APICLIENT__
 
+#include "world/Component.h"
 #include "apiserver/BasicApiClient.h"
 #include "events/EventManager.h"
 #include "logger/easylogging++.h"
@@ -19,31 +20,31 @@
 namespace Susi {
     namespace Api {
 
-        class ApiClient : protected BasicApiClient, protected Susi::Events::Manager, Susi::Events::IEventSystem {
+        class ApiClient : protected BasicApiClient, public Susi::Events::Manager {
         public:
             ApiClient( std::string addr ) : BasicApiClient {addr} {
                 setMaxReconnectCount(5);
             }
             void close() {
-                LOG(DEBUG) << "close called";
                 BasicApiClient::close();
             }
             virtual ~ApiClient() {
-                LOG(DEBUG) << "destructor called";
                 close();
+                LOG(INFO) << "Stopped ApiClient-Component.";
             }
-            void publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer {} );
-            long subscribe( std::string topic, Susi::Events::Processor processor , std::string name = "");
-            long subscribe( std::string topic, Susi::Events::Consumer consumer , std::string name = "");
-            bool unsubscribe( long id ) {
+            virtual void publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer {} );
+            virtual long subscribe( std::string topic, Susi::Events::Processor processor , std::string name = "");
+            virtual long subscribe( std::string topic, Susi::Events::Consumer consumer , std::string name = "");
+            virtual bool unsubscribe( long id ) {
                 return Susi::Events::Manager::unsubscribe( id );
             }
-            void ack( Susi::Events::EventPtr event ) {
+            virtual void ack( Susi::Events::EventPtr event ) {
                 Susi::Events::Manager::ack( std::move( event ) );
             }
-            Susi::Events::EventPtr createEvent( std::string topic ) {
+            virtual Susi::Events::EventPtr createEvent( std::string topic ) {
                 return Susi::Events::Manager::createEvent( topic );
             }
+            
         protected:
             virtual void onConsumerEvent( Susi::Events::Event & event ) override;
             virtual void onProcessorEvent( Susi::Events::Event & event ) override;
@@ -66,6 +67,17 @@ namespace Susi {
             };
             std::vector<SubscribeData> subscribes;
 
+        };
+
+        class ApiClientComponent : public ApiClient , public Susi::System::Component {
+        public:
+            ApiClientComponent(std::string addr) : ApiClient{addr} {}
+            virtual void start() override {
+                LOG(INFO) << "started api-client";
+            }
+            virtual void stop() override {
+                close();
+            }
         };
 
     }
