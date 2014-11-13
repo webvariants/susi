@@ -139,6 +139,7 @@ void Susi::Api::ApiServerComponent::handleUnregisterConsumer( std::string & id, 
             long subid = subs[topic];
             eventManager->unsubscribe( subid );
             LOG(DEBUG) << "unregister consumer for topic "<<topic<<" from session "<<id;
+            subs.erase(topic);
             sendOk( id );
         }
         else {
