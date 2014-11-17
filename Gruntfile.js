@@ -15,7 +15,8 @@ module.exports = function(grunt) {
         options: {
           create: [
             '<%= pkg.project.directories.build %>/core',
-            '<%= pkg.project.directories.build %>/cppengine'
+            '<%= pkg.project.directories.build %>/cppengine',
+            '<%= pkg.project.directories.build %>/watchdog'
           ]
         }
       }
@@ -40,6 +41,15 @@ module.exports = function(grunt) {
           }
         }
       },
+      cmake_watchdog: {
+        command: 'cmake ../../<%= pkg.project.directories.watchdog %>',
+        options: {
+          stderr: false,
+          execOptions: {
+            cwd: '<%= pkg.project.directories.build %>/watchdog'
+          }
+        }
+      },
       make_core: {
         command: 'make -j4',
         options: {
@@ -55,6 +65,15 @@ module.exports = function(grunt) {
           stderr: false,
           execOptions: {
             cwd: '<%= pkg.project.directories.build %>/cppengine'
+          }
+        }
+      },
+      make_watchdog: {
+        command: 'make -j4',
+        options: {
+          stderr: false,
+          execOptions: {
+            cwd: '<%= pkg.project.directories.build %>/watchdog'
           }
         }
       },
@@ -93,7 +112,20 @@ module.exports = function(grunt) {
           {
             expand: true,
             flatten: true,
-            src: ['<%= pkg.project.directories.build %>/cppengine/libsusicpp.so'],
+            src: ['<%= pkg.project.directories.build %>/cppengine/sample'],
+            dest: '<%= pkg.project.directories.bin %>'
+          }
+        ]
+      },
+      watchdog: {
+        options: {
+          mode: true
+        },
+        files: [
+          {
+            expand: true,
+            flatten: true,
+            src: ['<%= pkg.project.directories.build %>/watchdog/watchdog'],
             dest: '<%= pkg.project.directories.bin %>'
           }
         ]
@@ -124,7 +156,10 @@ module.exports = function(grunt) {
     'copy:core',
     'shell:cmake_cppengine',
     'shell:make_cppengine',
-    'copy:cppengine'
+    'copy:cppengine',
+    'shell:cmake_watchdog',
+    'shell:make_watchdog',
+    'copy:watchdog'
   ]);
 
   grunt.registerTask('development', 'update all changes', [
@@ -134,7 +169,10 @@ module.exports = function(grunt) {
     'newer:copy:core',
     'shell:cmake_cppengine',
     'shell:make_cppengine',
-    'newer:copy:cppengine'
+    'newer:copy:cppengine',
+    'shell:cmake_watchdog',
+    'shell:make_watchdog',
+    'newer:copy:watchdog'
   ]);
 
   grunt.registerTask('test', 'run the susi tests', ['development','shell:test_core']);

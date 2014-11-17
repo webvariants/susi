@@ -20,17 +20,12 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/dev")
 find_package(POCO REQUIRED PocoFoundation)
 find_package(Threads REQUIRED)
 
-#add_subdirectory( ${CMAKE_SOURCE_DIR}/test/gtest-1.7.0 )
-#include_directories( ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR} )
-
 set( CMAKE_COLOR_MAKEFILE ON )
 
 set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g -Wall --std=c++11 -fPIC -O0" )
 
 include_directories( ${CMAKE_SOURCE_DIR}/src/headers )
-#include_directories( ${CMAKE_SOURCE_DIR}/test/gtest-1.7.0/include )
 include_directories( ${POCO_INCLUDE_DIR} )
-include_directories( ${SOCI_INCLUDE_DIRS} )
 
 file( GLOB SRCFILES ${CMAKE_SOURCE_DIR}/src/sources/*.cpp )
 
