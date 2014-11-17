@@ -69,18 +69,10 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	 */
 	registerComponent("tcpapiserver", [](ComponentManager * mgr, Any & config) {
 		std::string address{""};
-		size_t threads{4};
-		size_t backlog{16};
 		if(config["address"].isString()){
 			address = static_cast<std::string>(config["address"]);
 		}
-		if(config["threads"].isInteger()){
-			threads =  static_cast<long>(config["threads"]);
-		}
-		if(config["backlog"].isInteger()){
-			backlog =  static_cast<long>(config["backlog"]);
-		}
-		return std::shared_ptr<Component>{new Susi::Api::TCPApiServerComponent{mgr, address, threads, backlog}};
+		return std::shared_ptr<Component>{new Susi::Api::TCPApiServerComponent{mgr, address}};
 	});
 	registerDependency("tcpapiserver","apiserver");
 

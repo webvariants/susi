@@ -21,7 +21,8 @@
       "bin": "bin/",
       "build": "build/",
       "core": "Core/",
-      "cppengine": "CPPEngine/"
+      "cppengine": "CPPEngine/",
+      "watchdog": "Watchdog/"
     }
   }
 }

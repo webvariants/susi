@@ -16,6 +16,10 @@
 #include "Poco/Net/TCPServerConnectionFactory.h"
 #include "Poco/Net/TCPServerConnection.h"
 #include "Poco/Net/Socket.h"
+#include "Poco/Net/SocketReactor.h"
+#include "Poco/Net/SocketAcceptor.h"
+#include "Poco/Net/SocketNotification.h" 
+#include "Poco/NObserver.h"
 #include "logger/easylogging++.h"
 #include "apiserver/ApiServerComponent.h"
 #include "apiserver/JSONStreamCollector.h"
@@ -28,100 +32,87 @@ namespace Susi {
 
         class TCPApiServerComponent : public Susi::System::BaseComponent {
         protected:
-            class Connection : public Poco::Net::TCPServerConnection {
-            protected:
-                std::shared_ptr<Susi::Api::ApiServerComponent> _api;
-                std::shared_ptr<Susi::Events::IEventSystem> _eventsystem;
-                std::string sessionID = "";
-                Susi::Api::JSONStreamCollector collector;
-                std::atomic<bool> * close;
-                TCPApiServerComponent *tcpApiServer;
+            class ConnectionHandler {
             public:
-                Connection( const Poco::Net::StreamSocket& s,std::shared_ptr<Susi::Api::ApiServerComponent> api, std::shared_ptr<Susi::Events::IEventSystem> eventsystem, std::atomic<bool> * _close,TCPApiServerComponent *tcpserver) :
-                    Poco::Net::TCPServerConnection {s},
-                    _api {api},
-                    _eventsystem{eventsystem},
-                    sessionID {std::to_string( std::chrono::system_clock::now().time_since_epoch().count() )},
-                    collector {[this]( std::string & msg ) {
-                        LOG(DEBUG) <<  "got message in collector:" << msg;
-                        std::string s = sessionID;
-                        auto message = Susi::Util::Any::fromJSONString( msg );
-                        if(message["type"]=="shutdown"){
-                            throw std::runtime_error{"shutdown requested"};
-                        }
-                        _api->onMessage( s,message );
-                    }},
-                    close{_close},
-                    tcpApiServer{tcpserver} {
-                    socket().setReceiveTimeout(Poco::Timespan(100000));
-                    LOG(DEBUG) <<  "Connection constructor" ;
-                    _api->onConnect( sessionID );
-                    _api->registerSender( sessionID,[this]( Susi::Util::Any & msg ) {
-                        if( this==nullptr ) return;
-                        std::string str = msg.toJSONString()+"\n";
-                        socket().sendBytes( str.c_str(),str.size() );
-                    } );
+                ConnectionHandler(Poco::Net::StreamSocket& socket, Poco::Net::SocketReactor& reactor):
+                    _socket(socket),
+                    _reactor(reactor),
+                    _pBuffer{new char[BUFFER_SIZE]},
+                    _collector{[this](std::string & msg){
+                        auto data = Susi::Util::Any::fromJSONString(msg);
+                        _api->onMessage(_sessionID,data);
+                    }}
+                {
+                    _reactor.addEventHandler(_socket, Poco::NObserver<ConnectionHandler, Poco::Net::ReadableNotification>(*this, &ConnectionHandler::onReadable));
+                    _reactor.addEventHandler(_socket, Poco::NObserver<ConnectionHandler, Poco::Net::ShutdownNotification>(*this, &ConnectionHandler::onShutdown));
                 }
-                ~Connection() {
-                    LOG(DEBUG) <<  "deleting tcp connection" ;
-                    _api->onClose( sessionID );
-                    tcpApiServer->allClosed.notify_one();
-                }
-                void run() {
-                    char buff[1024];
-                    bool shutdownCalled = false;
-                    while( !close->load() ) {
-                        try{
-                            std::string s;
-                            try{
-                                int bs = socket().receiveBytes( buff,sizeof( buff ) );
-                                if( bs<=0 ) {
-                                    LOG(DEBUG) << "tcp connection failed while receive." ;
-                                    auto evt = _eventsystem->createEvent("connection::die");
-                                    evt->payload = Susi::Util::Any::Object{{"sessionid",sessionID}};
-                                    _eventsystem->publish(std::move(evt));
-                                    socket().shutdown();
-                                    shutdownCalled = true;
-                                    break;
-                                }
-                                s = std::string{buff,static_cast<size_t>( bs )};
-                            }catch(const Poco::TimeoutException & e){
-                                continue;
-                            }
-                            collector.collect( s );
-                        }catch(const std::exception & e){
-                            LOG(DEBUG) << "got exception in apiclient connection: "<<e.what();
-                            Susi::Util::Any msg{Susi::Util::Any::Object{
-                                {"type","shutdown"}
-                            }};
-                            std::string m = msg.toJSONString();
-                            socket().sendBytes(m.c_str(),m.size());
-                            socket().shutdown();
-                            shutdownCalled = true;
-                            break;
-                        }
-                    }
-                    if(!shutdownCalled){
-                        LOG(DEBUG) << "shutdown of connection after stop-request";
-                        socket().shutdown();
-                    }
-                }
-            };
 
-            class ConnectionFactory : public Poco::Net::TCPServerConnectionFactory {
-            public:
+                ~ConnectionHandler() {
+                    _reactor.removeEventHandler(_socket, Poco::NObserver<ConnectionHandler, Poco::Net::ReadableNotification>(*this, &ConnectionHandler::onReadable));
+                    _reactor.removeEventHandler(_socket, Poco::NObserver<ConnectionHandler, Poco::Net::ShutdownNotification>(*this, &ConnectionHandler::onShutdown));
+                    _api->unregisterSender(_sessionID);
+                    _api->onClose(_sessionID);
+                }
+
+                void onReadable(const Poco::AutoPtr<Poco::Net::ReadableNotification>& pNf) {
+                    int n = _socket.receiveBytes(_pBuffer, BUFFER_SIZE);
+                    if (n > 0){
+                        std::string data{_pBuffer,static_cast<size_t>(n)};
+                        _collector.collect(data);
+                    }else{
+                        delete this;
+                    }
+                }
+
+                void onShutdown(const Poco::AutoPtr<Poco::Net::ShutdownNotification>& pNf) {
+                    delete this;
+                }
+
+                void setApi(std::shared_ptr<Susi::Api::ApiServerComponent> api){
+                    _api = api;
+                }
+
+                void setSessionID(std::string id){
+                    _sessionID = id;
+                }
+
+                Poco::Net::StreamSocket& socket(){
+                    return _socket;
+                }
+
+            private:
+                enum
+                {
+                    BUFFER_SIZE = 1024
+                };
+
                 std::shared_ptr<Susi::Api::ApiServerComponent> _api;
-                std::shared_ptr<Susi::Events::IEventSystem> _eventsystem;
-                std::atomic<bool> * _close;
-                TCPApiServerComponent *tcpApiServer;
-                ConnectionFactory( std::shared_ptr<Susi::Api::ApiServerComponent> api, std::shared_ptr<Susi::Events::IEventSystem> eventsystem, std::atomic<bool> * close, TCPApiServerComponent *tcpserver ) : 
-                    _api {api}, 
-                    _eventsystem{eventsystem},
-                    _close{close},
-                    tcpApiServer{tcpserver} {}
-                virtual Poco::Net::TCPServerConnection * createConnection( const Poco::Net::StreamSocket& s ) {
-                    LOG(DEBUG) <<  "creating new tcp connection" ;
-                    return new Connection {s, _api, _eventsystem, _close,tcpApiServer};
+                std::string _sessionID;
+                Poco::Net::StreamSocket   _socket;
+                Poco::Net::SocketReactor& _reactor;
+                char*                     _pBuffer;
+                Susi::Api::JSONStreamCollector _collector;
+            };
+            
+            class Acceptor : public Poco::Net::SocketAcceptor<ConnectionHandler> {
+            public:
+                Acceptor(Poco::Net::ServerSocket & svs, Poco::Net::SocketReactor & reactor, std::shared_ptr<Susi::Api::ApiServerComponent> api) :
+                    Poco::Net::SocketAcceptor<ConnectionHandler>{svs,reactor},
+                    _api{api} {}
+            protected:
+                std::shared_ptr<ApiServerComponent> _api;
+                virtual ConnectionHandler* createServiceHandler(Poco::Net::StreamSocket & socket) override{
+                    auto ptr = new ConnectionHandler{socket,*(reactor())};
+                    Poco::Timestamp now;
+                    std::string sessionID = std::to_string( now.epochMicroseconds() );
+                    ptr->setApi(_api);
+                    ptr->setSessionID(sessionID);
+                    _api->onConnect(sessionID);
+                    _api->registerSender(sessionID,[ptr](Susi::Util::Any & data){
+                        std::string msg = data.toJSONString()+"\n";
+                        ptr->socket().sendBytes(msg.c_str(),msg.size());
+                    });
+                    return ptr;
                 }
             };
 
@@ -129,40 +120,34 @@ namespace Susi {
             std::shared_ptr<Susi::Events::IEventSystem> eventsystem;
             Poco::Net::SocketAddress address;
             Poco::Net::ServerSocket serverSocket;
-            Poco::Net::TCPServerParams *params;
-            Poco::Net::TCPServer tcpServer;
-            std::atomic<bool> close{false};
-            std::condition_variable allClosed;
+            Poco::Net::SocketReactor reactor;
+            Acceptor acceptor;
+            std::thread runloop;
+
         public:
             TCPApiServerComponent( Susi::System::ComponentManager * mgr,
-                                   std::string addr,
-                                   size_t threads = 4,
-                                   size_t backlog = 16 ) :
+                                   std::string addr ) :
                 Susi::System::BaseComponent {mgr},
                  api {componentManager->getComponent<Susi::Api::ApiServerComponent>( "apiserver" )},
                  eventsystem {componentManager->getComponent<Susi::Events::IEventSystem>( "eventsystem" )},
                  address {addr},
                  serverSocket {address},
-            params {new Poco::Net::TCPServerParams},
-            tcpServer {new ConnectionFactory{api,eventsystem,&close,this}, serverSocket, params} {
-                params->setMaxThreads( threads );
-                params->setMaxQueued( backlog );
-            }
+                 acceptor{serverSocket,reactor,api}
+            {}
 
             virtual void start() override {
-                tcpServer.start();
+                runloop = std::move(std::thread{[this](){
+                    reactor.run();
+                }});
                 std::string msg {"started TCPApiServerComponent on "};
                 msg += address.toString();
                 LOG(INFO) <<  msg ;
                 std::this_thread::sleep_for( std::chrono::milliseconds {250} );
             }
             virtual void stop() override {
-                tcpServer.stop();
+                reactor.stop();
+                if(runloop.joinable())runloop.join();
                 serverSocket.close();
-                close.store(true);
-                std::mutex mutex;
-                std::unique_lock<std::mutex> lock{mutex};
-                allClosed.wait(lock,[this](){return tcpServer.currentConnections() == 0;});
             }
             ~TCPApiServerComponent() {
                 stop();
