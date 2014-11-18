@@ -70,11 +70,11 @@ bool SessionManager::checkSession( std::string id ) {
     resolveSessionID(id);
     try {
         bool alive = !sessions.at( id ).isDead();
-        LOG(DEBUG) <<  "session is alive: "+std::to_string( alive ) ;
+        LOG(DEBUG) <<  "session "<<id<<" is alive: "+std::to_string( alive ) ;
         return alive;
     }
     catch( const std::exception & e ) {
-        LOG(DEBUG) <<  "session is not known" ;
+        LOG(DEBUG) <<  "session is not known "+id ;
         return false;
     }
 }
