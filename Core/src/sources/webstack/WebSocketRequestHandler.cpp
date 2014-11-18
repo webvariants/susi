@@ -40,6 +40,8 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
     int flags;
     size_t n;
 
+    bool isClosed = false;
+
     while( true ) {
         try{
             n = socket.receiveFrame( buffer, sizeof( buffer ), flags );
@@ -52,8 +54,14 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
             Susi::Util::Any packet = Susi::Util::Any::fromJSONString( str );
             _apiServer->onMessage( connId, packet );
         }catch(const Poco::TimeoutException &){}
+        catch(const std::exception & e){
+            LOG(ERROR) << "websocket connection "<<connId<<" (sessionId: "<<id<<") throws exception: "<<e.what()<<". Closing gracefully.";
+            _apiServer->onClose( connId );            
+            isClosed = true;
+        }
     }
-    LOG(DEBUG) <<  "closing websocket" ;
-
-    _apiServer->onClose( connId );
+    if(!isClosed){
+        LOG(DEBUG) << "closing websocket with connection id "<<connId<<" (sessionId: "<<id<<")" ;
+        _apiServer->onClose( connId );
+    }
 }

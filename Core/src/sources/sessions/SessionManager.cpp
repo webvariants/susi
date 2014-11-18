@@ -36,7 +36,7 @@ int SessionManager::checkSessions() {
     while( it!=std::end( sessions ) ) {
         auto current = it++;
         if( current->second.isDead() ) {
-            LOG(DEBUG) <<  "delete session "+current->first ;
+            LOG(DEBUG) <<  "delete session "<<current->first<<" while regular checking" ;
             sessions.erase( current );
             for(auto ait = alias.begin(); ait != alias.end();){
                 if(ait->second == current->first){
@@ -139,7 +139,9 @@ Susi::Util::Any SessionManager::getSessionAttribute( std::string sessionID, std:
 
 void SessionManager::updateSession( std::string id ) {
     std::lock_guard<std::mutex> lock( mutex );
+    LOG(DEBUG) << "update session "<<id;
     resolveSessionID(id);
+    LOG(DEBUG) << "session id was resolved to "<<id;
     if( sessions.count( id ) > 0 && !sessions[id].isDead() ) {
         sessions[id].addTime( stdLifetime );
     }
