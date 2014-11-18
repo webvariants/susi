@@ -42,6 +42,7 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
 
     bool isClosed = false;
 
+
     while( true ) {
         try{
             n = socket.receiveFrame( buffer, sizeof( buffer ), flags );
