@@ -51,7 +51,7 @@ module.exports = function(grunt) {
         }
       },
       make_core: {
-        command: 'make -j4',
+        command: 'make -j4 susi',
         options: {
           stderr: false,
           execOptions: {
@@ -59,12 +59,12 @@ module.exports = function(grunt) {
           }
         }
       },
-      make_cppengine: {
-        command: 'make -j4',
+      make_test: {
+        command: 'make -j4 susi_test',
         options: {
           stderr: false,
           execOptions: {
-            cwd: '<%= pkg.project.directories.build %>/cppengine'
+            cwd: '<%= pkg.project.directories.build %>/core'
           }
         }
       },
@@ -153,9 +153,6 @@ module.exports = function(grunt) {
     'shell:cmake_core',
     'shell:make_core',
     'copy:core',
-    'shell:cmake_cppengine',
-    'shell:make_cppengine',
-    'copy:cppengine',
     'shell:cmake_watchdog',
     'shell:make_watchdog',
     'copy:watchdog'
@@ -166,15 +163,12 @@ module.exports = function(grunt) {
     'shell:cmake_core',
     'shell:make_core',
     'newer:copy:core',
-    'shell:cmake_cppengine',
-    'shell:make_cppengine',
-    'newer:copy:cppengine',
     'shell:cmake_watchdog',
     'shell:make_watchdog',
     'newer:copy:watchdog'
   ]);
 
-  grunt.registerTask('test', 'run the susi tests', ['development','shell:test_core']);
+  grunt.registerTask('test', 'run the susi tests', ['development','shell:make_test','shell:test_core']);
   grunt.registerTask('dev', ['development']);
   grunt.registerTask('default', ['development']);
 
