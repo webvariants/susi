@@ -145,7 +145,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-newer');
-  grunt.loadNpmTasks('grunt-debian-package');
 
   grunt.registerTask('build', 'generate a clean build of everything', [
     'clean:bin',
