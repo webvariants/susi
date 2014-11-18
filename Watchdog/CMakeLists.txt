@@ -30,7 +30,7 @@ file( GLOB SRCFILES ${CMAKE_SOURCE_DIR}/src/sources/*.cpp )
 
 #WATCHDOG BINARY
 add_executable( watchdog ${SRCFILES} ${CMAKE_SOURCE_DIR}/src/sources/main.cc )
-target_link_libraries(watchdog ${CMAKE_SOURCE_DIR}/../susi/node_modules/poco/lib/libPocoFoundation.so)
+target_link_libraries(watchdog ${CMAKE_SOURCE_DIR}/../node_modules/poco/lib/libPocoFoundation.so)
 target_link_libraries(watchdog ${CMAKE_THREAD_LIBS_INIT})
 
 
