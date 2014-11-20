@@ -10,13 +10,12 @@
  */
 
 #include "webstack/AssetsRequestHandler.h"
+#include "webstack/MimeTable.h"
 
 void Susi::AssetsRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& request,
         Poco::Net::HTTPServerResponse& response ) {
-    LOG(DEBUG) <<  "Assets request from " + request.clientAddress().toString()+" "+request.getURI() ;
     try {
         std::string fileLocation = _rootDirectory.path()+"/"+request.getURI().substr( 8 );
-        LOG(DEBUG) <<  "Target file: "+fileLocation ;
         Poco::File f( fileLocation );
 
         Poco::Timestamp dateTime    = f.getLastModified();
@@ -24,9 +23,8 @@ void Susi::AssetsRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& re
         response.set( "Last-Modified", Poco::DateTimeFormatter::format( dateTime, Poco::DateTimeFormat::HTTP_FORMAT ) );
         response.setContentLength( static_cast<int>( length ) );
 
-        if( fileLocation.find( ".svg" ) == fileLocation.size()-4 ) {
-            response.setContentType( "image/svg+xml" );
-        }
+        response.setContentType( Susi::MimeTable::getContentType(fileLocation) );
+
 
         response.setChunkedTransferEncoding( false );
 
