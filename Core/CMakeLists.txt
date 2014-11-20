@@ -41,6 +41,7 @@ file( GLOB TESTFILES ${CMAKE_SOURCE_DIR}/test/*/*.cpp )
 
 #easylogging++ defines 
 add_definitions(-D_ELPP_THREAD_SAFE)
+add_definitions(-D_ELPP_STACKTRACE_ON_CRASH)
 
 #LIBRARY
 add_library( libsusi SHARED ${SRCFILES} )
