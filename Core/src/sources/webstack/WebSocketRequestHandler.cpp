@@ -17,7 +17,6 @@ Susi::WebSocketRequestHandler::WebSocketRequestHandler( std::shared_ptr<Susi::Ap
 
 void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& request,
         Poco::Net::HTTPServerResponse& response ) {
-    //LOG(DEBUG) <<  "in ws handler" ;
     Poco::Net::WebSocket socket( request,response );
     Poco::Net::NameValueCollection cookies;
     request.getCookies( cookies );
@@ -40,29 +39,21 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
     int flags;
     size_t n;
 
-    bool isClosed = false;
-
-
     while( true ) {
         try{
             n = socket.receiveFrame( buffer, sizeof( buffer ), flags );
-            //LOG(DEBUG) <<  "got frame" ;
-            //LOG(DEBUG) <<  std::to_string( n ) ;
             if( n==0 || ( flags & Poco::Net::WebSocket::FRAME_OP_BITMASK ) == Poco::Net::WebSocket::FRAME_OP_CLOSE ) {
+                LOG(DEBUG) << "closing websocket connection "<<connId<<" (session: "<<id<<") normally";
                 break;
             }
             std::string str( buffer, n );
             Susi::Util::Any packet = Susi::Util::Any::fromJSONString( str );
             _apiServer->onMessage( connId, packet );
         }catch(const Poco::TimeoutException &){}
-        catch(const std::exception & e){
-            LOG(ERROR) << "websocket connection "<<connId<<" (sessionId: "<<id<<") throws exception: "<<e.what()<<". Closing gracefully.";
-            _apiServer->onClose( connId );            
-            isClosed = true;
+         catch(const std::exception & e){
+            LOG(DEBUG) << "closing websocket connection "<<connId<<" (session: "<<id<<") because of exception: "<<e.what();
+            break;
         }
     }
-    if(!isClosed){
-        LOG(DEBUG) << "closing websocket with connection id "<<connId<<" (sessionId: "<<id<<")" ;
-        _apiServer->onClose( connId );
-    }
+    _apiServer->onClose( connId );
 }

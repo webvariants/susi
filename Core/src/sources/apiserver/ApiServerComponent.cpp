@@ -1,16 +1,15 @@
 #include "apiserver/ApiServerComponent.h"
 
 void Susi::Api::ApiServerComponent::onConnect( std::string & id ) {
-    LOG(INFO) <<  "got new connection!" ;
+    LOG(DEBUG) <<  "new api connection: " << id;
     sessionManager->updateSession( id );
 }
 
 void Susi::Api::ApiServerComponent::onClose( std::string & id ) {
-    LOG(INFO) <<  "lost connection..." ;
+    LOG(DEBUG) <<  "lost api connection: " << id;
     sessionManager->killSession( id );
     senders.erase( id );
     eventsToAck.erase( id );
-
     auto & subs = consumerSubscriptions[id];
     for( auto & kv : subs ) {
         eventManager->unsubscribe( kv.second );
@@ -66,18 +65,16 @@ void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, Su
     if( data.isObject() ) {
         std::string topic = data["topic"];
         std::string subName = "";
-        LOG(DEBUG) << "trying to subscribe"<<id<<"to topic"<<topic;
         if(data["name"].isString()){
             subName = static_cast<std::string>(data["name"]);
         }
         auto & subs = consumerSubscriptions[id];
         if( subs.find( topic ) != subs.end() ) {
-            LOG(DEBUG) << "failed to subscribe"<<id<<"to topic"<<topic<<": allready subscribed";
+            LOG(DEBUG) << "failed to registerConsumer for "<<id<<" to topic "<<topic<<": allready subscribed";
             sendFail( id,"you are allready subscribed to "+topic );
             return;
         }
         Susi::Events::Consumer callback = [this,id]( Susi::Events::SharedEventPtr event ) {
-            LOG(DEBUG) << "got consumer event, forwarding it to api client.";
             Susi::Util::Any packet;
             packet["type"] = "consumerEvent";
             packet["data"] = event->toAny();
@@ -88,7 +85,7 @@ void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, Su
             send( _id,packet );
         };
         long subid = eventManager->subscribe( topic,callback,subName );
-        LOG(DEBUG) << "subscribed"<<id<<"to topic"<<topic;
+        LOG(DEBUG) << "registerConsumer for "<<id<<" to topic "<<topic;
         subs[topic] = subid;
         LOG(DEBUG) << "register consumer for topic "<<topic<<" to session "<<id;
         sendOk( id );
@@ -108,6 +105,7 @@ void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, S
         }
         auto & subs = processorSubscriptions[id];
         if( subs.find( topic ) != subs.end() ) {
+            LOG(DEBUG) << "failed to registerProcessor for "<<id<<" to topic "<<topic<<": allready subscribed";
             sendFail( id,"you are allready subscribed to "+topic );
             return;
         }
@@ -123,7 +121,7 @@ void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, S
             send( _id,packet );
         }},subName );
         subs[topic] = subid;
-        LOG(DEBUG) << "register processor for topic "<<topic<<" to session "<<id;
+        LOG(DEBUG) << "registerProcessor for "<<id<<" to topic "<<topic;
         sendOk( id );
     }
     else {
@@ -141,8 +139,10 @@ void Susi::Api::ApiServerComponent::handleUnregisterConsumer( std::string & id, 
             LOG(DEBUG) << "unregister consumer for topic "<<topic<<" from session "<<id;
             subs.erase(topic);
             sendOk( id );
+            LOG(DEBUG) << "unregisterConsumer for "<<id<<" from "<<topic;
         }
         else {
+            LOG(DEBUG) << "unregisterConsumer for "<<id<<" from "<<topic<<" failed: id not subscribed";
             sendFail( id,"you are not registered for "+topic );
         }
     }
@@ -161,8 +161,10 @@ void Susi::Api::ApiServerComponent::handleUnregisterProcessor( std::string & id,
             eventManager->unsubscribe( subid );
             LOG(DEBUG) << "unregister processor for topic "<<topic<<" from session "<<id;
             sendOk( id );
+            LOG(DEBUG) << "unregisterConsumer for "<<id<<" from "<<topic;
         }
         else {
+            LOG(DEBUG) << "unregisterConsumer for "<<id<<" from "<<topic<<" failed: id not subscribed";
             sendFail( id,"you are not registered for "+topic );
         }
     }
@@ -184,8 +186,7 @@ void Susi::Api::ApiServerComponent::handlePublish( std::string & id, Susi::Util:
         rawEvent.id = std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
     }
     *event = rawEvent;
-
-    LOG(DEBUG) << "publish event for topic "<<event->topic<<" from session "<<id;
+    LOG(DEBUG) << "publish event from "<<id<<", topic: "<<event->topic;
     eventManager->publish( std::move( event ),[this,id]( Susi::Events::SharedEventPtr event ) {
         Susi::Util::Any packet;
         packet["type"] = "ack";
@@ -205,6 +206,7 @@ void Susi::Api::ApiServerComponent::handleAck( std::string & id, Susi::Util::Any
     }
     std::string eventID = static_cast<std::string>(eventData["id"]);
     if(!(eventsToAck.count(id)>0) || !(eventsToAck[id].count(eventID)>0)){
+        LOG(DEBUG) << "unexpected ack from "<<id<<" for event with topic "<<static_cast<std::string>(eventData["id"]);
         sendFail( id , "unexpected ack" );
         return;
     }
@@ -223,8 +225,7 @@ void Susi::Api::ApiServerComponent::handleAck( std::string & id, Susi::Util::Any
     if( !eventData["payload"].isNull() ) {
         event->payload = eventData["payload"];
     }
-
-    LOG(DEBUG) << "received ack for topic "<<event->topic<<" from session "<<id;
+    LOG(DEBUG) << "got ack from "<<id<<" for event with topic "<<event->topic;
     eventManager->ack( std::move( event ) );
     sendOk( id );
 }
