@@ -13,10 +13,10 @@
 
 void Susi::AssetsRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& request,
         Poco::Net::HTTPServerResponse& response ) {
-    LOG(DEBUG) <<  "Assets request from " + request.clientAddress().toString()+" "+request.getURI() ;
+    std::string id = std::string id = cookies["susisession"];
+    LOG(DEBUG) <<  "Assets request from " +id+": "+request.getURI();
     try {
         std::string fileLocation = _rootDirectory.path()+"/"+request.getURI().substr( 8 );
-        LOG(DEBUG) <<  "Target file: "+fileLocation ;
         Poco::File f( fileLocation );
 
         Poco::Timestamp dateTime    = f.getLastModified();
@@ -38,7 +38,6 @@ void Susi::AssetsRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& re
         else {
             throw std::runtime_error {"cannot find file"};
         }
-        LOG(DEBUG) << "correctly leaving assets handler";
     }
     catch( const std::exception & e ) {
         LOG(DEBUG) <<  "got error "+std::string {e.what()} ;
