@@ -14,7 +14,9 @@
 
 void Susi::AssetsRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& request,
         Poco::Net::HTTPServerResponse& response ) {
-    std::string id = std::string id = cookies["susisession"];
+    Poco::Net::NameValueCollection cookies;
+    request.getCookies( cookies );
+    std::string id = cookies["susisession"];
     LOG(DEBUG) <<  "Assets request from " +id+": "+request.getURI();
     try {
         std::string fileLocation = _rootDirectory.path()+"/"+request.getURI().substr( 8 );
