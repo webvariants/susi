@@ -10,6 +10,7 @@
  */
 
 #include "webstack/AssetsRequestHandler.h"
+#include "webstack/MimeTable.h"
 
 void Susi::AssetsRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& request,
         Poco::Net::HTTPServerResponse& response ) {
@@ -24,9 +25,7 @@ void Susi::AssetsRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& re
         response.set( "Last-Modified", Poco::DateTimeFormatter::format( dateTime, Poco::DateTimeFormat::HTTP_FORMAT ) );
         response.setContentLength( static_cast<int>( length ) );
 
-        if( fileLocation.find( ".svg" ) == fileLocation.size()-4 ) {
-            response.setContentType( "image/svg+xml" );
-        }
+        response.setContentType( Susi::MimeTable::getContentType(fileLocation) );
 
         response.setChunkedTransferEncoding( false );
 
@@ -40,7 +39,7 @@ void Susi::AssetsRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& re
         }
     }
     catch( const std::exception & e ) {
-        LOG(DEBUG) <<  "got error "+std::string {e.what()} ;
+        LOG(DEBUG) <<  "can not find file: " << e.what();
         response.setChunkedTransferEncoding( true );
         response.setContentType( "text/html" );
         response.setStatus( Poco::Net::HTTPServerResponse::HTTPStatus::HTTP_NOT_FOUND );
