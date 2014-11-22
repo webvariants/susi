@@ -1,7 +1,6 @@
 #include "apiserver/ApiClient.h"
 
 void Susi::Api::ApiClient::publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback ) {
-    LOG(DEBUG) << "publish called";
     PublishData data{*event,finishCallback};
     publishs[event->getID()] = data;
     sendPublish( *event );
