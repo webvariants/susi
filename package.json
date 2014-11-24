@@ -22,6 +22,7 @@
       "build": "build/",
       "core": "Core/",
       "cppengine": "CPPEngine/",
+      "jsengine": "JSEngine/duktape/",
       "watchdog": "Watchdog/"
     }
   }
