@@ -27,7 +27,7 @@ namespace Susi {
             virtual long subscribe( Predicate pred, Consumer consumer, std::string name="" );
             virtual bool unsubscribe( long id );
             // public publish api function
-            virtual void publish( EventPtr event, Consumer finishCallback = Consumer {} );
+            virtual void publish( EventPtr event, Consumer finishCallback = Consumer {}, bool processorsOnly = false, bool consumersOnly = false );
             // pass event back to system
             virtual void ack( EventPtr event );
 
