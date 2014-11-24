@@ -34,10 +34,10 @@ file( GLOB SRCFILES ${CMAKE_SOURCE_DIR}/src/sources/*.cpp )
 #easylogging++ defines
 add_definitions(-D_ELPP_THREAD_SAFE)
 
-add_executable( duktape_engine ${CMAKE_SOURCE_DIR}/src/main.cc ${SRCFILES})
+add_executable( susi-jsengine ${CMAKE_SOURCE_DIR}/src/main.cc ${SRCFILES})
 
-target_link_libraries(duktape_engine ${CMAKE_SOURCE_DIR}/../../bin/libsusi.so)
-target_link_libraries(duktape_engine ${POCO_LIBRARIES})
-target_link_libraries(duktape_engine ${LIBLZMA_LIBRARIES})
-target_link_libraries(duktape_engine ${SOCI_LIBRARY})
-target_link_libraries(duktape_engine ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(susi-jsengine ${CMAKE_SOURCE_DIR}/../../bin/libsusi.so)
+target_link_libraries(susi-jsengine ${POCO_LIBRARIES})
+target_link_libraries(susi-jsengine ${LIBLZMA_LIBRARIES})
+target_link_libraries(susi-jsengine ${SOCI_LIBRARY})
+target_link_libraries(susi-jsengine ${CMAKE_THREAD_LIBS_INIT})

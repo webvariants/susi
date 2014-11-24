@@ -4,8 +4,10 @@
 	},
 
 	"logger": {
-		"easylogging++": "../easylogging++.conf"
+		"easylogging++": "../JSEngine/duktape/easylogging++.conf"
 	},
 
-	"duktape" : {}
+	"duktape" : {
+		"src": "../JSEngine/duktape/src/test.js"
+	}
 }
