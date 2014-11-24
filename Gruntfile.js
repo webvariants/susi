@@ -16,7 +16,8 @@ module.exports = function(grunt) {
           create: [
             '<%= pkg.project.directories.build %>/core',
             '<%= pkg.project.directories.build %>/cppengine',
-            '<%= pkg.project.directories.build %>/watchdog'
+            '<%= pkg.project.directories.build %>/watchdog',
+            '<%= pkg.project.directories.build %>/jsengine'
           ]
         }
       }
@@ -38,6 +39,15 @@ module.exports = function(grunt) {
           stderr: false,
           execOptions: {
             cwd: '<%= pkg.project.directories.build %>/cppengine'
+          }
+        }
+      },
+      cmake_jsengine: {
+        command: 'cmake -DPOCO_INCLUDE_DIR=../../node_modules/poco/include -DSOCI_INCLUDE_DIR=../../node_modules/soci/include/soci -DCMAKE_LIBRARY_PATH=../../node_modules/ ../../<%= pkg.project.directories.jsengine %>',
+        options: {
+          stderr: false,
+          execOptions: {
+            cwd: '<%= pkg.project.directories.build %>/jsengine'
           }
         }
       },
@@ -65,6 +75,15 @@ module.exports = function(grunt) {
           stderr: false,
           execOptions: {
             cwd: '<%= pkg.project.directories.build %>/cppengine'
+          }
+        }
+      },
+      make_jsengine: {
+        command: 'make -j4',
+        options: {
+          stderr: false,
+          execOptions: {
+            cwd: '<%= pkg.project.directories.build %>/jsengine'
           }
         }
       },
@@ -113,6 +132,19 @@ module.exports = function(grunt) {
             expand: true,
             flatten: true,
             src: ['<%= pkg.project.directories.build %>/cppengine/sample'],
+            dest: '<%= pkg.project.directories.bin %>'
+          }
+        ]
+      },
+      jsengine: {
+        options: {
+          mode: true
+        },
+        files: [
+          {
+            expand: true,
+            flatten: true,
+            src: ['<%= pkg.project.directories.build %>/jsengine/susi-jsengine'],
             dest: '<%= pkg.project.directories.bin %>'
           }
         ]
@@ -175,8 +207,12 @@ module.exports = function(grunt) {
     'newer:copy:watchdog'
   ]);
 
+  grunt.registerTask('core',['mkdir','shell:cmake_core','shell:make_core','newer:copy:core']);
+  grunt.registerTask('jsengine',['core','shell:cmake_jsengine','shell:make_jsengine','newer:copy:jsengine']);
+
   grunt.registerTask('test', 'run the susi tests', ['development','shell:test_core']);
   grunt.registerTask('dev', ['development']);
   grunt.registerTask('default', ['development']);
+
 
 };
