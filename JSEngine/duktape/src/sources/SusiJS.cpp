@@ -7,23 +7,51 @@ var susi = {  \
 	_publishCallbacks: {}, \
 	registerConsumer: function(topic,callback) { \
 		var consumers = this._consumerCallbacks[topic] || []; \
-		consumers.push(callback); \
+		var id = this._genID(); \
+		consumers.push({callback: callback, id: id}); \
 		this._consumerCallbacks[topic] = consumers; \
 		if(consumers.length == 1){ \
 			_registerConsumer(topic); \
 		} \
+		return id; \
 	}, \
 	registerProcessor: function(topic,callback) { \
 		var processors = this._processorCallbacks[topic] || []; \
-		processors.push(callback); \
+		var id = this._genID(); \
+		processors.push({callback: callback, id: id}); \
 		this._processorCallbacks[topic] = processors; \
 		if(processors.length == 1){ \
-		_registerProcessor(topic); \
+			_registerProcessor(topic); \
 		} \
+		return id; \
+	}, \
+	unregisterConsumer: function(id){ \
+		for(var topic in this._consumerCallbacks){ \
+			var callbacks = this._consumerCallbacks[topic]; \
+			for(var i=0; i<callbacks.length; i++){ \
+				if(callbacks[i].id === id){ \
+					callbacks.splice(i,1); \
+					return true; \
+				} \
+			} \
+		} \
+		return false; \
+	}, \
+	unregisterProcessor: function(id){ \
+		for(var topic in this._processorCallbacks){ \
+			var callbacks = this._processorCallbacks[topic]; \
+			for(var i=0; i<callbacks.length; i++){ \
+				if(callbacks[i].id === id){ \
+					callbacks.splice(i,1); \
+					return true; \
+				} \
+			} \
+		} \
+		return false; \
 	}, \
 	publish: function(event,callback) { \
 		if(event.id === undefined){ \
-			event.id = ''+Math.floor(Math.random()*1000000000000); \
+			event.id = ''+this._genID(); \
 		} \
 		if(callback !== undefined) { \
 			this._publishCallbacks[event.id] = callback; \
@@ -38,7 +66,7 @@ var susi = {  \
 		var consumers = this._consumerCallbacks[event.topic] || []; \
 		if(consumers.length > 0){ \
 			for (var i = consumers.length - 1; i >= 0; i--) { \
-				consumers[i](event); \
+				consumers[i].callback(event); \
 			} \
 		} \
 	}, \
@@ -50,7 +78,7 @@ var susi = {  \
 		var processors = this._processorCallbacks[event.topic] || []; \
 		if(processors.length > 0){ \
 			for (var i = processors.length - 1; i >= 0; i--) { \
-				processors[i](event); \
+				processors[i].callback(event); \
 			} \
 		} \
 		Duktape.gc(); \
@@ -62,6 +90,9 @@ var susi = {  \
 			delete this._publishCallbacks[event.id]; \
 		} \
 		cb(event); \
+	}, \
+	_genID: function(){ \
+		return Math.floor(Math.random()*1000000000000); \
 	} \
 }; \
 function _processConsumerEvent(event){ \

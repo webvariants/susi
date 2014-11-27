@@ -19,9 +19,14 @@ susi.registerProcessor("slave",function(event){
 	susi.ack(event);
 });
 
-//call master every second
-susi.registerConsumer("heartbeat::one",function(event){
+//call master every second five times
+var counter = 0;
+var id = susi.registerConsumer("heartbeat::one",function(event){
+	if(++counter == 5){
+		susi.unregisterConsumer(id);
+	}
 	susi.publish({topic: 'master'}, function(event){
 		print("publish ready:", JSON.stringify(event));
 	});
 });
+
