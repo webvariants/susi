@@ -8,6 +8,7 @@
 	},
 
 	"duktape" : {
-		"src": "../JSEngine/duktape/src/test.js"
+		"src": "../JSEngine/duktape/test.js",
+		"interactive": true
 	}
 }

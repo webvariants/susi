@@ -14,6 +14,8 @@ void Duktape::JSEngine::start() {
     duk_put_prop_string(ctx, -2, "_registerConsumer");
     duk_push_c_function(ctx, js_registerProcessor, 1 /*nargs*/);
     duk_put_prop_string(ctx, -2, "_registerProcessor");
+    duk_push_c_function(ctx, js_unregister, 1 /*nargs*/);
+    duk_put_prop_string(ctx, -2, "_unregister");
     duk_push_c_function(ctx, js_publish, 1 /*nargs*/);
     duk_put_prop_string(ctx, -2, "_publish");
     duk_push_c_function(ctx, js_ack, 1 /*nargs*/);
@@ -25,9 +27,17 @@ void Duktape::JSEngine::start() {
     	LOG(ERROR) << "processing susiJS: " << duk_safe_to_string(ctx, -1);
     }
 
-    if (duk_peval_file(ctx, sourceFile.c_str()) != 0) {
-        LOG(ERROR) << "processing usersource: " << duk_safe_to_string(ctx, -1);
+    if(sourceFile != ""){
+        if (duk_peval_file(ctx, sourceFile.c_str()) != 0) {
+            LOG(ERROR) << "processing usersource: " << duk_safe_to_string(ctx, -1);
+        }
     }
+
+    if (_interactive){
+        LOG(DEBUG) << "entering interactive session";
+        interactiveLoop();
+    }
+
     LOG(DEBUG) << "started duktape engine and loaded "<<sourceFile;
 }
 
@@ -80,13 +90,21 @@ duk_ret_t Duktape::JSEngine::js_ack(duk_context *ctx) {
 duk_ret_t Duktape::JSEngine::js_log(duk_context *ctx) {
     size_t sz;
     const char *val = duk_require_lstring(ctx, 0, &sz);
-    LOG(DEBUG) << val;
+    enginePtr->addOutput(val);
+    duk_push_true(ctx);
+    return 1;
+}
+
+duk_ret_t Duktape::JSEngine::js_unregister(duk_context *ctx) {
+    size_t sz;
+    const char *topic = duk_require_lstring(ctx, 0, &sz);
+    enginePtr->unregister(topic);
     duk_push_true(ctx);
     return 1;
 }
 
 void Duktape::JSEngine::registerProcessor(std::string topic){
-	BaseComponent::subscribe(topic,[this](Susi::Events::EventPtr event){
+	registerIds[topic] = BaseComponent::subscribe(topic,[this](Susi::Events::EventPtr event){
 		std::lock_guard<std::mutex> lock{mutex};
 		auto eventString = event->toString();
 		pendingEvents[event->id] = std::move(event);
@@ -100,6 +118,11 @@ void Duktape::JSEngine::registerProcessor(std::string topic){
 	});
 }
 
+void Duktape::JSEngine::unregister(std::string topic){
+    BaseComponent::unsubscribe(registerIds[topic]);
+    registerIds.erase(topic);
+}
+
 void Duktape::JSEngine::registerConsumer(std::string topic){
 	Susi::Events::Consumer consumer = [this](Susi::Events::SharedEventPtr event){
 		std::lock_guard<std::mutex> lock{mutex};
@@ -111,7 +134,7 @@ void Duktape::JSEngine::registerConsumer(std::string topic){
         }
         duk_pop(ctx);  /* pop result/error */
 	};
-	BaseComponent::subscribe(topic,consumer);
+	registerIds[topic] = BaseComponent::subscribe(topic,consumer);
 }
 
 void Duktape::JSEngine::publish(std::string eventData){
@@ -139,5 +162,66 @@ void Duktape::JSEngine::ack(std::string eventData){
 		*pendingEvent = rawEvent;
 		pendingEvents.erase(rawEvent.id);
 	}catch(...){}
+}
+
+void Duktape::JSEngine::addOutput(std::string line){
+    output.push_back(line);
+    int row,col;
+    getmaxyx(stdscr,row,col);
+    while(output.size()>row){
+        output.pop_front();
+    }
+    if(currentMode == OUTPUT){
+        printOutput();
+    }
+}
+
+void Duktape::JSEngine::printOutput(){
+    clear();
+    for(auto currentLine : output){
+        printw("%s\n",currentLine.c_str());
+    }
+    refresh();
+}
+
+void Duktape::JSEngine::interactiveLoop(){
+    initscr();           /* Start curses mode              */
+    raw();               /* Line buffering disabled        */
+    keypad(stdscr, TRUE);/* We get F1, F2 etc..            */
+    noecho();            /* Don't echo() while we do getch */
+    curs_set(0);
+
+    while(true){
+        char ch = getch();
+        switch(ch){
+            case 27: //escape
+            case 3: { // ctrl-c
+                endwin();
+                exit(0);
+                break;
+            }
+            case 9: { // ctrl-i
+                currentMode = INPUT;
+                system("nano /tmp/nextcommand.js");
+                if (duk_peval_file(ctx, "/tmp/nextcommand.js") != 0) {
+                    LOG(ERROR) << "processing usersource: " << duk_safe_to_string(ctx, -1);
+                }else{
+                    system("rm /tmp/nextcommand.js");
+                }
+                currentMode = OUTPUT;
+                printOutput();
+                break;
+            }
+            case 15: { //ctrl-o
+                currentMode = OUTPUT;
+                printOutput();
+                break;
+            }
+            default: {
+                /*std::cout<<(int)ch<<" pressed"<<std::endl;*/
+            }
+        }
+    }
+    endwin();
 }
 

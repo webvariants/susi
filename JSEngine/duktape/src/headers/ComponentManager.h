@@ -54,11 +54,15 @@ public:
 		 * Declare Sampleconnector
 		 */
 		registerComponent("duktape",[](Susi::System::ComponentManager * mgr, Any & config){
-			std::string src = "susi.js";
+			std::string src = "";
 			if(config["src"].isString()){
 				src = static_cast<std::string>(config["src"]);
 			}
-			return std::shared_ptr<Component>{new JSEngine{mgr,src}};
+			bool interactive = false;
+			if(config["interactive"].isBool()){
+				interactive = static_cast<bool>(config["interactive"]);
+			}
+			return std::shared_ptr<Component>{new JSEngine{mgr,src,interactive}};
 		});
 
 	}

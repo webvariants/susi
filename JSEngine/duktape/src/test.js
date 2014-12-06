@@ -26,7 +26,9 @@ var id = susi.registerConsumer("heartbeat::one",function(event){
 		susi.unregisterConsumer(id);
 	}
 	susi.publish({topic: 'master'}, function(event){
-		print("publish ready:", JSON.stringify(event));
+		log("publish ready: "+JSON.stringify(event));
 	});
 });
+
+log("foo");
 

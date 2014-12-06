@@ -31,6 +31,9 @@ var susi = {  \
 			for(var i=0; i<callbacks.length; i++){ \
 				if(callbacks[i].id === id){ \
 					callbacks.splice(i,1); \
+					if(callbacks.length === 0){ \
+						delete this._consumerCallbacks[topic]; \
+					} \
 					return true; \
 				} \
 			} \
@@ -43,6 +46,9 @@ var susi = {  \
 			for(var i=0; i<callbacks.length; i++){ \
 				if(callbacks[i].id === id){ \
 					callbacks.splice(i,1); \
+					if(callbacks.length === 0){ \
+						delete this._processorCallbacks[topic]; \
+					} \
 					return true; \
 				} \
 			} \
