@@ -8,8 +8,6 @@ void Susi::Api::ApiServerComponent::onConnect( std::string & id ) {
 void Susi::Api::ApiServerComponent::onClose( std::string & id ) {
     LOG(INFO) <<  "lost connection..." ;
     sessionManager->killSession( id );
-    senders.erase( id );
-    eventsToAck.erase( id );
     auto & subs = consumerSubscriptions[id];
     for( auto & kv : subs ) {
         eventManager->unsubscribe( kv.second );
@@ -19,6 +17,8 @@ void Susi::Api::ApiServerComponent::onClose( std::string & id ) {
     for( auto & kv : subs2 ) {
         eventManager->unsubscribe( kv.second );
     }
+    senders.erase( id );
+    eventsToAck.erase( id );
     processorSubscriptions.erase( id );
 }
 
