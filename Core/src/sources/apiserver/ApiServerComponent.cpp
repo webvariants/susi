@@ -17,9 +17,12 @@ void Susi::Api::ApiServerComponent::onClose( std::string & id ) {
     for( auto & kv : subs2 ) {
         eventManager->unsubscribe( kv.second );
     }
-    senders.erase( id );
-    eventsToAck.erase( id );
-    processorSubscriptions.erase( id );
+    {
+        std::lock_guard<std::mutex> lock{mutex};
+        eventsToAck.erase( id );
+        senders.erase( id );
+        processorSubscriptions.erase( id );
+    }
 }
 
 void Susi::Api::ApiServerComponent::onMessage( std::string & id, Susi::Util::Any & packet ) {
@@ -117,7 +120,10 @@ void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, S
                 return;
             }
             std::string _id = id;
-            eventsToAck[_id][event->id] = std::move( event );
+            {
+                std::lock_guard<std::mutex> lock{mutex};
+                eventsToAck[_id][event->id] = std::move( event );
+            }
             send( _id,packet );
         }},subName );
         subs[topic] = subid;
