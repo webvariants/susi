@@ -6,7 +6,8 @@ void Susi::Api::ApiServerComponent::onConnect( std::string & id ) {
 }
 
 void Susi::Api::ApiServerComponent::onClose( std::string & id ) {
-    LOG(DEBUG) <<  "lost api connection: " << id;
+    LOG(INFO) <<  "lost connection..." ;
+    std::lock_guard<std::mutex> lock{mutex};
     sessionManager->killSession( id );
     senders.erase( id );
     eventsToAck.erase( id );
@@ -117,6 +118,7 @@ void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, S
                 return;
             }
             std::string _id = id;
+            std::lock_guard<std::mutex> lock{mutex};
             eventsToAck[_id][event->id] = std::move( event );
             send( _id,packet );
         }},subName );
@@ -204,7 +206,8 @@ void Susi::Api::ApiServerComponent::handleAck( std::string & id, Susi::Util::Any
         sendFail( id,"ack handler: data is not an object or topic is not set correctly" );
         return;
     }
-    std::string eventID = static_cast<std::string>(eventData["id"]);
+    std::string eventID = eventData["id"];
+    std::lock_guard<std::mutex> lock{mutex};
     if(!(eventsToAck.count(id)>0) || !(eventsToAck[id].count(eventID)>0)){
         LOG(DEBUG) << "unexpected ack from "<<id<<" for event with topic "<<static_cast<std::string>(eventData["id"]);
         sendFail( id , "unexpected ack" );
