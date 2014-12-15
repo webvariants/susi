@@ -67,21 +67,21 @@ var susi = {  \
 	ack: function(event){ \
 		_ack(JSON.stringify(event)); \
 	}, \
-	_processConsumerEvent: function(event){ \
+	_processConsumerEvent: function(event,topic){ \
 		event = JSON.parse(event); \
-		var consumers = this._consumerCallbacks[event.topic] || []; \
+		var consumers = this._consumerCallbacks[topic] || []; \
 		if(consumers.length > 0){ \
 			for (var i = consumers.length - 1; i >= 0; i--) { \
 				consumers[i].callback(event); \
 			} \
 		} \
 	}, \
-	_processProcessorEvent: function(event){ \
+	_processProcessorEvent: function(event,topic){ \
 		event = JSON.parse(event); \
 		Duktape.fin(event,function(event){ \
 			susi.ack(event); \
 		}); \
-		var processors = this._processorCallbacks[event.topic] || []; \
+		var processors = this._processorCallbacks[topic] || []; \
 		if(processors.length > 0){ \
 			for (var i = processors.length - 1; i >= 0; i--) { \
 				processors[i].callback(event); \
@@ -101,11 +101,11 @@ var susi = {  \
 		return Math.floor(Math.random()*1000000000000); \
 	} \
 }; \
-function _processConsumerEvent(event){ \
-	susi._processConsumerEvent(event); \
+function _processConsumerEvent(event,topic){ \
+	susi._processConsumerEvent(event,topic); \
 } \
-function _processProcessorEvent(event){ \
-	susi._processProcessorEvent(event) \
+function _processProcessorEvent(event,topic){ \
+	susi._processProcessorEvent(event,topic) \
 } \
 function _processAck(event){ \
 	susi._processAck(event); \

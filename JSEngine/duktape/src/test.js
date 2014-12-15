@@ -22,7 +22,7 @@ susi.registerProcessor("slave",function(event){
 //call master every second five times
 var counter = 0;
 var id = susi.registerConsumer("heartbeat::one",function(event){
-	if(++counter == 5){
+	if(++counter == 10){
 		susi.unregisterConsumer(id);
 	}
 	susi.publish({topic: 'master'}, function(event){
@@ -30,5 +30,4 @@ var id = susi.registerConsumer("heartbeat::one",function(event){
 	});
 });
 
-log("foo");
 

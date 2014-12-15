@@ -31,7 +31,13 @@ public:
 	JSEngine(Susi::System::ComponentManager *mgr,std::string src,bool interactive) : 
 		Susi::System::BaseComponent{mgr},
 		sourceFile{src},
-		_interactive{interactive} {}
+		_interactive{interactive} {
+		    initscr();           /* Start curses mode              */
+		    raw();               /* Line buffering disabled        */
+		    keypad(stdscr, TRUE);/* We get F1, F2 etc..            */
+		    noecho();            /* Don't echo() while we do getch */
+		    curs_set(0);
+		}
 
 	// The start function subscribes to events and attaches its handlers
 	virtual void start() override;
@@ -73,6 +79,12 @@ protected:
 	void ack(std::string eventData);
 
 	void interactiveLoop();
+	void init();
+	void editCommands();
+
+	std::vector<std::string> commands;
+	const char* commandFile = "/tmp/susi-js.commands.js";
+
 };
 
 

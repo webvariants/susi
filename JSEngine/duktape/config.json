@@ -1,6 +1,6 @@
 {
 	"eventsystem" : {
-		"addr":"[::1]:4000"
+		"addr":"erhardt-dev:4000"
 	},
 
 	"logger": {
@@ -8,7 +8,7 @@
 	},
 
 	"duktape" : {
-		"src": "../JSEngine/duktape/test.js",
+		"src": "../JSEngine/duktape/src/test.js",
 		"interactive": true
 	}
 }
