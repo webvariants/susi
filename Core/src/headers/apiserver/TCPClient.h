@@ -49,7 +49,7 @@ namespace Susi {
 
             void startRunloop();
 
-            size_t maxReconnectCount = 0;
+            size_t maxReconnectCount = 5;
 
             std::atomic<bool> isClosed{false};
             Poco::Net::SocketAddress sa;
