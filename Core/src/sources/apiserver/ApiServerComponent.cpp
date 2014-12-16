@@ -9,19 +9,31 @@ void Susi::Api::ApiServerComponent::onClose( std::string & id ) {
     LOG(INFO) <<  "lost connection..." ;
     std::lock_guard<std::mutex> lock{mutex};
     sessionManager->killSession( id );
-    senders.erase( id );
-    eventsToAck.erase( id );
 
-    auto & subs = consumerSubscriptions[id];
-    for( auto & kv : subs ) {
-        eventManager->unsubscribe( kv.second );
+    {
+        std::lock_guard<std::mutex> lock{consumerMutex};
+        auto & subs = consumerSubscriptions[id];
+        for( auto & kv : subs ) {
+            eventManager->unsubscribe( kv.second );
+        }
+        consumerSubscriptions.erase( id );
     }
-    consumerSubscriptions.erase( id );
-    auto & subs2 = processorSubscriptions[id];
-    for( auto & kv : subs2 ) {
-        eventManager->unsubscribe( kv.second );
+    {
+        std::lock_guard<std::mutex> lock{processorMutex};
+        auto & subs2 = processorSubscriptions[id];
+        for( auto & kv : subs2 ) {
+            eventManager->unsubscribe( kv.second );
+        }
+        processorSubscriptions.erase( id );
     }
-    processorSubscriptions.erase( id );
+    {
+        std::lock_guard<std::mutex> lock{eventsMutex};
+        eventsToAck.erase( id );
+    }
+    {
+        std::lock_guard<std::mutex> lock{sendersMutex};
+        senders.erase( id );
+    }
 }
 
 void Susi::Api::ApiServerComponent::onMessage( std::string & id, Susi::Util::Any & packet ) {
@@ -71,6 +83,7 @@ void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, Su
         if(data["name"].isString()){
             subName = static_cast<std::string>(data["name"]);
         }
+        std::lock_guard<std::mutex> lock{consumerMutex};
         auto & subs = consumerSubscriptions[id];
         if( subs.find( topic ) != subs.end() ) {
             LOG(DEBUG) << "failed to subscribe"<<id<<"to topic"<<topic<<": allready subscribed";
@@ -106,6 +119,7 @@ void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, S
         if(data["name"].isString()){
             subName = static_cast<std::string>(data["name"]);
         }
+        std::lock_guard<std::mutex> lock{processorMutex};
         auto & subs = processorSubscriptions[id];
         if( subs.find( topic ) != subs.end() ) {
             sendFail( id,"you are allready subscribed to "+topic );
@@ -119,8 +133,10 @@ void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, S
                 return;
             }
             std::string _id = id;
-            std::lock_guard<std::mutex> lock{mutex};
-            eventsToAck[_id][event->id] = std::move( event );
+            {
+                std::lock_guard<std::mutex> eventLock{eventsMutex};
+                eventsToAck[_id][event->id] = std::move( event );
+            }
             send( _id,packet );
         },subName );
         subs[topic] = subid;
@@ -134,6 +150,7 @@ void Susi::Api::ApiServerComponent::handleUnregisterConsumer( std::string & id, 
     auto & data = packet["data"];
     if( data.isObject() ) {
         std::string topic = data["topic"];
+        std::lock_guard<std::mutex> lock{consumerMutex};
         auto & subs = consumerSubscriptions[id];
         if( subs.find( topic )!=subs.end() ) {
             long subid = subs[topic];
@@ -154,6 +171,7 @@ void Susi::Api::ApiServerComponent::handleUnregisterProcessor( std::string & id,
     auto & data = packet["data"];
     if( data.isObject() ) {
         std::string topic = data["topic"];
+        std::lock_guard<std::mutex> lock{processorMutex};
         auto & subs = processorSubscriptions[id];
         if( subs.find( topic )!=subs.end() ) {
             long subid = subs[topic];
@@ -199,7 +217,7 @@ void Susi::Api::ApiServerComponent::handleAck( std::string & id, Susi::Util::Any
         return;
     }
     std::string eventID = eventData["id"];
-    std::lock_guard<std::mutex> lock{mutex};
+    std::lock_guard<std::mutex> lock{eventsMutex};
     if(!(eventsToAck.count(id)>0) || !(eventsToAck[id].count(eventID)>0)){
         sendFail( id , "unexpected ack" );
         return;

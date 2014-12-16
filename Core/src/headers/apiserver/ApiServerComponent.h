@@ -27,11 +27,13 @@ namespace Susi {
         protected:
 
             std::map<std::string,std::function<void( Susi::Util::Any& )>> senders;
+            std::mutex sendersMutex;
             std::map<std::string,std::map<std::string,long>> consumerSubscriptions;
+            std::mutex consumerMutex;
             std::map<std::string,std::map<std::string,long>> processorSubscriptions;
+            std::mutex processorMutex;
             std::map<std::string,std::map<std::string,Susi::Events::EventPtr>> eventsToAck; //sessionid -> eventid -> event
-
-            std::mutex mutex;
+            std::mutex eventsMutex;
 
             void handleRegisterConsumer( std::string & id, Susi::Util::Any & packet );
             void handleRegisterProcessor( std::string & id, Susi::Util::Any & packet );
@@ -46,7 +48,7 @@ namespace Susi {
             bool checkIfConfidentialHeaderMatchesSession(Susi::Events::Event & event, std::string sessionID);
 
             void send( std::string & id, Susi::Util::Any & msg ) {
-                std::lock_guard<std::mutex> lock {mutex};
+                std::lock_guard<std::mutex> lock {sendersMutex};
                 auto & sender = senders[id];
                 if( sender ) sender(msg);
             }
@@ -72,11 +74,11 @@ namespace Susi {
             void onClose( std::string & id );
 
             inline void registerSender( std::string id , std::function<void( Susi::Util::Any& )> sender ) {
-                std::lock_guard<std::mutex> lock {mutex};
+                std::lock_guard<std::mutex> lock {sendersMutex};
                 senders[id] = sender;
             }
             inline void unregisterSender( std::string id ) {
-                std::lock_guard<std::mutex> lock {mutex};
+                std::lock_guard<std::mutex> lock {sendersMutex};
                 senders.erase(id);
             }
 
