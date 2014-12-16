@@ -47,13 +47,14 @@ Susi::Api::TCPClient::~TCPClient() {
 
 void Susi::Api::TCPClient::startRunloop(){
     sock.connect(sa);
+    isClosed.store(false);
     onConnect();
     sock.setReceiveTimeout( Poco::Timespan{0,100000} );
     runloop = std::move( std::thread{
         [this]() {
             char buff[1024];
             int bs;
-            while( !isClosed.load() ) { // data chunk loop
+            while( !(isClosed.load()) ) { // data chunk loop
                 try {
                     ////std::cout<<"wait for bytes"<<std::endl;
                     bs = sock.receiveBytes( buff,1024 );
@@ -91,6 +92,8 @@ void Susi::Api::TCPClient::startRunloop(){
                     }
                     if(!success){
                         LOG(DEBUG) << "no success with reconnecting, finally closing...";
+                        LOG(DEBUG) << "maxReconnectCount was: "<<maxReconnectCount;
+                        LOG(DEBUG) << "isClosed was: "<<isClosed.load();
                         onClose();
                         break;
                     }else{
