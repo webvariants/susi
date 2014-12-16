@@ -39,6 +39,7 @@ namespace Susi {
                             result.push_back( task );
                             tasks.erase( task );
                             hasChange = true;
+                            break;
                         }
                     }
                 }
