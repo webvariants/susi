@@ -33,7 +33,7 @@ void Susi::Api::TCPClient::send( std::string msg ) {
     try{
         sock.sendBytes( msg.c_str(),msg.size() );
     }catch(std::exception & e){
-        //std::cout<<"error while sending: "<<e.what()<<std::endl;
+        LOG(DEBUG) << "error while sending: "<<e.what();
         //sendbuff += msg;
     }
 }
@@ -71,7 +71,7 @@ void Susi::Api::TCPClient::startRunloop(){
                     LOG(DEBUG)<<"Exception in receive loop: "<<e.what();
                     size_t retryCount = 0;
                     bool success = false;
-                    while(!isClosed.load() && retryCount < maxReconnectCount){
+                    while(!(isClosed.load()) && (retryCount < maxReconnectCount)){
                         LOG(DEBUG)<<"try reconnect...";
                         try{
                             retryCount++;
@@ -85,11 +85,12 @@ void Susi::Api::TCPClient::startRunloop(){
                             }
                             break;
                         }catch(const std::exception & e){
-                            //std::cout<<"Error in reconnect: "<<e.what()<<std::endl;
+                            LOG(DEBUG) << "Error in reconnect: "<<e.what();
                         }               
                         std::this_thread::sleep_for(std::chrono::milliseconds{500});
                     }
                     if(!success){
+                        LOG(DEBUG) << "no success with reconnecting, finally closing...";
                         onClose();
                         break;
                     }else{
