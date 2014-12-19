@@ -1,0 +1,14 @@
+{
+	"eventsystem" : {
+		"addr":"erhardt-dev:4000"
+	},
+
+	"logger": {
+		"easylogging++": "../JSEngine/duktape/easylogging++.conf"
+	},
+
+	"duktape" : {
+		"src": "../JSEngine/duktape/src/test.js",
+		"interactive": true
+	}
+}

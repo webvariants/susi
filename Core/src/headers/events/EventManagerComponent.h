@@ -29,13 +29,13 @@ namespace Susi {
         public:
             ManagerComponent( size_t workers = 4, size_t buffsize = 32 ) : Manager {workers, buffsize} , noPublish {true} {}
 
-            void publish( EventPtr event, Consumer finishCallback = Consumer {} ) {
+            void publish( EventPtr event, Consumer finishCallback = Consumer {}, bool processorsOnly = false, bool consumersOnly = false) {
                 if( noPublish.load() ) {
                     std::shared_ptr<Event> sharedEvent {event.release()};
                     finishCallback( sharedEvent );
                     return;
                 }
-                Manager::publish( std::move( event ), std::move( finishCallback ) );
+                Manager::publish( std::move( event ), std::move( finishCallback ), processorsOnly, consumersOnly );
             }
 
             virtual void start() override {

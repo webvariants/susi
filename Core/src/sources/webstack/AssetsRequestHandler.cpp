@@ -14,6 +14,10 @@
 
 void Susi::AssetsRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& request,
         Poco::Net::HTTPServerResponse& response ) {
+    Poco::Net::NameValueCollection cookies;
+    request.getCookies( cookies );
+    std::string id = cookies["susisession"];
+    LOG(DEBUG) <<  "Assets request from " +id+": "+request.getURI();
     try {
         std::string fileLocation = _rootDirectory.path()+"/"+request.getURI().substr( 8 );
         Poco::File f( fileLocation );
@@ -25,7 +29,6 @@ void Susi::AssetsRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& re
 
         response.setContentType( Susi::MimeTable::getContentType(fileLocation) );
 
-
         response.setChunkedTransferEncoding( false );
 
         Poco::FileInputStream istr( fileLocation );
@@ -36,10 +39,9 @@ void Susi::AssetsRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& re
         else {
             throw std::runtime_error {"cannot find file"};
         }
-        LOG(DEBUG) << "correctly leaving assets handler";
     }
     catch( const std::exception & e ) {
-        LOG(DEBUG) <<  "got error "+std::string {e.what()} ;
+        LOG(DEBUG) <<  "can not find file: " << e.what();
         response.setChunkedTransferEncoding( true );
         response.setContentType( "text/html" );
         response.setStatus( Poco::Net::HTTPServerResponse::HTTPStatus::HTTP_NOT_FOUND );

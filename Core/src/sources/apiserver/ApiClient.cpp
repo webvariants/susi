@@ -1,7 +1,6 @@
 #include "apiserver/ApiClient.h"
 
-void Susi::Api::ApiClient::publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback ) {
-    LOG(DEBUG) << "publish called";
+void Susi::Api::ApiClient::publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback, bool processorsOnly, bool consumersOnly) {
     PublishData data{*event,finishCallback};
     publishs[event->getID()] = data;
     sendPublish( *event );
@@ -20,11 +19,10 @@ long Susi::Api::ApiClient::subscribe( std::string topic, Susi::Events::Consumer 
     return Susi::Events::Manager::subscribe( topic,consumer,name );
 }
 
-
 void Susi::Api::ApiClient::onConsumerEvent( Susi::Events::Event & event ) {
     auto evt = createEvent( event.getTopic() );
     *evt = event;
-    Susi::Events::Manager::publish( std::move( evt ) );
+    Susi::Events::Manager::publish( std::move( evt ), nullptr,false,true);
 }
 
 void Susi::Api::ApiClient::onProcessorEvent( Susi::Events::Event & event ) {
@@ -32,7 +30,7 @@ void Susi::Api::ApiClient::onProcessorEvent( Susi::Events::Event & event ) {
     *evt = event;
     Susi::Events::Manager::publish( std::move( evt ),[this]( Susi::Events::SharedEventPtr event ) {
         sendAck( *event );
-    } );
+    } ,true, false);
 }
 
 void Susi::Api::ApiClient::onAck( Susi::Events::Event & event ) {

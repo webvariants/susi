@@ -80,7 +80,7 @@ bool Susi::Events::Manager::unsubscribe( long id ) {
 }
 
 // public publish api function
-void Susi::Events::Manager::publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback ) {
+void Susi::Events::Manager::publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback, bool processorsOnly, bool consumersOnly ) {
     if( event.get()==nullptr ) {
         //std::cout<<"event is nullptr"<<std::endl;
         event.release();
@@ -95,10 +95,10 @@ void Susi::Events::Manager::publish( Susi::Events::EventPtr event, Susi::Events:
         for( auto & kv : subscriptionsByTopic ) {
             if( kv.first == event->topic ) {
                 for( auto & sub : kv.second ) {
-                    if( sub.consumer ) {
+                    if( sub.consumer && !processorsOnly ) {
                         process->consumers.push_back( sub.consumer );
                     }
-                    else if( sub.processor ) {
+                    else if( sub.processor && !consumersOnly ) {
                         affectedProcessorSubscriptions.push_back( sub );
                     }
                 }
@@ -111,7 +111,7 @@ void Susi::Events::Manager::publish( Susi::Events::EventPtr event, Susi::Events:
                 if( sub.consumer ) {
                     process->consumers.push_back( sub.consumer );
                 }
-                else if( sub.processor ) {
+                else if( sub.processor && !consumersOnly ) {
                     affectedProcessorSubscriptions.push_back( sub );
                 }
             }

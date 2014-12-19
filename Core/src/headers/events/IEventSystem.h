@@ -35,7 +35,7 @@ public:
     virtual long subscribe( std::string topic, Consumer consumer, std::string name="" ) = 0;
     //virtual long subscribe( Predicate pred, Consumer consumer, std::string name="" ) = 0;
     virtual bool unsubscribe( long id ) = 0;
-    virtual void publish( EventPtr event, Consumer finishCallback = Consumer {} ) = 0;
+    virtual void publish( EventPtr event, Consumer finishCallback = Consumer {}, bool processorsOnly = false, bool consumersOnly = false) = 0;
     virtual void ack( EventPtr event ) = 0;
     //virtual void addConstraint( std::pair<std::string,std::string> constraint ) = 0;
     virtual EventPtr createEvent( std::string topic ) = 0;
