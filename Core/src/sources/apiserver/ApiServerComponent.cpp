@@ -7,9 +7,7 @@ void Susi::Api::ApiServerComponent::onConnect( std::string & id ) {
 
 void Susi::Api::ApiServerComponent::onClose( std::string & id ) {
     LOG(INFO) <<  "lost connection..." ;
-    std::lock_guard<std::mutex> lock{mutex};
     sessionManager->killSession( id );
-
     {
         std::lock_guard<std::mutex> lock{consumerMutex};
         auto & subs = consumerSubscriptions[id];
