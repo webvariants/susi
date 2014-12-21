@@ -68,6 +68,10 @@
 
 	"logger": {
 		"easylogging++": "../Core/easylogging++.conf"
+	},
+
+	"duktape": {
+		"source": "test.js"
 	}
 
 }

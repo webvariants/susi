@@ -30,6 +30,7 @@
 #include "events/ConstraintController.h"
 #include "ddhcp/DDHCPComponent.h"
 #include "logger/Logger.h"
+#include "duktape/DuktapeEngine.h"
 
 namespace Susi {
 namespace System {

@@ -17,7 +17,7 @@ project( "SUSI" )
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/dev")
 
-find_package(POCO REQUIRED PocoFoundation PocoUtil PocoJSON PocoNet)
+find_package(POCO REQUIRED PocoFoundation PocoUtil PocoNet)
 find_package(SOCI REQUIRED)
 
 find_package(LibLZMA REQUIRED)
@@ -53,6 +53,7 @@ target_link_libraries(susi ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(susi ${SOCI_LIBRARY})
 target_link_libraries(susi ${LIBLZMA_LIBRARIES})
 target_link_libraries(susi ${POCO_LIBRARIES})
+# target_link_libraries(susi PocoFoundation PocoUtil PocoNet)
 
 #SUSI TESTS
 add_executable( susi_test ${CMAKE_SOURCE_DIR}/test/easylogging++_init.cpp ${TESTFILES})

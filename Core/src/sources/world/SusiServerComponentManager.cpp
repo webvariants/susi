@@ -221,4 +221,14 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	registerDependency("ddhcp","eventsystem");
 	registerDependency("ddhcp","sessionmanager");
 
+	/**
+	 * Declare duktape js engine
+	 */
+	registerComponent("duktape",[](ComponentManager * mgr, Any & config){
+		std::string source = "";
+		try{
+			source = static_cast<std::string>(config["source"]);
+		}catch(...){}
+		return std::shared_ptr<Component>{new Susi::Duktape::JSEngine{mgr,source}};
+	});
 }
