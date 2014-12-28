@@ -51,10 +51,9 @@
 	},
 
 	"httpserver": {
-		"address": "[::1]:8080",
-		"assets": "./assets",
-		"threads": 4,
-		"backlog": 32
+		"host": "::1",
+		"port": "8080",
+		"assets": "./assets/"
 	},
 
 	"autodiscovery": {

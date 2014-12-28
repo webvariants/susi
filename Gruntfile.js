@@ -51,7 +51,7 @@ module.exports = function(grunt) {
         }
       },
       make_core: {
-        command: 'make -j4',
+        command: 'make -j4 susi',
         options: {
           stderr: false,
           execOptions: {

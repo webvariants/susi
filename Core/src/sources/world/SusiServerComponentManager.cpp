@@ -146,29 +146,19 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	 * Declare httpserver
 	 */
 	registerComponent("httpserver", [](ComponentManager * mgr, Any & config) {
-		std::string address{""};
-		size_t threads{4};
-		size_t backlog{16};
+		std::string host="0.0.0.0",port="8080",assetRoot="./",uploadRoot="./";
 
-		if(config["address"].isString()){
-			address = static_cast<std::string>(config["address"]);
+		if(config["host"].isString()){
+			host = static_cast<std::string>(config["host"]);
 		}
-		std::string assetRoot{""};
 		if(config["assets"].isString()){
 			assetRoot = static_cast<std::string>(config["assets"]);
 		}
-		std::string upload{""};
 		if(config["upload"].isString()){
-			upload = static_cast<std::string>(config["upload"]);
+			uploadRoot = static_cast<std::string>(config["upload"]);
 		}
 
-		if(config["threads"].isInteger()){
-			threads =  static_cast<long>(config["threads"]);
-		}
-		if(config["backlog"].isInteger()){
-			backlog =  static_cast<long>(config["backlog"]);
-		}
-		return std::shared_ptr<Component>{new Susi::HttpServerComponent{mgr, address, assetRoot, upload, threads, backlog}};
+		return std::shared_ptr<Component>{new Susi::Webstack::HttpServerComponent{mgr, host, port, assetRoot, uploadRoot}};
 	});	
 	registerDependency("httpserver","apiserver");
 	registerDependency("httpserver","sessionmanager");

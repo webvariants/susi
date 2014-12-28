@@ -25,7 +25,10 @@
 #include "sessions/SessionManagerComponent.h"
 #include "states/StateControllerComponent.h"
 #include "syscall/SyscallComponent.h"
-#include "webstack/HttpServerComponent.h"
+
+//#include "webstack/HttpServerComponent.h"
+#include "webstack/OnionHttpServerComponent.h"
+
 #include "autodiscovery/AutoDiscoveryComponent.h"
 #include "events/ConstraintController.h"
 #include "ddhcp/DDHCPComponent.h"

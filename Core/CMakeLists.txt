@@ -53,6 +53,8 @@ target_link_libraries(susi ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(susi ${SOCI_LIBRARY})
 target_link_libraries(susi ${LIBLZMA_LIBRARIES})
 target_link_libraries(susi ${POCO_LIBRARIES})
+target_link_libraries(susi onion)
+target_link_libraries(susi onioncpp)
 # target_link_libraries(susi PocoFoundation PocoUtil PocoNet)
 
 #SUSI TESTS
@@ -62,6 +64,8 @@ target_link_libraries(susi_test ${CMAKE_THREAD_LIBS_INIT})
 target_link_libraries(susi_test ${SOCI_LIBRARY})
 target_link_libraries(susi_test ${LIBLZMA_LIBRARIES})
 target_link_libraries(susi_test ${POCO_LIBRARIES})
+target_link_libraries(susi_test onioncpp)
+target_link_libraries(susi_test onion)
 target_link_libraries(susi_test gtest)
 target_link_libraries(susi_test gtest_main)
 
