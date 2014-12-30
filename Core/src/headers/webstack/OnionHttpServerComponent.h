@@ -17,7 +17,6 @@
 #include "sessions/SessionManager.h"
 #include "apiserver/JSONStreamCollector.h"
 
-
 #include <onion/exportlocal.h>
 #include <onion/onion.hpp>
 #include <onion/response.hpp>

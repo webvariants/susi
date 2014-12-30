@@ -1,4 +1,6 @@
 #include "webstack/OnionHttpServerComponent.h"
+#include "webstack/MimeTable.h"
+
 
 onion_connection_status Susi::Webstack::HttpServerComponent::assetsHandler(Onion::Request &req, Onion::Response &res){
 	sessionHandling(req,res);
@@ -25,6 +27,8 @@ onion_connection_status Susi::Webstack::HttpServerComponent::assetsHandler(Onion
 		file.seekg (0, std::ios::beg);
 		file.read (memblock, size);
 		file.close();
+		auto contentType = MimeTable::getContentType(targetFile);
+		res.setHeader("content-type",contentType);
 		res << std::string{memblock,(unsigned long)size};
 		delete [] memblock;
 	}

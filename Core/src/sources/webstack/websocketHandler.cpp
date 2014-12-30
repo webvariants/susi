@@ -44,13 +44,11 @@ onion_connection_status Susi::Webstack::HttpServerComponent::websocketHandler(On
 		userData->server->apiServer()->onClose(userData->connID);
 		delete userData;
 	};
-
 	auto * userData = new wsUserData{
 		this,
 		connID,
 		collector
 	};
-
 	_sessionManager->addAlias(connID,sessionID);
 	_apiServer->onConnect(connID);
 	_apiServer->registerSender(connID,[ws](Susi::Util::Any & packet){
