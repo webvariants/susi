@@ -15,6 +15,8 @@
 #include "apiserver/ApiServerComponent.h"
 #include "world/BaseComponent.h"
 #include "sessions/SessionManager.h"
+#include "apiserver/JSONStreamCollector.h"
+
 
 #include <onion/exportlocal.h>
 #include <onion/onion.hpp>
@@ -22,6 +24,7 @@
 #include <onion/request.hpp>
 #include <onion/url.hpp>
 #include <onion/types.h>
+#include <onion/websocket.h>
 
 
 #include <thread>
@@ -33,6 +36,7 @@ namespace Webstack {
 	protected:
 
 		std::shared_ptr<Susi::Sessions::SessionManager> _sessionManager;
+		std::shared_ptr<Susi::Api::ApiServerComponent> _apiServer;
 
 		Onion::Onion _server{O_POOL};
 		Onion::Url _rootUrl{&_server};
@@ -42,7 +46,6 @@ namespace Webstack {
 		std::string _uploadDirectory;
 
 		std::thread _runloop;
-		onion_handler *_fsHandler;
 
 		std::string sessionHandling(Onion::Request &req, Onion::Response &res){
 			auto session = req.session();
@@ -74,6 +77,8 @@ namespace Webstack {
 
 		onion_connection_status assetsHandler(Onion::Request &req, Onion::Response &res);
 
+		onion_connection_status websocketHandler(Onion::Request &req, Onion::Response &res);
+
 	public:
 		HttpServerComponent(Susi::System::ComponentManager * mgr,
 							std::string host,
@@ -82,6 +87,7 @@ namespace Webstack {
 							std::string uploadDirectory) :
 			Susi::System::BaseComponent{mgr},
 			_sessionManager{componentManager->getComponent<Susi::Sessions::SessionManager>("sessionmanager")},
+			_apiServer{componentManager->getComponent<Susi::Api::ApiServerComponent>("apiserver")},
 			_host{host},
 			_port{port},
 			_assetRoot{assetRoot},
@@ -104,6 +110,7 @@ namespace Webstack {
 			_server.setHostname(_host);
 			_rootUrl.add("^assets/", this, &HttpServerComponent::assetsHandler)
 					.add("^$", this, &HttpServerComponent::redirectHandler)
+					.add("^ws$", this, &HttpServerComponent::websocketHandler)
 					.add("^.*$", this, &HttpServerComponent::notfoundHandler);
 			
 		}
@@ -120,6 +127,10 @@ namespace Webstack {
 			if(_runloop.joinable()){
 				_runloop.join();
 			}
+		}
+
+		std::shared_ptr<Susi::Api::ApiServerComponent> apiServer(){
+			return _apiServer;
 		}
 
 		~HttpServerComponent(){
