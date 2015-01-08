@@ -25,10 +25,11 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
     
     std::string connId = std::to_string( now.epochMicroseconds() );
     _sessionManager->addAlias(connId,id);
-    LOG(DEBUG) << "new websocket connection from session "<<id<<", naming it " << connId;
-    _apiServer->registerSender( connId,[&socket,&connId]( Susi::Util::Any & arg ) {
+
+    LOG(DEBUG) <<  "register sender in ws-handler for session "<<id<<" with connection id "<<connId;
+    _apiServer->registerSender( connId,[&socket]( Susi::Util::Any & arg ) {
         std::string msg = arg.toJSONString();
-        LOG(DEBUG) <<  "send frame to websocket " << connId ;
+        //LOG(DEBUG) <<  "send frame to websocket" ;
         socket.sendFrame( msg.data(), msg.length(), Poco::Net::WebSocket::FRAME_TEXT );
     } );
 

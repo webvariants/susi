@@ -39,13 +39,13 @@ TEST_F(EventManagerTest,SubscribeOneAndFinish){
 	// First parameter is the topic, second is a std::function<void(Susi::Events::EventPtr)>
 	// Subscribing a lambda is sufficent for this simple usecase.
 	// Since std::function is really good in converting functions of all kinds, we can use a lambda
-	eventManager->subscribe("test",[this](EventPtr event){
+	eventManager->subscribe(std::string{"test"},Susi::Events::Processor{[this](EventPtr event){
 		// set the finished condition to true, and notify the main test.
 		callbackCalledOne = true;
 		condOne.notify_all();
 		// acknoledge the event, to say that we are done with it and pass it back to the event system
 		eventManager->ack(std::move(event));
-	});
+	}});
 
 	// create a new EventPtr
 	auto event = eventManager->createEvent("test");
@@ -84,11 +84,11 @@ TEST_F(EventManagerTest,SubscribeOneAndFinish){
 // Therefore it is not fatal but unwelcome to forget to acknowledge an event.
 TEST_F(EventManagerTest,SubscribeOneAndFinishWithoutAck){
 	// subscribe handler
-	eventManager->subscribe("test",[this](EventPtr event){
+	eventManager->subscribe(std::string{"test"},Susi::Events::Processor{[this](EventPtr event){
 		callbackCalledOne = true;
 		condOne.notify_all();
 		// Here we forget to acknowledge!
-	});
+	}});
 
 	// publish event
 	auto event = eventManager->createEvent("test");
@@ -117,19 +117,19 @@ TEST_F(EventManagerTest,SubscribeOneAndFinishWithoutAck){
 // It is designed to carry small peaces of information (like error messages).
 TEST_F(EventManagerTest,SubscribeMultipleAndFinish){
 	// Install three handlers
-	eventManager->subscribe("test",[this](EventPtr event){
+	eventManager->subscribe(std::string{"test"},Susi::Events::Processor{[this](EventPtr event){
 		// add a foo header
 		event->headers.push_back(std::make_pair("foo","0"));
 		eventManager->ack(std::move(event));
-	});
-	eventManager->subscribe("test",[this](EventPtr event){
+	}});
+	eventManager->subscribe(std::string{"test"},Susi::Events::Processor{[this](EventPtr event){
 		event->headers.push_back(std::make_pair("foo","1"));
 		eventManager->ack(std::move(event)); 
-	});
-	eventManager->subscribe("test",[this](EventPtr event){
+	}});
+	eventManager->subscribe(std::string{"test"},Susi::Events::Processor{[this](EventPtr event){
 		event->headers.push_back(std::make_pair("foo","2"));
 		eventManager->ack(std::move(event));
-	});
+	}});
 
 	// publish and check if event manipulation worked like expected
 	auto event = eventManager->createEvent("test");
@@ -162,14 +162,14 @@ TEST_F(EventManagerTest,SubscribeMultipleAndFinish){
 // We can use a simple struct{void operator()(EventPtr){...}} for that.
 TEST_F(EventManagerTest,AckInFinishHandler){
 	// setup sub controller: add simple header to event.
-	eventManager->subscribe("topic2",[this](EventPtr event){
+	eventManager->subscribe(std::string{"topic2"},Susi::Events::Processor{[this](EventPtr event){
 		event->headers.push_back(std::make_pair("foo","bar"));
 		eventManager->ack(std::move(event));
-	});
+	}});
 
 	// setup main controller: publish sub event to sub controller 
 	// and acknowledge main event in finishCallback 
-	eventManager->subscribe("topic1",[this](EventPtr event){
+	eventManager->subscribe(std::string{"topic1"},Susi::Events::Processor{[this](EventPtr event){
 		struct Callback {
 			// our main event which we want to acknowledge later
 			EventPtr mainEvent;
@@ -187,7 +187,7 @@ TEST_F(EventManagerTest,AckInFinishHandler){
 		auto subEvent = eventManager->createEvent("topic2");
 		Callback callback(std::move(event));
 		eventManager->publish(std::move(subEvent),callback);
-	});
+	}});
 
 	// publish event to main controller
 	auto event = eventManager->createEvent("topic1");
@@ -215,11 +215,11 @@ TEST_F(EventManagerTest,AckInFinishHandler){
 // For this subscribe() returns an id, which we can use to unsubscribe the installed handler.
 TEST_F(EventManagerTest,unsubscribe){
 	// subscribe and save id;
-	long id = eventManager->subscribe("test",[this](EventPtr event){
+	long id = eventManager->subscribe(std::string{"test"},Susi::Events::Processor{[this](EventPtr event){
 		callbackCalledOne = true;
 		condOne.notify_all();
 		eventManager->ack(std::move(event));
-	});
+	}});
 	// unsubscribe the handler corresponding to this id
 	eventManager->unsubscribe(id);
 
@@ -248,11 +248,11 @@ TEST_F(EventManagerTest,unsubscribe){
 // e.g. we can provide a function<bool(const Event &)> to check if we are interested in the event.
 TEST_F(EventManagerTest, PredicateSubscribe){
 	// setup predicate: here we use a simple equality test (same effect as subscribe("test",handler))
-	auto predicate = [](const Event & event){
+	Susi::Events::Predicate predicate = [](const Event & event){
 		return event.topic == "test";
 	};
 	// setup handler.
-	auto handler = [this](EventPtr event){
+	Susi::Events::Processor handler = [this](EventPtr event){
 		callbackCalledOne = true;
 		condOne.notify_all();
 		eventManager->ack(std::move(event));
@@ -284,11 +284,11 @@ TEST_F(EventManagerTest, PredicateSubscribe){
 // We can also unsubscribe a handler which was setup with a predicate
 TEST_F(EventManagerTest, PredicateUnsubscribe){
 	// setup predicate: here we use a simple equality test (same effect as subscribe("test",handler))
-	auto predicate = [](const Event & event){
+	Susi::Events::Predicate predicate = [](const Event & event){
 		return event.topic == "test";
 	};
 	// setup handler.
-	auto handler = [this](EventPtr event){
+	Susi::Events::Processor handler = [this](EventPtr event){
 		callbackCalledOne = true;
 		condOne.notify_all();
 		eventManager->ack(std::move(event));
@@ -322,9 +322,9 @@ TEST_F(EventManagerTest, PredicateUnsubscribe){
 // Exceptions are translated into error headers and can be processed in the finishCallback.
 TEST_F(EventManagerTest,ErrorHandling){
 	// subscribe and throw error in handler
-	eventManager->subscribe("test",[this](EventPtr event){
+	eventManager->subscribe(std::string{"test"},Susi::Events::Processor{[this](EventPtr event){
 		throw std::runtime_error{"this failed..."};
-	});
+	}});
 	// publish event
 	auto event = eventManager->createEvent("test");
 	eventManager->publish(std::move(event),[this](SharedEventPtr event){
@@ -358,7 +358,7 @@ TEST_F(EventManagerTest,StressTest){
 		}
 	};
 	for(size_t i=0; i<numOfHandlers; i++){
-		eventManager->subscribe("test",Handler{i});
+		eventManager->subscribe(std::string{"test"},Susi::Events::Processor{Handler{i}});
 	}
 
 	//publish
@@ -382,11 +382,11 @@ TEST_F(EventManagerTest,StressTest){
 }
 
 TEST_F(EventManagerTest, GlobTest){
-	long id = eventManager->subscribe("*",[this](EventPtr event){
+	long id = eventManager->subscribe(std::string{"*"},Susi::Events::Processor{[this](EventPtr event){
 		callbackCalledOne = true;
 		condOne.notify_all();
 		eventManager->ack(std::move(event));
-	});
+	}});
 	auto event = eventManager->createEvent("test");
 	eventManager->publish(std::move(event),[this](SharedEventPtr event){
 		callbackCalledTwo = true;
@@ -428,15 +428,14 @@ TEST_F(EventManagerTest, GlobTest){
 	}
 }
 
-
 TEST_F(EventManagerTest,Constraints){
-	eventManager->subscribe("test",[](Susi::Events::EventPtr evt){
+	eventManager->subscribe(std::string{"test"},Susi::Events::Processor{[](Susi::Events::EventPtr evt){
 		evt->headers.push_back({"foo","foo"});
-	},"fooAdder");
+	}},"fooAdder");
 	
-	eventManager->subscribe("test",[](Susi::Events::EventPtr evt){
+	eventManager->subscribe(std::string{"test"},Susi::Events::Processor{[](Susi::Events::EventPtr evt){
 		evt->headers.push_back({"bar","bar"});
-	},"barAdder");
+	}},"barAdder");
 	
 	eventManager->addConstraint({"barAdder","fooAdder"});
 	

@@ -30,8 +30,8 @@ TEST_F(SessionManagerTest, Init) {
 	sessionManager->updateSession(sessionID);
 	EXPECT_TRUE(sessionManager->checkSession(sessionID));
 
-	auto duration = std::chrono::milliseconds(1100);
-	std::this_thread::sleep_for(duration);
+	//auto duration = std::chrono::milliseconds(1100);
+	Poco::Thread::sleep(1100);
 	EXPECT_FALSE(sessionManager->checkSession(sessionID));	
 }
 
@@ -43,8 +43,8 @@ TEST_F(SessionManagerTest, CheckSessions) {
 	EXPECT_TRUE(sessionManager->checkSession(sessionID));
 	EXPECT_TRUE(sessionManager->checkSession(sessionID_2));
 
-	auto duration = std::chrono::milliseconds(200);
-	std::this_thread::sleep_for(duration);
+	//auto duration = std::chrono::milliseconds(200);
+	Poco::Thread::sleep(200);
 	// expect 2 dead sessions
 	EXPECT_EQ(2,sessionManager->checkSessions());	
 }
@@ -62,24 +62,24 @@ TEST_F(SessionManagerTest, UpdateExistingSessionWithDuration){
 	sessionManager->init(std::chrono::milliseconds{100});
 	// will create session
 	sessionManager->updateSession(sessionID_4);
-	auto duration  = std::chrono::milliseconds(50);
+	//auto duration  = std::chrono::milliseconds(50);
 	auto duration2 = std::chrono::milliseconds(200);
 	
 	// 50 from 100
-	std::this_thread::sleep_for(duration);
+	Poco::Thread::sleep(50);
 	EXPECT_TRUE(sessionManager->checkSession(sessionID_4));
 
 	// add 200
 	sessionManager->updateSession(sessionID_4, duration2);
 
 	// wait 200 more
-	std::this_thread::sleep_for(duration2);
+	Poco::Thread::sleep(200);
 	// still alive, 300 not over
 	EXPECT_TRUE(sessionManager->checkSession(sessionID_4));
 
 	
 	// wait 50 more , sum is now 300 
-	std::this_thread::sleep_for(duration);
+	Poco::Thread::sleep(50);
 	// still alive ?
 	EXPECT_FALSE(sessionManager->checkSession(sessionID_4));
 }

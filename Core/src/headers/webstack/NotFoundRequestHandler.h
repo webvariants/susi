@@ -17,6 +17,8 @@
 #include "Poco/Net/HTTPRequestHandler.h"
 #include "Poco/Util/Application.h"
 
+#include "logger/Logger.h"
+
 namespace Susi {
 
     class NotFoundRequestHandler: public Poco::Net::HTTPRequestHandler {

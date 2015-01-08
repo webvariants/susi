@@ -19,29 +19,29 @@ namespace Susi {
     namespace EngineStarter {
         class StarterComponent : public Susi::System::BaseComponent , public Starter {
         public:
-            StarterComponent( Susi::System::ComponentManager * mgr ) :
-                Susi::System::BaseComponent {mgr}, Starter {} {}
+            StarterComponent( Susi::System::ComponentManager * mgr, std::string defaultPath = "" ) :
+                Susi::System::BaseComponent {mgr}, Starter {}, _defaultPath{defaultPath} {}
 
             virtual void start() override {
-                subscribe( "enginestarter::start", [this]( Susi::Events::EventPtr evt ) {
+                subscribe( std::string{"enginestarter::start"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleStart( std::move( evt ) );
-                } );
-                subscribe( "enginestarter::restart", [this]( Susi::Events::EventPtr evt ) {
+                }} );
+                subscribe( std::string{"enginestarter::restart"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleRestart( std::move( evt ) );
-                } );
-                subscribe( "enginestarter::stop", [this]( Susi::Events::EventPtr evt ) {
+                }} );
+                subscribe( std::string{"enginestarter::stop"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleStop( std::move( evt ) );
-                } );
+                }} );
 
-                subscribe( "global::start", [this]( Susi::Events::EventPtr evt ) {
+                subscribe( std::string{"global::start"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleStart( std::move( evt ) );
-                } );
-                subscribe( "global::restart", [this]( Susi::Events::EventPtr evt ) {
+                }} );
+                subscribe( std::string{"global::restart"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleRestart( std::move( evt ) );
-                } );
-                subscribe( "global::stop", [this]( Susi::Events::EventPtr evt ) {
+                }} );
+                subscribe( std::string{"global::stop"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     handleStop( std::move( evt ) );
-                } );
+                }} );
                 LOG(INFO) <<  "started EngineStarterComponent" ;
             }
 
@@ -55,6 +55,7 @@ namespace Susi {
                 LOG(INFO) <<  "stopped EngineStarterComponent" ;
             }
         protected:
+            std::string _defaultPath;
             void handleStart( Susi::Events::EventPtr event );
             void handleRestart( Susi::Events::EventPtr event );
             void handleStop( Susi::Events::EventPtr event );

@@ -23,7 +23,7 @@ namespace Susi {
         class ApiClient : protected BasicApiClient, public Susi::Events::Manager {
         public:
             ApiClient( std::string addr ) : BasicApiClient {addr} {
-                setMaxReconnectCount(5);
+                Susi::Api::TCPClient::setMaxReconnectCount(5);
             }
             void close() {
                 BasicApiClient::close();

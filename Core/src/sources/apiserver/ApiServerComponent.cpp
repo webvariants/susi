@@ -1,12 +1,12 @@
 #include "apiserver/ApiServerComponent.h"
 
 void Susi::Api::ApiServerComponent::onConnect( std::string & id ) {
-    LOG(DEBUG) <<  "new api connection: " << id;
+    LOG(DEBUG) << "new api connection: " << id;
     sessionManager->updateSession( id );
 }
 
 void Susi::Api::ApiServerComponent::onClose( std::string & id ) {
-    LOG(DEBUG) <<  "lost api connection: " << id;
+    LOG(DEBUG) << "lost api connection: " << id;
     sessionManager->killSession( id );
     {
         std::lock_guard<std::mutex> lock{consumerMutex};
@@ -67,6 +67,7 @@ void Susi::Api::ApiServerComponent::onMessage( std::string & id, Susi::Util::Any
     catch( const std::exception & e ) {
         std::string msg = "exception while processing: ";
         msg += e.what();
+        LOG(ERROR) << msg;
         sendFail( id,msg );
     }
 }
@@ -99,6 +100,7 @@ void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, Su
         long subid = eventManager->subscribe( topic,callback,subName );
         LOG(DEBUG) << "registerConsumer for "<<id<<" to topic "<<topic;
         subs[topic] = subid;
+        LOG(DEBUG) << "register consumer for topic "<<topic<<" to session "<<id;
         sendOk( id );
     }
     else {
@@ -121,7 +123,7 @@ void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, S
             sendFail( id,"you are allready subscribed to "+topic );
             return;
         }
-        long subid = eventManager->subscribe( topic,[this,id]( Susi::Events::EventPtr event ) {
+        long subid = eventManager->subscribe( topic,Susi::Events::Processor{[this,id]( Susi::Events::EventPtr event ) {
             Susi::Util::Any packet;
             packet["type"] = "processorEvent";
             packet["data"] = event->toAny();
@@ -134,7 +136,7 @@ void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, S
                 eventsToAck[_id][event->id] = std::move( event );
             }
             send( _id,packet );
-        },subName );
+        }},subName );
         subs[topic] = subid;
         LOG(DEBUG) << "registerProcessor for "<<id<<" to topic "<<topic;
         sendOk( id );
@@ -152,6 +154,7 @@ void Susi::Api::ApiServerComponent::handleUnregisterConsumer( std::string & id, 
         if( subs.find( topic )!=subs.end() ) {
             long subid = subs[topic];
             eventManager->unsubscribe( subid );
+            LOG(DEBUG) << "unregister consumer for topic "<<topic<<" from session "<<id;
             subs.erase(topic);
             sendOk( id );
             LOG(DEBUG) << "unregisterConsumer for "<<id<<" from "<<topic;
@@ -175,6 +178,7 @@ void Susi::Api::ApiServerComponent::handleUnregisterProcessor( std::string & id,
         if( subs.find( topic )!=subs.end() ) {
             long subid = subs[topic];
             eventManager->unsubscribe( subid );
+            LOG(DEBUG) << "unregister processor for topic "<<topic<<" from session "<<id;
             sendOk( id );
             LOG(DEBUG) << "unregisterConsumer for "<<id<<" from "<<topic;
         }
@@ -193,11 +197,12 @@ void Susi::Api::ApiServerComponent::handlePublish( std::string & id, Susi::Util:
         sendFail( id,"publish handler: data is not an object or topic is not set correctly" );
         return;
     }
+
     auto event = eventManager->createEvent( eventData["topic"] );
     Susi::Events::Event rawEvent {eventData};
     rawEvent.sessionID = id;
     if( rawEvent.id == "" ) {
-        rawEvent.id = std::chrono::system_clock::now().time_since_epoch().count();
+        rawEvent.id = std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
     }
     *event = rawEvent;
     LOG(DEBUG) << "publish event from "<<id<<", topic: "<<event->topic;

@@ -29,8 +29,9 @@ TEST_F(SessionManagerComponentTest, checkSessions) {
 	//check event
 	EXPECT_TRUE(static_cast<bool>(result->payload["success"]));
 
-	auto duration = std::chrono::milliseconds(1200);
-	std::this_thread::sleep_for(duration);
+	//auto duration = std::chrono::milliseconds(1200);
+	//std::this_thread::sleep_for(duration);
+	Poco::Thread::sleep(1200);
 
 	auto evt2 = createEvent("session::check");
 	evt2->payload["id"] = sessionID;

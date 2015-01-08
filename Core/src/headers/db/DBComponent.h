@@ -23,9 +23,9 @@ namespace Susi {
                 Susi::System::BaseComponent {mgr}, Manager {config} {}
 
             virtual void start() override {
-                subscribe( "db::query",[this]( ::Susi::Events::EventPtr evt ) {
+                subscribe( std::string{"db::query"},Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                     handleQuery( std::move( evt ) );
-                } );
+                }} );
                 std::string msg = "started DatabaseComponent with "+std::to_string(Manager::dbMap.size())+" databases";
                 LOG(INFO) <<  msg ;
             }

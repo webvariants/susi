@@ -17,10 +17,10 @@
 #include <cstdlib>
 
 bool checkConstraint(std::vector<std::string> plan, std::pair<std::string,std::string> constraint){
-	for(int i=0;i<plan.size();i++){
+	for(size_t i=0;i<plan.size();i++){
 		std::string task = plan[i];
 		if(task==constraint.first){
-			for(int j=i+1;j<plan.size();j++){
+			for(size_t j=i+1;j<plan.size();j++){
 				if(plan[j]==constraint.second){
 					return true;
 				}

@@ -79,8 +79,12 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	/**
 	 * Declare enginestarter
 	 */
-	registerComponent("enginestarter", [](ComponentManager * mgr, Any & config) {		
-		return std::shared_ptr<Component>{new Susi::EngineStarter::StarterComponent{mgr}};
+	registerComponent("enginestarter", [](ComponentManager * mgr, Any & config) {	
+		std::string path{""};
+		if(config["path"].isString()){
+			path = static_cast<std::string>(config["path"]);
+		}
+		return std::shared_ptr<Component>{new Susi::EngineStarter::StarterComponent{mgr,path}};
 	});
 	registerDependency("enginestarter","eventsystem");
 	registerDependency("enginestarter","sessionmanager");

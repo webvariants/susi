@@ -63,14 +63,14 @@ bool Susi::Events::Manager::unsubscribe( long id ) {
     std::lock_guard<std::mutex> lock( mutex );
     for( auto & kv : subscriptionsByTopic ) {
         auto & subs = kv.second;
-        for( int i=0; i<subs.size(); i++ ) {
+        for( size_t i=0; i<subs.size(); i++ ) {
             if( subs[i].id == id ) {
                 subs.erase( subs.begin()+i );
                 return true;
             }
         }
     }
-    for( int i=0; i<subscriptionsByPred.size(); i++ ) {
+    for( size_t i=0; i<subscriptionsByPred.size(); i++ ) {
         if( subscriptionsByPred[i].id == id ) {
             subscriptionsByPred.erase( subscriptionsByPred.begin()+i );
             return true;
@@ -82,10 +82,13 @@ bool Susi::Events::Manager::unsubscribe( long id ) {
 // public publish api function
 void Susi::Events::Manager::publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback, bool processorsOnly, bool consumersOnly ) {
     if( event.get()==nullptr ) {
+        LOG(DEBUG) << "publish: event is nullptr";
         //std::cout<<"event is nullptr"<<std::endl;
         event.release();
         return;
     }
+
+    //LOG(DEBUG) << "publish!";
     {
         std::lock_guard<std::mutex> lock( mutex );
         auto process = std::make_shared<PublishProcess>();
@@ -139,9 +142,11 @@ void Susi::Events::Manager::publish( Susi::Events::EventPtr event, Susi::Events:
 // pass event back to system
 void Susi::Events::Manager::ack( EventPtr event ) {
     if( event.get()==nullptr ) {
+        LOG(DEBUG) << "ack: event is nullptr";
         event.release();
         return;
     }
+    //LOG(DEBUG) << "ack!";
     struct Work {
         EventPtr event;
         Manager *manager;

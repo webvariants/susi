@@ -53,7 +53,8 @@ namespace Susi {
                         if( count % 3000 == 0 ) {
                             publish( createEvent( "heartbeat::fiveMinute" ) );
                         }
-                        std::this_thread::sleep_for( interval );
+                        //std::this_thread::sleep_for( interval );
+                        Poco::Thread::sleep(interval.count());
                     }
                 }
             } );

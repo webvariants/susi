@@ -51,7 +51,7 @@ module.exports = function(grunt) {
         }
       },
       make_core: {
-        command: 'make -j4',
+        command: 'make -j4 susi',
         options: {
           stderr: false,
           execOptions: {
@@ -59,12 +59,12 @@ module.exports = function(grunt) {
           }
         }
       },
-      make_jsengine: {
-        command: 'make -j4',
+      make_test: {
+        command: 'make -j4 susi_test',
         options: {
           stderr: false,
           execOptions: {
-            cwd: '<%= pkg.project.directories.build %>/jsengine'
+            cwd: '<%= pkg.project.directories.build %>/core'
           }
         }
       },
@@ -145,27 +145,31 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-newer');
-  grunt.loadNpmTasks('grunt-debian-package');
 
-  var register = function(name){
-    grunt.registerTask(name,'build '+name,[
-      'mkdir',
-      'shell:cmake_'+name,
-      'shell:make_'+name,
-      'newer:copy:'+name
-    ]);
-  };
+  grunt.registerTask('build', 'generate a clean build of everything', [
+    'clean:bin',
+    'clean:build',
+    'mkdir:all',
+    'shell:cmake_core',
+    'shell:make_core',
+    'copy:core',
+    'shell:cmake_watchdog',
+    'shell:make_watchdog',
+    'copy:watchdog'
+  ]);
 
-  register('core');
-  register('jsengine');
-  register('watchdog');
+  grunt.registerTask('development', 'update all changes', [
+    'mkdir:all',
+    'shell:cmake_core',
+    'shell:make_core',
+    'newer:copy:core',
+    'shell:cmake_watchdog',
+    'shell:make_watchdog',
+    'newer:copy:watchdog'
+  ]);
 
-  grunt.registerTask('test', 'run the susi tests', ['development','shell:test_core']);
-  
-  grunt.registerTask('development', ['core','jsengine','watchdog']);
-  grunt.registerTask('build', ['clean','core','jsengine','watchdog']);
-
-  grunt.registerTask('dev',['development']);  
+  grunt.registerTask('test', 'run the susi tests', ['development','shell:make_test','shell:test_core']);
+  grunt.registerTask('dev', ['development']);
   grunt.registerTask('default', ['development']);
 
 };

@@ -68,6 +68,7 @@ void Susi::Config::loadConfig( std::string path ) {
         /*std::string msg = "Susi::Config::loadConfig ";
         msg += ( "File: " + path );
         LOG(INFO) <<  msg ;*/
+        LOG(DEBUG) << "loaded cfg file "<<path;
         load_count++;
 
     }

@@ -127,5 +127,6 @@ bool Susi::compress_lzma(std::string infilename, std::string outfilename){
     }
 
     lzma_end (&strm);
+    fclose(out_file);
     return ret;
 }

@@ -14,6 +14,7 @@
 
 #include <Poco/Net/StreamSocket.h>
 #include <Poco/Net/SocketAddress.h>
+#include <Poco/Net/NetException.h>
 #include <thread>
 #include <iostream>
 #include <atomic>
@@ -35,7 +36,6 @@ namespace Susi {
             
             TCPClient( TCPClient && other );
 
-
             void close() ;
             void send( std::string msg ) ;
             void join() ;
@@ -49,7 +49,7 @@ namespace Susi {
 
             void startRunloop();
 
-            size_t maxReconnectCount = 0;
+            size_t maxReconnectCount = 5;
 
             std::atomic<bool> isClosed{false};
             Poco::Net::SocketAddress sa;

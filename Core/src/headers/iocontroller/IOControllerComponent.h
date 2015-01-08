@@ -27,30 +27,30 @@ namespace Susi {
         }
 
         virtual void start() override {
-            subscribe( "io::writeFile", [this]( ::Susi::Events::EventPtr evt ) {
+            subscribe( std::string{"io::writeFile"}, Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                 handleWriteFile( std::move( evt ) );
-            } );
-            subscribe( "io::readFile", [this]( ::Susi::Events::EventPtr evt ) {
+            }} );
+            subscribe( std::string{"io::readFile"}, Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                 handleReadFile( std::move( evt ) );
-            } );
-            subscribe( "io::deletePath",[this]( ::Susi::Events::EventPtr evt ) {
+            }} );
+            subscribe( std::string{"io::deletePath"},Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                 handleDeletePath( std::move( evt ) );
-            } );
-            subscribe( "io::movePath", [this]( ::Susi::Events::EventPtr evt ) {
+            }} );
+            subscribe( std::string{"io::movePath"}, Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                 handleMovePath( std::move( evt ) );
-            } );
-            subscribe( "io::copyPath", [this]( ::Susi::Events::EventPtr evt ) {
+            }} );
+            subscribe( std::string{"io::copyPath"}, Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                 handleCopyPath( std::move( evt ) );
-            } );
-            subscribe( "io::makeDir", [this]( ::Susi::Events::EventPtr evt ) {
+            }} );
+            subscribe( std::string{"io::makeDir"}, Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                 handleMakeDir( std::move( evt ) );
-            } );
-            subscribe( "io::setExecutable", [this]( ::Susi::Events::EventPtr evt ) {
+            }} );
+            subscribe( std::string{"io::setExecutable"}, Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                 handleSetExecutable( std::move( evt ) );
-            } );
-            subscribe( "io::getExecutable", [this]( ::Susi::Events::EventPtr evt ) {
+            }} );
+            subscribe( std::string{"io::getExecutable"}, Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                 handleGetExecutable( std::move( evt ) );
-            } );
+            }} );
             LOG(INFO) <<  "started IOControllerComponent" ;
         }
 

@@ -23,25 +23,25 @@ namespace Susi {
                 Susi::System::BaseComponent {mgr}, StateController {file} {}
 
             virtual void start() override {
-                subscribe( "heartbeat::fiveMinute",[this]( ::Susi::Events::EventPtr evt ) {
+                subscribe( std::string{"heartbeat::fiveMinute"}, Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                     handleAutoSave( std::move( evt ) );
-                } );
+                }} );
 
-                subscribe( "state::saveState", [this]( ::Susi::Events::EventPtr evt ) {
+                subscribe( std::string{"state::saveState"}, Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                     handleSave( std::move( evt ) );
-                } );
-                subscribe( "state::setState", [this]( ::Susi::Events::EventPtr evt ) {
+                }} );
+                subscribe( std::string{"state::setState"}, Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                     handleSetState( std::move( evt ) );
-                } );
-                subscribe( "state::getState", [this]( ::Susi::Events::EventPtr evt ) {
+                }} );
+                subscribe( std::string{"state::getState"}, Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                     handleGetState( std::move( evt ) );
-                } );
-                subscribe( "state::setPersistentState", [this]( ::Susi::Events::EventPtr evt ) {
+                }} );
+                subscribe( std::string{"state::setPersistentState"}, Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                     handleSetPersistentState( std::move( evt ) );
-                } );
-                subscribe( "state::getPersistentState", [this]( ::Susi::Events::EventPtr evt ) {
+                }} );
+                subscribe( std::string{"state::getPersistentState"}, Susi::Events::Processor{[this]( ::Susi::Events::EventPtr evt ) {
                     handleGetPersistentState( std::move( evt ) );
-                } );
+                }} );
                 LOG(INFO) <<  "started StateControllerComponent" ;
             }
 

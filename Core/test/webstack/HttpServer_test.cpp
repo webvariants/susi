@@ -19,7 +19,8 @@ protected:
 		io.writeFile(base_path+"/assets/test.txt","foobar");
 		io.writeFile(base_path+"/assets/test.svg", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		componentManager->startComponent("httpserver");
-		std::this_thread::sleep_for(std::chrono::milliseconds{150});
+		//std::this_thread::sleep_for(std::chrono::milliseconds{150});
+		Poco::Thread::sleep(150);
 	}
 	virtual void TearDown() override {
 		componentManager->stopAll();
@@ -103,8 +104,8 @@ TEST_F(HttpServerTest, Session) {
 	EXPECT_EQ(200,status);
 	EXPECT_EQ(2, countSetCookieInHeaders(headers));
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(300));
-
+	//std::this_thread::sleep_for(std::chrono::milliseconds(300));
+	Poco::Thread::sleep(300);
 	// get new sessionID
 	std::string new_session = getSessionIDFromHeaders(headers);
 	client.addHeader("Cookie", "susisession="+new_session);
@@ -121,8 +122,9 @@ TEST_F(HttpServerTest, Session) {
 	EXPECT_EQ(200,status);
 	EXPECT_EQ(0, countSetCookieInHeaders(headers));
 
-	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
+	//std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+	Poco::Thread::sleep(1000);
+	
 	client.addHeader("Cookie", "susisession="+new_session);
 	client.get("/assets/test.txt");
 	status = client.getStatus();

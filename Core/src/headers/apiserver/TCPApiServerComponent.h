@@ -25,12 +25,13 @@
 #include "apiserver/JSONStreamCollector.h"
 #include "world/BaseComponent.h"
 
+#include <Poco/Thread.h>
+
 namespace Susi {
     namespace Api {
 
         class TCPApiServerComponent : public Susi::System::BaseComponent {
         protected:
-
             class ConnectionHandler {
             public:
                 ConnectionHandler(Poco::Net::StreamSocket& socket, Poco::Net::SocketReactor& reactor):
@@ -59,11 +60,13 @@ namespace Susi {
                         std::string data{_pBuffer,static_cast<size_t>(n)};
                         _collector.collect(data);
                     }else{
+                        LOG(DEBUG) << "got zero bytes from client -> connection died.";
                         delete this;
                     }
                 }
 
                 void onShutdown(const Poco::AutoPtr<Poco::Net::ShutdownNotification>& pNf) {
+                    LOG(DEBUG) << "got shutdown event from client -> connection died.";
                     delete this;
                 }
 

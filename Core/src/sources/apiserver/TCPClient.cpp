@@ -33,7 +33,7 @@ void Susi::Api::TCPClient::send( std::string msg ) {
     try{
         sock.sendBytes( msg.c_str(),msg.size() );
     }catch(std::exception & e){
-        //std::cout<<"error while sending: "<<e.what()<<std::endl;
+        LOG(DEBUG) << "error while sending: "<<e.what();
         //sendbuff += msg;
     }
 }
@@ -47,13 +47,14 @@ Susi::Api::TCPClient::~TCPClient() {
 
 void Susi::Api::TCPClient::startRunloop(){
     sock.connect(sa);
+    isClosed.store(false);
     onConnect();
     sock.setReceiveTimeout( Poco::Timespan{0,100000} );
     runloop = std::move( std::thread{
         [this]() {
             char buff[1024];
             int bs;
-            while( !isClosed.load() ) { // data chunk loop
+            while( !(isClosed.load()) ) { // data chunk loop
                 try {
                     ////std::cout<<"wait for bytes"<<std::endl;
                     bs = sock.receiveBytes( buff,1024 );
@@ -71,7 +72,7 @@ void Susi::Api::TCPClient::startRunloop(){
                     LOG(DEBUG)<<"Exception in receive loop: "<<e.what();
                     size_t retryCount = 0;
                     bool success = false;
-                    while(!isClosed.load() && retryCount < maxReconnectCount){
+                    while(!(isClosed.load()) && (retryCount < maxReconnectCount)){
                         LOG(DEBUG)<<"try reconnect...";
                         try{
                             retryCount++;
@@ -85,11 +86,14 @@ void Susi::Api::TCPClient::startRunloop(){
                             }
                             break;
                         }catch(const std::exception & e){
-                            //std::cout<<"Error in reconnect: "<<e.what()<<std::endl;
+                            LOG(DEBUG) << "Error in reconnect: "<<e.what();
                         }               
                         std::this_thread::sleep_for(std::chrono::milliseconds{500});
                     }
                     if(!success){
+                        LOG(DEBUG) << "no success with reconnecting, finally closing...";
+                        LOG(DEBUG) << "maxReconnectCount was: "<<maxReconnectCount;
+                        LOG(DEBUG) << "isClosed was: "<<isClosed.load();
                         onClose();
                         break;
                     }else{

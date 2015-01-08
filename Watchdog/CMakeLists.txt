@@ -17,7 +17,6 @@ project( "WATCHDOG" )
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/dev")
 
-find_package(POCO REQUIRED PocoFoundation)
 find_package(Threads REQUIRED)
 
 set( CMAKE_COLOR_MAKEFILE ON )
@@ -31,7 +30,7 @@ file( GLOB SRCFILES ${CMAKE_SOURCE_DIR}/src/sources/*.cpp )
 
 #WATCHDOG BINARY
 add_executable( watchdog ${SRCFILES} ${CMAKE_SOURCE_DIR}/src/sources/main.cc )
-target_link_libraries(watchdog ${POCO_LIBRARIES})
+target_link_libraries(watchdog ${CMAKE_SOURCE_DIR}/../node_modules/poco/lib/libPocoFoundation.so)
 target_link_libraries(watchdog ${CMAKE_THREAD_LIBS_INIT})
 
 
