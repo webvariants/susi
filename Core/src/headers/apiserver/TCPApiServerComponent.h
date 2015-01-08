@@ -144,7 +144,8 @@ namespace Susi {
                 std::string msg {"started TCPApiServerComponent on "};
                 msg += address.toString();
                 LOG(INFO) <<  msg ;
-                std::this_thread::sleep_for( std::chrono::milliseconds {250} );
+                usleep(250000);
+                //std::this_thread::sleep_for( std::chrono::milliseconds {250} );
             }
             virtual void stop() override {
                 reactor.stop();

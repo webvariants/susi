@@ -88,7 +88,8 @@ void Susi::Api::TCPClient::startRunloop(){
                         }catch(const std::exception & e){
                             LOG(DEBUG) << "Error in reconnect: "<<e.what();
                         }               
-                        std::this_thread::sleep_for(std::chrono::milliseconds{500});
+                        usleep(500000);
+                        //std::this_thread::sleep_for(std::chrono::milliseconds{500});
                     }
                     if(!success){
                         LOG(DEBUG) << "no success with reconnecting, finally closing...";

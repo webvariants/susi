@@ -104,7 +104,7 @@ duk_ret_t Susi::Duktape::JSEngine::js_unregister(duk_context *ctx) {
 }
 
 void Susi::Duktape::JSEngine::registerProcessor(std::string topic){
-	registerIds[topic] = BaseComponent::subscribe(topic,[this,topic](Susi::Events::EventPtr event){
+	registerIds[topic] = BaseComponent::subscribe(topic,Susi::Events::Processor{[this,topic](Susi::Events::EventPtr event){
 		std::lock_guard<std::mutex> lock{mutex};
 		auto eventString = event->toString();
 		pendingEvents[event->id] = std::move(event);
@@ -116,7 +116,7 @@ void Susi::Duktape::JSEngine::registerProcessor(std::string topic){
             LOG(ERROR) << (std::string{"Error: "}+duk_safe_to_string(ctx, -1));
         }
         duk_pop(ctx);  /* pop result/error */
-	});
+	}});
 }
 
 void Susi::Duktape::JSEngine::unregister(std::string topic){

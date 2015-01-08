@@ -24,7 +24,7 @@ module.exports = function(grunt) {
 
     shell: {
       cmake_core: {
-        command: 'cmake -DPOCO_INCLUDE_DIR=../../node_modules/poco/include -DSOCI_INCLUDE_DIR=../../node_modules/soci/include/soci -DCMAKE_LIBRARY_PATH=../../node_modules/ ../../<%= pkg.project.directories.core %>',
+        command: 'CXX=g++-4.7 CC=gcc-4.7 cmake -DPOCO_INCLUDE_DIR=../../node_modules/poco/include -DSOCI_INCLUDE_DIR=../../node_modules/soci/include/soci -DCMAKE_LIBRARY_PATH=../../node_modules/ ../../<%= pkg.project.directories.core %>',
         options: {
           stderr: false,
           execOptions: {
@@ -33,7 +33,7 @@ module.exports = function(grunt) {
         }
       },
       cmake_jsengine: {
-        command: 'cmake -DPOCO_INCLUDE_DIR=../../node_modules/poco/include -DSOCI_INCLUDE_DIR=../../node_modules/soci/include/soci -DCMAKE_LIBRARY_PATH=../../node_modules/ ../../<%= pkg.project.directories.jsengine %>',
+        command: 'CXX=g++-4.7 CC=gcc-4.7 cmake -DPOCO_INCLUDE_DIR=../../node_modules/poco/include -DSOCI_INCLUDE_DIR=../../node_modules/soci/include/soci -DCMAKE_LIBRARY_PATH=../../node_modules/ ../../<%= pkg.project.directories.jsengine %>',
         options: {
           stderr: false,
           execOptions: {
@@ -42,7 +42,7 @@ module.exports = function(grunt) {
         }
       },
       cmake_watchdog: {
-        command: 'cmake ../../<%= pkg.project.directories.watchdog %>',
+        command: 'CXX=g++-4.7 CC=gcc-4.7 cmake ../../<%= pkg.project.directories.watchdog %>',
         options: {
           stderr: false,
           execOptions: {
