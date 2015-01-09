@@ -1153,6 +1153,14 @@ typedef duk_uint_t duk_ucodepoint_t;
 /* IEEE double typedef. */
 typedef double duk_double_t;
 
+
+/* Limit of `size_t' type.  */
+# if __WORDSIZE == 64
+#  define SIZE_MAX              (18446744073709551615UL)
+# else
+#  define SIZE_MAX              (4294967295U)
+# endif
+
 /* We're generally assuming that we're working on a platform with a 32-bit
  * address space.  If DUK_SIZE_MAX is a typecast value (which is necessary
  * if SIZE_MAX is missing), the check must be avoided because the
