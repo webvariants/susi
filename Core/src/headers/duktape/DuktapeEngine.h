@@ -17,7 +17,6 @@
 #include <sstream>
 #include "world/BaseComponent.h"
 #include "duktape.h"
-#include <ncurses.h>
 
 namespace Susi {
 namespace Duktape {
