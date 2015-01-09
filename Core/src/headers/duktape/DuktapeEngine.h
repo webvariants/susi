@@ -12,8 +12,6 @@
 #ifndef __DUKTAPEENGINE__
 #define __DUKTAPEENGINE__
 
-
-#include <libtecla.h>
 #include <sstream>
 #include "world/BaseComponent.h"
 #include "duktape.h"
