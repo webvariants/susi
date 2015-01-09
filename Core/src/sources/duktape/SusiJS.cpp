@@ -104,9 +104,9 @@ var susi = {
 		event = JSON.parse(event); 
 		var cb = this._publishCallbacks[event.id]; 
 		if(cb !== undefined) { 
+			cb(event); 
 			delete this._publishCallbacks[event.id]; 
-		} 
-		cb(event); 
+		}
 	},
 
 	_genID: function(){ 
