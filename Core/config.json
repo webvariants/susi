@@ -72,6 +72,10 @@
 
 	"duktape": {
 		"source": "test.js"
+	},
+
+	"pluginloader": {
+		"foo": "bar"
 	}
 
 }

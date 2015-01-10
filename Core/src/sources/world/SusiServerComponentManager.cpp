@@ -231,4 +231,12 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 		}catch(...){}
 		return std::shared_ptr<Component>{new Susi::Duktape::JSEngine{mgr,source}};
 	});
+
+	/**
+	 * Declare PluginLoader
+	 */
+	registerComponent("pluginloader", [](ComponentManager * mgr, Any & config) {			
+		return std::shared_ptr<Component>{new Susi::PluginLoaderComponent{mgr}};
+	});
+	registerDependency("pluginloader","eventsystem");
 }

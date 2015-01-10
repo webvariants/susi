@@ -32,6 +32,8 @@
 #include "logger/Logger.h"
 #include "duktape/DuktapeEngine.h"
 
+#include "pluginloader/PluginLoaderComponent.h"
+
 namespace Susi {
 namespace System {
 

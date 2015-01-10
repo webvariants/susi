@@ -1,0 +1,88 @@
+/*
+ * Copyright (c) 2015, webvariants GmbH, http://www.webvariants.de
+ *
+ * This file is released under the terms of the MIT license. You can find the
+ * complete text in the attached LICENSE file or online at:
+ *
+ * http://www.opensource.org/licenses/mit-license.php
+ *
+ * @author: Tino Rusch (tino.rusch@webvariants.de)
+ */
+
+#include <thread>
+#include <atomic>
+#include "world/BaseComponent.h"
+
+#if defined(_WIN32)
+#define LIBRARY_API __declspec(dllexport)
+#else
+#define LIBRARY_API
+#endif
+
+extern "C" {
+    std::shared_ptr<Susi::System::Component> LIBRARY_API createComponent(Susi::System::ComponentManager *mgr);
+    std::string LIBRARY_API getName();
+    std::vector<std::string> LIBRARY_API getDependencies();
+}
+
+namespace Susi {
+    class HeartBeatComponent : public System::BaseComponent {
+    protected:
+        std::atomic<bool> stopVar;
+        std::thread t;
+    public:
+        HeartBeatComponent( System::ComponentManager * mgr ) :
+            System::BaseComponent {mgr},
+        stopVar {false} {}
+
+        ~HeartBeatComponent() {
+            stop();
+            LOG(INFO) <<  "stopped HeartBeatComponent" ;
+        }
+
+        virtual void start() override {
+            t = std::move( std::thread {
+                [this]() {
+                    int count = 0;
+                    std::chrono::milliseconds interval( 100 );
+                    while( !this->stopVar.load() ) {
+                        ++count %= 3000;
+                        if( count % 10 == 0) {
+                            publish( createEvent( "heartbeat::one" ) );
+                        }
+                        if( count % 50 == 0 ) {
+                            publish( createEvent( "heartbeat::five" ) );
+                        }
+                        if( count % 100 == 0 ) {
+                            publish( createEvent( "heartbeat::ten" ) );
+                        }
+                        if( count % 600 == 0 ) {
+                            publish( createEvent( "heartbeat::minute" ) );
+                        }
+                        if( count % 3000 == 0 ) {
+                            publish( createEvent( "heartbeat::fiveMinute" ) );
+                        }
+                        std::this_thread::sleep_for( interval );
+                    }
+                }
+            } );
+
+            LOG(INFO) <<  "started HeartBeatComponent" ;
+        }
+
+        virtual void stop() override {
+            stopVar.store( true );
+            if( t.joinable() )t.join();
+        }
+    };
+}
+
+std::shared_ptr<Susi::System::Component> LIBRARY_API createComponent(Susi::System::ComponentManager *mgr){
+    return std::make_shared<Susi::HeartBeatComponent>(mgr);
+}
+std::string LIBRARY_API getName(){
+    return "heartbeat";
+}
+std::vector<std::string> LIBRARY_API getDependencies(){
+    return std::vector<std::string>{};
+}
