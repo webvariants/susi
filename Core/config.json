@@ -4,6 +4,10 @@
 		"queuelen": 32
 	},
 
+	"plugins" : {
+		"path": "../Core/src/plugins/heartbeat/build"
+	}
+
 	"heartbeat": {},
 
 

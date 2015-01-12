@@ -1,6 +1,7 @@
 #include "world/ComponentManager.h"
 
 void Susi::System::ComponentManager::registerComponent( std::string name, RegisterFunction func ) {
+    LOG(DEBUG) << "register component " << name;
     registerFunctions.emplace( name,std::move( func ) );
 }
 void Susi::System::ComponentManager::registerDependency( std::string subject, std::string dependency ) {
@@ -19,11 +20,11 @@ bool Susi::System::ComponentManager::loadComponent( std::string name ) {
         }
         data.component = registerFunctions[name]( this,config[name] );
         components[name] = data;
-        //LOG(DEBUG) <<  "loaded component "+name+"!" ;
+        LOG(DEBUG) <<  "loaded component "+name+"!" ;
         return true;
     }
     else {
-        //LOG(DEBUG) << "cant find register-function for component "+name;
+        LOG(DEBUG) << "cant find register-function for component "+name;
     }
 
     return false;
@@ -39,27 +40,27 @@ bool Susi::System::ComponentManager::unloadComponent( std::string name ) {
 }
 
 bool Susi::System::ComponentManager::startComponent( std::string name ) {
-    //LOG(DEBUG) <<  "starting component "+name+"..." ;
+    LOG(DEBUG) <<  "starting component "+name+"..." ;
     if( components.find( name ) == components.end() && !loadComponent( name ) ) {
         LOG(ERROR) <<  "can't start component "+name+", component is not loadable." ;
         return false;
     }
     auto & data = components[name];
     if( data.running ) {
-        //LOG(DEBUG) <<  "can't start component "+name+", component is allready ruuning." ;
+        LOG(DEBUG) <<  "can't start component "+name+", component is allready running." ;
         return false;
     }
     for( std::string & dep : dependencies[name] ) {
-        //LOG(DEBUG) <<  "need dependency "+dep ;
+        LOG(DEBUG) <<  "need dependency "+dep ;
         startComponent( dep );
         if( components.find( dep ) == components.end() || !components[dep].running ) {
-            //LOG(DEBUG) <<  "can't start component "+name+", dependency "+dep+" is not startable." ;
+            LOG(DEBUG) <<  "can't start component "+name+", dependency "+dep+" is not startable." ;
             return false;
         }
     }
     data.component->start();
     data.running = true;
-    //LOG(DEBUG) <<  "started component "+name+"!" ;
+    LOG(DEBUG) <<  "started component "+name+"!" ;
     return true;
 }
 

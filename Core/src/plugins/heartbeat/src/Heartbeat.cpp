@@ -20,7 +20,7 @@
 #endif
 
 extern "C" {
-    std::shared_ptr<Susi::System::Component> LIBRARY_API createComponent(Susi::System::ComponentManager *mgr);
+    std::shared_ptr<Susi::System::Component> LIBRARY_API createComponent(Susi::System::ComponentManager *mgr, Susi::Util::Any &config);
     std::string LIBRARY_API getName();
     std::vector<std::string> LIBRARY_API getDependencies();
 }
@@ -31,16 +31,19 @@ namespace Susi {
         std::atomic<bool> stopVar;
         std::thread t;
     public:
-        HeartBeatComponent( System::ComponentManager * mgr ) :
+        HeartBeatComponent( System::ComponentManager * mgr , Susi::Util::Any & config) :
             System::BaseComponent {mgr},
-        stopVar {false} {}
+        stopVar {false} {
+            //LOG(DEBUG) << "constructed heartbeat";
+        }
 
         ~HeartBeatComponent() {
             stop();
-            LOG(INFO) <<  "stopped HeartBeatComponent" ;
+            //LOG(INFO) <<  "stopped HeartBeatComponent" ;
         }
 
         virtual void start() override {
+            //LOG(DEBUG) << "starting heartbeat...";
             t = std::move( std::thread {
                 [this]() {
                     int count = 0;
@@ -67,7 +70,6 @@ namespace Susi {
                 }
             } );
 
-            LOG(INFO) <<  "started HeartBeatComponent" ;
         }
 
         virtual void stop() override {
@@ -77,12 +79,13 @@ namespace Susi {
     };
 }
 
-std::shared_ptr<Susi::System::Component> LIBRARY_API createComponent(Susi::System::ComponentManager *mgr){
-    return std::make_shared<Susi::HeartBeatComponent>(mgr);
+std::shared_ptr<Susi::System::Component> LIBRARY_API createComponent(Susi::System::ComponentManager * mgr, Susi::Util::Any & config){
+    return std::make_shared<Susi::HeartBeatComponent>(mgr,config);
 }
 std::string LIBRARY_API getName(){
     return "heartbeat";
 }
+
 std::vector<std::string> LIBRARY_API getDependencies(){
-    return std::vector<std::string>{};
+    return {};
 }
