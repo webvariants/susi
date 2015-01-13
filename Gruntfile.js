@@ -32,30 +32,12 @@ module.exports = function(grunt) {
           }
         }
       },
-      cmake_jsengine: {
-        command: 'cmake -DPOCO_INCLUDE_DIR=../../node_modules/poco/include -DSOCI_INCLUDE_DIR=../../node_modules/soci/include/soci -DCMAKE_LIBRARY_PATH=../../node_modules/ ../../<%= pkg.project.directories.jsengine %>',
-        options: {
-          stderr: false,
-          execOptions: {
-            cwd: '<%= pkg.project.directories.build %>/jsengine'
-          }
-        }
-      },
       make_core: {
         command: 'make -j4',
         options: {
           stderr: false,
           execOptions: {
             cwd: '<%= pkg.project.directories.build %>/core'
-          }
-        }
-      },
-      make_jsengine: {
-        command: 'make -j4',
-        options: {
-          stderr: false,
-          execOptions: {
-            cwd: '<%= pkg.project.directories.build %>/jsengine'
           }
         }
       },
@@ -82,19 +64,6 @@ module.exports = function(grunt) {
               '<%= pkg.project.directories.build %>/core/susi',
               '<%= pkg.project.directories.build %>/core/libsusi.so'
             ],
-            dest: '<%= pkg.project.directories.bin %>'
-          }
-        ]
-      },
-      jsengine: {
-        options: {
-          mode: true
-        },
-        files: [
-          {
-            expand: true,
-            flatten: true,
-            src: ['<%= pkg.project.directories.build %>/jsengine/susi-jsengine'],
             dest: '<%= pkg.project.directories.bin %>'
           }
         ]
@@ -126,12 +95,11 @@ module.exports = function(grunt) {
   };
 
   register('core');
-  register('jsengine');
   
   grunt.registerTask('test', 'run the susi tests', ['development','shell:test_core']);
   
-  grunt.registerTask('development', ['core','jsengine']);
-  grunt.registerTask('build', ['clean','core','jsengine']);
+  grunt.registerTask('development', ['core']);
+  grunt.registerTask('build', ['clean','core']);
 
   grunt.registerTask('dev',['development']);  
   grunt.registerTask('default', ['development']);

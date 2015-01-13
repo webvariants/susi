@@ -22,7 +22,7 @@
 #include "world/SusiServerComponentManager.h"
 
 #include "logger/easylogging++.h"
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 std::condition_variable waitCond;
 

@@ -8,4 +8,4 @@ set(CMAKE_CXX_FLAGS "--std=c++11 -g ${CMAKE_CXX_FLAGS}")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/headers)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../headers)
 
-add_library(heartbeat SHARED src/Heartbeat.cpp)
+add_library(heartbeat SHARED sources/export.cpp)
