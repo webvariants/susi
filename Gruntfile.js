@@ -41,15 +41,7 @@ module.exports = function(grunt) {
           }
         }
       },
-      cmake_watchdog: {
-        command: 'CXX=g++-4.7 CC=gcc-4.7 cmake ../../<%= pkg.project.directories.watchdog %>',
-        options: {
-          stderr: false,
-          execOptions: {
-            cwd: '<%= pkg.project.directories.build %>/watchdog'
-          }
-        }
-      },
+
       make_core: {
         command: 'make -j4 susi',
         options: {
@@ -65,15 +57,6 @@ module.exports = function(grunt) {
           stderr: false,
           execOptions: {
             cwd: '<%= pkg.project.directories.build %>/core'
-          }
-        }
-      },
-      make_watchdog: {
-        command: 'make -j4',
-        options: {
-          stderr: false,
-          execOptions: {
-            cwd: '<%= pkg.project.directories.build %>/watchdog'
           }
         }
       },
@@ -116,19 +99,6 @@ module.exports = function(grunt) {
             dest: '<%= pkg.project.directories.bin %>'
           }
         ]
-      },
-      watchdog: {
-        options: {
-          mode: true
-        },
-        files: [
-          {
-            expand: true,
-            flatten: true,
-            src: ['<%= pkg.project.directories.build %>/watchdog/watchdog'],
-            dest: '<%= pkg.project.directories.bin %>'
-          }
-        ]
       }
     },
     watch: {
@@ -146,27 +116,14 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-newer');
 
-  grunt.registerTask('build', 'generate a clean build of everything', [
-    'clean:bin',
-    'clean:build',
-    'mkdir:all',
-    'shell:cmake_core',
-    'shell:make_core',
-    'copy:core',
-    'shell:cmake_watchdog',
-    'shell:make_watchdog',
-    'copy:watchdog'
-  ]);
 
-  grunt.registerTask('development', 'update all changes', [
-    'mkdir:all',
-    'shell:cmake_core',
-    'shell:make_core',
-    'newer:copy:core',
-    'shell:cmake_watchdog',
-    'shell:make_watchdog',
-    'newer:copy:watchdog'
-  ]);
+  register('core');
+  register('jsengine');
+  
+  grunt.registerTask('test', 'run the susi tests', ['development','shell:test_core']);
+  
+  grunt.registerTask('development', ['core','jsengine']);
+  grunt.registerTask('build', ['clean','core','jsengine']);
 
   grunt.registerTask('test', 'run the susi tests', ['development','shell:make_test','shell:test_core']);
   grunt.registerTask('dev', ['development']);
