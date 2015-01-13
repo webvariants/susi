@@ -116,14 +116,21 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-newer');
 
+  var register = function(name){
+    grunt.registerTask(name,'build '+name,[
+      'mkdir',
+      'shell:cmake_'+name,
+      'shell:make_'+name,
+      'newer:copy:'+name
+    ]);
+  };
 
   register('core');
-  register('jsengine');
   
   grunt.registerTask('test', 'run the susi tests', ['development','shell:test_core']);
   
-  grunt.registerTask('development', ['core','jsengine']);
-  grunt.registerTask('build', ['clean','core','jsengine']);
+  grunt.registerTask('development', ['core']);
+  grunt.registerTask('build', ['clean','core']);
 
   grunt.registerTask('test', 'run the susi tests', ['development','shell:make_test','shell:test_core']);
   grunt.registerTask('dev', ['development']);
