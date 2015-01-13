@@ -14,7 +14,6 @@
 
 #include "world/ComponentManager.h"
 #include "logger/easylogging++.h"
-/*#include "zlib.h"*/
 #include "lzma.h"
 
 namespace Susi {

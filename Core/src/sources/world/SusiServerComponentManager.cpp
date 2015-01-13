@@ -1,6 +1,6 @@
 #include "world/SusiServerComponentManager.h"
 
-Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util::Any::Object config) : Susi::System::ComponentManager{config} {
+Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util::Any::Object config) : Susi::System::PluginLoadingComponentManager{config} {
 	
 	using Susi::System::ComponentManager;
 	using Susi::System::Component;
@@ -35,11 +35,11 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 
 	/**
 	 * Declare heartbeat
-	 */
 	registerComponent("heartbeat",[](ComponentManager * mgr, Any & config){
 		return std::shared_ptr<Component>{new Susi::HeartBeatComponent{mgr}};
 	});
 	registerDependency("heartbeat","eventsystem");
+	 */
 
 	/**
 	 * Declare dbmanager
@@ -231,4 +231,5 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 		}catch(...){}
 		return std::shared_ptr<Component>{new Susi::Duktape::JSEngine{mgr,source}};
 	});
+
 }

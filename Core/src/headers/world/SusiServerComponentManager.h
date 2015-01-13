@@ -12,7 +12,7 @@
 #ifndef __SUSISERVERCOMPONENTMANAGER__
 #define __SUSISERVERCOMPONENTMANAGER__
 
-#include "world/ComponentManager.h"
+#include "world/PluginLoadingComponentManager.h"
 #include "util/Any.h"
  
 #include "apiserver/TCPApiServerComponent.h"
@@ -35,7 +35,7 @@
 namespace Susi {
 namespace System {
 
-class SusiServerComponentManager : public ComponentManager {
+class SusiServerComponentManager : public PluginLoadingComponentManager {
 public:
 	SusiServerComponentManager(Susi::Util::Any::Object config);
 };
