@@ -41,15 +41,6 @@ module.exports = function(grunt) {
           }
         }
       },
-      cmake_watchdog: {
-        command: 'cmake ../../<%= pkg.project.directories.watchdog %>',
-        options: {
-          stderr: false,
-          execOptions: {
-            cwd: '<%= pkg.project.directories.build %>/watchdog'
-          }
-        }
-      },
       make_core: {
         command: 'make -j4',
         options: {
@@ -65,15 +56,6 @@ module.exports = function(grunt) {
           stderr: false,
           execOptions: {
             cwd: '<%= pkg.project.directories.build %>/jsengine'
-          }
-        }
-      },
-      make_watchdog: {
-        command: 'make -j4',
-        options: {
-          stderr: false,
-          execOptions: {
-            cwd: '<%= pkg.project.directories.build %>/watchdog'
           }
         }
       },
@@ -116,19 +98,6 @@ module.exports = function(grunt) {
             dest: '<%= pkg.project.directories.bin %>'
           }
         ]
-      },
-      watchdog: {
-        options: {
-          mode: true
-        },
-        files: [
-          {
-            expand: true,
-            flatten: true,
-            src: ['<%= pkg.project.directories.build %>/watchdog/watchdog'],
-            dest: '<%= pkg.project.directories.bin %>'
-          }
-        ]
       }
     },
     watch: {
@@ -158,12 +127,11 @@ module.exports = function(grunt) {
 
   register('core');
   register('jsengine');
-  register('watchdog');
-
+  
   grunt.registerTask('test', 'run the susi tests', ['development','shell:test_core']);
   
-  grunt.registerTask('development', ['core','jsengine','watchdog']);
-  grunt.registerTask('build', ['clean','core','jsengine','watchdog']);
+  grunt.registerTask('development', ['core','jsengine']);
+  grunt.registerTask('build', ['clean','core','jsengine']);
 
   grunt.registerTask('dev',['development']);  
   grunt.registerTask('default', ['development']);
