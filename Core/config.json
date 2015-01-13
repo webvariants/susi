@@ -5,7 +5,7 @@
 	},
 
 	"plugins" : {
-		"path": "../Core/src/plugins/heartbeat/build"
+		"path": "./lib"
 	}
 
 	"heartbeat": {},
@@ -71,15 +71,11 @@
 	"constraints": {},
 
 	"logger": {
-		"easylogging++": "../Core/easylogging++.conf"
+		"easylogging++": "../../Core/easylogging++.conf"
 	},
 
 	"duktape": {
 		"source": "test.js"
-	},
-
-	"pluginloader": {
-		"foo": "bar"
 	}
 
 }

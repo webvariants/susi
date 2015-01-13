@@ -20,7 +20,7 @@ bool Susi::System::ComponentManager::loadComponent( std::string name ) {
         }
         data.component = registerFunctions[name]( this,config[name] );
         components[name] = data;
-        LOG(DEBUG) <<  "loaded component "+name+"!" ;
+        //LOG(DEBUG) <<  "loaded component "+name+"!" ;
         return true;
     }
     else {
@@ -40,18 +40,18 @@ bool Susi::System::ComponentManager::unloadComponent( std::string name ) {
 }
 
 bool Susi::System::ComponentManager::startComponent( std::string name ) {
-    LOG(DEBUG) <<  "starting component "+name+"..." ;
+    //LOG(DEBUG) <<  "starting component "+name+"..." ;
     if( components.find( name ) == components.end() && !loadComponent( name ) ) {
         LOG(ERROR) <<  "can't start component "+name+", component is not loadable." ;
         return false;
     }
     auto & data = components[name];
     if( data.running ) {
-        LOG(DEBUG) <<  "can't start component "+name+", component is allready running." ;
+        //LOG(DEBUG) <<  "can't start component "+name+", component is allready running." ;
         return false;
     }
     for( std::string & dep : dependencies[name] ) {
-        LOG(DEBUG) <<  "need dependency "+dep ;
+        //LOG(DEBUG) <<  "need dependency "+dep ;
         startComponent( dep );
         if( components.find( dep ) == components.end() || !components[dep].running ) {
             LOG(DEBUG) <<  "can't start component "+name+", dependency "+dep+" is not startable." ;
@@ -60,7 +60,7 @@ bool Susi::System::ComponentManager::startComponent( std::string name ) {
     }
     data.component->start();
     data.running = true;
-    LOG(DEBUG) <<  "started component "+name+"!" ;
+    //LOG(DEBUG) <<  "started component "+name+"!" ;
     return true;
 }
 

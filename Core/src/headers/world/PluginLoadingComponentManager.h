@@ -42,23 +42,20 @@ namespace Susi {
 		            Poco::Glob::glob(pattern, sharedLibraryFiles);
 		            LOG(DEBUG) << "shared libs: "<<sharedLibraryFiles.size();
 		            for(auto & path : sharedLibraryFiles){
-		                LOG(INFO) << "found lib " << path;
 		                libs.emplace_back(std::make_shared<Poco::SharedLibrary>(path));
 		                auto lib = libs[libs.size()-1];
 		                if(lib->hasSymbol(symbol_getName) && 
 		                   lib->hasSymbol(symbol_createComponent)){
-		                   	LOG(INFO) << "lib has minimal function set";
+		                	LOG(INFO) << "found lib " << path;
 		                    GetName_t getName = (GetName_t)lib->getSymbol(symbol_getName);
 		                    CreateComponent_t createComponent = (CreateComponent_t)lib->getSymbol(symbol_createComponent);
 		                    std::string name = getName();
 		                    registerComponent(name,createComponent);
-		                    LOG(DEBUG) << "registered component "<<name;
 		                    if(lib->hasSymbol(symbol_getDependencies)){
 		                    	GetDependencies_t getDependencies = (GetDependencies_t)lib->getSymbol(symbol_getDependencies);
 		                    	auto deps = getDependencies();
 		                    	for(std::string & dep : deps){
 		                    		registerDependency(name, dep);
-		                    		LOG(DEBUG) << "registered dependency "<<dep;
 		                    	}
 		                    }
 		                }
