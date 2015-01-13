@@ -22,7 +22,7 @@
 #include "world/SusiServerComponentManager.h"
 
 #include "logger/easylogging++.h"
-_INITIALIZE_EASYLOGGINGPP
+INITIALIZE_EASYLOGGINGPP
 
 std::condition_variable waitCond;
 
@@ -42,7 +42,6 @@ void signalHandler (int signum) {
 
 int main(int argc, char** argv){
    	
-
 	std::vector<std::string> argv_vec;
 
 	for (int i=0; i<argc; i++) {

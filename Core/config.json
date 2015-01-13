@@ -4,6 +4,10 @@
 		"queuelen": 32
 	},
 
+	"plugins" : {
+		"path": "./lib"
+	}
+
 	"heartbeat": {},
 
 
@@ -67,7 +71,7 @@
 	"constraints": {},
 
 	"logger": {
-		"easylogging++": "../Core/easylogging++.conf"
+		"easylogging++": "../../Core/easylogging++.conf"
 	},
 
 	"duktape": {

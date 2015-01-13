@@ -1,7 +1,9 @@
 #include "world/ComponentManager.h"
 
 void Susi::System::ComponentManager::registerComponent( std::string name, RegisterFunction func ) {
-    registerFunctions[name]= std::move( func ) ;
+
+    LOG(DEBUG) << "register component " << name;
+    registerFunctions.emplace( name,std::move( func ) );
 }
 void Susi::System::ComponentManager::registerDependency( std::string subject, std::string dependency ) {
     auto & deps = dependencies[subject];
@@ -23,7 +25,7 @@ bool Susi::System::ComponentManager::loadComponent( std::string name ) {
         return true;
     }
     else {
-        //LOG(DEBUG) << "cant find register-function for component "+name;
+        LOG(DEBUG) << "cant find register-function for component "+name;
     }
 
     return false;
@@ -46,14 +48,14 @@ bool Susi::System::ComponentManager::startComponent( std::string name ) {
     }
     auto & data = components[name];
     if( data.running ) {
-        //LOG(DEBUG) <<  "can't start component "+name+", component is allready ruuning." ;
+        //LOG(DEBUG) <<  "can't start component "+name+", component is allready running." ;
         return false;
     }
     for( std::string & dep : dependencies[name] ) {
         //LOG(DEBUG) <<  "need dependency "+dep ;
         startComponent( dep );
         if( components.find( dep ) == components.end() || !components[dep].running ) {
-            //LOG(DEBUG) <<  "can't start component "+name+", dependency "+dep+" is not startable." ;
+            LOG(DEBUG) <<  "can't start component "+name+", dependency "+dep+" is not startable." ;
             return false;
         }
     }

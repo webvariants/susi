@@ -32,27 +32,8 @@ module.exports = function(grunt) {
           }
         }
       },
-      cmake_jsengine: {
-        command: 'CXX=g++-4.7 CC=gcc-4.7 cmake -DPOCO_INCLUDE_DIR=../../node_modules/poco/include -DSOCI_INCLUDE_DIR=../../node_modules/soci/include/soci -DCMAKE_LIBRARY_PATH=../../node_modules/ ../../<%= pkg.project.directories.jsengine %>',
-        options: {
-          stderr: false,
-          execOptions: {
-            cwd: '<%= pkg.project.directories.build %>/jsengine'
-          }
-        }
-      },
-
       make_core: {
         command: 'make -j4 susi',
-        options: {
-          stderr: false,
-          execOptions: {
-            cwd: '<%= pkg.project.directories.build %>/core'
-          }
-        }
-      },
-      make_test: {
-        command: 'make -j4 susi_test',
         options: {
           stderr: false,
           execOptions: {
@@ -83,19 +64,6 @@ module.exports = function(grunt) {
               '<%= pkg.project.directories.build %>/core/susi',
               '<%= pkg.project.directories.build %>/core/libsusi.so'
             ],
-            dest: '<%= pkg.project.directories.bin %>'
-          }
-        ]
-      },
-      jsengine: {
-        options: {
-          mode: true
-        },
-        files: [
-          {
-            expand: true,
-            flatten: true,
-            src: ['<%= pkg.project.directories.build %>/jsengine/susi-jsengine'],
             dest: '<%= pkg.project.directories.bin %>'
           }
         ]

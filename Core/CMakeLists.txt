@@ -17,12 +17,16 @@ project( "SUSI" )
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/dev")
 
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
 find_package(POCO REQUIRED PocoFoundation PocoUtil PocoNet)
 find_package(SOCI REQUIRED)
-
 find_package(LibLZMA REQUIRED)
-
 find_package(Threads REQUIRED)
+
+add_subdirectory( ${CMAKE_SOURCE_DIR}/src/plugins )
 
 add_subdirectory( ${CMAKE_SOURCE_DIR}/test/gtest-1.7.0 )
 include_directories( ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR} )
