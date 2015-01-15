@@ -35,11 +35,11 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 
 	/**
 	 * Declare heartbeat
+	 */
 	registerComponent("heartbeat",[](ComponentManager * mgr, Any & config){
 		return std::shared_ptr<Component>{new Susi::HeartBeatComponent{mgr}};
 	});
 	registerDependency("heartbeat","eventsystem");
-	 */
 
 	/**
 	 * Declare dbmanager

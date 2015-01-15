@@ -71,7 +71,7 @@
 	"constraints": {},
 
 	"logger": {
-		"easylogging++": "../../Core/easylogging++.conf"
+		"easylogging++": "../Core/easylogging++.conf"
 	},
 
 	"duktape": {
