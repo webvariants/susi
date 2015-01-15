@@ -27,7 +27,7 @@ find_package(SOCI REQUIRED)
 find_package(LibLZMA REQUIRED)
 find_package(Threads REQUIRED)
 
-add_subdirectory( ${CMAKE_SOURCE_DIR}/src/plugins )
+#add_subdirectory( ${CMAKE_SOURCE_DIR}/src/plugins )
 
 add_subdirectory( ${CMAKE_SOURCE_DIR}/test/gtest-1.7.0 )
 include_directories( ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR} )
