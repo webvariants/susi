@@ -35,12 +35,12 @@ namespace Susi {
 			PluginLoadingComponentManager(Susi::Util::Any::Object config) : ComponentManager{config} {
 				if(config["plugins"].isObject() && config["plugins"]["path"].isString()){
 					std::string path = config["plugins"]["path"];
-					LOG(DEBUG) << "got plugin path " << path;
+					//LOG(DEBUG) << "got plugin path " << path;
 					std::string pattern = path+"/*"+Poco::SharedLibrary::suffix();
-					LOG(DEBUG) << "pattern " << pattern;
+					//LOG(DEBUG) << "pattern " << pattern;
 					std::set<std::string> sharedLibraryFiles;
 		            Poco::Glob::glob(pattern, sharedLibraryFiles);
-		            LOG(DEBUG) << "shared libs: "<<sharedLibraryFiles.size();
+		            //LOG(DEBUG) << "shared libs: "<<sharedLibraryFiles.size();
 		            for(auto & path : sharedLibraryFiles){
 		                libs.emplace_back(std::make_shared<Poco::SharedLibrary>(path));
 		                auto lib = libs[libs.size()-1];
