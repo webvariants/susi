@@ -33,7 +33,7 @@ include_directories( ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR} )
 
 set( CMAKE_COLOR_MAKEFILE ON )
 
-set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -g -Wall --std=c++11 -fPIC -O0 " )
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 -fPIC -Os" )
 
 include_directories( ${CMAKE_SOURCE_DIR}/src/headers )
 include_directories( ${CMAKE_SOURCE_DIR}/test/gtest-1.7.0/include )

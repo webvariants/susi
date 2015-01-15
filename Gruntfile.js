@@ -61,8 +61,8 @@ module.exports = function(grunt) {
             expand: true,
             flatten: true,
             src: [
-              '<%= pkg.project.directories.build %>/core/susi',
-              '<%= pkg.project.directories.build %>/core/libsusi.so'
+              '<%= pkg.project.directories.build %>/core/bin/susi',
+              '<%= pkg.project.directories.build %>/core/lib/libsusi.so'
             ],
             dest: '<%= pkg.project.directories.bin %>'
           }
