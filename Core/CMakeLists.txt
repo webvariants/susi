@@ -1,3 +1,4 @@
+
 ###################################################################################
 #
 #  Copyright (c) 2014, webvariants GmbH, http://www.webvariants.de
@@ -13,7 +14,7 @@
 
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
-project( "SUSI" )
+project( "susi" )
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/dev")
 
@@ -43,6 +44,8 @@ include_directories( ${SOCI_INCLUDE_DIRS} )
 file( GLOB SRCFILES ${CMAKE_SOURCE_DIR}/src/sources/**/*.cpp )
 file( GLOB TESTFILES ${CMAKE_SOURCE_DIR}/test/*/*.cpp )
 
+file( GLOB HEADERFILES ${CMAKE_SOURCE_DIR}/src/headers/**/*.h )
+
 #easylogging++ defines 
 add_definitions(-D_ELPP_THREAD_SAFE)
 add_definitions(-D_ELPP_STACKTRACE_ON_CRASH)
@@ -69,5 +72,10 @@ target_link_libraries(susi_test ${LIBLZMA_LIBRARIES})
 target_link_libraries(susi_test ${POCO_LIBRARIES})
 target_link_libraries(susi_test gtest)
 target_link_libraries(susi_test gtest_main)
+
+
+install(TARGETS libsusi LIBRARY DESTINATION "/usr/lib")
+install(TARGETS susi RUNTIME DESTINATION "/usr/bin")
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/headers/ DESTINATION /usr/include)
 
 
