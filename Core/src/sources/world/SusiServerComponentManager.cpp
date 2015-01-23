@@ -14,7 +14,11 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 		if(config["easylogging++"].isString()){
 			configFile = static_cast<std::string>(config["easylogging++"]);
 		}
-		return std::shared_ptr<Component>{new Susi::LoggerComponent{configFile}};
+		bool syslog = false;
+		if(config["syslog"].isBool()){
+			syslog = static_cast<bool>(config["syslog"]);
+		}
+		return std::shared_ptr<Component>{new Susi::LoggerComponent{configFile,syslog}};
 	});
 
 	/**
