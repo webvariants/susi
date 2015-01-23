@@ -46,9 +46,11 @@ file( GLOB TESTFILES ${CMAKE_SOURCE_DIR}/test/*/*.cpp )
 
 file( GLOB HEADERFILES ${CMAKE_SOURCE_DIR}/src/headers/**/*.h )
 
-#easylogging++ defines
-add_definitions(-D_ELPP_THREAD_SAFE)
-add_definitions(-D_ELPP_STACKTRACE_ON_CRASH)
+#easylogging++ defines 
+add_definitions(-DELPP_THREAD_SAFE)
+add_definitions(-DELPP_STACKTRACE_ON_CRASH)
+add_definitions(-DELPP_SYSLOG)
+add_definitions(-DELPP_NO_DEFAULT_LOG_FILE)
 
 #LIBRARY
 add_library(lib${PROJECT_NAME} SHARED ${SRCFILES} )

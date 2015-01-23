@@ -1,0 +1,65 @@
+{
+
+	"plugins" : {
+		"path": "./"
+	}
+
+	"logger": {
+		"easylogging++": "../Scripts/easylogging++.conf",
+		"syslog": true
+	},
+
+	"eventsystem" : {
+		"threads": 4,
+		"queuelen": 32
+	},
+
+	"heartbeat": {},
+
+	"sessionmanager": {
+		"lifetime": 600000
+	},
+
+	"apiserver": {},
+
+	"tcpapiserver": {
+		"address": "localhost:4000"
+	},
+
+	"webstack": {
+		"address": "[::1]:8080",
+		"assets": "./assets",
+		"threads": 4,
+		"backlog": 32
+	},
+
+	"dbmanager": [
+		{
+			"identifier" : "auth",
+			"type": "sqlite3",
+			"uri" : "./auth.sqlite3"
+		}
+	],
+
+	"auth": {
+		"db": "auth"
+	},
+
+	"states": {
+		"file": "./states.json"
+	},
+
+	"syscalls": {
+		"threads": 4,
+		"queuelen": 16,
+		"commands": {
+			"ECHO" : "echo $arg",
+			"PWD"  : "pwd"
+		}
+	},
+
+	"duktape": {
+		"source": "../Scripts/duktapeTest.js"
+	}
+
+}
