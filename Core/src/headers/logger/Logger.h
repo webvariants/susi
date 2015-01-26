@@ -12,8 +12,11 @@
 #ifndef __LOGGER__
 #define __LOGGER__
 
+
 #include "world/ComponentManager.h"
+#include <syslog.h>
 #include "logger/easylogging++.h"
+
 #include "lzma.h"
 
 namespace Susi {
@@ -25,18 +28,41 @@ bool compress_lzma(std::string infile, std::string outfile);
 
 class LoggerComponent : public Susi::System::Component {
 protected:
-    std::string configFile;
+    std::string _configFile;
+    bool _syslog;
+
+    class SyslogBuilder : public el::base::DefaultLogBuilder {
+    protected:
+    public:
+        el::base::type::string_t build(const el::LogMessage* logMessage, bool appendNewLine) const {
+            el::base::type::string_t msg = el::base::DefaultLogBuilder::build(logMessage,appendNewLine);
+            if(logMessage->level() == el::Level::Info){
+                syslog(LOG_INFO,msg.c_str());
+            }else if(logMessage->level() == el::Level::Debug){
+                syslog(LOG_DEBUG,msg.c_str());
+            }else if(logMessage->level() == el::Level::Error){
+                syslog(LOG_ERR,msg.c_str());
+            }
+            return msg;
+        }
+    };
+
 public:
-    LoggerComponent(std::string cfg) : configFile{cfg} {}
+    LoggerComponent(std::string cfg, bool syslog) : _configFile{cfg},_syslog{syslog} {}
 
     virtual void start() override {
-        if(configFile!=""){
-            el::Configurations conf(configFile);
+        if(_configFile!=""){
+            el::Configurations conf(_configFile);
             el::Loggers::reconfigureAllLoggers(conf);
+        }
+        if(_syslog){
+            ELPP_INITIALIZE_SYSLOG("susi", LOG_PID | LOG_CONS | LOG_PERROR, LOG_USER);
+            el::LogBuilderPtr syslogBuilder = el::LogBuilderPtr(new SyslogBuilder());
+            el::Loggers::getLogger("default")->setLogBuilder(syslogBuilder);
         }
         el::Loggers::addFlag(el::LoggingFlag::StrictLogFileSizeCheck);
         el::Helpers::installPreRollOutCallback(rolloutHandler);
-        LOG(INFO) <<  "started LoggerComponent" ;
+        LOG(INFO) <<  "started LoggerComponent with syslog "<<_syslog ;
     }
 
     virtual void stop() override {}

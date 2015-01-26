@@ -14,7 +14,7 @@
 
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
-project( "susi" )
+project(susi)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/dev")
 
@@ -47,35 +47,37 @@ file( GLOB TESTFILES ${CMAKE_SOURCE_DIR}/test/*/*.cpp )
 file( GLOB HEADERFILES ${CMAKE_SOURCE_DIR}/src/headers/**/*.h )
 
 #easylogging++ defines 
-add_definitions(-D_ELPP_THREAD_SAFE)
-add_definitions(-D_ELPP_STACKTRACE_ON_CRASH)
+add_definitions(-DELPP_THREAD_SAFE)
+add_definitions(-DELPP_STACKTRACE_ON_CRASH)
+add_definitions(-DELPP_SYSLOG)
+add_definitions(-DELPP_NO_DEFAULT_LOG_FILE)
 
 #LIBRARY
-add_library( libsusi SHARED ${SRCFILES} )
-set_target_properties(libsusi PROPERTIES OUTPUT_NAME susi)
+add_library(lib${PROJECT_NAME} SHARED ${SRCFILES} )
+set_target_properties(lib${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 
 #SUSI BINARY
-add_executable( susi ${CMAKE_SOURCE_DIR}/src/sources/main.cc )
-target_link_libraries(susi libsusi)
-target_link_libraries(susi ${CMAKE_THREAD_LIBS_INIT})
-target_link_libraries(susi ${SOCI_LIBRARY})
-target_link_libraries(susi ${LIBLZMA_LIBRARIES})
-target_link_libraries(susi ${POCO_LIBRARIES})
-# target_link_libraries(susi PocoFoundation PocoUtil PocoNet)
+add_executable( ${PROJECT_NAME} ${CMAKE_SOURCE_DIR}/src/sources/main.cc )
+target_link_libraries(${PROJECT_NAME}
+	lib${PROJECT_NAME}
+	${CMAKE_THREAD_LIBS_INIT}
+	${SOCI_LIBRARY}
+	${LIBLZMA_LIBRARIES}
+	${POCO_LIBRARIES}
+)
 
 #SUSI TESTS
-add_executable( susi_test ${CMAKE_SOURCE_DIR}/test/easylogging++_init.cpp ${TESTFILES})
-target_link_libraries(susi_test libsusi)
-target_link_libraries(susi_test ${CMAKE_THREAD_LIBS_INIT})
-target_link_libraries(susi_test ${SOCI_LIBRARY})
-target_link_libraries(susi_test ${LIBLZMA_LIBRARIES})
-target_link_libraries(susi_test ${POCO_LIBRARIES})
-target_link_libraries(susi_test gtest)
-target_link_libraries(susi_test gtest_main)
+add_executable(${PROJECT_NAME}_test ${CMAKE_SOURCE_DIR}/test/easylogging++_init.cpp ${TESTFILES})
+target_link_libraries(${PROJECT_NAME}_test
+	lib${PROJECT_NAME}
+	${CMAKE_THREAD_LIBS_INIT}
+	${SOCI_LIBRARY}
+	${LIBLZMA_LIBRARIES}
+	${POCO_LIBRARIES}
+	gtest
+	gtest_main
+)
 
-
-install(TARGETS libsusi LIBRARY DESTINATION "/usr/lib")
-install(TARGETS susi RUNTIME DESTINATION "/usr/bin")
+install(TARGETS lib${PROJECT_NAME} LIBRARY DESTINATION "/usr/lib")
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "/usr/bin")
 install(DIRECTORY ${CMAKE_SOURCE_DIR}/src/headers/ DESTINATION /usr/include)
-
-
