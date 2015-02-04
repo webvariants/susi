@@ -16,6 +16,7 @@
 #include <functional>
 #include <vector>
 #include "util/Channel.h"
+#include "logger/easylogging++.h"
 
 #include <iostream>
 

@@ -7,18 +7,15 @@ Susi::Util::ThreadPool::ThreadPool( size_t workers, size_t buffsize ) : _highPri
 }
 
 void Susi::Util::ThreadPool::startThread() {
-    std::thread t {[this]() {
+    std::thread t1 {[this]() {
         while( true ) {
             Work work;
             try {
-                if(this->_highPrioWorkChannel.size()>=1){
-                    work = this->_highPrioWorkChannel.get();
-                }else{
-                    work = this->_lowPrioWorkChannel.get();
-                }
+                LOG(INFO) << "wait for high prio work";
+                work = this->_highPrioWorkChannel.get();
+                LOG(INFO) << "got high prio work";
             }
             catch( const std::exception & e ) {
-                //std::cout<<"error in worker: "<<e.what()<<std::endl;
                 return;
             }
             try {
@@ -30,9 +27,30 @@ void Susi::Util::ThreadPool::startThread() {
                 }
             }
         }
-    }};
-    
-    _threads.push_back( std::move( t ) );
+    }};   
+    _threads.push_back( std::move( t1 ) );
+    std::thread t2 {[this]() {
+        while( true ) {
+            Work work;
+            try {
+                LOG(INFO) << "wait for low prio work";
+                work = this->_lowPrioWorkChannel.get();
+                LOG(INFO) << "got low prio work";
+            }
+            catch( const std::exception & e ) {
+                return;
+            }
+            try {
+                work.work();
+            }
+            catch( const std::exception & e ) {
+                if( work.error ) {
+                    work.error( e.what() );
+                }
+            }
+        }
+    }};   
+    _threads.push_back( std::move( t2 ) );
 }
 
 void Susi::Util::ThreadPool::add( std::function<void()> work,
