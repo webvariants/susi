@@ -230,8 +230,15 @@ void Susi::Events::Manager::ack( EventPtr event ) {
         }
     };
     
+    bool highPrio = true;
+    for(int i=0;i<event->headers.size();i++){
+        if(event->headers[i].first == "LowPriority"){
+            highPrio = false;
+        }
+    }
+
     Work work {std::move( event ),this};
-    pool.add( std::move( work ),error );
+    pool.add( std::move( work ),error, highPrio );
 }
 
 Susi::Events::EventPtr Susi::Events::Manager::createEvent( std::string topic ) {

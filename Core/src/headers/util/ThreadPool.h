@@ -29,7 +29,8 @@ namespace Susi {
                 std::function<void( std::string )>    error;
             };
 
-            Channel<Work> _workChannel;
+            Channel<Work> _highPrioWorkChannel;
+            Channel<Work> _lowPrioWorkChannel;
             std::vector<std::thread> _threads;
 
             void startThread();
@@ -38,7 +39,8 @@ namespace Susi {
             ThreadPool() : ThreadPool {4,16} {};
             ThreadPool( size_t workers, size_t buffsize );
             void add( std::function<void()> work,
-                      std::function<void( std::string )> error = std::function<void( std::string )> {} );
+                      std::function<void( std::string )> error = std::function<void( std::string )> {},
+                      bool highPrio = false);
             ~ThreadPool();
         };
 

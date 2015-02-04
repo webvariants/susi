@@ -1,6 +1,6 @@
 #include "util/ThreadPool.h"
 
-Susi::Util::ThreadPool::ThreadPool( size_t workers, size_t buffsize ) : _workChannel {buffsize} {
+Susi::Util::ThreadPool::ThreadPool( size_t workers, size_t buffsize ) : _highPrioWorkChannel {buffsize}, _lowPrioWorkChannel {buffsize} {
     for( size_t i=0; ( i<workers ); ++i ) {
         startThread();
     }
@@ -11,7 +11,11 @@ void Susi::Util::ThreadPool::startThread() {
         while( true ) {
             Work work;
             try {
-                work = this->_workChannel.get();
+                if(this->_highPrioWorkChannel.size()>=1){
+                    work = this->_highPrioWorkChannel.get();
+                }else{
+                    work = this->_lowPrioWorkChannel.get();
+                }
             }
             catch( const std::exception & e ) {
                 //std::cout<<"error in worker: "<<e.what()<<std::endl;
@@ -32,12 +36,18 @@ void Susi::Util::ThreadPool::startThread() {
 }
 
 void Susi::Util::ThreadPool::add( std::function<void()> work,
-                                  std::function<void( std::string )> error ) {
-    _workChannel.put( Work {work,error} );
+                                  std::function<void( std::string )> error,
+                                  bool highPrio) {
+    if(highPrio){
+        _highPrioWorkChannel.put( Work {work,error} );
+    }else{
+        _lowPrioWorkChannel.put( Work {work,error} );
+    }
 }
 
 Susi::Util::ThreadPool::~ThreadPool() {
-    _workChannel.close();
+    _lowPrioWorkChannel.close();
+    _highPrioWorkChannel.close();
     for( auto & t : _threads ) {
         t.join();
     }

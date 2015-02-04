@@ -205,6 +205,9 @@ void Susi::Api::ApiServerComponent::handlePublish( std::string & id, Susi::Util:
         rawEvent.id = std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
     }
     *event = rawEvent;
+
+    event->headers.push_back({"LowPriority",""});
+    
     LOG(DEBUG) << "publish event from "<<id<<", topic: "<<event->topic;
     eventManager->publish( std::move( event ),[this,id]( Susi::Events::SharedEventPtr event ) {
         Susi::Util::Any packet;
