@@ -48,7 +48,7 @@ namespace Susi {
             bool checkIfConfidentialHeaderMatchesSession(Susi::Events::Event & event, std::string sessionID);
 
             void send( std::string & id, Susi::Util::Any & msg ) {
-                std::lock_guard<std::mutex> lock {sendersMutex};
+                std::lock_guard<std::mutex> lock {sendersMutex}; //DEADLOCK IF SENDER DEAD (websocket)
                 auto & sender = senders[id];
                 if( sender ) sender(msg);
             }

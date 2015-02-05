@@ -35,6 +35,7 @@ void Susi::Api::ApiServerComponent::onClose( std::string & id ) {
 }
 
 void Susi::Api::ApiServerComponent::onMessage( std::string & id, Susi::Util::Any & packet ) {
+    LOG(DEBUG) << "got message in apiserver: "<<packet.toJSONString();
     try {
         auto type = packet["type"];
         if( type.isString() ) {
@@ -210,11 +211,13 @@ void Susi::Api::ApiServerComponent::handlePublish( std::string & id, Susi::Util:
     
     LOG(DEBUG) << "publish event from "<<id<<", topic: "<<event->topic;
     eventManager->publish( std::move( event ),[this,id]( Susi::Events::SharedEventPtr event ) {
+        LOG(DEBUG) << "publish ready, in finish callback";
         Susi::Util::Any packet;
         packet["type"] = "ack";
         packet["data"] = event->toAny();
         std::string _id = id;
         send( _id,packet );
+        LOG(DEBUG) << "after send back of finishcallback, id: "<<_id;
     } );
 
     sendOk( id );

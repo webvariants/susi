@@ -16,6 +16,8 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 project(susi)
 
+SET(CMAKE_BUILD_TYPE Debug)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/dev")
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -34,7 +36,7 @@ include_directories( ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR} )
 
 set( CMAKE_COLOR_MAKEFILE ON )
 
-set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 -fPIC -Os" )
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -g --std=c++11 -fPIC -Os" )
 
 include_directories( ${CMAKE_SOURCE_DIR}/src/headers )
 include_directories( ${CMAKE_SOURCE_DIR}/test/gtest-1.7.0/include )

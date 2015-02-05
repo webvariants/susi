@@ -39,6 +39,7 @@ namespace Susi {
                     _reactor(reactor),
                     _pBuffer{new char[BUFFER_SIZE]},
                     _collector{[this](std::string & msg){
+                        LOG(DEBUG) << "got message in collector";
                         auto data = Susi::Util::Any::fromJSONString(msg);
                         _api->onMessage(_sessionID,data);
                     }}
@@ -48,6 +49,7 @@ namespace Susi {
                 }
 
                 ~ConnectionHandler() {
+                    LOG(DEBUG) << "connection destructor.";
                     _reactor.removeEventHandler(_socket, Poco::NObserver<ConnectionHandler, Poco::Net::ReadableNotification>(*this, &ConnectionHandler::onReadable));
                     _reactor.removeEventHandler(_socket, Poco::NObserver<ConnectionHandler, Poco::Net::ShutdownNotification>(*this, &ConnectionHandler::onShutdown));
                     _api->unregisterSender(_sessionID);

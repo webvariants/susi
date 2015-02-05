@@ -18,6 +18,8 @@ Susi::WebSocketRequestHandler::WebSocketRequestHandler( std::shared_ptr<Susi::Ap
 void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& request,
         Poco::Net::HTTPServerResponse& response ) {
     Poco::Net::WebSocket socket( request,response );
+    socket.setSendTimeout(200000);
+    socket.setReceiveTimeout(200000);
     Poco::Net::NameValueCollection cookies;
     request.getCookies( cookies );
     std::string id = cookies["susisession"];
@@ -30,7 +32,11 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
     _apiServer->registerSender( connId,[&socket]( Susi::Util::Any & arg ) {
         std::string msg = arg.toJSONString();
         //LOG(DEBUG) <<  "send frame to websocket" ;
-        socket.sendFrame( msg.data(), msg.length(), Poco::Net::WebSocket::FRAME_TEXT );
+        try{
+            socket.sendFrame( msg.data(), msg.length(), Poco::Net::WebSocket::FRAME_TEXT );
+        }catch(...){
+            LOG(DEBUG) << "send timeout in websocket sender!";
+        }
     } );
 
     _apiServer->onConnect( connId );
@@ -42,6 +48,7 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
     while( true ) {
         try{
             n = socket.receiveFrame( buffer, sizeof( buffer ), flags );
+            LOG(DEBUG) << "got websocket data";
             if( n==0 || ( flags & Poco::Net::WebSocket::FRAME_OP_BITMASK ) == Poco::Net::WebSocket::FRAME_OP_CLOSE ) {
                 LOG(DEBUG) << "closing websocket connection "<<connId<<" (session: "<<id<<") normally";
                 break;
@@ -49,9 +56,13 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
             std::string str( buffer, n );
             Susi::Util::Any packet = Susi::Util::Any::fromJSONString( str );
             _apiServer->onMessage( connId, packet );
-        }catch(const Poco::TimeoutException &){}
-         catch(const std::exception & e){
+        } catch(const Poco::TimeoutException &){
+            LOG(DEBUG) << "got websocket timeout";
+        } catch(const std::exception & e){
             LOG(DEBUG) << "closing websocket connection "<<connId<<" (session: "<<id<<") because of exception: "<<e.what();
+            break;
+        } catch(...){
+            LOG(DEBUG) << "closing websocket connection "<<connId<<" (session: "<<id<<") because of unknown exception";
             break;
         }
     }
