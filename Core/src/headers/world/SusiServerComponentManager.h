@@ -31,6 +31,7 @@
 #include "ddhcp/DDHCPComponent.h"
 #include "logger/Logger.h"
 #include "duktape/DuktapeEngine.h"
+#include "selfchecker/SelfChecker.h"
 
 namespace Susi {
 namespace System {

@@ -77,6 +77,11 @@
 
 	"duktape": {
 		"source": "test.js"
-	}
+	},
 
+	"selfchecker": {
+		"interval": 1000,
+		"timeout": 100,
+		"failCommand": "xmessage 'selfcheck failed!!!!!' &"
+	}
 }

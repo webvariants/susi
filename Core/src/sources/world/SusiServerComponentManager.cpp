@@ -240,4 +240,12 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 		return std::shared_ptr<Component>{new Susi::Duktape::JSEngine{mgr,source}};
 	});
 
+	/**
+	 * Declare selfchecker
+	 */
+	registerComponent("selfchecker",[](ComponentManager * mgr, Any & config){
+		return std::shared_ptr<Component>{new Susi::SelfCheckerComponent{mgr,config}};
+	});
+	registerDependency("selfchecker","eventsystem");
+
 }

@@ -21,7 +21,7 @@
 
 namespace Susi {
 
-class SelfCheckerComponent : public Susi::System::Component {
+class SelfCheckerComponent : public Susi::System::BaseComponent {
 protected:
     Susi::Util::Any             _config;
     std::string                 _failCommand;
@@ -32,21 +32,23 @@ protected:
     std::thread       _runloop;
 
 public:
-    SelfCheckerComponent(Susi::Util::Any config) : _config{config} {
+    SelfCheckerComponent(Susi::System::ComponentManager *mgr, Susi::Util::Any config) : 
+      Susi::System::BaseComponent{mgr}, 
+      _config{config} {
         if(_config["failCommand"].isString()){
-            _failCommand = _config["failCommand"];
+            _failCommand = static_cast<std::string>(_config["failCommand"]);
         }else{
             _failCommand = "";
         }
         if(_config["timeout"].isInteger()){
-            _timeout = _config["timeout"];
+            _timeout = std::chrono::milliseconds{static_cast<int>(_config["timeout"])};
         }else{
-            _timeout = 500;
+            _timeout = std::chrono::milliseconds{500};
         }
         if(_config["interval"].isInteger()){
-            _interval = _config["interval"];
+            _interval = std::chrono::milliseconds{static_cast<int>(_config["interval"])};
         }else{
-            _interval = 5000;
+            _interval = std::chrono::milliseconds{5000};
         }
     }
 
@@ -56,22 +58,23 @@ public:
             std::mutex mutex;
             std::condition_variable cond;
             bool b1,b2;
-            subscribe(std::string{"selfchecker::check"},Susi::Events::Processor{[&c1,&b1](Susi::Events::EventPtr){
+            subscribe(std::string{"selfchecker::check"},Susi::Events::Processor{[&b1](Susi::Events::EventPtr){
                 b1 = true;
             }});
             while(!_stop.load()){
                 Poco::Thread::sleep(_interval.count());
                 b1 = b2 = false;
                 auto event = createEvent("selfchecker::check");
-                publish(std::move(event),[&c3,&b3](Susi::Events::SharedEventPtr){
+                publish(std::move(event),[&cond,&b2](Susi::Events::SharedEventPtr){
                     b2 = true;
                     cond.notify_one();
                 });
                 {
                     std::unique_lock<std::mutex> lk(mutex);
-                    c1.wait_for(lk,_timeout,[&b2](){return b2;});
+                    cond.wait_for(lk,_timeout,[&b2](){return b2;});
                 }
                 if((!b1 || !b2) && _failCommand != ""){
+                    LOG(ERROR) << "SelfChecker: selfcheck failed!";
                     std::system(_failCommand.c_str());
                 }
             }
