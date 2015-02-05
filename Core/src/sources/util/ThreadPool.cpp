@@ -11,9 +11,7 @@ void Susi::Util::ThreadPool::startThread() {
         while( true ) {
             Work work;
             try {
-                LOG(INFO) << "wait for high prio work";
                 work = this->_highPrioWorkChannel.get();
-                LOG(INFO) << "got high prio work";
             }
             catch( const std::exception & e ) {
                 return;
@@ -33,9 +31,7 @@ void Susi::Util::ThreadPool::startThread() {
         while( true ) {
             Work work;
             try {
-                LOG(INFO) << "wait for low prio work";
                 work = this->_lowPrioWorkChannel.get();
-                LOG(INFO) << "got low prio work";
             }
             catch( const std::exception & e ) {
                 return;
