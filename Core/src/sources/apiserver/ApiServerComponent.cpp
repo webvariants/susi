@@ -9,7 +9,7 @@ void Susi::Api::ApiServerComponent::onClose( std::string & id ) {
     LOG(DEBUG) << "lost api connection: " << id;
     sessionManager->killSession( id );
     {
-        std::lock_guard<std::mutex> lock{consumerMutex};
+        std::lock_guard<std::recursive_mutex> lock{consumerMutex};
         auto & subs = consumerSubscriptions[id];
         for( auto & kv : subs ) {
             eventManager->unsubscribe( kv.second );
@@ -17,7 +17,7 @@ void Susi::Api::ApiServerComponent::onClose( std::string & id ) {
         consumerSubscriptions.erase( id );
     }
     {
-        std::lock_guard<std::mutex> lock{processorMutex};
+        std::lock_guard<std::recursive_mutex> lock{processorMutex};
         auto & subs2 = processorSubscriptions[id];
         for( auto & kv : subs2 ) {
             eventManager->unsubscribe( kv.second );
@@ -25,11 +25,11 @@ void Susi::Api::ApiServerComponent::onClose( std::string & id ) {
         processorSubscriptions.erase( id );
     }
     {
-        std::lock_guard<std::mutex> lock{eventsMutex};
+        std::lock_guard<std::recursive_mutex> lock{eventsMutex};
         eventsToAck.erase( id );
     }
     {
-        std::lock_guard<std::mutex> lock{sendersMutex};
+        std::lock_guard<std::recursive_mutex> lock{sendersMutex};
         senders.erase( id );
     }
 }
@@ -81,7 +81,7 @@ void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, Su
         if(data["name"].isString()){
             subName = static_cast<std::string>(data["name"]);
         }
-        std::lock_guard<std::mutex> lock{consumerMutex};
+        std::lock_guard<std::recursive_mutex> lock{consumerMutex};
         auto & subs = consumerSubscriptions[id];
         if( subs.find( topic ) != subs.end() ) {
             LOG(DEBUG) << "failed to registerConsumer for "<<id<<" to topic "<<topic<<": allready subscribed";
@@ -117,7 +117,7 @@ void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, S
         if(data["name"].isString()){
             subName = static_cast<std::string>(data["name"]);
         }
-        std::lock_guard<std::mutex> lock{processorMutex};
+        std::lock_guard<std::recursive_mutex> lock{processorMutex};
         auto & subs = processorSubscriptions[id];
         if( subs.find( topic ) != subs.end() ) {
             LOG(DEBUG) << "failed to registerProcessor for "<<id<<" to topic "<<topic<<": allready subscribed";
@@ -133,7 +133,7 @@ void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, S
             }
             std::string _id = id;
             {
-                std::lock_guard<std::mutex> eventLock{eventsMutex};
+                std::lock_guard<std::recursive_mutex> eventLock{eventsMutex};
                 eventsToAck[_id][event->id] = std::move( event );
             }
             send( _id,packet );
@@ -150,7 +150,7 @@ void Susi::Api::ApiServerComponent::handleUnregisterConsumer( std::string & id, 
     auto & data = packet["data"];
     if( data.isObject() ) {
         std::string topic = data["topic"];
-        std::lock_guard<std::mutex> lock{consumerMutex};
+        std::lock_guard<std::recursive_mutex> lock{consumerMutex};
         auto & subs = consumerSubscriptions[id];
         if( subs.find( topic )!=subs.end() ) {
             long subid = subs[topic];
@@ -174,7 +174,7 @@ void Susi::Api::ApiServerComponent::handleUnregisterProcessor( std::string & id,
     auto & data = packet["data"];
     if( data.isObject() ) {
         std::string topic = data["topic"];
-        std::lock_guard<std::mutex> lock{processorMutex};
+        std::lock_guard<std::recursive_mutex> lock{processorMutex};
         auto & subs = processorSubscriptions[id];
         if( subs.find( topic )!=subs.end() ) {
             long subid = subs[topic];
@@ -230,7 +230,7 @@ void Susi::Api::ApiServerComponent::handleAck( std::string & id, Susi::Util::Any
         return;
     }
     std::string eventID = eventData["id"];
-    std::lock_guard<std::mutex> lock{eventsMutex};
+    std::lock_guard<std::recursive_mutex> lock{eventsMutex};
     if(!(eventsToAck.count(id)>0) || !(eventsToAck[id].count(eventID)>0)){
         LOG(DEBUG) << "unexpected ack from "<<id<<" for event with topic "<<static_cast<std::string>(eventData["id"]);
         sendFail( id , "unexpected ack" );

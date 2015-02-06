@@ -27,13 +27,13 @@ namespace Susi {
         protected:
 
             std::map<std::string,std::function<void( Susi::Util::Any& )>> senders;
-            std::mutex sendersMutex;
+            std::recursive_mutex sendersMutex;
             std::map<std::string,std::map<std::string,long>> consumerSubscriptions;
-            std::mutex consumerMutex;
+            std::recursive_mutex consumerMutex;
             std::map<std::string,std::map<std::string,long>> processorSubscriptions;
-            std::mutex processorMutex;
+            std::recursive_mutex processorMutex;
             std::map<std::string,std::map<std::string,Susi::Events::EventPtr>> eventsToAck; //sessionid -> eventid -> event
-            std::mutex eventsMutex;
+            std::recursive_mutex eventsMutex;
 
             void handleRegisterConsumer( std::string & id, Susi::Util::Any & packet );
             void handleRegisterProcessor( std::string & id, Susi::Util::Any & packet );
@@ -48,9 +48,16 @@ namespace Susi {
             bool checkIfConfidentialHeaderMatchesSession(Susi::Events::Event & event, std::string sessionID);
 
             void send( std::string & id, Susi::Util::Any & msg ) {
-                std::lock_guard<std::mutex> lock {sendersMutex}; //DEADLOCK IF SENDER DEAD (websocket)
+                std::lock_guard<std::recursive_mutex> lock {sendersMutex}; //DEADLOCK IF SENDER DEAD (websocket)
                 auto & sender = senders[id];
-                if( sender ) sender(msg);
+                if( sender ){
+                    try{
+                        sender(msg);   
+                    }catch(const std::exception & e){
+                        LOG(DEBUG) << "Exception while sending. Possible timeout due to too much load?!";
+                        onClose(id);
+                    }
+                }
             }
 
         public:
@@ -74,11 +81,11 @@ namespace Susi {
             void onClose( std::string & id );
 
             inline void registerSender( std::string id , std::function<void( Susi::Util::Any& )> sender ) {
-                std::lock_guard<std::mutex> lock {sendersMutex};
+                std::lock_guard<std::recursive_mutex> lock {sendersMutex};
                 senders[id] = sender;
             }
             inline void unregisterSender( std::string id ) {
-                std::lock_guard<std::mutex> lock {sendersMutex};
+                std::lock_guard<std::recursive_mutex> lock {sendersMutex};
                 senders.erase(id);
             }
 

@@ -19,7 +19,7 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
         Poco::Net::HTTPServerResponse& response ) {
     Poco::Net::WebSocket socket( request,response );
     socket.setSendTimeout(200000);
-    socket.setReceiveTimeout(200000);
+    socket.setReceiveTimeout(5000000);
     Poco::Net::NameValueCollection cookies;
     request.getCookies( cookies );
     std::string id = cookies["susisession"];
@@ -31,12 +31,7 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
     LOG(DEBUG) <<  "register sender in ws-handler for session "<<id<<" with connection id "<<connId;
     _apiServer->registerSender( connId,[&socket]( Susi::Util::Any & arg ) {
         std::string msg = arg.toJSONString();
-        //LOG(DEBUG) <<  "send frame to websocket" ;
-        try{
-            socket.sendFrame( msg.data(), msg.length(), Poco::Net::WebSocket::FRAME_TEXT );
-        }catch(...){
-            LOG(DEBUG) << "send timeout in websocket sender!";
-        }
+        socket.sendFrame( msg.data(), msg.length(), Poco::Net::WebSocket::FRAME_TEXT );
     } );
 
     _apiServer->onConnect( connId );
@@ -57,7 +52,8 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
             Susi::Util::Any packet = Susi::Util::Any::fromJSONString( str );
             _apiServer->onMessage( connId, packet );
         } catch(const Poco::TimeoutException &){
-            LOG(DEBUG) << "got websocket timeout";
+            LOG(DEBUG) << "got websocket receive timeout, assume died connection.";
+            break;
         } catch(const std::exception & e){
             LOG(DEBUG) << "closing websocket connection "<<connId<<" (session: "<<id<<") because of exception: "<<e.what();
             break;
