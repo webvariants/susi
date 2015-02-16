@@ -37,11 +37,11 @@ protected:
         el::base::type::string_t build(const el::LogMessage* logMessage, bool appendNewLine) const {
             el::base::type::string_t msg = el::base::DefaultLogBuilder::build(logMessage,appendNewLine);
             if(logMessage->level() == el::Level::Info){
-                syslog(LOG_INFO,msg.c_str());
+                syslog(LOG_INFO,"%s",msg.c_str());
             }else if(logMessage->level() == el::Level::Debug){
-                syslog(LOG_DEBUG,msg.c_str());
+                syslog(LOG_DEBUG,"%s",msg.c_str());
             }else if(logMessage->level() == el::Level::Error){
-                syslog(LOG_ERR,msg.c_str());
+                syslog(LOG_ERR,"%s",msg.c_str());
             }
             return msg;
         }
