@@ -1,4 +1,0 @@
-Susi CPP-Engine
-
-Use this as a boilerplate for susi engines.
-Simply add your own eventhandlers and register them in ComponentManager.h
