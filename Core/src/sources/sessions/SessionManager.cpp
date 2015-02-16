@@ -165,8 +165,12 @@ void SessionManager::updateSession( std::string id, std::chrono::milliseconds li
 
 bool SessionManager::killSession( std::string id ) {
     std::lock_guard<std::mutex> lock( mutex );
+    std::string originalId = id;
     resolveSessionID(id);
-    if( sessions.count( id ) > 0 ) {
+    if(originalId != id){
+        alias.erase(originalId);
+        return true;
+    }else if( sessions.count( id ) > 0 ) {
         return sessions[id].die();
     }
     return false;
