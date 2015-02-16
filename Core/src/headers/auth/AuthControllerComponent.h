@@ -15,6 +15,7 @@
 
 #include "auth/AuthController.h"
 #include "world/SessionAwareComponent.h"
+#include "logger/easylogging++.h"
 
 namespace Susi {
     namespace Auth {
@@ -49,6 +50,7 @@ namespace Susi {
                     handleLogout( std::move( evt ) );
                 }});
                 subscribe( std::string{"auth::isLoggedIn"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
+                    LOG(INFO) << "handle auth::isLoggedIn";
                     handleIsLoggedIn( std::move( evt ) );
                 }});
                 subscribe( std::string{"auth::getUsername"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {

@@ -31,12 +31,12 @@ namespace Susi {
             std::map<std::string, std::string> alias;
             std::mutex mutex;
             std::chrono::milliseconds stdLifetime;
+        public:
             void resolveSessionID(std::string & sessionID){
                 if(alias.count(sessionID)>0){
                     sessionID = alias[sessionID];
                 }
             }
-        public:
             bool checkSession( std::string id );
             int  checkSessions();
             void updateSession( std::string id );

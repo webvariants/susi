@@ -13,10 +13,12 @@
 
 void Susi::Auth::ControllerComponent::handleLogin( Susi::Events::EventPtr event ) {
     try {
+        std::string id = event->getSessionID();
+        sessionManager->resolveSessionID(id);
         std::string username = event->payload["username"];
         std::string password  = event->payload["password"];
         event->payload.reset();
-        event->payload["success"] = login( event->getSessionID(), username, password );
+        event->payload["success"] = login( id, username, password );
     }
     catch( const std::exception & e ) {
         event->getPayload()["success"] = false;
@@ -27,15 +29,25 @@ void Susi::Auth::ControllerComponent::handleLogin( Susi::Events::EventPtr event 
 }
 
 void Susi::Auth::ControllerComponent::handleLogout( Susi::Events::EventPtr event ) {
-    event->payload["success"] = logout( event->getSessionID() );
+    std::string id = event->getSessionID();
+    sessionManager->resolveSessionID(id);
+    event->payload["success"] = logout( id );
 }
 
 void Susi::Auth::ControllerComponent::handleIsLoggedIn( Susi::Events::EventPtr event ) {
-    event->payload["success"] = isLoggedIn( event->getSessionID() );
+    std::string id = event->getSessionID();
+    sessionManager->resolveSessionID(id);
+    auto username = sessionManager->getSessionAttribute(id,"User");
+    if(username.isObject() && username["username"].isString()){
+        event->payload["username"] = username["username"];
+    }
+    event->payload["success"] = isLoggedIn( id );
 }
 
 void Susi::Auth::ControllerComponent::handleGetUsername( Susi::Events::EventPtr event ) {
-    event->payload["username"] = getUsername( event->getSessionID() );
+    std::string id = event->getSessionID();
+    sessionManager->resolveSessionID(id);
+    event->payload["username"] = getUsername( id );
 }
 
 void Susi::Auth::ControllerComponent::handleAddUser( Susi::Events::EventPtr event ) {
