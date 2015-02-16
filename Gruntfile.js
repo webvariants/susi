@@ -14,9 +14,7 @@ module.exports = function(grunt) {
       all: {
         options: {
           create: [
-            '<%= pkg.project.directories.build %>/core',
-            '<%= pkg.project.directories.build %>/watchdog',
-            '<%= pkg.project.directories.build %>/jsengine'
+            '<%= pkg.project.directories.build %>/core'
           ]
         }
       }
