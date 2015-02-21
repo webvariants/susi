@@ -24,7 +24,7 @@ Tino Rusch, Thomas Krause, Christian Sonderfeld
 * Version 0.1.6.3
 
 ## How-to use this code
-* see [INSTRUCTIONS](https://github.com/webvariants/susi/blob/master/INSTRUCTIONS.md) file
+* see [INSTRUCTIONS](https://github.com/webvariants/susi/blob/stable/INSTRUCTIONS.md) file
 
 ## Contact
 #### Developer/Company
