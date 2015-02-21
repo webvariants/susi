@@ -39,6 +39,15 @@ module.exports = function(grunt) {
           }
         }
       },
+      make_test: {
+        command: 'make -j4 susi_test',
+        options: {
+          stderr: false,
+          execOptions: {
+            cwd: '<%= pkg.project.directories.build %>/core'
+          }
+        }
+      },
       test_core: {
         command: './susi_test --gtest_filter="'+(grunt.option("filter")||"*")+'"',
         options: {
@@ -92,8 +101,6 @@ module.exports = function(grunt) {
   };
 
   register('core');
-  
-  grunt.registerTask('test', 'run the susi tests', ['development','shell:test_core']);
   
   grunt.registerTask('development', ['core']);
   grunt.registerTask('build', ['clean','core']);
