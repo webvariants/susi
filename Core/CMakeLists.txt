@@ -16,7 +16,7 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 project(susi)
 
-SET(CMAKE_BUILD_TYPE Debug)
+SET(CMAKE_BUILD_TYPE Release)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/dev")
 
