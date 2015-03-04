@@ -9,7 +9,7 @@
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
-#include "webstack/NotFoundRequestHandler.h"
+#include "susi/webstack/NotFoundRequestHandler.h"
 
 void Susi::NotFoundRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& request,
         Poco::Net::HTTPServerResponse& response ) {

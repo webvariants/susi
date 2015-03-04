@@ -1,4 +1,4 @@
-#include "apiserver/ApiServerComponent.h"
+#include "susi/apiserver/ApiServerComponent.h"
 
 void Susi::Api::ApiServerComponent::onConnect( std::string & id ) {
     LOG(DEBUG) << "new api connection: " << id;

@@ -1,4 +1,4 @@
-#include "util/ThreadPool.h"
+#include "susi/util/ThreadPool.h"
 
 Susi::Util::ThreadPool::ThreadPool( size_t workers, size_t buffsize ) : _highPrioWorkChannel {buffsize}, _lowPrioWorkChannel {buffsize} {
     for( size_t i=0; ( i<workers ); ++i ) {

@@ -1,4 +1,4 @@
-#include "auth/AuthController.h"
+#include "susi/auth/AuthController.h"
 
 
 std::string Susi::Auth::Controller::generateSalt() {

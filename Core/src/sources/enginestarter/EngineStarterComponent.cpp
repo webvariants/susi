@@ -9,7 +9,7 @@
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
-#include "enginestarter/EngineStarterComponent.h"
+#include "susi/enginestarter/EngineStarterComponent.h"
 
 void Susi::EngineStarter::StarterComponent::handleStart( Susi::Events::EventPtr event ) {
     try {

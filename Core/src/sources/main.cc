@@ -18,10 +18,10 @@
 #include <iostream>
 #include <zlib.h>
 
-#include "config/Config.h"
-#include "world/SusiServerComponentManager.h"
+#include "susi/config/Config.h"
+#include "susi/world/SusiServerComponentManager.h"
 
-#include "logger/easylogging++.h"
+#include "susi/logger/easylogging++.h"
 INITIALIZE_EASYLOGGINGPP
 
 std::condition_variable waitCond;

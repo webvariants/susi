@@ -9,8 +9,8 @@
  * @authors: Tino Rusch (tino.rusch@webvariants.de), Christian Sonderfeld (christian.sondefeld@webvariants.de), Thomas Krause (thomas.krause@webvariants.de)
  */
 
-#include "sessions/SessionManager.h"
-#include "logger/easylogging++.h"
+#include "susi/sessions/SessionManager.h"
+#include "susi/logger/easylogging++.h"
 
 using namespace Susi::Sessions;
 

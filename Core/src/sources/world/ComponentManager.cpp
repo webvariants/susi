@@ -1,4 +1,4 @@
-#include "world/ComponentManager.h"
+#include "susi/world/ComponentManager.h"
 
 void Susi::System::ComponentManager::registerComponent( std::string name, RegisterFunction func ) {
 

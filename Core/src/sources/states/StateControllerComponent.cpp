@@ -9,7 +9,7 @@
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
-#include "states/StateControllerComponent.h"
+#include "susi/states/StateControllerComponent.h"
 
 void Susi::States::StateControllerComponent::handleAutoSave( Susi::Events::EventPtr event ) {
     if( persistentChanged ) {

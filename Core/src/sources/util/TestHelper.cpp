@@ -1,4 +1,4 @@
-#include "util/TestHelper.h"
+#include "susi/util/TestHelper.h"
 
 static const char alphanum[] = "0123456789!@#$%^&*ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 int stringLength = sizeof( alphanum ) - 1;

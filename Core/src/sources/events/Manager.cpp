@@ -1,4 +1,4 @@
-#include "events/EventManager.h"
+#include "susi/events/EventManager.h"
 
 
 long Susi::Events::Manager::subscribe(

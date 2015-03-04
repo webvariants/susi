@@ -9,7 +9,7 @@
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
-#include "auth/AuthControllerComponent.h"
+#include "susi/auth/AuthControllerComponent.h"
 
 void Susi::Auth::ControllerComponent::handleLogin( Susi::Events::EventPtr event ) {
     try {

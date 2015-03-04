@@ -1,4 +1,4 @@
-#include "util/Glob.h"
+#include "susi/util/Glob.h"
 
 Susi::Util::Glob::Glob( std::string pattern ) {
     _pattern = pattern;

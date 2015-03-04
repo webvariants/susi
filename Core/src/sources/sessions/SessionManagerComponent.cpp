@@ -1,4 +1,4 @@
-#include "sessions/SessionManagerComponent.h"
+#include "susi/sessions/SessionManagerComponent.h"
 
 void Susi::Sessions::SessionManagerComponent::handleCheckSessions( Susi::Events::SharedEventPtr event ) {
     checkSessions();

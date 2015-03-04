@@ -1,4 +1,4 @@
-#include "webstack/SessionRequestHandler.h"
+#include "susi/webstack/SessionRequestHandler.h"
 
 void Susi::SessionRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& request,
         Poco::Net::HTTPServerResponse& response ) {

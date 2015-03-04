@@ -1,4 +1,4 @@
-#include "db/Database.h"
+#include "susi/db/Database.h"
 
 Susi::Util::Any Susi::DB::Database::query( std::string query ) {
     soci::rowset<soci::row> rows = ( session.prepare << query );

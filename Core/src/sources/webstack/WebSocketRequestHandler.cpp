@@ -9,7 +9,7 @@
  * @author: Tino Rusch (tino.rusch@webvariants.de), Thomas Krause (thomas.krause@webvariants.de)
  */
 
-#include "webstack/WebSocketRequestHandler.h"
+#include "susi/webstack/WebSocketRequestHandler.h"
 
 Susi::WebSocketRequestHandler::WebSocketRequestHandler( std::shared_ptr<Susi::Api::ApiServerComponent> apiServer, std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager) :
     _apiServer{apiServer},

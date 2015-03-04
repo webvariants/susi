@@ -9,7 +9,7 @@
  * @author: Christian Sonderfeld (christian.sonderfeld@webvariants.de), Thomas Krause (thomas.krause@webvariants.de)
  */
 
-#include "states/StateController.h"
+#include "susi/states/StateController.h"
 using namespace Susi::States;
 
 StateController::StateController( std::string file ) {

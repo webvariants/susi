@@ -1,4 +1,4 @@
-#include "duktape/DuktapeEngine.h"
+#include "susi/duktape/DuktapeEngine.h"
 
 Susi::Duktape::JSEngine *Susi::Duktape::enginePtr;
 

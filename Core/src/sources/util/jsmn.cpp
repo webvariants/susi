@@ -21,7 +21,7 @@ THE SOFTWARE.
 */
 
 #include <stdlib.h>
-#include "util/jsmn.h"
+#include "susi/util/jsmn.h"
 
 /**
  * Allocates a fresh unused token from the token pull.

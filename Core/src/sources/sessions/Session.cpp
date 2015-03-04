@@ -9,7 +9,7 @@
  * @author: Christian Sonderfeld (christian.sonderfeld@webvariants.de)
  */
 
-#include "sessions/Session.h"
+#include "susi/sessions/Session.h"
 
 namespace Susi {
     Session::Session( std::chrono::milliseconds milliseconds ) {

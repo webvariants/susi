@@ -9,7 +9,7 @@
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
-#include "iocontroller/IOController.h"
+#include "susi/iocontroller/IOController.h"
 
 //Constructor
 Susi::IOController::IOController() {}

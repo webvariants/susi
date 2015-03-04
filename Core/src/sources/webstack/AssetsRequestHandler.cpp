@@ -9,8 +9,8 @@
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
-#include "webstack/AssetsRequestHandler.h"
-#include "webstack/MimeTable.h"
+#include "susi/webstack/AssetsRequestHandler.h"
+#include "susi/webstack/MimeTable.h"
 
 void Susi::AssetsRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& request,
         Poco::Net::HTTPServerResponse& response ) {

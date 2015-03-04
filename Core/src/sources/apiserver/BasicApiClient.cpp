@@ -1,4 +1,4 @@
-#include "apiserver/BasicApiClient.h"
+#include "susi/apiserver/BasicApiClient.h"
 
 void Susi::Api::BasicApiClient::sendPublish( Susi::Events::Event & event ) {
     Susi::Util::Any packedEvent = event.toAny();

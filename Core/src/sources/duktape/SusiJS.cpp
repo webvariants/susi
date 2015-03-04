@@ -1,4 +1,4 @@
-#include "duktape/DuktapeEngine.h"
+#include "susi/duktape/DuktapeEngine.h"
 
 std::string Susi::Duktape::susiJS = R"SUSIJS(
 

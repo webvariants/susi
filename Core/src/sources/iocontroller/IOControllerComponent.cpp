@@ -9,7 +9,7 @@
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
-#include "iocontroller/IOControllerComponent.h"
+#include "susi/iocontroller/IOControllerComponent.h"
 
 void Susi::IOControllerComponent::handleWriteFile( Susi::Events::EventPtr event ) {
     try {

@@ -1,4 +1,4 @@
-#include "util/Helpers.h"
+#include "susi/util/Helpers.h"
 
 std::vector<std::string> & Susi::Util::Helpers::split( const std::string &s, char delim, std::vector<std::string> &elems ) {
     std::stringstream ss( s );

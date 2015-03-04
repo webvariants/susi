@@ -1,4 +1,4 @@
-#include "db/Manager.h"
+#include "susi/db/Manager.h"
 
 Susi::DB::Manager::Manager() {}
 

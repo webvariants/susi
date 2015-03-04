@@ -1,4 +1,4 @@
-#include "logger/Logger.h"
+#include "susi/logger/Logger.h"
 
 bool Susi::fileExists (const std::string& name) {
     struct stat buffer;   

@@ -9,7 +9,7 @@
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
-#include "webstack/RedirectRequestHandler.h"
+#include "susi/webstack/RedirectRequestHandler.h"
 
 void Susi::RedirectRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& request,
         Poco::Net::HTTPServerResponse& response ) {

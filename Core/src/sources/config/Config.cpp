@@ -9,7 +9,7 @@
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
-#include "config/Config.h"
+#include "susi/config/Config.h"
 
 void Susi::Config::loadConfig( std::string path ) {
     std::string content = "";

@@ -1,4 +1,4 @@
-#include "db/ManagerItem.h"
+#include "susi/db/ManagerItem.h"
 
 Susi::DB::ManagerItem::ManagerItem( std::string dbtype, std::string connectURI ) {
     this->connected = false;

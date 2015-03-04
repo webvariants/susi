@@ -1,4 +1,4 @@
-#include "world/SusiServerComponentManager.h"
+#include "susi/world/SusiServerComponentManager.h"
 
 Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util::Any::Object config) : Susi::System::PluginLoadingComponentManager{config} {
 	

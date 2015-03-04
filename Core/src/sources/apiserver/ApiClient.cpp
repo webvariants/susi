@@ -1,4 +1,4 @@
-#include "apiserver/ApiClient.h"
+#include "susi/apiserver/ApiClient.h"
 
 void Susi::Api::ApiClient::publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback, bool processorsOnly, bool consumersOnly) {
     PublishData data{*event,finishCallback};

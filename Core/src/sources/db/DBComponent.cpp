@@ -9,7 +9,7 @@
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
-#include "db/DBComponent.h"
+#include "susi/db/DBComponent.h"
 
 void Susi::DB::DBComponent::handleQuery( Susi::Events::EventPtr  event ) {
     try {
