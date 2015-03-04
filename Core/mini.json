@@ -14,5 +14,8 @@
   },
   "apiserver": {},
   "heartbeat": {},
-  "ddhcp": {}
+  "ddhcp": {},
+  "coapserver": {
+    "address": "0.0.0.0:4001"
+  }
 }

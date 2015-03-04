@@ -248,4 +248,17 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	});
 	registerDependency("selfchecker","eventsystem");
 
+	/**
+	 * Declare coapserver
+	 */
+	registerComponent("coapserver",[](ComponentManager * mgr, Any & config){
+		std::string address = "";
+		try{
+			address = static_cast<std::string>(config["address"]);
+		}catch(...){}
+		auto ptr = new Susi::Api::CoapServerComponent{mgr,address};
+		return std::shared_ptr<Component>{ptr};
+	});
+	registerDependency("coapserver","apiserver");
+
 }

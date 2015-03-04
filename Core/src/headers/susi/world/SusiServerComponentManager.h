@@ -31,6 +31,7 @@
 #include "susi/logger/Logger.h"
 #include "susi/duktape/DuktapeEngine.h"
 #include "susi/selfchecker/SelfChecker.h"
+#include "susi/coapserver/CoapServerComponent.h"
 
 namespace Susi {
 namespace System {
