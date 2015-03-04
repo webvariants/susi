@@ -8,7 +8,7 @@
  *
  * @author: Tino Rusch (tino.rusch@webvariants.de), Thomas Krause (thomas.krause@webvariants.de)
  */
-#include <util/Any.h>
+#include "susi/util/Any.h"
 
 using namespace Susi::Util;
 
