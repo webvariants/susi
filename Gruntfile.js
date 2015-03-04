@@ -55,6 +55,15 @@ module.exports = function(grunt) {
             cwd: '<%= pkg.project.directories.build %>/core'
           }
         }
+      },
+      make_install: {
+        command: 'make -j4 install',
+        options: {
+          stderr: false,
+          execOptions: {
+            cwd: '<%= pkg.project.directories.build %>/core'
+          }
+        }
       }
     },
 
@@ -104,9 +113,14 @@ module.exports = function(grunt) {
   
   grunt.registerTask('development', ['core']);
   grunt.registerTask('build', ['clean','core']);
+  grunt.registerTask('install', ['shell:make_install']);
 
   grunt.registerTask('test', 'run the susi tests', ['development','shell:make_test','shell:test_core']);
   grunt.registerTask('dev', ['development']);
+
+
   grunt.registerTask('default', ['development']);
+
+
 
 };
