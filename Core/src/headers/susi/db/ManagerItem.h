@@ -13,7 +13,7 @@
 #define __MANAGER_ITEM__
 
 #include <map>
-#include <db/Database.h>
+#include "susi/db/Database.h"
 
 namespace Susi {
     namespace DB {

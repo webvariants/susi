@@ -6,12 +6,12 @@
 #include <vector>
 #include <utility>
 
-#include "susi/Poco/Net/SocketReactor.h"
-#include "susi/Poco/Net/SocketAcceptor.h"
-#include "susi/Poco/Net/SocketNotification.h"
-#include "susi/Poco/Net/StreamSocket.h"
-#include "susi/Poco/Net/ServerSocket.h"
-#include "susi/Poco/NObserver.h"
+#include <Poco/Net/SocketReactor.h>
+#include <Poco/Net/SocketAcceptor.h>
+#include <Poco/Net/SocketNotification.h>
+#include <Poco/Net/StreamSocket.h>
+#include <Poco/Net/ServerSocket.h>
+#include <Poco/NObserver.h>
 
 
 class ApiClientTest : public ComponentTest {
