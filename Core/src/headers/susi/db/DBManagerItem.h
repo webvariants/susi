@@ -12,7 +12,7 @@
 #ifndef __DB_MANAGER_ITEM__
 #define __DB_MANAGER_ITEM__
 
-#include <db/Database.h>
+#include "susi/db/Database.h"
 
 namespace Susi {
     namespace DB {
