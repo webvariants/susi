@@ -1,9 +1,9 @@
 /*
 
-#include "gtest/gtest.h"
+#include "susi/gtest/gtest.h"
 
-#include "apiserver/BasicApiClient.h"
-#include "world/World.h"
+#include "susi/apiserver/BasicApiClient.h"
+#include "susi/world/World.h"
 
 class TCPApiServerTest : public ::testing::Test {
 protected:

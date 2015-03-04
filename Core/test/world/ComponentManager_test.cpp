@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "world/ComponentManager.h"
+#include "susi/world/ComponentManager.h"
 
 class ComponentManagerTest : public ::testing::Test {
 	protected:

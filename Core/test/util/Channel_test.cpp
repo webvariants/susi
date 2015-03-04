@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "util/Channel.h"
+#include "susi/util/Channel.h"
 #include <thread>
 #include <functional>
 #include <atomic>

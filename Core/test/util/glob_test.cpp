@@ -10,7 +10,7 @@
  */
 
 #include "gtest/gtest.h"
-#include "util/Glob.h"
+#include "susi/util/Glob.h"
 
 #include <iostream>
 

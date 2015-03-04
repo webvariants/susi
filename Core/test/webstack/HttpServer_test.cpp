@@ -1,13 +1,13 @@
 #include "gtest/gtest.h"
-#include "world/ComponentManager.h"
-#include "config/Config.h"
-#include "iocontroller/IOController.h"
+#include "susi/world/ComponentManager.h"
+#include "susi/config/Config.h"
+#include "susi/iocontroller/IOController.h"
 
 #include <thread>
 #include <chrono>
 
-#include "webstack/HttpClient.h"
-#include "util/ComponentTest.h"
+#include "susi/webstack/HttpClient.h"
+#include "susi/util/ComponentTest.h"
 
 class HttpServerTest : public ComponentTest {
 protected:

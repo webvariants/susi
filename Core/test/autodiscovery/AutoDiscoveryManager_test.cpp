@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "autodiscovery/AutoDiscoveryManager.h"
+#include "susi/autodiscovery/AutoDiscoveryManager.h"
 #include <mutex>
 #include <vector>
 #include <utility>

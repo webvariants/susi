@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
-#include "db/Database.h"
-#include "iocontroller/IOController.h"
+#include "susi/db/Database.h"
+#include "susi/iocontroller/IOController.h"
 
 class DatabaseTest : public ::testing::Test {
 public:

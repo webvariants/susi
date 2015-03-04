@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "sessions/Session.h"
+#include "susi/sessions/Session.h"
 
 class SessionTest : public ::testing::Test {
 protected:

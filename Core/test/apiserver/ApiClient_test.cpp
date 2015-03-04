@@ -1,17 +1,17 @@
 #include "gtest/gtest.h"
-#include "util/ComponentTest.h"
-#include "apiserver/ApiClient.h"
+#include "susi/util/ComponentTest.h"
+#include "susi/apiserver/ApiClient.h"
 #include <mutex>
 #include <condition_variable>
 #include <vector>
 #include <utility>
 
-#include "Poco/Net/SocketReactor.h"
-#include "Poco/Net/SocketAcceptor.h"
-#include "Poco/Net/SocketNotification.h"
-#include "Poco/Net/StreamSocket.h"
-#include "Poco/Net/ServerSocket.h"
-#include "Poco/NObserver.h"
+#include "susi/Poco/Net/SocketReactor.h"
+#include "susi/Poco/Net/SocketAcceptor.h"
+#include "susi/Poco/Net/SocketNotification.h"
+#include "susi/Poco/Net/StreamSocket.h"
+#include "susi/Poco/Net/ServerSocket.h"
+#include "susi/Poco/NObserver.h"
 
 
 class ApiClientTest : public ComponentTest {

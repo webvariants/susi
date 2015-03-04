@@ -1,16 +1,16 @@
 #include "gtest/gtest.h"
-#include "apiserver/TCPClient.h"
+#include "susi/apiserver/TCPClient.h"
 #include <mutex>
 #include <condition_variable>
 #include <vector>
 #include <utility>
 
-#include "Poco/Net/SocketReactor.h"
-#include "Poco/Net/SocketAcceptor.h"
-#include "Poco/Net/SocketNotification.h"
-#include "Poco/Net/StreamSocket.h"
-#include "Poco/Net/ServerSocket.h"
-#include "Poco/NObserver.h"
+#include <Poco/Net/SocketReactor.h>
+#include <Poco/Net/SocketAcceptor.h>
+#include <Poco/Net/SocketNotification.h>
+#include <Poco/Net/StreamSocket.h>
+#include <Poco/Net/ServerSocket.h>
+#include <Poco/NObserver.h>
 
 
 class TCPClientTest : public ::testing::Test {

@@ -9087,7 +9087,7 @@ _LT_EOF
 
         if test "x$supports_anon_versioning" = xyes; then
           archive_expsym_cmds='echo "{ global:" > $output_objdir/$libname.ver~
-	    cat $export_symbols | sed -e "s/\(.*\)/\1;/" >> $output_objdir/$libname.ver~
+	    cat $export_symbols | sed -e "s/\(.*\)/'"$ac_symprfx"'\1;/" >> $output_objdir/$libname.ver~
 	    echo "local: *; };" >> $output_objdir/$libname.ver~
 	    $CC '"$tmp_sharedflag""$tmp_addflag"' $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-version-script ${wl}$output_objdir/$libname.ver -o $lib'
         fi
@@ -9100,7 +9100,7 @@ _LT_EOF
 	  archive_cmds='$LD -shared $libobjs $deplibs $linker_flags -soname $soname -o $lib'
 	  if test "x$supports_anon_versioning" = xyes; then
 	    archive_expsym_cmds='echo "{ global:" > $output_objdir/$libname.ver~
-	      cat $export_symbols | sed -e "s/\(.*\)/\1;/" >> $output_objdir/$libname.ver~
+	      cat $export_symbols | sed -e "s/\(.*\)/'"$ac_symprfx"'\1;/" >> $output_objdir/$libname.ver~
 	      echo "local: *; };" >> $output_objdir/$libname.ver~
 	      $LD -shared $libobjs $deplibs $linker_flags -soname $soname -version-script $output_objdir/$libname.ver -o $lib'
 	  fi
@@ -10306,7 +10306,7 @@ version_type=none
 dynamic_linker="$host_os ld.so"
 sys_lib_dlsearch_path_spec="/lib /usr/lib"
 need_lib_prefix=unknown
-hardcode_into_libs=no
+hardcode_into_libs="no"
 
 # when you set need_version to no, make sure it does not cause -set_version
 # flags to be left without arguments
@@ -12803,7 +12803,7 @@ fi
 	    archive_cmds_CXX='$CC -qmkshrobj $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname -o $lib'
 	    if test "x$supports_anon_versioning" = xyes; then
 	      archive_expsym_cmds_CXX='echo "{ global:" > $output_objdir/$libname.ver~
-		cat $export_symbols | sed -e "s/\(.*\)/\1;/" >> $output_objdir/$libname.ver~
+		cat $export_symbols | sed -e "s/\(.*\)/'"$ac_symprfx"'\1;/" >> $output_objdir/$libname.ver~
 		echo "local: *; };" >> $output_objdir/$libname.ver~
 		$CC -qmkshrobj $libobjs $deplibs $compiler_flags ${wl}-soname $wl$soname ${wl}-version-script ${wl}$output_objdir/$libname.ver -o $lib'
 	    fi
@@ -14154,7 +14154,7 @@ version_type=none
 dynamic_linker="$host_os ld.so"
 sys_lib_dlsearch_path_spec="/lib /usr/lib"
 need_lib_prefix=unknown
-hardcode_into_libs=no
+hardcode_into_libs="no"
 
 # when you set need_version to no, make sure it does not cause -set_version
 # flags to be left without arguments
@@ -16409,7 +16409,7 @@ module_expsym_cmds='`$ECHO "$module_expsym_cmds" | $SED "$delay_single_quote_sub
 with_gnu_ld='`$ECHO "$with_gnu_ld" | $SED "$delay_single_quote_subst"`'
 allow_undefined_flag='`$ECHO "$allow_undefined_flag" | $SED "$delay_single_quote_subst"`'
 no_undefined_flag='`$ECHO "$no_undefined_flag" | $SED "$delay_single_quote_subst"`'
-hardcode_libdir_flag_spec='`$ECHO "$hardcode_libdir_flag_spec" | $SED "$delay_single_quote_subst"`'
+hardcode_libdir_flag_spec=""
 hardcode_libdir_separator='`$ECHO "$hardcode_libdir_separator" | $SED "$delay_single_quote_subst"`'
 hardcode_direct='`$ECHO "$hardcode_direct" | $SED "$delay_single_quote_subst"`'
 hardcode_direct_absolute='`$ECHO "$hardcode_direct_absolute" | $SED "$delay_single_quote_subst"`'
@@ -16440,7 +16440,7 @@ postinstall_cmds='`$ECHO "$postinstall_cmds" | $SED "$delay_single_quote_subst"`
 postuninstall_cmds='`$ECHO "$postuninstall_cmds" | $SED "$delay_single_quote_subst"`'
 finish_cmds='`$ECHO "$finish_cmds" | $SED "$delay_single_quote_subst"`'
 finish_eval='`$ECHO "$finish_eval" | $SED "$delay_single_quote_subst"`'
-hardcode_into_libs='`$ECHO "$hardcode_into_libs" | $SED "$delay_single_quote_subst"`'
+hardcode_into_libs="no"
 sys_lib_search_path_spec='`$ECHO "$sys_lib_search_path_spec" | $SED "$delay_single_quote_subst"`'
 sys_lib_dlsearch_path_spec='`$ECHO "$sys_lib_dlsearch_path_spec" | $SED "$delay_single_quote_subst"`'
 hardcode_action='`$ECHO "$hardcode_action" | $SED "$delay_single_quote_subst"`'
@@ -17674,7 +17674,7 @@ finish_cmds=$lt_finish_cmds
 finish_eval=$lt_finish_eval
 
 # Whether we should hardcode library paths into libraries.
-hardcode_into_libs=$hardcode_into_libs
+hardcode_into_libs="no"
 
 # Compile-time system search path for libraries.
 sys_lib_search_path_spec=$lt_sys_lib_search_path_spec
@@ -17768,7 +17768,7 @@ no_undefined_flag=$lt_no_undefined_flag
 
 # Flag to hardcode \$libdir into a binary during linking.
 # This must work even if \$libdir does not exist
-hardcode_libdir_flag_spec=$lt_hardcode_libdir_flag_spec
+hardcode_libdir_flag_spec=""
 
 # Whether we need a single "-rpath" flag with a separated argument.
 hardcode_libdir_separator=$lt_hardcode_libdir_separator
@@ -18110,7 +18110,7 @@ no_undefined_flag=$lt_no_undefined_flag_CXX
 
 # Flag to hardcode \$libdir into a binary during linking.
 # This must work even if \$libdir does not exist
-hardcode_libdir_flag_spec=$lt_hardcode_libdir_flag_spec_CXX
+hardcode_libdir_flag_spec=""
 
 # Whether we need a single "-rpath" flag with a separated argument.
 hardcode_libdir_separator=$lt_hardcode_libdir_separator_CXX

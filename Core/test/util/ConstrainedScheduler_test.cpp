@@ -10,7 +10,7 @@
  */
 
 #include "gtest/gtest.h"
-#include "util/ConstrainedScheduler.h"
+#include "susi/util/ConstrainedScheduler.h"
 
 #include <ctime>
 #include <algorithm>

@@ -9,7 +9,7 @@
  * @author: Thomas Krause (thomas.krause@webvariants.de)
  */
 
-#include "util/ComponentTest.h"
+#include "susi/util/ComponentTest.h"
 
 class AuthControllerComponentTest : public ComponentTest {
 

@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "util/ThreadPool.h"
+#include "susi/util/ThreadPool.h"
 #include <condition_variable>
 
 class ThreadPoolTest : public ::testing::Test {

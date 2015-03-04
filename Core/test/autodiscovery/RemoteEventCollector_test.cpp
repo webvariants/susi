@@ -1,5 +1,5 @@
-#include "util/ComponentTest.h"
-#include "autodiscovery/RemoteEventCollector.h"
+#include "susi/util/ComponentTest.h"
+#include "susi/autodiscovery/RemoteEventCollector.h"
 
 class RemoteEventCollectorTest : public ComponentTest {
 protected:

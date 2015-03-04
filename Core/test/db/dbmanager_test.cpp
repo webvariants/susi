@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
-#include "db/Manager.h"
-#include "iocontroller/IOController.h"
+#include "susi/db/Manager.h"
+#include "susi/iocontroller/IOController.h"
 
 
 TEST(DBManager, Contruct) {

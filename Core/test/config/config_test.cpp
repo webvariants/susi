@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
-#include "world/ComponentManager.h"
-#include "config/Config.h"
-#include "iocontroller/IOController.h"
+#include "susi/world/ComponentManager.h"
+#include "susi/config/Config.h"
+#include "susi/iocontroller/IOController.h"
 
 class ConfigTest : public ::testing::Test {
 

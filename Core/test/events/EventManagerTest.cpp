@@ -1,4 +1,4 @@
-#include "util/ComponentTest.h"
+#include "susi/util/ComponentTest.h"
 
 class EventManagerTest : public ComponentTest {
 protected:

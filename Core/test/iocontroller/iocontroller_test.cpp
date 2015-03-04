@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
-#include "iocontroller/IOController.h"
-#include "util/TestHelper.h"
+#include "susi/iocontroller/IOController.h"
+#include "susi/util/TestHelper.h"
 
 
 class IOControllerTest : public ::testing::Test {

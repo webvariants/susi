@@ -6700,7 +6700,7 @@ func_mode_link ()
 	  *)
 	    if test "$installed" = no; then
 	      func_append notinst_deplibs " $lib"
-	      need_relink=yes
+	      need_relink="no"
 	    fi
 	    ;;
 	  esac

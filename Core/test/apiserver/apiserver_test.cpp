@@ -1,9 +1,9 @@
-/*#include "gtest/gtest.h"
-#include "events/EventSystem.h"
-#include "client/SusiClient.h"
-#include "apiserver/TCPServer.h"
+/*#include "susi/gtest/gtest.h"
+#include "susi/events/EventSystem.h"
+#include "susi/client/SusiClient.h"
+#include "susi/apiserver/TCPServer.h"
 #include <condition_variable>
-#include "world/World.h"
+#include "susi/world/World.h"
 
 class ApiServerTest : public ::testing::Test {
 protected:

@@ -1,7 +1,7 @@
 #include "gtest/gtest.h"
-#include "iocontroller/IOController.h"
-#include "logger/easylogging++.h"
-#include "states/StateController.h"
+#include "susi/iocontroller/IOController.h"
+#include "susi/logger/easylogging++.h"
+#include "susi/states/StateController.h"
 
 using Susi::Util::Any;
 
