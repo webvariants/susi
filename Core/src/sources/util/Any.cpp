@@ -10,6 +10,8 @@
  */
 #include "susi/util/Any.h"
 
+#include "susi/logger/easylogging++.h"
+
 using namespace Susi::Util;
 
 Any::Any() {
@@ -718,6 +720,7 @@ Any Any::fromJSONString( std::string str ) {
         }
     }
     catch( ... ) {
+        LOG(ERROR) << "failed parsing json";
         return Susi::Util::Any {};
     }
 }
@@ -779,7 +782,14 @@ Any Any::tokenToAny( jsmntok_t * & t, const  char *js ) {
                 result = std::stod( str );
             }
             else {
-                result = std::stoll( str );
+                bool isNumber = true;
+                for(auto k = str.begin(); k != str.end(); ++k)
+                    isNumber &= isdigit(*k);
+                if(isNumber){
+                    result = std::stoll( str );
+                }else{
+                    result = str;
+                }
             }
             t++;
             break;
