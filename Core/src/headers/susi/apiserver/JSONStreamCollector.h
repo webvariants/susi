@@ -27,6 +27,7 @@ namespace Susi {
             std::string message = "";
             size_t opening = 0;
             size_t closing = 0;
+            bool inQuotes = false;
             std::function<void( std::string& )> _onMessage;
         public:
             JSONStreamCollector( std::function<void( std::string& )> onMessage ) : _onMessage {onMessage} {}
@@ -38,8 +39,11 @@ namespace Susi {
                 for( size_t i=0; i<data.size(); i++ ) {
                     char c = data[i];
                     message += c;
-                    if( c=='{' )opening++;
-                    if( c=='}' ) {
+                    if( c=='"' && i>0 && data[i-1] != '\\'){
+                        inQuotes = !inQuotes;
+                    }
+                    if( c=='{' && !inQuotes)opening++;
+                    if( c=='}' && !inQuotes) {
                         closing++;
                         if( opening==closing ) {
                             std::string msg = message;
