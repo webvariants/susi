@@ -96,7 +96,7 @@ TEST_F(TCPClientTest, Basic) {
 	};
 	TestTCPClient client{"localhost:2222"};
 	client.send("foobar");
-	Poco::Thread::sleep(100000);
+	Poco::Thread::sleep(1000);
 	//std::this_thread::sleep_for(std::chrono::milliseconds{100});
 	client.close();
 	client.join();
