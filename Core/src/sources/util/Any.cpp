@@ -783,8 +783,10 @@ Any Any::tokenToAny( jsmntok_t * & t, const  char *js ) {
             }
             else {
                 bool isNumber = true;
-                for(auto k = str.begin(); k != str.end(); ++k)
-                    isNumber &= isdigit(*k);
+                int pos = 0;
+                if(str[0]=='-' || str[0]=='+')pos++;
+                for(;pos<str.size();pos++)
+                    isNumber &= isdigit(str[pos]);
                 if(isNumber){
                     result = std::stoll( str );
                 }else{
