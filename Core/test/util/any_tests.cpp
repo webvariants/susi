@@ -1031,6 +1031,13 @@ TEST (Any, FromJSONString){
 
 }
 
+TEST (Any, FromJSONUTF8String){
+	Any b = Any::fromJSONString("Δ");
+	EXPECT_EQ(Any{"Δ"}.toJSONString(), b.toJSONString());
+}
+
+
+
 TEST (Any, CopyConversionOperators){
 
 	Any foo = 21;
