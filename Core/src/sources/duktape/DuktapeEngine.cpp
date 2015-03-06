@@ -17,27 +17,31 @@ void Susi::Duktape::JSEngine::start() {
 }
 
 void Susi::Duktape::JSEngine::init(){
-    ctx = duk_create_heap_default();
-    if (!ctx) {
-        printf("Failed to create a Susi::Duktape heap.\n");
-        exit(1);
-    }
-    duk_push_global_object(ctx);
-    duk_push_c_function(ctx, js_registerConsumer, 1 /*nargs*/);
-    duk_put_prop_string(ctx, -2, "_registerConsumer");
-    duk_push_c_function(ctx, js_registerProcessor, 1 /*nargs*/);
-    duk_put_prop_string(ctx, -2, "_registerProcessor");
-    duk_push_c_function(ctx, js_unregister, 1 /*nargs*/);
-    duk_put_prop_string(ctx, -2, "_unregister");
-    duk_push_c_function(ctx, js_publish, 1 /*nargs*/);
-    duk_put_prop_string(ctx, -2, "_publish");
-    duk_push_c_function(ctx, js_ack, 1 /*nargs*/);
-    duk_put_prop_string(ctx, -2, "_ack");
-    duk_push_c_function(ctx, js_log, 1 /*nargs*/);
-    duk_put_prop_string(ctx, -2, "log");
+    for(int i=0;i<numEngines;i++){
+        struct DuktapeContainer container;
+        container.ctx = duk_create_heap_default();
+        if (!container.ctx) {
+            printf("Failed to create a Susi::Duktape heap.\n");
+            exit(1);
+        }
+        duk_push_global_object(container.ctx);
+        duk_push_c_function(container.ctx, js_registerConsumer, 1 /*nargs*/);
+        duk_put_prop_string(container.ctx, -2, "_registerConsumer");
+        duk_push_c_function(container.ctx, js_registerProcessor, 1 /*nargs*/);
+        duk_put_prop_string(container.ctx, -2, "_registerProcessor");
+        duk_push_c_function(container.ctx, js_unregister, 1 /*nargs*/);
+        duk_put_prop_string(container.ctx, -2, "_unregister");
+        duk_push_c_function(container.ctx, js_publish, 1 /*nargs*/);
+        duk_put_prop_string(container.ctx, -2, "_publish");
+        duk_push_c_function(container.ctx, js_ack, 1 /*nargs*/);
+        duk_put_prop_string(container.ctx, -2, "_ack");
+        duk_push_c_function(container.ctx, js_log, 1 /*nargs*/);
+        duk_put_prop_string(container.ctx, -2, "log");
 
-    if(duk_peval_lstring(ctx, Susi::Duktape::susiJS.c_str(), Susi::Duktape::susiJS.size()) != 0){
-        LOG(ERROR) << "processing susiJS: " << duk_safe_to_string(ctx, -1);
+        if(duk_peval_lstring(container.ctx, Susi::Duktape::susiJS.c_str(), Susi::Duktape::susiJS.size()) != 0){
+            LOG(ERROR) << "processing susiJS: " << duk_safe_to_string(container.ctx, -1);
+        }
+        duktapeContainers.push_back(container);
     }
 }
 
@@ -106,17 +110,18 @@ duk_ret_t Susi::Duktape::JSEngine::js_unregister(duk_context *ctx) {
 void Susi::Duktape::JSEngine::registerProcessor(std::string topic){
 	registerIds[topic] = BaseComponent::subscribe(topic,Susi::Events::Processor{[this,topic](Susi::Events::EventPtr event){
 		try{
-            std::lock_guard<std::mutex> lock{mutex};
+            auto container = getContainer();
+            std::lock_guard<std::mutex> lock{container->mutex};
     		auto eventString = event->toString();
-    		pendingEvents[event->id] = std::move(event);
-    		duk_push_global_object(ctx);
-            duk_get_prop_string(ctx, -1 /*index*/, "_processProcessorEvent");
-            duk_push_string(ctx, eventString.c_str());
-            duk_push_string(ctx, topic.c_str());
-            if (duk_pcall(ctx, 2 /*nargs*/) != 0) {
-                LOG(ERROR) << (std::string{"Error: "}+duk_safe_to_string(ctx, -1));
+    		container->pendingEvents[event->id] = std::move(event);
+    		duk_push_global_object(container->ctx);
+            duk_get_prop_string(container->ctx, -1 /*index*/, "_processProcessorEvent");
+            duk_push_string(container->ctx, eventString.c_str());
+            duk_push_string(container->ctx, topic.c_str());
+            if (duk_pcall(container->ctx, 2 /*nargs*/) != 0) {
+                LOG(ERROR) << (std::string{"Error: "}+duk_safe_to_string(container->ctx, -1));
             }
-            duk_pop(ctx);  /* pop result/error */
+            duk_pop(container->ctx);  /* pop result/error */
         }catch(const std::exception & e){
             event->headers.push_back({"error",e.what()});
         }
@@ -130,15 +135,16 @@ void Susi::Duktape::JSEngine::unregister(std::string topic){
 
 void Susi::Duktape::JSEngine::registerConsumer(std::string topic){
 	Susi::Events::Consumer consumer = [this,topic](Susi::Events::SharedEventPtr event){
-		std::lock_guard<std::mutex> lock{mutex};
-		duk_push_global_object(ctx);
-        duk_get_prop_string(ctx, -1 /*index*/, "_processConsumerEvent");
-        duk_push_string(ctx, event->toString().c_str());
-        duk_push_string(ctx, topic.c_str());
-        if (duk_pcall(ctx, 2 /*nargs*/) != 0) {
-            LOG(ERROR) << (std::string{"Error: "}+duk_safe_to_string(ctx, -1));
+		auto container = getContainer();
+        std::lock_guard<std::mutex> lock{container->mutex};
+		duk_push_global_object(container->ctx);
+        duk_get_prop_string(container->ctx, -1 /*index*/, "_processConsumerEvent");
+        duk_push_string(container->ctx, event->toString().c_str());
+        duk_push_string(container->ctx, topic.c_str());
+        if (duk_pcall(container->ctx, 2 /*nargs*/) != 0) {
+            LOG(ERROR) << (std::string{"Error: "}+duk_safe_to_string(container->ctx, -1));
         }
-        duk_pop(ctx);  /* pop result/error */
+        duk_pop(container->ctx);  /* pop result/error */
 	};
 	registerIds[topic] = BaseComponent::subscribe(topic,consumer);
 }

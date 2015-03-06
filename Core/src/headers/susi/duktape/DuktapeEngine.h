@@ -26,9 +26,10 @@ extern std::string susiJS;
 
 class JSEngine : public Susi::System::BaseComponent {
 public:
-	JSEngine(Susi::System::ComponentManager *mgr, std::string src) : 
+	JSEngine(Susi::System::ComponentManager *mgr, std::string src, int _numEngines = 1) : 
 		Susi::System::BaseComponent{mgr},
-		sourceFile{src} {}
+		sourceFile{src},
+		numEngines{_numEngines} {}
 
 	// The start function subscribes to events and attaches its handlers
 	virtual void start() override;
@@ -37,17 +38,32 @@ public:
 	virtual void stop() override;
 
 protected:
-	std::string sourceFile;
-	duk_context *ctx;
-	std::mutex mutex;
+
+	struct DuktapeContainer {
+		duk_context *ctx;
+		std::mutex mutex;
+		std::map<std::string,Susi::Events::EventPtr> pendingEvents;
+		std::map<std::string,long> registerIds;
+	};
+
 
 	enum {
 		OUTPUT = 0,
 		INPUT = 1
 	};
 
-	std::map<std::string,Susi::Events::EventPtr> pendingEvents;
-	std::map<std::string,long> registerIds;
+	std::string sourceFile;
+
+	int numEngines = 1;
+	int currentEngine = -1;
+	std::mutex duktapeContainersMutex;
+	std::vector<DuktapeContainer> duktapeContainers;
+
+	struct DuktapeContainer* getContainer(){
+		std::lock_guard<std::mutex> lock{duktapeContainersMutex};
+		currentEngine = (currentEngine+1)%numEngines;
+		return &(duktapeContainers[currentEngine]);
+	}
 
 	static duk_ret_t js_registerConsumer(duk_context *ctx) ;
 	static duk_ret_t js_registerProcessor(duk_context *ctx) ;
