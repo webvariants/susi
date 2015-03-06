@@ -218,15 +218,19 @@ void Susi::Events::Manager::ack( EventPtr event ) {
 
     std::string id = event->id;
     auto error = [id,this]( std::string msg ) {
-        std::unique_lock<std::mutex> lock( mutex );
-        std::shared_ptr<PublishProcess> process;
-        for( auto & kv : publishProcesses ) {
-            if( kv.first == id ) {
-                process = kv.second;
+        try{
+            std::unique_lock<std::mutex> lock( mutex );
+            std::shared_ptr<PublishProcess> process;
+            for( auto & kv : publishProcesses ) {
+                if( kv.first == id ) {
+                    process = kv.second;
+                }
             }
-        }
-        if( process.get()!=nullptr ) {
-            process->errors.push_back( msg );
+            if( process.get()!=nullptr ) {
+                process->errors.push_back( msg );
+            }
+        }catch(...){
+            LOG(ERROR) << "Error in error callback of eventmanager work";
         }
     };
     
