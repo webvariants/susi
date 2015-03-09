@@ -16,7 +16,11 @@ using namespace Susi::States;
 StateController::StateController( std::string file ) {
     // Todo: set fileLocation to a value
     this->fileLocation = file;
-    loadPersistent();
+    try{
+        loadPersistent();
+    }catch(...){
+        LOG(ERROR) << "can't load state file "+file;
+    }
 }
 
 StateController::~StateController() {}
@@ -30,7 +34,7 @@ void StateController::savePersistent() {
 bool StateController::loadPersistent() {
     Susi::IOController io;
     std::string fileContent = io.readFile( fileLocation );
-
+    LOG(INFO) << "read states from file...";
     persistentStates = Susi::Util::Any::fromJSONString( fileContent );
     return true;
 }

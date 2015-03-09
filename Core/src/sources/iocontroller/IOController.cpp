@@ -39,7 +39,7 @@ std::size_t Susi::IOController::writeFile( std::string filename,std::string cont
 
 std::string Susi::IOController::readFile( std::string filename ) {
     Poco::Path dir = this->getAbsDirFromString( filename );
-    if( dir.toString() == "" || this->checkFile( dir ) ) {
+    if( dir.toString() == "" || this->checkDir( dir ) ) {
         std::string result = "";
         int length = 1024;
         std::ifstream s( ( char* )filename.c_str() );
