@@ -114,6 +114,7 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	});
 	registerDependency("sessionmanager","eventsystem");
 	registerDependency("sessionmanager","heartbeat");
+	
 	/**
 	 * Declare statecontroller
 	 */

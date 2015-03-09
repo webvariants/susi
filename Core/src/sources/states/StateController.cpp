@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2014, webvariants GmbH, http://www.webvariants.de
  *
@@ -15,14 +16,14 @@ using namespace Susi::States;
 StateController::StateController( std::string file ) {
     // Todo: set fileLocation to a value
     this->fileLocation = file;
+    loadPersistent();
 }
 
 StateController::~StateController() {}
 
 void StateController::savePersistent() {
     Susi::Util::Any obj = persistentStates;
-
-    Susi::IOController io;
+    Susi::IOController io{};
     io.writeFile( fileLocation,obj.toJSONString() );
 }
 
