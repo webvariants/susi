@@ -719,8 +719,8 @@ Any Any::fromJSONString( std::string str ) {
             return tokenToAny( start,str.c_str() );
         }
     }
-    catch( ... ) {
-        LOG(ERROR) << "failed parsing json";
+    catch( const std::exception & e ) {
+        LOG(ERROR) << "failed parsing json from this: "<<str<<" (exception what(): "<<e.what()<<")";
         return Susi::Util::Any {};
     }
 }
