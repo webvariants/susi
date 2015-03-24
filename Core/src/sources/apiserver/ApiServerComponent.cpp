@@ -206,8 +206,6 @@ void Susi::Api::ApiServerComponent::handlePublish( std::string & id, Susi::Util:
         rawEvent.id = std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
     }
     *event = rawEvent;
-
-    event->headers.push_back({"LowPriority",""});
     
     LOG(DEBUG) << "publish event from "<<id<<", topic: "<<event->topic;
     eventManager->publish( std::move( event ),[this,id]( Susi::Events::SharedEventPtr event ) {
@@ -257,16 +255,17 @@ void Susi::Api::ApiServerComponent::handleAck( std::string & id, Susi::Util::Any
 }
 
 void Susi::Api::ApiServerComponent::sendOk( std::string & id ) {
+    /* DO NOT SEND "OK" STATUS MESSAGES ANYMORE!
     Susi::Util::Any response;
     response["type"] = "status";
     response["error"] = false;
     send( id,response );
+    */
 }
 
 void Susi::Api::ApiServerComponent::sendFail( std::string & id,std::string error ) {
     Susi::Util::Any response;
-    response["type"] = "status";
-    response["error"] = true;
+    response["type"] = "error";
     response["data"] = error;
     send( id,response );
 }

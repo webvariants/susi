@@ -65,11 +65,10 @@ public:
                 Poco::Thread::sleep(_interval.count());
                 b1 = b2 = false;
                 auto event = createEvent("selfchecker::check");
-                event->headers.push_back({"LowPriority",""});
                 publish(std::move(event),[&cond,&b2](Susi::Events::SharedEventPtr){
                     b2 = true;
                     cond.notify_one();
-                });
+                },false,false,false);
                 {
                     std::unique_lock<std::mutex> lk(mutex);
                     cond.wait_for(lk,_timeout,[&b2](){return b2;});

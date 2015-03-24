@@ -80,7 +80,7 @@ bool Susi::Events::Manager::unsubscribe( long id ) {
 }
 
 // public publish api function
-void Susi::Events::Manager::publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback, bool processorsOnly, bool consumersOnly ) {
+void Susi::Events::Manager::publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback, bool processorsOnly, bool consumersOnly, bool highPrio) {
     if( event.get()==nullptr ) {
         LOG(DEBUG) << "publish: event is nullptr";
         //std::cout<<"event is nullptr"<<std::endl;
@@ -136,11 +136,11 @@ void Susi::Events::Manager::publish( Susi::Events::EventPtr event, Susi::Events:
         process->consumers.push_back( finishCallback );
         publishProcesses[event->id] = process;
     } // release lock
-    ack( std::move( event ) );
+    ack( std::move( event ) , highPrio);
 }
 
 // pass event back to system
-void Susi::Events::Manager::ack( EventPtr event ) {
+void Susi::Events::Manager::ack( EventPtr event , bool highPrio) {
     if( event.get()==nullptr ) {
         LOG(DEBUG) << "ack: event is nullptr";
         event.release();
@@ -233,13 +233,6 @@ void Susi::Events::Manager::ack( EventPtr event ) {
             LOG(ERROR) << "Error in error callback of eventmanager work";
         }
     };
-    
-    bool highPrio = true;
-    for(int i=0;i<event->headers.size();i++){
-        if(event->headers[i].first == "LowPriority"){
-            highPrio = false;
-        }
-    }
 
     Work work {std::move( event ),this};
     pool.add( std::move( work ),error, highPrio );

@@ -27,9 +27,9 @@ namespace Susi {
             virtual long subscribe( Predicate pred, Consumer consumer, std::string name="" );
             virtual bool unsubscribe( long id );
             // public publish api function
-            virtual void publish( EventPtr event, Consumer finishCallback = Consumer {}, bool processorsOnly = false, bool consumersOnly = false );
+            virtual void publish( EventPtr event, Consumer finishCallback = Consumer {}, bool processorsOnly = false, bool consumersOnly = false, bool highPrio = true );
             // pass event back to system
-            virtual void ack( EventPtr event );
+            virtual void ack( EventPtr event , bool highPrio = true);
 
             void addConstraint( std::pair<std::string,std::string> constraint ) {
                 scheduler.addConstraint( constraint );
