@@ -4,6 +4,8 @@ SUSI - Susi, a Universal System Interface
 Susi is an application framework, to build interfaces to arbitary systems.
 It is intended to enable even novice programmers to build robust asyncronous applications, on both ends of the system: frontend and backend.
 
+For more detailed documentation please visit [susi.readme.io](http://susi.readme.io/).
+
 ## How to Get
 * [Git](https://github.com/webvariants/susi)
 * More coming soon, such as npm, bower etc.
