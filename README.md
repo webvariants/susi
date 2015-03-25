@@ -26,7 +26,8 @@ Tino Rusch, Thomas Krause, Christian Sonderfeld
 * Version 0.1.6.3
 
 ## How-to use this code
-* see [INSTRUCTIONS](https://github.com/webvariants/susi/blob/stable/INSTRUCTIONS.md) file
+* compile and install susi, go to the sample-project directory and start susi with no commandline arguments.
+* this will start a basic susi server with a little sample chat application.
 
 ## Contact
 #### Developer/Company
