@@ -16,15 +16,12 @@ Susi::IOController::IOController() {}
 
 //high level
 std::size_t Susi::IOController::writeFile( std::string filename,char* ptr, std::size_t len ) {
-
     Poco::Path dir = this->getAbsDirFromString( filename );
-
-    if( this->checkDir( dir ) ) {
+    if( dir.toString() == "" || this->checkDir( dir ) ) {
         // write File
         std::ofstream s( ( char* )filename.c_str() );
         s<<ptr;
         s.close();
-
         return len;
     }
     else {
@@ -41,8 +38,8 @@ std::size_t Susi::IOController::writeFile( std::string filename,std::string cont
 }
 
 std::string Susi::IOController::readFile( std::string filename ) {
-
-    if( this->checkFile( this->getAbsPathFromString( filename ) ) ) {
+    Poco::Path dir = this->getAbsDirFromString( filename );
+    if( dir.toString() == "" || this->checkDir( dir ) ) {
         std::string result = "";
         int length = 1024;
         std::ifstream s( ( char* )filename.c_str() );
@@ -193,20 +190,24 @@ Poco::Path Susi::IOController::getAbsDirFromString( std::string path ) {
 }
 
 bool Susi::IOController::checkDir( Poco::Path dir ) {
+    try{
+        Poco::File f( dir );
 
-    Poco::File f( dir );
-
-    if( f.exists() ) {
-        if( f.isDirectory() ) {
-            return true;
+        if( f.exists() ) {
+            if( f.isDirectory() ) {
+                return true;
+            }
+            else {
+                return false;
+            }
         }
         else {
             return false;
         }
-    }
-    else {
+    }catch(...){
         return false;
     }
+    return false;
 }
 
 bool Susi::IOController::checkFile( Poco::Path dir ) {

@@ -46,6 +46,7 @@ namespace Susi {
             }
 
             virtual void stop() override {
+                handleSave(createEvent("save"));
                 unsubscribeAll();
             }
 

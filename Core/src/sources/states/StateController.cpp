@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2014, webvariants GmbH, http://www.webvariants.de
  *
@@ -15,21 +16,25 @@ using namespace Susi::States;
 StateController::StateController( std::string file ) {
     // Todo: set fileLocation to a value
     this->fileLocation = file;
+    try{
+        loadPersistent();
+    }catch(...){
+        LOG(ERROR) << "can't load state file "+file;
+    }
 }
 
 StateController::~StateController() {}
 
 void StateController::savePersistent() {
     Susi::Util::Any obj = persistentStates;
-
-    Susi::IOController io;
+    Susi::IOController io{};
     io.writeFile( fileLocation,obj.toJSONString() );
 }
 
 bool StateController::loadPersistent() {
     Susi::IOController io;
     std::string fileContent = io.readFile( fileLocation );
-
+    LOG(INFO) << "read states from file...";
     persistentStates = Susi::Util::Any::fromJSONString( fileContent );
     return true;
 }

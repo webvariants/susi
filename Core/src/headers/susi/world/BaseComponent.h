@@ -55,7 +55,7 @@ namespace Susi {
             bool unsubscribe( long id ) {
                 return eventManager->unsubscribe( id );
             }
-            void publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer {} ) {
+            void publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer {} , bool processorsOnly = false, bool consumersOnly= false, bool highPrio = true) {
                 eventManager->publish( std::move( event ),finishCallback );
             }
             Susi::Events::EventPtr createEvent( std::string topic ) {
