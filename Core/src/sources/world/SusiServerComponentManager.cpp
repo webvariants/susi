@@ -240,6 +240,8 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 		}catch(...){}
 		return std::shared_ptr<Component>{new Susi::Duktape::JSEngine{mgr,source}};
 	});
+	registerDependency("duktape","statecontroller");
+	registerDependency("duktape","sessionmanager");
 
 	/**
 	 * Declare selfchecker
