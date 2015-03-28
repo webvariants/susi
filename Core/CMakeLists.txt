@@ -25,8 +25,6 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-find_package(POCO REQUIRED PocoFoundation PocoUtil PocoNet)
-find_package(SOCI REQUIRED)
 find_package(LibLZMA REQUIRED)
 find_package(Threads REQUIRED)
 
@@ -36,6 +34,11 @@ add_subdirectory( ${CMAKE_CURRENT_SOURCE_DIR}/test/gtest-1.7.0 )
 include_directories( ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR} )
 
 add_subdirectory( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/libbson )
+add_subdirectory( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/poco )
+include_directories( ${POCO_INCLUDE_DIR} )
+add_subdirectory( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/soci/src )
+INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/soci/src/core )
+INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/soci/src/backends )
 
 set( CMAKE_COLOR_MAKEFILE ON )
 
@@ -43,7 +46,6 @@ set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall -g --std=c++11 -fPIC -Os" )
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/src/headers )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/test/gtest-1.7.0/include )
-include_directories( ${POCO_INCLUDE_DIR} )
 include_directories( ${SOCI_INCLUDE_DIRS} )
 
 file( GLOB SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/src/sources/**/*.cpp )
@@ -59,27 +61,27 @@ add_definitions(-DELPP_NO_DEFAULT_LOG_FILE)
 
 #LIBRARY
 add_library(lib${PROJECT_NAME} SHARED ${SRCFILES} )
+target_link_libraries(lib${PROJECT_NAME}
+	${CMAKE_THREAD_LIBS_INIT}
+	${LIBLZMA_LIBRARIES}
+	soci_core soci_sqlite3
+	PocoFoundation PocoUtil PocoNet
+	bson
+)
+
 set_target_properties(lib${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
 
 #SUSI BINARY
 add_executable( ${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/src/sources/main.cc )
-target_link_libraries(${PROJECT_NAME}
-	lib${PROJECT_NAME}
-	${CMAKE_THREAD_LIBS_INIT}
-	${SOCI_LIBRARY}
-	${LIBLZMA_LIBRARIES}
-	${POCO_LIBRARIES}
-	bson
-)
+target_link_libraries( ${PROJECT_NAME} lib${PROJECT_NAME} )
 
 #SUSI TESTS
 add_executable(${PROJECT_NAME}_test ${CMAKE_CURRENT_SOURCE_DIR}/test/easylogging++_init.cpp ${TESTFILES})
 target_link_libraries(${PROJECT_NAME}_test
 	lib${PROJECT_NAME}
 	${CMAKE_THREAD_LIBS_INIT}
-	${SOCI_LIBRARY}
 	${LIBLZMA_LIBRARIES}
-	${POCO_LIBRARIES}
+	PocoFoundation PocoUtil PocoNet
 	gtest
 	gtest_main
 	bson
