@@ -161,6 +161,7 @@ void Susi::Config::parseCommandLine( std::vector<std::string> argv ) {
             if( elems.size() == 2 ) {
                 key = elems[0];
                 v   = BSON::Value::fromJSON( elems[1] );
+                std::cout<<elems[1]<<" : "<< v.toJSON()<<std::endl;
                 set( key,v );
             }
             else {

@@ -28,10 +28,10 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(BSON::Objec
 		size_t threads = 4;
 		size_t queuelen = 32;
 		if(config["threads"].isInteger()){
-			threads = config["threads"].getInt32();
+			threads = config["threads"].getInt64();
 		}
 		if(config["queuelen"].isInteger()){
-			queuelen = config["queuelen"].getInt32();
+			queuelen = config["queuelen"].getInt64();
 		}
 		return std::shared_ptr<Component>{new Susi::Events::ManagerComponent{threads,queuelen}};
 	});
@@ -108,7 +108,7 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(BSON::Objec
 	registerComponent("sessionmanager", [](ComponentManager * mgr, BSON::Value& config) {
 		std::chrono::milliseconds lifetime{10000};		
 		if(config["lifetime"].isInteger()){
-			lifetime =  std::chrono::milliseconds{static_cast<int>(config["lifetime"])};
+			lifetime =  std::chrono::milliseconds{config["lifetime"].getInt64()};
 		}
 		return std::shared_ptr<Component>{new Susi::Sessions::SessionManagerComponent{mgr, lifetime}};
 	});
@@ -139,11 +139,11 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(BSON::Objec
 		BSON::Object commands = cfg["commands"];
 		BSON::Value threadsVal = cfg["threads"];
 		if(!threadsVal.isUndefined()){
-			threads = (size_t)threadsVal.getInt32();
+			threads = (size_t)threadsVal.getInt64();
 		}
 		BSON::Value queuelenVal = cfg["queuelen"];
 		if(!queuelenVal.isUndefined()){
-			queuelen = (size_t)queuelenVal.getInt32();
+			queuelen = (size_t)queuelenVal.getInt64();
 		}
 		return std::shared_ptr<Component>{new Susi::Syscall::SyscallComponent{mgr, commands, threads, queuelen}};
 	});
@@ -172,10 +172,10 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(BSON::Objec
 		}
 
 		if(config["threads"].isInteger()){
-			threads =  config["threads"].getInt32();
+			threads =  config["threads"].getInt64();
 		}
 		if(config["backlog"].isInteger()){
-			backlog =  config["backlog"].getInt32();
+			backlog =  config["backlog"].getInt64();
 		}
 		return std::shared_ptr<Component>{new Susi::HttpServerComponent{mgr, address, assetRoot, upload, threads, backlog}};
 	});	
