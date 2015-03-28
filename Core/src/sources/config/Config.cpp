@@ -161,6 +161,9 @@ void Susi::Config::parseCommandLine( std::vector<std::string> argv ) {
             if( elems.size() == 2 ) {
                 key = elems[0];
                 v   = BSON::Value::fromJSON( elems[1] );
+                if(v.isUndefined()){
+                    v = elems[1];
+                }
                 std::cout<<elems[1]<<" : "<< v.toJSON()<<std::endl;
                 set( key,v );
             }
@@ -173,6 +176,9 @@ void Susi::Config::parseCommandLine( std::vector<std::string> argv ) {
                     if( i < ( argc-1 ) && argv[i+1][0]!='-' ) {
                         std::string value = argv[( i+1 )];
                         v = BSON::Value::fromJSON( value );
+                        if(v.isUndefined()){
+                            v = value;
+                        }
                         i++;
                     }
                     else {
@@ -185,6 +191,9 @@ void Susi::Config::parseCommandLine( std::vector<std::string> argv ) {
                     if( i < ( argc-1 ) && argv[i+1][0]!='-' ) {
                         std::string value = argv[( i+1 )];
                         v = BSON::Value::fromJSON( value );
+                        if(v.isUndefined()){
+                            v = value;
+                        }
                         i++;
                     }
                     else {

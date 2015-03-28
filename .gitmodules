@@ -1,0 +1,3 @@
+[submodule "Core/submodules/libbson"]
+	path = Core/submodules/libbson
+	url = https://github.com/trusch/libbson
