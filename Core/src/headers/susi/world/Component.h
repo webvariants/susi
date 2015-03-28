@@ -12,7 +12,7 @@
 #ifndef __COMPONENT__
 #define __COMPONENT__
 
-#include "susi/util/Any.h"
+#include "bson/Value.h"
 
 namespace Susi {
     namespace System {

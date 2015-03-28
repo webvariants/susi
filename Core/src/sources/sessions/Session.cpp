@@ -24,7 +24,7 @@ namespace Susi {
     void Session::addTime( std::chrono::milliseconds milliseconds ) {
         deadline += std::chrono::duration_cast<std::chrono::microseconds>( milliseconds ).count();
     }
-    void Session::pushAttribute( std::string key, Susi::Util::Any value ) {
+    void Session::pushAttribute( std::string key, BSON::Value value ) {
         if( attributes.count( key ) > 0 ) {
             multiAttributes[key].push_back( attributes[key] );
             multiAttributes[key].push_back( value );
@@ -34,7 +34,7 @@ namespace Susi {
             multiAttributes[key].push_back( value );
         }
         else {
-            attributes[key] = Susi::Util::Any( value );
+            attributes[key] = BSON::Value( value );
         }
     }
     bool Session::removeAttribute( std::string key ) {
@@ -48,7 +48,7 @@ namespace Susi {
         }
         return false;
     }
-    Susi::Util::Any Session::getAttribute( std::string key ) {
+    BSON::Value Session::getAttribute( std::string key ) {
         if( key.length() > 0 ) {
             if( attributes.count( key ) > 0 ) {
                 return attributes[key];
@@ -57,9 +57,9 @@ namespace Susi {
                 return multiAttributes[key];
             }
         }
-        return Susi::Util::Any();
+        return BSON::Value();
     }
-    bool Session::setAttribute( std::string key, Susi::Util::Any value ) {
+    bool Session::setAttribute( std::string key, BSON::Value value ) {
         if( key.length() > 0 ) {
             attributes[key] = value;
             return true;

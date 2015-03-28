@@ -1,4 +1,4 @@
-/*
+    /*
  * Copyright (c) 2014, webvariants GmbH, http://www.webvariants.de
  *
  * This file is released under the terms of the MIT license. You can find the
@@ -14,15 +14,16 @@
 
 #include <sstream>
 #include <iostream>
+#include "bson/Value.h"
 
-#include "susi/util/Any.h"
+
 #include "susi/util/Helpers.h"
 #include "susi/iocontroller/IOController.h"
 #include "susi/logger/easylogging++.h"
 
+
 namespace Susi {
 
-    using Susi::Util::Any;
 
     class Config {
     protected:
@@ -33,13 +34,13 @@ namespace Susi {
         int load_count = 0;
 
         // holds the config
-        Any _configVar;
+        BSON::Value _configVar;
 
         // holds infos to all possible commandline options
         std::map<std::string,std::string> _knownCommandLineOptions;
 
         // used to set a value in the config object (should be used by parseCommandLine())
-        void set( std::string key, Any value );
+        void set( std::string key, BSON::Value value );
 
         // recursive config loading, in alphabetical order
         void rec_dir( const std::string & path );
@@ -57,13 +58,13 @@ namespace Susi {
 
         Config( const char *filename ) : Config {std::string{filename}} {}
 
-        Config( Susi::Util::Any cfg ) {
+        Config( BSON::Value cfg ) {
             _configVar = cfg;
         }
 
         void loadConfig( std::string path );
 
-        void merge( Susi::Util::Any & ref, Susi::Util::Any & other );
+        void merge( BSON::Value & ref, BSON::Value & other );
 
         // register a commandline option which will be recognized while parsing
         void registerCommandLineOption( std::string name, std::string key );
@@ -78,9 +79,9 @@ namespace Susi {
         // keys are in this format: "foo.bar.baz"
         // -> if we have {foo:{bar:{baz:123}}} get("foo.bar.baz") should return Any{123};
         // should throw if key doesn't exist
-        Any get( std::string key );
+        BSON::Value get( std::string key );
 
-        Any getConfig();
+        BSON::Value getConfig();
 
         // returns a help message which shows which options are available
         std::string getHelp();

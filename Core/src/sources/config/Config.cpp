@@ -13,7 +13,7 @@
 
 void Susi::Config::loadConfig( std::string path ) {
     std::string content = "";
-    Susi::Util::Any configVar;
+    BSON::Value configVar;
 
     if( !io.checkDir( path ) && !io.checkFile( path ) ) {
         std::string msg = "Susi::Config::loadConfig ";
@@ -35,7 +35,7 @@ void Susi::Config::loadConfig( std::string path ) {
         }
 
         try {
-            configVar = Susi::Util::Any::fromJSONString( content );
+            configVar = BSON::Value::fromJSON( content );
         }
         catch( const std::exception & e ) {
             std::string msg = "Susi::Config::loadConfig ";
@@ -46,14 +46,14 @@ void Susi::Config::loadConfig( std::string path ) {
             throw std::runtime_error( msg );
         }
 
-        if( configVar.getType() != Susi::Util::Any::OBJECT ) {
+        if( configVar.getType() != BSON::OBJECT ) {
             std::string msg = "Susi::Config::loadConfig ";
             msg += ( "File: " + path + " file doesn't contain a (json) object" );
             //LOG(ERROR) <<  msg ;
             throw std::runtime_error( "file doesn't contain a (json) object" );
         }
 
-        if( _configVar.isNull() ) {
+        if( _configVar.isUndefined() ) {
             // first load or empty
             //LOG(DEBUG) << "first load of config";
             _configVar = configVar;
@@ -102,9 +102,9 @@ void Susi::Config::setLoadCount( int _load_count ) {
     load_count = _load_count;
 }
 
-void Susi::Config::merge( Susi::Util::Any & ref, Susi::Util::Any & other ){
+void Susi::Config::merge( BSON::Value & ref, BSON::Value & other ){
     if(ref.isObject() && other.isObject()){
-        for(auto & kv : static_cast<Susi::Util::Any::Object>(other)){
+        for(auto & kv : other){
             if(ref[kv.first].isObject()){
                 merge(ref[kv.first],kv.second);
             }else{
@@ -117,16 +117,16 @@ void Susi::Config::merge( Susi::Util::Any & ref, Susi::Util::Any & other ){
 }
 
 // used to set a value in the config object (should be used by parseCommandLine())
-void Susi::Config::set( std::string key, Any value ) {
-    //LOG(DEBUG) <<  "set "+key+" to "+value.toJSONString() ;
+void Susi::Config::set( std::string key, BSON::Value value ) {
+    //LOG(DEBUG) <<  "set "+key+" to "+value.toJSON() ;
     std::vector<std::string> elems;
     Susi::Util::Helpers::split( key, '.', elems );
     auto * current = &_configVar;
 
     for( size_t e=0; e<elems.size()-1; e++ ) {
         current = &( *current )[elems[e]];
-        if( ( *current ).isNull() ) {
-            *current = Susi::Util::Any::Object {};
+        if( ( *current ).isUndefined() ) {
+            *current = BSON::Object {};
         }
     }
     ( *current )[elems.back()] = value;
@@ -152,7 +152,7 @@ void Susi::Config::parseCommandLine( std::vector<std::string> argv ) {
             if( option[1] == '-' )option = option.substr( 2 );
             else option = option.substr( 1 );
 
-            Susi::Util::Any v;
+            BSON::Value v;
             std::string key = option;
 
             // find '='
@@ -160,7 +160,7 @@ void Susi::Config::parseCommandLine( std::vector<std::string> argv ) {
             Susi::Util::Helpers::split( key, '=', elems );
             if( elems.size() == 2 ) {
                 key = elems[0];
-                v   = Susi::Util::Any::fromJSONString( elems[1] );
+                v   = BSON::Value::fromJSON( elems[1] );
                 set( key,v );
             }
             else {
@@ -171,11 +171,11 @@ void Susi::Config::parseCommandLine( std::vector<std::string> argv ) {
 
                     if( i < ( argc-1 ) && argv[i+1][0]!='-' ) {
                         std::string value = argv[( i+1 )];
-                        v = Susi::Util::Any::fromJSONString( value );
+                        v = BSON::Value::fromJSON( value );
                         i++;
                     }
                     else {
-                        v = Susi::Util::Any::Object {};
+                        v = BSON::Object {};
                     }
                     set( key,v );
                 }
@@ -183,11 +183,11 @@ void Susi::Config::parseCommandLine( std::vector<std::string> argv ) {
                 else {
                     if( i < ( argc-1 ) && argv[i+1][0]!='-' ) {
                         std::string value = argv[( i+1 )];
-                        v = Susi::Util::Any::fromJSONString( value );
+                        v = BSON::Value::fromJSON( value );
                         i++;
                     }
                     else {
-                        v = Susi::Util::Any::Object {};
+                        v = BSON::Object {};
                     }
                     set( key,v );
                 }
@@ -201,7 +201,7 @@ void Susi::Config::parseCommandLine( std::vector<std::string> argv ) {
 // keys are in this format: "foo.bar.baz"
 // -> if we have {foo:{bar:{baz:123}}} get("foo.bar.baz") should return Any{123};
 // should throw if key doesn't exist
-Susi::Util::Any Susi::Config::get( std::string key ) {
+BSON::Value Susi::Config::get( std::string key ) {
     std::vector<std::string> elems;
 
     if( key.length() == 0 ) {
@@ -210,14 +210,14 @@ Susi::Util::Any Susi::Config::get( std::string key ) {
     else {
         Susi::Util::Helpers::split( key, '.', elems );
 
-        Susi::Util::Any found = _configVar;
-        Susi::Util::Any next  = _configVar;
+        BSON::Value found = _configVar;
+        BSON::Value next  = _configVar;
         for( size_t e=0; e<elems.size(); e++ )
         {
             std::string elem = elems[e];
             found = next[elem];
             next = found;
-            if( found.getType() == Susi::Util::Any::UNDEFINED ) {
+            if( found.getType() == BSON::UNDEFINED ) {
                 throw std::runtime_error( "key doesn't exist!"+key );
             }
 
@@ -227,7 +227,7 @@ Susi::Util::Any Susi::Config::get( std::string key ) {
     }
 }
 
-Susi::Util::Any Susi::Config::getConfig() {
+BSON::Value Susi::Config::getConfig() {
     return _configVar;
 }
 

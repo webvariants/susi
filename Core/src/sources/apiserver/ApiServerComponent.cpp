@@ -34,27 +34,28 @@ void Susi::Api::ApiServerComponent::onClose( std::string & id ) {
     }
 }
 
-void Susi::Api::ApiServerComponent::onMessage( std::string & id, Susi::Util::Any & packet ) {
-    LOG(DEBUG) << "got message in apiserver: "<<packet.toJSONString();
+void Susi::Api::ApiServerComponent::onMessage( std::string & id, BSON::Value & packet ) {
+    LOG(DEBUG) << "got message in apiserver: "<<packet.toJSON();
     try {
-        auto type = packet["type"];
+        BSON::Value & type = packet["type"];
         if( type.isString() ) {
-            if( type=="registerConsumer" ) {
+            std::string typeStr = type;
+            if( typeStr == "registerConsumer" ) {
                 handleRegisterConsumer( id,packet );
             }
-            else if( type=="registerProcessor" ) {
+            else if( typeStr == "registerProcessor" ) {
                 handleRegisterProcessor( id,packet );
             }
-            else if( type=="unregisterConsumer" ) {
+            else if( typeStr == "unregisterConsumer" ) {
                 handleUnregisterConsumer( id,packet );
             }
-            else if( type=="unregisterProcessor" ) {
+            else if( typeStr == "unregisterProcessor" ) {
                 handleUnregisterProcessor( id,packet );
             }
-            else if( type=="publish" ) {
+            else if( typeStr == "publish" ) {
                 handlePublish( id,packet );
             }
-            else if( type=="ack" ) {
+            else if( typeStr == "ack" ) {
                 handleAck( id,packet );
             }
             else {
@@ -73,13 +74,13 @@ void Susi::Api::ApiServerComponent::onMessage( std::string & id, Susi::Util::Any
     }
 }
 
-void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, Susi::Util::Any & packet ) {
+void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, BSON::Value & packet ) {
     auto & data = packet["data"];
     if( data.isObject() ) {
         std::string topic = data["topic"];
         std::string subName = "";
         if(data["name"].isString()){
-            subName = static_cast<std::string>(data["name"]);
+            subName = data["name"].getString();
         }
         std::lock_guard<std::recursive_mutex> lock{consumerMutex};
         auto & subs = consumerSubscriptions[id];
@@ -89,7 +90,7 @@ void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, Su
             return;
         }
         Susi::Events::Consumer callback = [this,id]( Susi::Events::SharedEventPtr event ) {
-            Susi::Util::Any packet;
+            BSON::Value packet;
             packet["type"] = "consumerEvent";
             packet["data"] = event->toAny();
             if(!checkIfConfidentialHeaderMatchesSession(*event,id)){
@@ -109,13 +110,13 @@ void Susi::Api::ApiServerComponent::handleRegisterConsumer( std::string & id, Su
     }
 }
 
-void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, Susi::Util::Any & packet ) {
+void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, BSON::Value & packet ) {
     auto & data = packet["data"];
     if( data.isObject() ) {
         std::string topic = data["topic"];
         std::string subName = "";
         if(data["name"].isString()){
-            subName = static_cast<std::string>(data["name"]);
+            subName = data["name"].getString();
         }
         std::lock_guard<std::recursive_mutex> lock{processorMutex};
         auto & subs = processorSubscriptions[id];
@@ -125,7 +126,7 @@ void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, S
             return;
         }
         long subid = eventManager->subscribe( topic,Susi::Events::Processor{[this,id]( Susi::Events::EventPtr event ) {
-            Susi::Util::Any packet;
+            BSON::Value packet;
             packet["type"] = "processorEvent";
             packet["data"] = event->toAny();
             if(!checkIfConfidentialHeaderMatchesSession(*event,id)){
@@ -146,7 +147,7 @@ void Susi::Api::ApiServerComponent::handleRegisterProcessor( std::string & id, S
         sendFail( id,"data is not a object" );
     }
 }
-void Susi::Api::ApiServerComponent::handleUnregisterConsumer( std::string & id, Susi::Util::Any & packet ) {
+void Susi::Api::ApiServerComponent::handleUnregisterConsumer( std::string & id, BSON::Value & packet ) {
     auto & data = packet["data"];
     if( data.isObject() ) {
         std::string topic = data["topic"];
@@ -170,7 +171,7 @@ void Susi::Api::ApiServerComponent::handleUnregisterConsumer( std::string & id, 
     }
 }
 
-void Susi::Api::ApiServerComponent::handleUnregisterProcessor( std::string & id, Susi::Util::Any & packet ) {
+void Susi::Api::ApiServerComponent::handleUnregisterProcessor( std::string & id, BSON::Value & packet ) {
     auto & data = packet["data"];
     if( data.isObject() ) {
         std::string topic = data["topic"];
@@ -192,7 +193,7 @@ void Susi::Api::ApiServerComponent::handleUnregisterProcessor( std::string & id,
         sendFail( id,"data is not a object" );
     }
 }
-void Susi::Api::ApiServerComponent::handlePublish( std::string & id, Susi::Util::Any & packet ) {
+void Susi::Api::ApiServerComponent::handlePublish( std::string & id, BSON::Value & packet ) {
     auto & eventData = packet["data"];
     if( !eventData.isObject() || !eventData["topic"].isString() ) {
         sendFail( id,"publish handler: data is not an object or topic is not set correctly" );
@@ -210,7 +211,7 @@ void Susi::Api::ApiServerComponent::handlePublish( std::string & id, Susi::Util:
     LOG(DEBUG) << "publish event from "<<id<<", topic: "<<event->topic;
     eventManager->publish( std::move( event ),[this,id]( Susi::Events::SharedEventPtr event ) {
         LOG(DEBUG) << "publish ready, in finish callback";
-        Susi::Util::Any packet;
+        BSON::Value packet;
         packet["type"] = "ack";
         packet["data"] = event->toAny();
         std::string _id = id;
@@ -221,7 +222,7 @@ void Susi::Api::ApiServerComponent::handlePublish( std::string & id, Susi::Util:
     sendOk( id );
 }
 
-void Susi::Api::ApiServerComponent::handleAck( std::string & id, Susi::Util::Any & packet ) {
+void Susi::Api::ApiServerComponent::handleAck( std::string & id, BSON::Value & packet ) {
     auto & eventData = packet["data"];
     if( !eventData.isObject() || !eventData["topic"].isString() ) {
         sendFail( id,"ack handler: data is not an object or topic is not set correctly" );
@@ -230,7 +231,7 @@ void Susi::Api::ApiServerComponent::handleAck( std::string & id, Susi::Util::Any
     std::string eventID = eventData["id"];
     std::lock_guard<std::recursive_mutex> lock{eventsMutex};
     if(!(eventsToAck.count(id)>0) || !(eventsToAck[id].count(eventID)>0)){
-        LOG(DEBUG) << "unexpected ack from "<<id<<" for event with topic "<<static_cast<std::string>(eventData["id"]);
+        LOG(DEBUG) << "unexpected ack from "<<id<<" for event with topic "<<eventData["id"].getString();
         sendFail( id , "unexpected ack" );
         return;
     }
@@ -239,14 +240,14 @@ void Susi::Api::ApiServerComponent::handleAck( std::string & id, Susi::Util::Any
     event->headers.clear();
     event->id = eventID;
     if( eventData["headers"].isArray() ) {
-        Susi::Util::Any::Array arr = eventData["headers"];
-        for( Susi::Util::Any::Object & val : arr ) {
+        BSON::Array arr = eventData["headers"];
+        for( BSON::Object & val : arr ) {
             for( auto & kv : val ) {
-                event->headers.push_back( std::make_pair( kv.first,( std::string )kv.second ) );
+                event->headers.push_back( std::make_pair( kv.first,kv.second.getString() ) );
             }
         }
     }
-    if( !eventData["payload"].isNull() ) {
+    if( !eventData["payload"].isUndefined() ) {
         event->payload = eventData["payload"];
     }
     LOG(DEBUG) << "got ack from "<<id<<" for event with topic "<<event->topic;
@@ -256,7 +257,7 @@ void Susi::Api::ApiServerComponent::handleAck( std::string & id, Susi::Util::Any
 
 void Susi::Api::ApiServerComponent::sendOk( std::string & id ) {
     /* DO NOT SEND "OK" STATUS MESSAGES ANYMORE!
-    Susi::Util::Any response;
+    BSON::Value response;
     response["type"] = "status";
     response["error"] = false;
     send( id,response );
@@ -264,7 +265,7 @@ void Susi::Api::ApiServerComponent::sendOk( std::string & id ) {
 }
 
 void Susi::Api::ApiServerComponent::sendFail( std::string & id,std::string error ) {
-    Susi::Util::Any response;
+    BSON::Value response;
     response["type"] = "error";
     response["data"] = error;
     send( id,response );
@@ -272,7 +273,7 @@ void Susi::Api::ApiServerComponent::sendFail( std::string & id,std::string error
 
 
 bool Susi::Api::ApiServerComponent::checkIfConfidentialHeaderMatchesSession(Susi::Events::Event & event, std::string sessionID){
-    long sessionAuthlevel = sessionManager->getSessionAttribute(sessionID,"authlevel");
+    long sessionAuthlevel = sessionManager->getSessionAttribute(sessionID,"authlevel").getInt32();
     for(auto & pair : event.headers){
         if(pair.first == "confidential"){
             long eventAuthlevel = std::stol(pair.second);

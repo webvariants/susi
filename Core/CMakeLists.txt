@@ -66,6 +66,7 @@ target_link_libraries(${PROJECT_NAME}
 	${SOCI_LIBRARY}
 	${LIBLZMA_LIBRARIES}
 	${POCO_LIBRARIES}
+	bson
 )
 
 #SUSI TESTS
@@ -78,6 +79,7 @@ target_link_libraries(${PROJECT_NAME}_test
 	${POCO_LIBRARIES}
 	gtest
 	gtest_main
+	bson
 )
 
 install(TARGETS lib${PROJECT_NAME} LIBRARY DESTINATION "/usr/lib")

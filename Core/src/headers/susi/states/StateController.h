@@ -18,24 +18,24 @@
 
 #include "susi/iocontroller/IOController.h"
 #include "susi/logger/easylogging++.h"
-#include "susi/util/Any.h"
+#include "bson/Value.h"
 
 namespace Susi {
     namespace States {
         class StateController {
         protected:
-            std::map<std::string, Susi::Util::Any> volatileStates;
-            std::map<std::string, Susi::Util::Any> persistentStates;
+            std::map<std::string, BSON::Value> volatileStates;
+            std::map<std::string, BSON::Value> persistentStates;
 
             std::mutex mutex;
             std::string fileLocation;
             bool persistentChanged = false;
         public:
             StateController( std::string file );
-            bool setState( std::string stateID, Susi::Util::Any value );
-            bool setPersistentState( std::string stateID, Susi::Util::Any value );
-            Susi::Util::Any getState( std::string stateID );
-            Susi::Util::Any getPersistentState( std::string stateID );
+            bool setState( std::string stateID, BSON::Value value );
+            bool setPersistentState( std::string stateID, BSON::Value value );
+            BSON::Value getState( std::string stateID );
+            BSON::Value getPersistentState( std::string stateID );
             bool removeState( std::string stateID );
             bool removePersistentState( std::string stateID );
             void savePersistent();

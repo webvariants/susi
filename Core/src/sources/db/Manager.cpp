@@ -2,7 +2,7 @@
 
 Susi::DB::Manager::Manager() {}
 
-Susi::DB::Manager::Manager( Susi::Util::Any config ) {
+Susi::DB::Manager::Manager( BSON::Value config ) {
     this->init( config );
 }
 
@@ -16,13 +16,13 @@ Susi::DB::Manager::Manager( std::vector<std::tuple<std::string,std::string,std::
     LOG(INFO) <<  msg ;
 }
 
-void Susi::DB::Manager::init( Susi::Util::Any config ) {
+void Susi::DB::Manager::init( BSON::Value config ) {
     if( config.isArray() ) {
         for( std::size_t i=0; i<config.size(); ++i ) {
             try {
-                Susi::Util::Any entry = config[i];
+                BSON::Value entry = config[i];
 
-                //LOG(INFO) <<  "INIT:" + entry.toJSONString() +" TYPE:" + ( entry.isObject() ? "Object" : "Wrong Type" ) ;
+                //LOG(INFO) <<  "INIT:" + entry.toJSON() +" TYPE:" + ( entry.isObject() ? "Object" : "Wrong Type" ) ;
 
                 std::string identifier = entry["identifier"];
                 std::string dbtype     = entry["type"];

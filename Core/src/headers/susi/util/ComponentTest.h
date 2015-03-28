@@ -28,7 +28,7 @@ public:
 
         base_path = Poco::Path( Poco::Path::current() ).toString() + "component_test";
 
-        Susi::Util::Any::Object cfg = Susi::Util::Any::fromJSONString( getConfigString( base_path ) );
+        BSON::Object cfg = BSON::Value::fromJSON( getConfigString( base_path ) );
         componentManager.reset(dynamic_cast<Susi::System::ComponentManager*>(new Susi::System::SusiServerComponentManager{cfg}));
         eventManager = componentManager->getComponent<Susi::Events::IEventSystem>( "eventsystem" );
 

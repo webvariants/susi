@@ -12,7 +12,7 @@
 #ifndef __COMPONENTMANAGER__
 #define __COMPONENTMANAGER__
 
-#include "susi/util/Any.h"
+#include "bson/Value.h"
 #include "susi/world/Component.h"
 #include "susi/logger/easylogging++.h"
 
@@ -26,20 +26,20 @@ namespace Susi
         class ComponentManager
         {
         protected:
-            typedef std::function<std::shared_ptr<Component>( ComponentManager * mgr, Susi::Util::Any & config )> RegisterFunction;
+            typedef std::function<std::shared_ptr<Component>( ComponentManager * mgr, BSON::Value & config )> RegisterFunction;
             struct ComponentData
             {
                 std::shared_ptr<Component> component {nullptr};
                 bool running = false;
             };
-            Susi::Util::Any::Object config;
+            BSON::Object config;
             std::map<std::string,RegisterFunction> registerFunctions;
             std::map<std::string,ComponentData> components;
             std::map<std::string,std::vector<std::string>> dependencies;
             std::map<std::string,std::vector<std::string>> inverseDependencies;
         public:
 
-            ComponentManager( Susi::Util::Any::Object config ) : config {config} {}
+            ComponentManager( BSON::Object config ) : config {config} {}
 
             void registerComponent( std::string name, RegisterFunction func );
             void registerDependency( std::string subject, std::string dependency );

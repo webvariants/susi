@@ -20,7 +20,7 @@
 #include <iostream>
 
 #include "susi/sessions/Session.h"
-#include "susi/util/Any.h"
+#include "bson/Value.h"
 #include "susi/events/EventManager.h"
 
 namespace Susi {
@@ -42,10 +42,10 @@ namespace Susi {
             void updateSession( std::string id );
             void updateSession( std::string id, std::chrono::milliseconds lifeTime );
             bool killSession( std::string id );
-            bool setSessionAttribute( std::string sessionID, std::string key, Susi::Util::Any value );
-            Susi::Util::Any getSessionAttribute( std::string sessionID, std::string key );
+            bool setSessionAttribute( std::string sessionID, std::string key, BSON::Value value );
+            BSON::Value getSessionAttribute( std::string sessionID, std::string key );
             void init( std::chrono::milliseconds stdSessionLifetime );
-            bool pushSessionAttribute( std::string sessionID, std::string key, Susi::Util::Any value );
+            bool pushSessionAttribute( std::string sessionID, std::string key, BSON::Value value );
             bool removeSessionAttribute( std::string sessionID, std::string key );
             void addAlias(std::string alias, std::string sessionID);
 

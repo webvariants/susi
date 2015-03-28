@@ -13,7 +13,7 @@
 #define __SUSISERVERCOMPONENTMANAGER__
 
 #include "susi/world/PluginLoadingComponentManager.h"
-#include "susi/util/Any.h"
+#include "bson/Value.h"
 #include "susi/apiserver/TCPApiServerComponent.h"
 #include "susi/auth/AuthControllerComponent.h"
 #include "susi/db/DBComponent.h"
@@ -37,7 +37,7 @@ namespace System {
 
 class SusiServerComponentManager : public PluginLoadingComponentManager {
 public:
-	SusiServerComponentManager(Susi::Util::Any::Object config);
+	SusiServerComponentManager(BSON::Object config);
 };
 
 }

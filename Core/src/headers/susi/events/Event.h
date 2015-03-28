@@ -12,7 +12,7 @@
 #ifndef __EVENT__
 #define __EVENT__
 
-#include "susi/util/Any.h"
+#include "bson/Value.h"
 #include <chrono>
 
 namespace Susi {
@@ -26,7 +26,7 @@ namespace Susi {
             std::string id;
             std::string topic;
             std::vector<Header> headers;
-            Susi::Util::Any payload;
+            BSON::Value payload;
             std::string sessionID;
             Event() {
                 id = std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
@@ -50,46 +50,50 @@ namespace Susi {
                 setPayload( other.getPayload() );
                 return *this;
             }
-            Event( Susi::Util::Any & any ) {
-                if( !any["id"].isNull() ) {
-                    id = static_cast<std::string>( any["id"] );
+            Event( BSON::Value & any ) {
+                if( !any["id"].isUndefined() ) {
+                    std::string _id = any["id"];
+                    id = _id;
                 }
                 else {
                     id = std::to_string(std::chrono::system_clock::now().time_since_epoch().count());
                 }
-                if( !any["topic"].isNull() ) {
-                    topic = static_cast<std::string>( any["topic"] );
+                if( !any["topic"].isUndefined() ) {
+                    std::string _topic = any["topic"];
+                    topic = _topic;
                 }
-                if( !any["headers"].isNull() ) {
-                    Susi::Util::Any::Array headers = any["headers"];
-                    for( Susi::Util::Any::Object & obj : headers ) {
+                if( !any["headers"].isUndefined() ) {
+                    BSON::Array headers = any["headers"];
+                    for( BSON::Object & obj : headers ) {
                         for( auto & kv : obj ) {
-                            this->headers.push_back( std::make_pair( kv.first,static_cast<std::string>( kv.second ) ) );
+                            std::string headerVal = kv.second;
+                            this->headers.push_back( std::make_pair( kv.first,headerVal ) );
                         }
                     }
                 }
-                if( !any["payload"].isNull() ) {
+                if( !any["payload"].isUndefined() ) {
                     payload = any["payload"];
                 }
-                if( !any["sessionid"].isNull() ) {
-                    sessionID = static_cast<std::string>( any["sessionid"] );
+                if( !any["sessionid"].isUndefined() ) {
+                    std::string idVal = any["sessionid"];
+                    sessionID = idVal;
                 }
                
             }
-            Susi::Util::Any toAny() {
-                Susi::Util::Any obj = Susi::Util::Any::Object {
+            BSON::Value toAny() {
+                BSON::Value obj = BSON::Object {
                     {"id",id},
                     {"sessionid",sessionID},
                     {"topic",topic}
                 };
-                if( !payload.isNull() ) {
+                if( !payload.isUndefined() ) {
                     obj["payload"] = payload;
                 }
                 for( size_t i=0; i<headers.size(); ++i ) {
-                    Susi::Util::Any::Object header {
+                    BSON::Object header {
                         {headers[i].first,headers[i].second}
                     };
-                    obj["headers"].push_back( Susi::Util::Any {header} );
+                    obj["headers"].push_back( BSON::Value {header} );
                 }
                 return obj;
             }
@@ -106,7 +110,7 @@ namespace Susi {
             inline std::vector<Header> & getHeaders() {
                 return headers;
             }
-            inline Susi::Util::Any & getPayload() {
+            inline BSON::Value & getPayload() {
                 return payload;
             }
 
@@ -122,11 +126,11 @@ namespace Susi {
             inline void setHeaders( std::vector<Header> _headers ) {
                 headers = _headers;
             }
-            inline void setPayload( Susi::Util::Any _payload ) {
+            inline void setPayload( BSON::Value _payload ) {
                 payload = _payload;
             }
             std::string toString() {
-                return toAny().toJSONString();
+                return toAny().toJSON();
             }
 
 

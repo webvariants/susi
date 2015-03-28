@@ -79,7 +79,7 @@ bool SessionManager::checkSession( std::string id ) {
     }
 }
 
-bool SessionManager::setSessionAttribute( std::string sessionID, std::string key, Susi::Util::Any value ) {
+bool SessionManager::setSessionAttribute( std::string sessionID, std::string key, BSON::Value value ) {
     std::lock_guard<std::mutex> lock( mutex );
     resolveSessionID(sessionID);
     if( sessionID.length() > 0 )
@@ -97,7 +97,7 @@ bool SessionManager::setSessionAttribute( std::string sessionID, std::string key
     return false;
 }
 
-bool SessionManager::pushSessionAttribute( std::string sessionID, std::string key, Susi::Util::Any value ) {
+bool SessionManager::pushSessionAttribute( std::string sessionID, std::string key, BSON::Value value ) {
     std::lock_guard<std::mutex> lock( mutex );
     resolveSessionID(sessionID);
     if( sessionID.length() > 0 )
@@ -127,14 +127,14 @@ bool SessionManager::removeSessionAttribute( std::string sessionID, std::string 
     return false;
 }
 
-Susi::Util::Any SessionManager::getSessionAttribute( std::string sessionID, std::string key ) {
+BSON::Value SessionManager::getSessionAttribute( std::string sessionID, std::string key ) {
     std::lock_guard<std::mutex> lock( mutex );
     resolveSessionID(sessionID);
     if( sessionID.length() > 0 && sessions.count( sessionID ) > 0 )
     {
         return sessions[sessionID].getAttribute( key );
     }
-    return Susi::Util::Any {};
+    return BSON::Value {};
 }
 
 void SessionManager::updateSession( std::string id ) {

@@ -53,7 +53,7 @@ void Susi::Auth::ControllerComponent::handleGetUsername( Susi::Events::EventPtr 
 void Susi::Auth::ControllerComponent::handleAddUser( Susi::Events::EventPtr event ) {
     std::string username = event->payload["username"];
     std::string password  = event->payload["password"];
-    long authlevel  = event->payload["authlevel"];
+    long authlevel  = (BSON::int32)event->payload["authlevel"];
     event->payload.reset();
     event->payload["success"] = addUser( username,password,authlevel );
 }
@@ -66,7 +66,7 @@ void Susi::Auth::ControllerComponent::handleDelUser( Susi::Events::EventPtr even
 void Susi::Auth::ControllerComponent::handleUpdateUser( Susi::Events::EventPtr event ) {
     std::string username = event->payload["username"];
     std::string password  = event->payload["password"];
-    long authlevel  = event->payload["authlevel"];
+    long authlevel  = (BSON::int32)event->payload["authlevel"];
     event->payload.reset();
     event->payload["success"] = updateUser( username,password,authlevel );
 }

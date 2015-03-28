@@ -40,7 +40,7 @@ namespace Susi {
                     _pBuffer{new char[BUFFER_SIZE]},
                     _collector{[this](std::string & msg){
                         LOG(DEBUG) << "got message in collector";
-                        auto data = Susi::Util::Any::fromJSONString(msg);
+                        auto data = BSON::Value::fromJSON(msg);
                         _api->onMessage(_sessionID,data);
                     }}
                 {
@@ -112,8 +112,8 @@ namespace Susi {
                     ptr->setApi(_api);
                     ptr->setSessionID(sessionID);
                     _api->onConnect(sessionID);
-                    _api->registerSender(sessionID,[ptr](Susi::Util::Any & data){
-                        std::string msg = data.toJSONString()+"\n";
+                    _api->registerSender(sessionID,[ptr](BSON::Value & data){
+                        std::string msg = data.toJSON()+"\n";
                         ptr->socket().sendBytes(msg.c_str(),msg.size());
                     });
                     return ptr;

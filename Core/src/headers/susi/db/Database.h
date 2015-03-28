@@ -5,7 +5,7 @@
 #include <sqlite3/soci-sqlite3.h>
 #include <iostream>
 
-#include "susi/util/Any.h"
+#include "bson/Value.h"
 
 namespace Susi {
     namespace DB {
@@ -14,7 +14,7 @@ namespace Susi {
             soci::session session;
         public:
             Database( std::string dbtype,std::string connectURI ) : session( dbtype,connectURI ) {};
-            Susi::Util::Any query( std::string query );
+            BSON::Value query( std::string query );
         };
     }
 }

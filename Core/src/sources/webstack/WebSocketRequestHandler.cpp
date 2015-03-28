@@ -29,8 +29,8 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
     _sessionManager->addAlias(connId,id);
 
     LOG(DEBUG) <<  "register sender in ws-handler for session "<<id<<" with connection id "<<connId;
-    _apiServer->registerSender( connId,[&socket]( Susi::Util::Any & arg ) {
-        std::string msg = arg.toJSONString();
+    _apiServer->registerSender( connId,[&socket]( BSON::Value & arg ) {
+        std::string msg = arg.toJSON();
         socket.sendFrame( msg.data(), msg.length(), Poco::Net::WebSocket::FRAME_TEXT );
     } );
 
@@ -49,7 +49,7 @@ void Susi::WebSocketRequestHandler::handleRequest( Poco::Net::HTTPServerRequest&
                 break;
             }
             std::string str( buffer, n );
-            Susi::Util::Any packet = Susi::Util::Any::fromJSONString( str );
+            BSON::Value packet = BSON::Value::fromJSON( str );
             _apiServer->onMessage( connId, packet );
         } catch(const Poco::TimeoutException &){
             LOG(DEBUG) << "got websocket receive timeout, assume died connection.";

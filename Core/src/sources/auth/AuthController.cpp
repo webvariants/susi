@@ -91,7 +91,7 @@ bool Susi::Auth::Controller::login( std::string sessionID, std::string username,
         if( !checkForSqlSafety( username ) ) {
             return false;
         }
-        Susi::Util::Any result = db->query( "SELECT authlevel,salt,password FROM users WHERE username='"+username+"';" );
+        BSON::Value result = db->query( "SELECT authlevel,salt,password FROM users WHERE username='"+username+"';" );
         if( result.size()==0 ) {
             LOG(DEBUG) <<  "username and password does not match" ;
             return false;
@@ -101,8 +101,8 @@ bool Susi::Auth::Controller::login( std::string sessionID, std::string username,
         std::string pwHash = hasher( password+salt );
         std::string expectedHash = result[0]["password"];
         if( pwHash == expectedHash ) {
-            LOG(DEBUG) <<  "Login success: "+result.toJSONString() ;
-            _sessionManager->setSessionAttribute( sessionID, "User", Susi::Util::Any::Object( {{"username",username}} ) );
+            LOG(DEBUG) <<  "Login success: "+result.toJSON() ;
+            _sessionManager->setSessionAttribute( sessionID, "User", BSON::Object( {{"username",username}} ) );
             _sessionManager->setSessionAttribute( sessionID, "authlevel", result[0]["authlevel"] );
             return true;
         }
@@ -121,14 +121,14 @@ bool Susi::Auth::Controller::logout( std::string sessionID ) {
 }
 
 bool Susi::Auth::Controller::isLoggedIn( std::string sessionID ) {
-    Susi::Util::Any user = _sessionManager->getSessionAttribute( sessionID, "User" );
-    return !( user.isNull() );
+    BSON::Value user = _sessionManager->getSessionAttribute( sessionID, "User" );
+    return !( user.isUndefined() );
 }
 
 std::string Susi::Auth::Controller::getUsername( std::string sessionID ) {
-    Susi::Util::Any user = _sessionManager->getSessionAttribute( sessionID, "User" );
+    BSON::Value user = _sessionManager->getSessionAttribute( sessionID, "User" );
 
-    if( user.isNull() ) {
+    if( user.isUndefined() ) {
         return "";
     }
     else {

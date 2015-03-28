@@ -21,14 +21,14 @@
 namespace Susi {
     namespace Syscall {
 
-        using Susi::Util::Any;
+        using BSON::Value;
         using Susi::Events::EventPtr;
 
         class SyscallComponent : public Susi::System::BaseComponent {
 
         public:
 
-            SyscallComponent( Susi::System::ComponentManager * mgr, Any::Object _commands, size_t threads = 4, size_t queuelen = 16 ) :
+            SyscallComponent( Susi::System::ComponentManager * mgr, BSON::Object _commands, size_t threads = 4, size_t queuelen = 16 ) :
                 Susi::System::BaseComponent {mgr},
                  commands {_commands},
             pool {threads,queuelen} {}
@@ -50,17 +50,17 @@ namespace Susi {
             }
 
         protected:
-            Any::Object commands;
+            BSON::Object commands;
             Susi::Util::ThreadPool pool;
 
             void handleExec( EventPtr event ) {
                 LOG(DEBUG) <<  "entering syscall::exec handler" ;
                 std::string commandSpecifier = event->payload["cmd"];
                 std::string commandline = commands[commandSpecifier];
-                Any args = event->payload["args"];
+                BSON::Value args = event->payload["args"];
 
                 if( args.isObject() ) {
-                    Any::Object argsObject = args;
+                    BSON::Object argsObject = args;
                     for( auto& kv : argsObject ) {
                         std::string value = kv.second;
                         replaceString( commandline, "$" + kv.first,value );

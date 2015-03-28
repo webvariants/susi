@@ -15,7 +15,7 @@ void Susi::System::ComponentManager::registerDependency( std::string subject, st
 bool Susi::System::ComponentManager::loadComponent( std::string name ) {
     if( components.find( name ) == components.end() && registerFunctions[name] ) {
         ComponentData data;
-        if( config[name].isNull() ) {
+        if( config[name].isUndefined() ) {
             LOG(ERROR) <<  "cant find config for component "+name ;
             return false;
         }

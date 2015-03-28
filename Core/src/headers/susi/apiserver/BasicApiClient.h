@@ -14,14 +14,14 @@
 
 #include "susi/apiserver/JSONTCPClient.h"
 #include "susi/events/EventManager.h"
-#include "susi/util/Any.h"
+#include "bson/Value.h"
 
 namespace Susi {
     namespace Api {
 
         class BasicApiClient : protected JSONTCPClient {
         protected:
-            virtual void onMessage( Susi::Util::Any & message ) override;
+            virtual void onMessage( BSON::Value & message ) override;
 
         public:
             BasicApiClient( std::string addr ) : JSONTCPClient {addr} {}
