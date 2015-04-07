@@ -18,7 +18,7 @@ void SessionManager::init( std::chrono::milliseconds stdSessionLifetime ) {
     std::lock_guard<std::mutex> lock( mutex );
 
     if( stdSessionLifetime.count() <= 0 ) {
-        stdLifetime = std::chrono::milliseconds( 10000 );
+        this->stdLifetime = std::chrono::milliseconds( 10000 );
     }
     else {
         this->stdLifetime = stdSessionLifetime;
