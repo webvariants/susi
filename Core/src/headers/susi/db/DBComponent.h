@@ -19,7 +19,7 @@ namespace Susi {
     namespace DB {
         class DBComponent : public Susi::System::BaseComponent , public Manager {
         public:
-            DBComponent( Susi::System::ComponentManager * mgr, Susi::Util::Any & config ) :
+            DBComponent( Susi::System::ComponentManager * mgr, BSON::Value & config ) :
                 Susi::System::BaseComponent {mgr}, Manager {config} {}
 
             virtual void start() override {

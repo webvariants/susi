@@ -1,6 +1,6 @@
 #include "susi/apiserver/ApiClient.h"
 
-void Susi::Api::ApiClient::publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback, bool processorsOnly, bool consumersOnly) {
+void Susi::Api::ApiClient::publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback, bool processorsOnly, bool consumersOnly, bool highPrio) {
     PublishData data{*event,finishCallback};
     publishs[event->getID()] = data;
     sendPublish( *event );

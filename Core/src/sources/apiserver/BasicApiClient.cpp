@@ -1,8 +1,8 @@
 #include "susi/apiserver/BasicApiClient.h"
 
 void Susi::Api::BasicApiClient::sendPublish( Susi::Events::Event & event ) {
-    Susi::Util::Any packedEvent = event.toAny();
-    Susi::Util::Any packet = Susi::Util::Any::Object {
+    BSON::Value packedEvent = event.toAny();
+    BSON::Value packet = BSON::Object {
         {"type","publish"},
         {"data",packedEvent}
     };
@@ -11,8 +11,8 @@ void Susi::Api::BasicApiClient::sendPublish( Susi::Events::Event & event ) {
 }
 
 void Susi::Api::BasicApiClient::sendAck( Susi::Events::Event & event ) {
-    Susi::Util::Any packedEvent = event.toAny();
-    Susi::Util::Any packet = Susi::Util::Any::Object {
+    BSON::Value packedEvent = event.toAny();
+    BSON::Value packet = BSON::Object {
         {"type","ack"},
         {"data",packedEvent}
     };
@@ -20,9 +20,9 @@ void Susi::Api::BasicApiClient::sendAck( Susi::Events::Event & event ) {
 }
 
 void Susi::Api::BasicApiClient::sendRegisterConsumer( std::string topic , std::string name) {
-    Susi::Util::Any packet = Susi::Util::Any::Object {
+    BSON::Value packet = BSON::Object {
         {"type","registerConsumer"},
-        {"data",Susi::Util::Any::Object{
+        {"data",BSON::Object{
             {"topic",topic},
             {"name",name}
         }}
@@ -31,9 +31,9 @@ void Susi::Api::BasicApiClient::sendRegisterConsumer( std::string topic , std::s
 }
 
 void Susi::Api::BasicApiClient::sendRegisterProcessor( std::string topic , std::string name) {
-    Susi::Util::Any packet = Susi::Util::Any::Object {
+    BSON::Value packet = BSON::Object {
         {"type","registerProcessor"},
-        {"data",Susi::Util::Any::Object{
+        {"data",BSON::Object{
             {"topic",topic},
             {"name",name}
         }}
@@ -42,32 +42,32 @@ void Susi::Api::BasicApiClient::sendRegisterProcessor( std::string topic , std::
 }
 
 void Susi::Api::BasicApiClient::sendShutdown(){
-    Susi::Util::Any packet = Susi::Util::Any::Object{
+    BSON::Value packet = BSON::Object{
         {"type","shutdown"}
     };
     JSONTCPClient::send( packet );
 }
 
 void Susi::Api::BasicApiClient::sendUnregisterConsumer( std::string topic){
-    Susi::Util::Any packet = Susi::Util::Any::Object{
+    BSON::Value packet = BSON::Object{
         {"type","unregisterConsumer"},
-        {"data",Susi::Util::Any::Object{
+        {"data",BSON::Object{
             {"topic",topic}
         }}
     };
     JSONTCPClient::send( packet );
 }
 void Susi::Api::BasicApiClient::sendUnregisterProcessor( std::string topic ){
-    Susi::Util::Any packet = Susi::Util::Any::Object{
+    BSON::Value packet = BSON::Object{
         {"type","unregisterProcessor"},
-        {"data",Susi::Util::Any::Object{
+        {"data",BSON::Object{
             {"topic",topic}
         }}
     };
     JSONTCPClient::send( packet );
 }
 
-void Susi::Api::BasicApiClient::onMessage( Susi::Util::Any & message ) {
+void Susi::Api::BasicApiClient::onMessage( BSON::Value & message ) {
     std::string type = message["type"];
     if( type=="ack" ) {
         Susi::Events::Event event {message["data"]};

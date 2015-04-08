@@ -26,20 +26,20 @@ StateController::StateController( std::string file ) {
 StateController::~StateController() {}
 
 void StateController::savePersistent() {
-    Susi::Util::Any obj = persistentStates;
+    BSON::Value obj = persistentStates;
     Susi::IOController io{};
-    io.writeFile( fileLocation,obj.toJSONString() );
+    io.writeFile( fileLocation,obj.toJSON() );
 }
 
 bool StateController::loadPersistent() {
     Susi::IOController io;
     std::string fileContent = io.readFile( fileLocation );
     LOG(INFO) << "read states from file...";
-    persistentStates = Susi::Util::Any::fromJSONString( fileContent );
+    persistentStates = BSON::Value::fromJSON( fileContent );
     return true;
 }
 
-bool StateController::setState( std::string stateID, Susi::Util::Any value ) {
+bool StateController::setState( std::string stateID, BSON::Value value ) {
 
     std::lock_guard<std::mutex> lock( mutex );
 
@@ -50,7 +50,7 @@ bool StateController::setState( std::string stateID, Susi::Util::Any value ) {
     return false;
 }
 
-bool StateController::setPersistentState( std::string stateID, Susi::Util::Any value ) {
+bool StateController::setPersistentState( std::string stateID, BSON::Value value ) {
     std::lock_guard<std::mutex> lock( mutex );
 
     if( stateID.length() > 0 ) {
@@ -61,18 +61,18 @@ bool StateController::setPersistentState( std::string stateID, Susi::Util::Any v
     return false;
 }
 
-Susi::Util::Any StateController::getState( std::string stateID ) {
+BSON::Value StateController::getState( std::string stateID ) {
     if( stateID.length() > 0 ) {
         return volatileStates[stateID];
     }
-    return Susi::Util::Any();
+    return BSON::Value();
 }
 
-Susi::Util::Any StateController::getPersistentState( std::string stateID ) {
+BSON::Value StateController::getPersistentState( std::string stateID ) {
     if( stateID.length() > 0 ) {
         return persistentStates[stateID];
     }
-    return Susi::Util::Any();
+    return BSON::Value();
 }
 
 bool StateController::removeState( std::string stateID ) {

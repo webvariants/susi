@@ -17,6 +17,10 @@
   "logger": {
     "easylogging++": "./easylogging++.conf"
   },  
+  "iocontroller": {},
+  "statecontroller":{
+    "file": "./states.json"
+  },
   "duktape": {
     "source": "backend/backend.js"
   },

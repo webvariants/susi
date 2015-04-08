@@ -22,7 +22,7 @@ void Susi::Sessions::SessionManagerComponent::handleSetAttribute( Susi::Events::
     try {
         std::string sessionID = event->payload["id"];
         std::string key = event->payload["key"];
-        Susi::Util::Any value = event->payload["value"];
+        BSON::Value value = event->payload["value"];
 
         event->payload["success"] = setSessionAttribute( sessionID, key, value );
     }
@@ -37,7 +37,7 @@ void Susi::Sessions::SessionManagerComponent::handlePushAttribute( Susi::Events:
     try {
         std::string sessionID = event->payload["id"];
         std::string key = event->payload["key"];
-        Susi::Util::Any value = event->payload["value"];
+        BSON::Value value = event->payload["value"];
 
         event->payload["success"] = pushSessionAttribute( sessionID, key, value );
     }

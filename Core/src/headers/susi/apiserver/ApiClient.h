@@ -32,14 +32,14 @@ namespace Susi {
                 close();
                 LOG(INFO) << "Stopped ApiClient-Component.";
             }
-            virtual void publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer {}, bool processorsOnly = false, bool consumersOnly = false );
+            virtual void publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer {}, bool processorsOnly = false, bool consumersOnly = false , bool highPrio = true);
             virtual long subscribe( std::string topic, Susi::Events::Processor processor , std::string name = "");
             virtual long subscribe( std::string topic, Susi::Events::Consumer consumer , std::string name = "");
             virtual bool unsubscribe( long id ) {
                 return Susi::Events::Manager::unsubscribe( id );
             }
-            virtual void ack( Susi::Events::EventPtr event ) {
-                Susi::Events::Manager::ack( std::move( event ) );
+            virtual void ack( Susi::Events::EventPtr event , bool highPrio = true) {
+                Susi::Events::Manager::ack( std::move( event ) , highPrio);
             }
             virtual Susi::Events::EventPtr createEvent( std::string topic ) {
                 return Susi::Events::Manager::createEvent( topic );

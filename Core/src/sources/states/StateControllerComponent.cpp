@@ -40,9 +40,9 @@ void Susi::States::StateControllerComponent::handleSetState( Susi::Events::Event
     LOG(DEBUG) <<  "got state event" ;
     try {
         std::string stateID  = event->payload["stateID"];
-        Susi::Util::Any value = event->payload["value"];
+        BSON::Value value = event->payload["value"];
 
-        if( value.isNull() ) {
+        if( value.isUndefined() ) {
             event->payload["success"] = false;
         }
         else {
@@ -61,9 +61,9 @@ void Susi::States::StateControllerComponent::handleSetState( Susi::Events::Event
 void Susi::States::StateControllerComponent::handleGetState( Susi::Events::EventPtr event ) {
     try {
         std::string stateID  = event->payload["stateID"];
-        Susi::Util::Any value = getState( stateID );
+        BSON::Value value = getState( stateID );
         event->payload["value"] = value;
-        if( value.isNull() ) {
+        if( value.isUndefined() ) {
             event->payload["success"] = false;
         }
         else {
@@ -82,9 +82,9 @@ void Susi::States::StateControllerComponent::handleSetPersistentState( Susi::Eve
     LOG(DEBUG) <<  "got persitent state event" ;
     try {
         std::string stateID  = event->payload["stateID"];
-        Susi::Util::Any value = event->payload["value"];
+        BSON::Value value = event->payload["value"];
 
-        if( value.isNull() ) {
+        if( value.isUndefined() ) {
             event->payload["success"] = false;
         }
         else {
@@ -102,9 +102,9 @@ void Susi::States::StateControllerComponent::handleSetPersistentState( Susi::Eve
 void Susi::States::StateControllerComponent::handleGetPersistentState( Susi::Events::EventPtr event ) {
     try {
         std::string stateID  = event->payload["stateID"];
-        Susi::Util::Any value = getPersistentState( stateID );
+        BSON::Value value = getPersistentState( stateID );
         event->payload["value"] = value;
-        if( value.isNull() ) {
+        if( value.isUndefined() ) {
             event->payload["success"] = false;
         }
         else {

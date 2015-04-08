@@ -1,6 +1,6 @@
 {
   "name": "susi",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "maintainers": [{
      "name": "Tino Rusch",
      "email": "tino.rusch@webvariants.de"
@@ -12,18 +12,13 @@
     "grunt-contrib-watch": "*",
     "grunt-shell": "^0.7.0",
     "grunt-newer": "*",
-    "grunt-mkdir": "*",
-    "soci": "0.0.1",
-    "poco": "0.0.1"
+    "grunt-mkdir": "*"
   },  
   "project": {
     "directories": {
       "bin": "bin/",
       "build": "build/",
-      "core": "Core/",
-      "cppengine": "CPPEngine/",
-      "jsengine": "JSEngine/duktape/",
-      "watchdog": "Watchdog/"
+      "core": "Core/"
     }
   }
 }

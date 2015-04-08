@@ -13,15 +13,16 @@
 #include <Poco/Timestamp.h>
 #include <chrono>
 #include <iostream>
+#include <deque>
 
-#include "susi/util/Any.h"
+#include "bson/Value.h"
 
 namespace Susi {
     class Session {
     protected:
         Poco::Timestamp deadline;
-        std::map<std::string, Susi::Util::Any> attributes;
-        std::map<std::string, std::deque<Susi::Util::Any>> multiAttributes;
+        std::map<std::string, BSON::Value> attributes;
+        std::map<std::string, BSON::Array> multiAttributes;
 
     public:
         Session() : Session( std::chrono::milliseconds( 10000 ) ) {}
@@ -50,10 +51,10 @@ namespace Susi {
         }
         bool isDead();
         void addTime( std::chrono::milliseconds milliseconds );
-        bool setAttribute( std::string key, Susi::Util::Any value );
-        void pushAttribute( std::string key, Susi::Util::Any value );
+        bool setAttribute( std::string key, BSON::Value value );
+        void pushAttribute( std::string key, BSON::Value value );
         bool removeAttribute( std::string key );
-        Susi::Util::Any getAttribute( std::string key );
+        BSON::Value getAttribute( std::string key );
         bool die();
     };
 }

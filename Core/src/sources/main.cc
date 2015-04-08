@@ -56,6 +56,7 @@ int main(int argc, char** argv){
 		cfg.loadConfig(config_file);   		
    	} catch(const std::exception & e){
    		// default fallback
+   		LOG(ERROR) << e.what();
    		cfg.loadConfig("config.json");
    	}
    	

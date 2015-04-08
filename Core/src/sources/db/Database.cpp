@@ -1,15 +1,15 @@
 #include "susi/db/Database.h"
 
-Susi::Util::Any Susi::DB::Database::query( std::string query ) {
+BSON::Value Susi::DB::Database::query( std::string query ) {
     soci::rowset<soci::row> rows = ( session.prepare << query );
-    Susi::Util::Any results {Susi::Util::Any::Array{}};
+    BSON::Value results {BSON::Array{}};
 
     for( soci::row & row : rows ) {
-        Susi::Util::Any entry {Susi::Util::Any::Object{}};
+        BSON::Value entry {BSON::Object{}};
         for( std::size_t i = 0; i != row.size(); ++i ) {
             const soci::column_properties & props = row.get_properties( i );
             std::string name = props.get_name();
-            Susi::Util::Any value;
+            BSON::Value value;
             switch( props.get_data_type() ) {
                 case soci::dt_string:
                     value = row.get<std::string>( i );

@@ -14,7 +14,7 @@
 void Susi::EngineStarter::StarterComponent::handleStart( Susi::Events::EventPtr event ) {
     try {
         if(event->payload["path"].isString()){
-            std::string path = static_cast<std::string>(event->payload["path"]);
+            std::string path = event->payload["path"];
             execute( path );
         }else{
             execute( _defaultPath );
@@ -30,7 +30,7 @@ void Susi::EngineStarter::StarterComponent::handleStart( Susi::Events::EventPtr 
 void Susi::EngineStarter::StarterComponent::handleRestart( Susi::Events::EventPtr event ) {
     try {
         if(event->payload["path"].isString()){
-            std::string path = static_cast<std::string>(event->payload["path"]);
+            std::string path = event->payload["path"];
             killall();
             execute( path );
         }else{

@@ -151,7 +151,7 @@ void Susi::Duktape::JSEngine::registerConsumer(std::string topic){
 
 void Susi::Duktape::JSEngine::publish(std::string eventData){
     LOG(DEBUG) << eventData;
-	auto any = Susi::Util::Any::fromJSONString(eventData);
+	auto any = BSON::Value::fromJSON(eventData);
 	Susi::Events::Event rawEvent{any};
 	auto event = createEvent(rawEvent.topic);
 	*event = rawEvent;
@@ -168,7 +168,7 @@ void Susi::Duktape::JSEngine::publish(std::string eventData){
 }
 
 void Susi::Duktape::JSEngine::ack(std::string eventData){
-	auto any = Susi::Util::Any::fromJSONString(eventData);
+	auto any = BSON::Value::fromJSON(eventData);
 	Susi::Events::Event rawEvent{any};
 	try{
 		auto & pendingEvent = pendingEvents.at(rawEvent.id);

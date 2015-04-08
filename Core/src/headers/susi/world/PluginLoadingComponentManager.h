@@ -19,7 +19,7 @@
 namespace Susi {
 	namespace System {
 
-		typedef std::shared_ptr<Susi::System::Component>(*CreateComponent_t)(Susi::System::ComponentManager*,Susi::Util::Any&); 
+		typedef std::shared_ptr<Susi::System::Component>(*CreateComponent_t)(Susi::System::ComponentManager*,BSON::Value&); 
 		typedef std::string (*GetName_t)();
 		typedef std::vector<std::string>(*GetDependencies_t)(); 
 
@@ -32,7 +32,7 @@ namespace Susi {
 			std::vector<std::shared_ptr<Poco::SharedLibrary>> libs;
 
 		public:
-			PluginLoadingComponentManager(Susi::Util::Any::Object config) : ComponentManager{config} {
+			PluginLoadingComponentManager(BSON::Object config) : ComponentManager{config} {
 				if(config["plugins"].isObject() && config["plugins"]["path"].isString()){
 					std::string path = config["plugins"]["path"];
 					//LOG(DEBUG) << "got plugin path " << path;

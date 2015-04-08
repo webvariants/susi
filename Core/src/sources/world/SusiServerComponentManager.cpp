@@ -1,18 +1,18 @@
 #include "susi/world/SusiServerComponentManager.h"
 
-Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util::Any::Object config) : Susi::System::PluginLoadingComponentManager{config} {
+Susi::System::SusiServerComponentManager::SusiServerComponentManager(BSON::Object config) : Susi::System::PluginLoadingComponentManager{config} {
 	
 	using Susi::System::ComponentManager;
 	using Susi::System::Component;
-	using Susi::Util::Any;
+	using BSON::Value;
 
 	/**
 	 * Declare logger
 	 */
-	registerComponent("logger",[](ComponentManager * mgr, Any & config){
+	registerComponent("logger",[](ComponentManager * mgr, BSON::Value& config){
 		std::string configFile;
 		if(config["easylogging++"].isString()){
-			configFile = static_cast<std::string>(config["easylogging++"]);
+			configFile = config["easylogging++"].getString();
 		}
 		bool syslog = false;
 		if(config["syslog"].isBool()){
@@ -24,14 +24,14 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	/**
 	 * Declare event system
 	 */
-	registerComponent("eventsystem",[](ComponentManager * mgr, Any & config){
+	registerComponent("eventsystem",[](ComponentManager * mgr, BSON::Value& config){
 		size_t threads = 4;
 		size_t queuelen = 32;
 		if(config["threads"].isInteger()){
-			threads = static_cast<long>(config["threads"]);
+			threads = config["threads"].getInt64();
 		}
 		if(config["queuelen"].isInteger()){
-			queuelen = static_cast<long>(config["queuelen"]);
+			queuelen = config["queuelen"].getInt64();
 		}
 		return std::shared_ptr<Component>{new Susi::Events::ManagerComponent{threads,queuelen}};
 	});
@@ -40,7 +40,7 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	/**
 	 * Declare heartbeat
 	 */
-	registerComponent("heartbeat",[](ComponentManager * mgr, Any & config){
+	registerComponent("heartbeat",[](ComponentManager * mgr, BSON::Value& config){
 		return std::shared_ptr<Component>{new Susi::HeartBeatComponent{mgr}};
 	});
 	registerDependency("heartbeat","eventsystem");
@@ -48,7 +48,7 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	/**
 	 * Declare dbmanager
 	 */
-	registerComponent("dbmanager", [](ComponentManager * mgr, Any & config) {
+	registerComponent("dbmanager", [](ComponentManager * mgr, BSON::Value& config) {
 		return std::shared_ptr<Component>{new Susi::DB::DBComponent{mgr, config}};
 	});
 	registerDependency("dbmanager","eventsystem");
@@ -57,10 +57,10 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	/**
 	 * Declare authcontroller
 	 */
-	registerComponent("authcontroller", [](ComponentManager * mgr, Any & config) {
+	registerComponent("authcontroller", [](ComponentManager * mgr, BSON::Value& config) {
 		std::string db_identifier{"authdb"};
 		if(config["db"].isString()){
-			db_identifier = static_cast<std::string>(config["db"]);
+			db_identifier = config["db"].getString();
 		}
 		return std::shared_ptr<Component>{new Susi::Auth::ControllerComponent{mgr, db_identifier}};
 	});
@@ -71,10 +71,10 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	/**
 	 * TCP Api Server
 	 */
-	registerComponent("tcpapiserver", [](ComponentManager * mgr, Any & config) {
+	registerComponent("tcpapiserver", [](ComponentManager * mgr, BSON::Value& config) {
 		std::string address{""};
 		if(config["address"].isString()){
-			address = static_cast<std::string>(config["address"]);
+			address = config["address"].getString();
 		}
 		return std::shared_ptr<Component>{new Susi::Api::TCPApiServerComponent{mgr, address}};
 	});
@@ -83,10 +83,10 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	/**
 	 * Declare enginestarter
 	 */
-	registerComponent("enginestarter", [](ComponentManager * mgr, Any & config) {	
+	registerComponent("enginestarter", [](ComponentManager * mgr, BSON::Value& config) {	
 		std::string path{""};
 		if(config["path"].isString()){
-			path = static_cast<std::string>(config["path"]);
+			path = config["path"].getString();
 		}
 		return std::shared_ptr<Component>{new Susi::EngineStarter::StarterComponent{mgr,path}};
 	});
@@ -96,7 +96,7 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	/**
 	 * Declare iocontroller
 	 */
-	registerComponent("iocontroller", [](ComponentManager * mgr, Any & config) {			
+	registerComponent("iocontroller", [](ComponentManager * mgr, BSON::Value& config) {			
 		return std::shared_ptr<Component>{new Susi::IOControllerComponent{mgr}};
 	});
 	registerDependency("iocontroller","eventsystem");
@@ -105,10 +105,10 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	/**
 	 * Declare sessionmanager
 	 */
-	registerComponent("sessionmanager", [](ComponentManager * mgr, Any & config) {
+	registerComponent("sessionmanager", [](ComponentManager * mgr, BSON::Value& config) {
 		std::chrono::milliseconds lifetime{10000};		
 		if(config["lifetime"].isInteger()){
-			lifetime =  std::chrono::milliseconds{static_cast<int>(config["lifetime"])};
+			lifetime =  std::chrono::milliseconds{config["lifetime"].getInt64()};
 		}
 		return std::shared_ptr<Component>{new Susi::Sessions::SessionManagerComponent{mgr, lifetime}};
 	});
@@ -118,10 +118,10 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	/**
 	 * Declare statecontroller
 	 */
-	registerComponent("statecontroller", [](ComponentManager * mgr, Any & config) {
+	registerComponent("statecontroller", [](ComponentManager * mgr, BSON::Value& config) {
 		std::string file{""};
 		if(config["file"].isString()){
-			file = static_cast<std::string>(config["file"]);
+			file = config["file"].getString();
 		}
 		return std::shared_ptr<Component>{new Susi::States::StateControllerComponent{mgr, file}};
 	});
@@ -133,17 +133,17 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	/**
 	 * Declare syscallcontroller
 	 */
-	registerComponent("syscallcontroller", [](ComponentManager * mgr, Any & cfg) {
+	registerComponent("syscallcontroller", [](ComponentManager * mgr, BSON::Value& cfg) {
 		size_t threads = 4;
 		size_t queuelen = 16;
-		Any::Object commands = cfg["commands"];
-		Any threadsVal = cfg["threads"];
-		if(!threadsVal.isNull()){
-			threads = (size_t)static_cast<long>(threadsVal);
+		BSON::Object commands = cfg["commands"];
+		BSON::Value threadsVal = cfg["threads"];
+		if(!threadsVal.isUndefined()){
+			threads = (size_t)threadsVal.getInt64();
 		}
-		Any queuelenVal = cfg["queuelen"];
-		if(!queuelenVal.isNull()){
-			queuelen = (size_t)static_cast<long>(queuelenVal);
+		BSON::Value queuelenVal = cfg["queuelen"];
+		if(!queuelenVal.isUndefined()){
+			queuelen = (size_t)queuelenVal.getInt64();
 		}
 		return std::shared_ptr<Component>{new Susi::Syscall::SyscallComponent{mgr, commands, threads, queuelen}};
 	});
@@ -154,28 +154,28 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	/**
 	 * Declare httpserver
 	 */
-	registerComponent("httpserver", [](ComponentManager * mgr, Any & config) {
+	registerComponent("httpserver", [](ComponentManager * mgr, BSON::Value& config) {
 		std::string address{""};
 		size_t threads{4};
 		size_t backlog{16};
 
 		if(config["address"].isString()){
-			address = static_cast<std::string>(config["address"]);
+			address = config["address"].getString();
 		}
 		std::string assetRoot{""};
 		if(config["assets"].isString()){
-			assetRoot = static_cast<std::string>(config["assets"]);
+			assetRoot = config["assets"].getString();
 		}
 		std::string upload{""};
 		if(config["upload"].isString()){
-			upload = static_cast<std::string>(config["upload"]);
+			upload = config["upload"].getString();
 		}
 
 		if(config["threads"].isInteger()){
-			threads =  static_cast<long>(config["threads"]);
+			threads =  config["threads"].getInt64();
 		}
 		if(config["backlog"].isInteger()){
-			backlog =  static_cast<long>(config["backlog"]);
+			backlog =  config["backlog"].getInt64();
 		}
 		return std::shared_ptr<Component>{new Susi::HttpServerComponent{mgr, address, assetRoot, upload, threads, backlog}};
 	});	
@@ -185,14 +185,14 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	/**
 	 * Declare Autodiscovery
 	 */
-	registerComponent("autodiscovery", [](ComponentManager * mgr, Any & config){
+	registerComponent("autodiscovery", [](ComponentManager * mgr, BSON::Value& config){
 		std::string mcast{"239.23.23.23:4242"};
 		std::string ownName{"susi"};
 		if(config["mcast"].isString()){
-			mcast = static_cast<std::string>(config["mcast"]);
+			mcast = config["mcast"].getString();
 		}
 		if(config["address"].isString()){
-			ownName = static_cast<std::string>(config["address"]);
+			ownName = config["address"].getString();
 		}
 		return std::shared_ptr<Component>{new Susi::Autodiscovery::AutoDiscoveryComponent{mcast,ownName,mgr}};
 	});
@@ -202,7 +202,7 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	/**
 	 * Declare apiserver
 	 */
-	registerComponent("apiserver", [](ComponentManager * mgr, Any & config) {			
+	registerComponent("apiserver", [](ComponentManager * mgr, BSON::Value& config) {			
 		return std::shared_ptr<Component>{new Susi::Api::ApiServerComponent{mgr}};
 	});
 	registerDependency("apiserver","eventsystem");
@@ -211,7 +211,7 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	/**
 	 * Declare constraints
 	 */
-	registerComponent("constraints", [](ComponentManager * mgr, Any & config) {			
+	registerComponent("constraints", [](ComponentManager * mgr, BSON::Value& config) {			
 		return std::shared_ptr<Component>{new Susi::Events::ConstraintControllerComponent{mgr}};
 	});
 	registerDependency("constraints","eventsystem");
@@ -220,10 +220,10 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	/**
 	 * Declare DDHCP
 	 */
-	registerComponent("ddhcp", [](ComponentManager * mgr, Any & config) {			
+	registerComponent("ddhcp", [](ComponentManager * mgr, BSON::Value& config) {			
 		unsigned short port = 1704;
 		try{
-			port = (unsigned short)(int)config[port];
+			port = (unsigned short)(int)config["port"];
 		}catch(...){}
 		return std::shared_ptr<Component>{new Susi::Ddhcp::DDHCPComponent{mgr,port}};
 	});
@@ -233,18 +233,20 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(Susi::Util:
 	/**
 	 * Declare duktape js engine
 	 */
-	registerComponent("duktape",[](ComponentManager * mgr, Any & config){
+	registerComponent("duktape",[](ComponentManager * mgr, BSON::Value& config){
 		std::string source = "";
 		try{
-			source = static_cast<std::string>(config["source"]);
+			source = config["source"].getString();
 		}catch(...){}
 		return std::shared_ptr<Component>{new Susi::Duktape::JSEngine{mgr,source}};
 	});
+	registerDependency("duktape","statecontroller");
+	registerDependency("duktape","sessionmanager");
 
 	/**
 	 * Declare selfchecker
 	 */
-	registerComponent("selfchecker",[](ComponentManager * mgr, Any & config){
+	registerComponent("selfchecker",[](ComponentManager * mgr, BSON::Value& config){
 		return std::shared_ptr<Component>{new Susi::SelfCheckerComponent{mgr,config}};
 	});
 	registerDependency("selfchecker","eventsystem");

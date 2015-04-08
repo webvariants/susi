@@ -23,7 +23,7 @@ namespace Susi {
 
 class SelfCheckerComponent : public Susi::System::BaseComponent {
 protected:
-    Susi::Util::Any             _config;
+    BSON::Value             _config;
     std::string                 _failCommand;
     std::chrono::milliseconds   _timeout;
     std::chrono::milliseconds   _interval;
@@ -32,21 +32,21 @@ protected:
     std::thread       _runloop;
 
 public:
-    SelfCheckerComponent(Susi::System::ComponentManager *mgr, Susi::Util::Any config) : 
+    SelfCheckerComponent(Susi::System::ComponentManager *mgr, BSON::Value config) : 
       Susi::System::BaseComponent{mgr}, 
       _config{config} {
         if(_config["failCommand"].isString()){
-            _failCommand = static_cast<std::string>(_config["failCommand"]);
+            _failCommand = _config["failCommand"].getString();
         }else{
             _failCommand = "";
         }
         if(_config["timeout"].isInteger()){
-            _timeout = std::chrono::milliseconds{static_cast<int>(_config["timeout"])};
+            _timeout = std::chrono::milliseconds{_config["timeout"].getInt32()};
         }else{
             _timeout = std::chrono::milliseconds{500};
         }
         if(_config["interval"].isInteger()){
-            _interval = std::chrono::milliseconds{static_cast<int>(_config["interval"])};
+            _interval = std::chrono::milliseconds{_config["interval"].getInt32()};
         }else{
             _interval = std::chrono::milliseconds{5000};
         }

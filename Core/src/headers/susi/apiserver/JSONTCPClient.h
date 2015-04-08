@@ -14,7 +14,7 @@
 
 #include "susi/apiserver/TCPClient.h"
 #include "susi/apiserver/JSONStreamCollector.h"
-#include "susi/util/Any.h"
+#include "bson/Value.h"
 namespace Susi {
     namespace Api {
 
@@ -23,7 +23,7 @@ namespace Susi {
             JSONTCPClient( std::string addr ) :
                 TCPClient {addr},
             collector {[this]( std::string & msg ) {
-                auto message = Susi::Util::Any::fromJSONString( msg );
+                auto message = BSON::Value::fromJSON( msg );
                 //std::cout<<"got message in json client"<<std::endl;
                 this->onMessage( message );
             }
@@ -31,8 +31,8 @@ namespace Susi {
             virtual ~JSONTCPClient() {
                 close();
             }
-            void send( Susi::Util::Any & message ) {
-                std::string msg = message.toJSONString();
+            void send( BSON::Value & message ) {
+                std::string msg = message.toJSON();
                 TCPClient::send( msg );
             }
             void close() {
@@ -47,7 +47,7 @@ namespace Susi {
                 collector.collect( data );
             }
 
-            virtual void onMessage( Susi::Util::Any & message ) {};
+            virtual void onMessage( BSON::Value & message ) {};
 
         };
 

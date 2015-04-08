@@ -24,7 +24,7 @@ _SHARE_EASYLOGGINGPP(el::Helpers::storage());
 #endif
 
 extern "C" {
-    std::shared_ptr<Susi::System::Component> LIBRARY_API createComponent(Susi::System::ComponentManager *mgr, Susi::Util::Any &config);
+    std::shared_ptr<Susi::System::Component> LIBRARY_API createComponent(Susi::System::ComponentManager *mgr, BSON::Value &config);
     std::string LIBRARY_API getName();
     std::vector<std::string> LIBRARY_API getDependencies();
 }
@@ -35,7 +35,7 @@ namespace Susi {
         std::atomic<bool> stopVar;
         std::thread t;
     public:
-        HeartBeatComponent( System::ComponentManager * mgr , Susi::Util::Any & config) :
+        HeartBeatComponent( System::ComponentManager * mgr , BSON::Value & config) :
             System::BaseComponent {mgr},
         stopVar {false} {
             LOG(DEBUG) << "constructed heartbeat!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
@@ -83,7 +83,7 @@ namespace Susi {
     };
 }
 
-std::shared_ptr<Susi::System::Component> LIBRARY_API createComponent(Susi::System::ComponentManager * mgr, Susi::Util::Any & config){
+std::shared_ptr<Susi::System::Component> LIBRARY_API createComponent(Susi::System::ComponentManager * mgr, BSON::Value & config){
     return std::make_shared<Susi::HeartBeatComponent>(mgr,config);
 }
 std::string LIBRARY_API getName(){

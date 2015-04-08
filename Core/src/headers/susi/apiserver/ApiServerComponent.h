@@ -26,7 +26,7 @@ namespace Susi {
         class ApiServerComponent : public Susi::System::SessionAwareComponent {
         protected:
 
-            std::map<std::string,std::function<void( Susi::Util::Any& )>> senders;
+            std::map<std::string,std::function<void( BSON::Value& )>> senders;
             std::recursive_mutex sendersMutex;
             std::map<std::string,std::map<std::string,long>> consumerSubscriptions;
             std::recursive_mutex consumerMutex;
@@ -35,19 +35,19 @@ namespace Susi {
             std::map<std::string,std::map<std::string,Susi::Events::EventPtr>> eventsToAck; //sessionid -> eventid -> event
             std::recursive_mutex eventsMutex;
 
-            void handleRegisterConsumer( std::string & id, Susi::Util::Any & packet );
-            void handleRegisterProcessor( std::string & id, Susi::Util::Any & packet );
-            void handleUnregisterConsumer( std::string & id, Susi::Util::Any & packet );
-            void handleUnregisterProcessor( std::string & id, Susi::Util::Any & packet );
-            void handlePublish( std::string & id, Susi::Util::Any & packet );
-            void handleAck( std::string & id, Susi::Util::Any & packet );
+            void handleRegisterConsumer( std::string & id, BSON::Value & packet );
+            void handleRegisterProcessor( std::string & id, BSON::Value & packet );
+            void handleUnregisterConsumer( std::string & id, BSON::Value & packet );
+            void handleUnregisterProcessor( std::string & id, BSON::Value & packet );
+            void handlePublish( std::string & id, BSON::Value & packet );
+            void handleAck( std::string & id, BSON::Value & packet );
 
             void sendOk( std::string & id );
             void sendFail( std::string & id,std::string error = "" );
 
             bool checkIfConfidentialHeaderMatchesSession(Susi::Events::Event & event, std::string sessionID);
 
-            void send( std::string & id, Susi::Util::Any & msg ) {
+            void send( std::string & id, BSON::Value & msg ) {
                 std::lock_guard<std::recursive_mutex> lock {sendersMutex}; //DEADLOCK IF SENDER DEAD (websocket)
                 auto & sender = senders[id];
                 if( sender ){
@@ -77,10 +77,10 @@ namespace Susi {
             }
 
             void onConnect( std::string & id );
-            void onMessage( std::string & id, Susi::Util::Any & packet );
+            void onMessage( std::string & id, BSON::Value & packet );
             void onClose( std::string & id );
 
-            inline void registerSender( std::string id , std::function<void( Susi::Util::Any& )> sender ) {
+            inline void registerSender( std::string id , std::function<void( BSON::Value& )> sender ) {
                 std::lock_guard<std::recursive_mutex> lock {sendersMutex};
                 senders[id] = sender;
             }
