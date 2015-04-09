@@ -14,19 +14,14 @@
 
 #include <sstream>
 #include "susi/world/BaseComponent.h"
-#include "susi/duktape/duktape.h"
+#include "susi/duktape/Context.h"
 
 namespace Susi {
 namespace Duktape {
 
-class JSEngine;
-
-extern JSEngine *enginePtr;
-extern std::string susiJS;
-
 class JSEngine : public Susi::System::BaseComponent {
 public:
-	JSEngine(Susi::System::ComponentManager *mgr, std::string src, int _numEngines = 1) : 
+	JSEngine(Susi::System::ComponentManager *mgr, std::string src = "", int _numEngines = 1) : 
 		Susi::System::BaseComponent{mgr},
 		sourceFile{src},
 		numEngines{_numEngines} {}
@@ -38,47 +33,27 @@ public:
 	virtual void stop() override;
 
 protected:
-
-	struct DuktapeContainer {
-		duk_context *ctx;
-		std::mutex mutex;
-		std::map<std::string,Susi::Events::EventPtr> pendingEvents;
-		std::map<std::string,long> registerIds;
-	};
-
-
-	enum {
-		OUTPUT = 0,
-		INPUT = 1
-	};
-
-	std::string sourceFile;
-
 	int numEngines = 1;
-	int currentEngine = -1;
-	std::mutex duktapeContainersMutex;
-	std::vector<DuktapeContainer> duktapeContainers;
+	std::string sourceFile = "";
 
-	struct DuktapeContainer* getContainer(){
-		std::lock_guard<std::mutex> lock{duktapeContainersMutex};
-		currentEngine = (currentEngine+1)%numEngines;
-		return &(duktapeContainers[currentEngine]);
-	}
+	class SusiAwareContext : public ::Duktape::Context {
+	protected:
+		std::shared_ptr<Susi::Events::IEventSystem> eventManager;
 
-	static duk_ret_t js_registerConsumer(duk_context *ctx) ;
-	static duk_ret_t js_registerProcessor(duk_context *ctx) ;
-	static duk_ret_t js_publish(duk_context *ctx) ;
-	static duk_ret_t js_ack(duk_context *ctx) ;
-	static duk_ret_t js_log(duk_context *ctx) ;
-	static duk_ret_t js_unregister(duk_context *ctx) ;
+		duk_ret_t publish(duk_context *ctx);
+		duk_ret_t registerConsumer(duk_context *ctx);
+		duk_ret_t registerProcessor(duk_context *ctx);
+		duk_ret_t ack(duk_context *ctx);
 
-	void registerProcessor(std::string topic);
-	void registerConsumer(std::string topic);
-	void unregister(std::string topic);
-	void publish(std::string eventData);
-	void ack(std::string eventData);
+		void forwardAckToJS(Susi::Events::SharedEventPtr event);
+		void forwardConsumerEventToJS(Susi::Events::SharedEventPtr event);
+		void forwardProcessorEventToJS(Susi::Events::EventPtr event);
 
-	void init();
+	public:
+		SusiAwareContext(std::string sourceFile);
+	};
+
+	std::vector<std::shared_ptr<SusiAwareContext>> contexts;
 
 };
 
