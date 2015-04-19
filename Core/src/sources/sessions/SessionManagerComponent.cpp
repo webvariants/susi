@@ -1,7 +1,12 @@
 #include "susi/sessions/SessionManagerComponent.h"
 
 void Susi::Sessions::SessionManagerComponent::handleCheckSessions( Susi::Events::SharedEventPtr event ) {
-    checkSessions();
+    checkSessions([this](std::string diedSession){
+        auto event = createEvent("session::died");
+        event->payload = diedSession;
+        publish(std::move(event));
+        LOG(DEBUG) << "publish session::died event";
+    });
 }
 
 void Susi::Sessions::SessionManagerComponent::handleGetAttribute( Susi::Events::EventPtr event ) {

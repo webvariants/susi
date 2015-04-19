@@ -27,7 +27,7 @@ void SessionManager::init( std::chrono::milliseconds stdSessionLifetime ) {
 
 SessionManager::~SessionManager() {}
 
-int SessionManager::checkSessions() {
+int SessionManager::checkSessions(std::function<void(std::string)> closer) {
     //std::cout<<"aquiere sessions mutex"<<std::endl;
     std::lock_guard<std::mutex> lock( mutex );
     //std::cout<<"got sessions mutex"<<std::endl;
@@ -37,9 +37,15 @@ int SessionManager::checkSessions() {
         auto current = it++;
         if( current->second.isDead() ) {
             LOG(DEBUG) <<  "delete session "<<current->first<<" while regular checking" ;
+            if(closer){
+                closer(current->first);
+            }
             sessions.erase( current );
             for(auto ait = alias.begin(); ait != alias.end();){
                 if(ait->second == current->first){
+                    if(closer){
+                        closer(ait->first);
+                    }
                     alias.erase(ait++);
                 }else{
                     ++ait;
@@ -163,7 +169,7 @@ void SessionManager::updateSession( std::string id, std::chrono::milliseconds li
     }
 }
 
-bool SessionManager::killSession( std::string id ) {
+bool SessionManager::killSession( std::string id) {
     std::lock_guard<std::mutex> lock( mutex );
     std::string originalId = id;
     resolveSessionID(id);

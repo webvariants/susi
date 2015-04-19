@@ -38,7 +38,7 @@ namespace Susi {
                 }
             }
             bool checkSession( std::string id );
-            int  checkSessions();
+            int  checkSessions(std::function<void(std::string)> closer = std::function<void(std::string)>{});
             void updateSession( std::string id );
             void updateSession( std::string id, std::chrono::milliseconds lifeTime );
             bool killSession( std::string id );

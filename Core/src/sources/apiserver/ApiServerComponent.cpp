@@ -9,6 +9,11 @@ void Susi::Api::ApiServerComponent::onClose( std::string & id ) {
     LOG(DEBUG) << "lost api connection: " << id;
     sessionManager->killSession( id );
     {
+        auto evt = createEvent("session::died");
+        evt->payload = id;
+        publish(std::move(evt));
+    }
+    {
         std::lock_guard<std::recursive_mutex> lock{consumerMutex};
         auto & subs = consumerSubscriptions[id];
         for( auto & kv : subs ) {
