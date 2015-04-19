@@ -1,0 +1,32 @@
+{
+  "eventsystem" : {
+    "threads": 4,
+    "queuelen": 256
+  },
+  "sessionmanager": {
+    "lifetime": 600000
+  },
+  "httpserver": {
+    "address": "127.0.0.1:8080",
+    "assets": "./assets",
+    "threads": 8,
+    "backlog": 32
+  },
+  "apiserver": {},
+  "heartbeat": {},
+  "logger": {
+    "easylogging++": "./easylogging++.conf"
+  },  
+  "iocontroller": {},
+  "statecontroller":{
+    "file": "./states.json"
+  },
+  "duktape": {
+    "source": "backend/backend.js"
+  },
+  "tcpapiserver": {
+    "address": "127.0.0.1:4000",
+    "threads": 4,
+    "backlog": 32
+  }
+}
