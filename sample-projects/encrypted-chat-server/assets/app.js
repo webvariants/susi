@@ -12,7 +12,7 @@ var whisper = function(msg,id){
 	var orig = crypter.getKey();
 	crypter.setPublicKey(key)
 	susi.publish("whisper@"+users[id].key,{msg: crypter.encrypt(msg), name: name});
-	$('#message-output').append("<li>you whispered to "+users[id].name+": "+msg+"</li>");
+	$('#message-output').append("<li class='list-group-item'>you whispered to "+users[id].name+": "+msg+"</li>");
 	crypter.setKey(orig);
 };
 
@@ -23,7 +23,7 @@ var updateUserlist = function(){
 		$('#user-output').empty();
 		for(var idx in users){
 			if(users[idx].key !== crypter.getPublicKey()){
-				$('#user-output').append("<li>"+users[idx].name+"</li><button id='"+idx+"' type='button'>Whisper</button>");
+				$('#user-output').append("<li class='list-group-item'>"+users[idx].name+"<button class='pull-right' id='"+idx+"' type='button'>Whisper</button></li>");
 				$('#'+idx).on('click',function(idx){
 					whisper($('#text-input').val(),idx);
 					$('#text-input').val('');
@@ -39,7 +39,7 @@ $(function(){
 
 	susi = new Susi(function(susi){
 		susi.registerConsumer("message",function(evt){
-			$('#message-output').append("<li>"+evt.payload.name+" says: "+evt.payload.msg+"</li>");
+			$('#message-output').append("<li class='list-group-item'>"+evt.payload.name+" says: "+evt.payload.msg+"</li>");
 		});
 		susi.registerConsumer("register-key",function(){
 			updateUserlist();
@@ -49,7 +49,7 @@ $(function(){
 		});
 		susi.publish("register-key",crypter.getPublicKey(),function(){
 			susi.registerConsumer("whisper@"+crypter.getPublicKey(),function(evt){
-				$('#message-output').append("<li>"+evt.payload.name+" whispered: "+crypter.decrypt(evt.payload.msg)+"</li>");
+				$('#message-output').append("<li  class='list-group-item'>"+evt.payload.name+" whispered: "+crypter.decrypt(evt.payload.msg)+"</li>");
 			});
 		});
 	});
