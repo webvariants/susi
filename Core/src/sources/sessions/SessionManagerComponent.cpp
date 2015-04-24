@@ -14,6 +14,10 @@ void Susi::Sessions::SessionManagerComponent::handleGetAttribute( Susi::Events::
         std::string sessionID = event->payload["id"];
         std::string key = event->payload["key"];
 
+        if(sessionID != event->sessionID && !checkAuthlevel(*event,0)){
+            throw std::runtime_error{"not your session and insufficient authlevel"};
+        }
+
         event->payload["value"] = getSessionAttribute( sessionID, key );
     }
     catch( const std::exception & e ) {
@@ -28,6 +32,10 @@ void Susi::Sessions::SessionManagerComponent::handleSetAttribute( Susi::Events::
         std::string sessionID = event->payload["id"];
         std::string key = event->payload["key"];
         BSON::Value value = event->payload["value"];
+
+        if(sessionID != event->sessionID && !checkAuthlevel(*event,0)){
+            throw std::runtime_error{"not your session and insufficient authlevel"};
+        }
 
         event->payload["success"] = setSessionAttribute( sessionID, key, value );
     }
@@ -44,6 +52,10 @@ void Susi::Sessions::SessionManagerComponent::handlePushAttribute( Susi::Events:
         std::string key = event->payload["key"];
         BSON::Value value = event->payload["value"];
 
+        if(sessionID != event->sessionID && !checkAuthlevel(*event,0)){
+            throw std::runtime_error{"not your session and insufficient authlevel"};
+        }
+
         event->payload["success"] = pushSessionAttribute( sessionID, key, value );
     }
     catch( const std::exception & e ) {
@@ -58,6 +70,10 @@ void Susi::Sessions::SessionManagerComponent::handleRemoveAttribute( Susi::Event
         std::string sessionID = event->payload["id"];
         std::string key = event->payload["key"];
 
+        if(sessionID != event->sessionID && !checkAuthlevel(*event,0)){
+            throw std::runtime_error{"not your session and insufficient authlevel"};
+        }
+
         event->payload["success"] = removeSessionAttribute( sessionID, key );
     }
     catch( const std::exception & e ) {
@@ -70,8 +86,8 @@ void Susi::Sessions::SessionManagerComponent::handleRemoveAttribute( Susi::Event
 void Susi::Sessions::SessionManagerComponent::handleUpdate( Susi::Events::EventPtr event ) {
     try {
         std::string sessionID = event->sessionID;
-        if(event->payload["id"].isString()){
-            std::string sessionID = event->payload["id"];
+        if(event->payload["id"].isString() && checkAuthlevel(*event,0)){
+            sessionID = event->payload["id"].getString();
         }
         std::chrono::seconds secs;
 
@@ -113,5 +129,8 @@ void Susi::Sessions::SessionManagerComponent::handleCheck( Susi::Events::EventPt
 void Susi::Sessions::SessionManagerComponent::handleAddAlias( Susi::Events::EventPtr event ){
     std::string sessionID = event->payload["sessionid"];
     std::string alias = event->payload["alias"];
+    if(sessionID != event->sessionID && !checkAuthlevel(*event,0)){
+        throw std::runtime_error{"not your session and insufficient authlevel"};
+    }
     SessionManager::addAlias(alias,sessionID);
 }

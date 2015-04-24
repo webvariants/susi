@@ -18,6 +18,16 @@
 namespace Susi {
     namespace Sessions {
         class SessionManagerComponent : public Susi::System::BaseComponent , public SessionManager {
+        protected:
+            bool checkAuthlevel(Susi::Events::Event & event, long long minAuthlevel){
+                std::string & sessionID = event.sessionID;
+                auto sessionAuthlevel = getSessionAttribute(sessionID,"authlevel");
+                if(!sessionAuthlevel.isUndefined() && static_cast<long long>(sessionAuthlevel) > minAuthlevel){
+                    return false;
+                }
+                return true;
+            }
+
         public:
             SessionManagerComponent( Susi::System::ComponentManager * mgr, std::chrono::milliseconds stdSessionLifetime ) :
                 Susi::System::BaseComponent {mgr}, SessionManager {} {
