@@ -66,6 +66,7 @@ bool Susi::System::ComponentManager::startComponent( std::string name ) {
 }
 
 bool Susi::System::ComponentManager::stopComponent( std::string name ) {
+    LOG(DEBUG) << "stopping "+name+"...";
     if( components.find( name ) == components.end() || components[name].running == false ) {
         return false;
     }
@@ -74,7 +75,7 @@ bool Susi::System::ComponentManager::stopComponent( std::string name ) {
     }
     components[name].component->stop();
     components[name].running = false;
-
+    LOG(DEBUG) << "stopped "+name+".";
     return true;
 }
 

@@ -181,6 +181,7 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(BSON::Objec
 	});	
 	registerDependency("httpserver","apiserver");
 	registerDependency("httpserver","sessionmanager");
+	registerDependency("httpserver","logger");
 	
 	/**
 	 * Declare Autodiscovery
