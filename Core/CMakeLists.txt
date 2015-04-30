@@ -32,8 +32,6 @@ find_package(Threads REQUIRED)
 add_subdirectory( ${CMAKE_CURRENT_SOURCE_DIR}/test/gtest-1.7.0 )
 include_directories( ${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR} )
 
-add_subdirectory( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/libbson )
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/libbson/src/headers)
 
 add_subdirectory( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/poco )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/poco/Foundation/include)
@@ -43,6 +41,9 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/poco/Net/include)
 add_subdirectory( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/soci/src )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/soci/src/core )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/soci/src/backends )
+
+add_subdirectory( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/libbson )
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/libbson/src/headers)
 
 set( CMAKE_COLOR_MAKEFILE ON )
 

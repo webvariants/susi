@@ -22,7 +22,7 @@ module.exports = function(grunt) {
 
     shell: {
       cmake_core: {
-        command: 'CXX=g++-4.7 CC=gcc-4.7 cmake ' +(grunt.option("buildmode")?'-DCMAKE_BUILD_TYPE='+grunt.option("buildmode"):'')+ ' -DPOCO_INCLUDE_DIR=../../node_modules/poco/include -DSOCI_INCLUDE_DIR=../../node_modules/soci/include/soci -DCMAKE_LIBRARY_PATH=../../node_modules/ ../../<%= pkg.project.directories.core %>',
+        command: 'cmake ' +(grunt.option("buildmode")?'-DCMAKE_BUILD_TYPE='+grunt.option("buildmode"):'')+ ' -DPOCO_INCLUDE_DIR=../../node_modules/poco/include -DSOCI_INCLUDE_DIR=../../node_modules/soci/include/soci -DCMAKE_LIBRARY_PATH=../../node_modules/ ../../<%= pkg.project.directories.core %>',
         options: {
           stderr: false,
           execOptions: {

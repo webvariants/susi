@@ -35,7 +35,7 @@ bool StateController::loadPersistent() {
     Susi::IOController io;
     std::string fileContent = io.readFile( fileLocation );
     LOG(INFO) << "read states from file...";
-    persistentStates = BSON::Value::fromJSON( fileContent );
+    persistentStates = BSON::Value::fromJSON( fileContent ).getObject();
     return true;
 }
 
