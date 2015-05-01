@@ -1,0 +1,31 @@
+{
+  "eventsystem" : {
+    "threads": 4,
+    "queuelen": 256
+  },
+  "sessionmanager": {
+    "lifetime": 600000
+  },
+  "apiserver": {},
+  "heartbeat": {},
+  "logger": {
+    "easylogging++": "./easylogging++.conf"
+  },  
+  "iocontroller": {},
+  "statecontroller":{
+    "file": "./states.json"
+  },
+  "tcpapiserver": {
+    "address": "127.0.0.1:4002",
+    "threads": 4,
+    "backlog": 32
+  },
+  "cluster": {
+    "nodes": [
+      {
+        "addr": "127.0.0.1:4001",
+	"topics": ["*@node2","*@all"]
+      }
+    ]
+  }
+}
