@@ -81,16 +81,16 @@ add_executable( ${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/src/sources/main.cc 
 target_link_libraries( ${PROJECT_NAME} lib${PROJECT_NAME} )
 
 #SUSI TESTS
-add_executable(${PROJECT_NAME}_test ${CMAKE_CURRENT_SOURCE_DIR}/test/easylogging++_init.cpp ${TESTFILES})
-target_link_libraries(${PROJECT_NAME}_test
-	lib${PROJECT_NAME}
-	${CMAKE_THREAD_LIBS_INIT}
-	${LIBLZMA_LIBRARIES}
-	PocoFoundation PocoUtil PocoNet
-	gtest
-	gtest_main
-	bson
-)
+# add_executable(${PROJECT_NAME}_test ${CMAKE_CURRENT_SOURCE_DIR}/test/easylogging++_init.cpp ${TESTFILES})
+# target_link_libraries(${PROJECT_NAME}_test
+# 	lib${PROJECT_NAME}
+# 	${CMAKE_THREAD_LIBS_INIT}
+# 	${LIBLZMA_LIBRARIES}
+# 	PocoFoundation PocoUtil PocoNet
+# 	gtest
+# 	gtest_main
+# 	bson
+# )
 
 install(TARGETS lib${PROJECT_NAME} LIBRARY DESTINATION "/usr/lib")
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "/usr/bin")

@@ -22,7 +22,7 @@ namespace Susi {
 
         class ApiClient : protected BasicApiClient, public Susi::Events::Manager {
         public:
-            ApiClient( std::string addr ) : BasicApiClient {addr} {
+            ApiClient( std::string addr ) : BasicApiClient {addr}, addr{addr} {
                 Susi::Api::TCPClient::setMaxReconnectCount(5);
             }
             void close() {
@@ -46,12 +46,18 @@ namespace Susi {
             }
             
         protected:
+            std::string addr;
+
             virtual void onConsumerEvent( Susi::Events::Event & event ) override;
             virtual void onProcessorEvent( Susi::Events::Event & event ) override;
             virtual void onAck( Susi::Events::Event & event ) override;
 
-            virtual void onConnect() override {};
-            virtual void onClose() override {};
+            virtual void onConnect() override {
+                LOG(INFO) << "Connected ApiClient to " << addr;
+            };
+            virtual void onClose() override {
+                LOG(INFO) << "Lost connection to " << addr;
+            };
             virtual void onReconnect() override;
 
             struct PublishData {

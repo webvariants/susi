@@ -46,31 +46,38 @@ Susi::Api::TCPClient::~TCPClient() {
 }
 
 void Susi::Api::TCPClient::startRunloop(){
-    sock.connect(sa);
     isClosed.store(false);
-    onConnect();
-    sock.setReceiveTimeout( Poco::Timespan{0,100000} );
     runloop = std::move( std::thread{
         [this]() {
             char buff[1024];
             int bs;
+            bool onCloseCalled = false;
             while( !(isClosed.load()) ) { // data chunk loop
                 try {
-                    ////std::cout<<"wait for bytes"<<std::endl;
                     bs = sock.receiveBytes( buff,1024 );
-                    ////std::cout<<"got "<<bs<<std::endl;
                     if( bs<=0 ) {
                         throw std::runtime_error{"got zero bytes -> connection reset by peer"};
                     }
                     std::string data {buff,static_cast<size_t>( bs )};
                     onData( data );
                 }
-                catch( const Poco::TimeoutException & e ) {
-                    
-                }
+                catch( const Poco::TimeoutException & e ) {}
                 catch( const std::exception & e ) {
-                    LOG(DEBUG)<<"Exception in receive loop: "<<e.what();
-                    size_t retryCount = 0;
+                    if(!onCloseCalled){
+                        onCloseCalled = true;
+                        onClose();
+                    }
+                    try{
+                        sock.close();
+                        sock.connect(sa);
+                        sock.setReceiveTimeout( Poco::Timespan{0,100000} );
+                        onConnect();
+                        onReconnect();
+                        onCloseCalled = false;
+                    }catch(const Poco::Net::ConnectionRefusedException & e){
+                        usleep(200000);
+                    }
+                    /*size_t retryCount = 0;
                     bool success = false;
                     while(!(isClosed.load()) && (retryCount < maxReconnectCount)){
                         LOG(DEBUG)<<"try reconnect...";
@@ -99,7 +106,7 @@ void Susi::Api::TCPClient::startRunloop(){
                         break;
                     }else{
                         LOG(DEBUG) << "reconnected tcp client...";
-                    }
+                    }*/
                 }
             }
         }

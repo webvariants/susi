@@ -252,4 +252,12 @@ Susi::System::SusiServerComponentManager::SusiServerComponentManager(BSON::Objec
 	});
 	registerDependency("selfchecker","eventsystem");
 
+	/**
+	 * Declare Cluster Component
+	 */
+	registerComponent("cluster",[](ComponentManager * mgr, BSON::Value& config){
+		return std::shared_ptr<Component>{new Susi::ClusterComponent{mgr,config}};
+	});
+	registerDependency("cluster","eventsystem");
+
 }
