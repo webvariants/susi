@@ -69,7 +69,7 @@ namespace Susi {
                 std::vector<std::string> arguments;
                 std::string binary {"noshell"};
 #if defined(POCO_OS_FAMILY_UNIX)
-                binary = "sh";
+                binary = "bash";
                 arguments.push_back( "-c" );
 #elif defined(POCO_OS_FAMILY_WINDOWS)
                 binary = "cmd";

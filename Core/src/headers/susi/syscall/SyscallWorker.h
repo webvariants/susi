@@ -62,6 +62,10 @@ namespace Susi {
                 Poco::Pipe outPipe;
                 Poco::Pipe errPipe;
                 try{
+                    LOG(DEBUG) << "command: "<<_command;
+                    for(auto & arg : _args){
+                        LOG(DEBUG) << "arg:\t" << arg;
+                    }
                     Poco::ProcessHandle ph = Poco::Process::launch( _command, _args, 0, &outPipe, &errPipe );
                     Poco::PipeInputStream ostr( outPipe );
                     Poco::PipeInputStream estr( errPipe );
