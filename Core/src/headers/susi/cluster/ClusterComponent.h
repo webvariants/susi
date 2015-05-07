@@ -63,20 +63,29 @@ public:
 					}
 
 					Susi::Events::Processor processor = [this,apiClient](Susi::Events::EventPtr event){
+						LOG(DEBUG) << "received event from other cluster node: "<<event->toString();
 						struct FinishCallback {
 							Susi::Events::EventPtr mainEvent;
-							FinishCallback(Susi::Events::EventPtr evt) : mainEvent{std::move(evt)} {}
-							FinishCallback(FinishCallback && other) : mainEvent{std::move(other.mainEvent)} {}
-							FinishCallback(FinishCallback & other) : mainEvent{std::move(other.mainEvent)} {}
+							std::shared_ptr<Susi::Api::ApiClient> apiClient;
+							FinishCallback(Susi::Events::EventPtr evt) : 
+								mainEvent{std::move(evt)} {}
+							FinishCallback(FinishCallback && other) : 
+								mainEvent{std::move(other.mainEvent)} {}
+							FinishCallback(FinishCallback & other) : 
+								mainEvent{std::move(other.mainEvent)} {}
 							void operator()(Susi::Events::SharedEventPtr subEvent){
+								LOG(DEBUG) << "in finish callback";
 								*mainEvent = *subEvent;
 							}
 						};
 						if(!checkIfInBlacklist(event->id)){
+							LOG(DEBUG) << "event not in blacklist";
 							addToBlacklist(event->id);
 							auto evt = createEvent(event->topic);
 							*evt = *event;
 							publish(std::move(evt),FinishCallback{std::move(event)});
+						}else{
+							LOG(DEBUG) << "event is blacklisted!";
 						}
 					};
 
