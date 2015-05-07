@@ -25,6 +25,13 @@ namespace Susi {
             virtual long subscribe( Predicate pred, Processor processor, std::string name="" );
             virtual long subscribe( std::string topic, Consumer consumer, std::string name="" );
             virtual long subscribe( Predicate pred, Consumer consumer, std::string name="" );
+
+            virtual long registerProcessor( std::string topic, Processor processor, std::string name="" ){
+                return subscribe(topic,processor,name);
+            }
+            virtual long registerConsumer( std::string topic, Consumer consumer, std::string name="" ){
+                return subscribe(topic,consumer,name);
+            }
             virtual bool unsubscribe( long id );
             // public publish api function
             virtual void publish( EventPtr event, Consumer finishCallback = Consumer {}, bool processorsOnly = false, bool consumersOnly = false, bool highPrio = true );

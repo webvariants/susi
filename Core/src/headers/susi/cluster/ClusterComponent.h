@@ -12,7 +12,7 @@
 #ifndef __CLUSTERCOMPONENT__
 #define __CLUSTERCOMPONENT__
 
-#include "susi/world/ComponentManager.h"
+#include "susi/world/BaseComponent.h"
 #include "susi/logger/easylogging++.h"
 
 #include "susi/apiserver/ApiClient.h"
@@ -22,24 +22,18 @@ namespace Susi {
 class ClusterComponent : public Susi::System::BaseComponent {
 protected:
 	BSON::Array nodes;
-	std::vector<std::shared_ptr<Susi::Api::ApiClient>> apiClients;
+	//std::vector<std::shared_ptr<Susi::Api::ApiClient>> apiClients;
+	std::map<std::string,std::shared_ptr<Susi::Api::ApiClient>> apiClients;
 	std::deque<std::string> eventBlacklist;
 
-	void addToBlacklist(std::string & id){
-		eventBlacklist.push_front(id);
-		while(eventBlacklist.size() > 64){
-			eventBlacklist.pop_back();
-		}
-	}
+	void addToBlacklist(std::string & id);
+	bool checkIfInBlacklist(std::string & id);
 
-	bool checkIfInBlacklist(std::string & id){
-		for(auto & entry : eventBlacklist){
-			if(entry == id){
-				return true;
-			}
-		}
-		return false;
-	}
+	void validateNode(BSON::Value & node);
+	void setupNode(BSON::Value & node);
+	void registerProcessorForNode(std::string nodeId, std::string topic);
+	void registerConsumerForNode(std::string nodeId, std::string topic);
+	void registerForwardingForNode(std::string nodeId, std::string topic);
 
 public:
 	ClusterComponent(Susi::System::ComponentManager *mgr, BSON::Value config) : Susi::System::BaseComponent{mgr} {
@@ -51,48 +45,8 @@ public:
 
 	virtual void start() override {
 		for(auto & node : nodes){
-			if(!node.isObject() || !node["addr"].isString()){
-				throw std::runtime_error{"ClusterComponent: config is malformed."};
-			}
-			auto apiClient = std::make_shared<Susi::Api::ApiClient>(node["addr"].getString());
-			apiClients.push_back(apiClient);
-			if(node["topics"].isArray()){
-				for(auto & topic : node["topics"].getArray()){
-					if(!topic.isString()){
-						throw std::runtime_error{"ClusterComponent: config is malformed."};
-					}
-
-					Susi::Events::Processor processor = [this,apiClient](Susi::Events::EventPtr event){
-						LOG(DEBUG) << "received event from other cluster node: "<<event->toString();
-						struct FinishCallback {
-							Susi::Events::EventPtr mainEvent;
-							std::shared_ptr<Susi::Api::ApiClient> apiClient;
-							FinishCallback(Susi::Events::EventPtr evt) : 
-								mainEvent{std::move(evt)} {}
-							FinishCallback(FinishCallback && other) : 
-								mainEvent{std::move(other.mainEvent)} {}
-							FinishCallback(FinishCallback & other) : 
-								mainEvent{std::move(other.mainEvent)} {}
-							void operator()(Susi::Events::SharedEventPtr subEvent){
-								LOG(DEBUG) << "in finish callback";
-								*mainEvent = *subEvent;
-							}
-						};
-						if(!checkIfInBlacklist(event->id)){
-							LOG(DEBUG) << "event not in blacklist";
-							addToBlacklist(event->id);
-							auto evt = createEvent(event->topic);
-							*evt = *event;
-							publish(std::move(evt),FinishCallback{std::move(event)});
-						}else{
-							LOG(DEBUG) << "event is blacklisted!";
-						}
-					};
-
-					apiClient->subscribe(topic.getString(),processor);
-					LOG(INFO) << "subscribed to topic "<<topic.getString()<<" @ "<<node["addr"].getString();
-				}
-			}
+			validateNode(node);
+			setupNode(node);
 		}
 	}
 
