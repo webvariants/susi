@@ -104,21 +104,27 @@ duk_ret_t Susi::Duktape::JSEngine::js_unregister(duk_context *ctx) {
 }
 
 void Susi::Duktape::JSEngine::registerProcessor(std::string topic){
-	registerIds[topic] = BaseComponent::subscribe(topic,Susi::Events::Processor{[this,topic](Susi::Events::EventPtr event){
+    registerIds[topic] = BaseComponent::subscribe(topic,Susi::Events::Processor{[this,topic](Susi::Events::EventPtr event){
+        const std::string eventID = event->id;
 		try{
             std::lock_guard<std::mutex> lock{mutex};
     		auto eventString = event->toString();
-    		pendingEvents[event->id] = std::move(event);
+    		pendingEvents[eventID] = std::move(event);
     		duk_push_global_object(ctx);
             duk_get_prop_string(ctx, -1 /*index*/, "_processProcessorEvent");
             duk_push_string(ctx, eventString.c_str());
             duk_push_string(ctx, topic.c_str());
             if (duk_pcall(ctx, 2 /*nargs*/) != 0) {
-                LOG(ERROR) << (std::string{"Error: "}+duk_safe_to_string(ctx, -1));
+                std::string err = duk_safe_to_string(ctx, -1);
+                LOG(ERROR) << err;
+                throw std::runtime_error{err};
             }
             duk_pop(ctx);  /* pop result/error */
         }catch(const std::exception & e){
-            event->headers.push_back({"error",e.what()});
+            std::string err = e.what();
+            auto & pendingEvent = pendingEvents.at(eventID);
+            pendingEvent->headers.push_back({"error",err});
+            pendingEvents.erase(eventID);
         }
 	}});
 }
