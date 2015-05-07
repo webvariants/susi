@@ -31,7 +31,7 @@ module.exports = function(grunt) {
         }
       },
       make_core: {
-        command: 'make -j4 susi',
+        command: 'make -j8 susi',
         options: {
           stderr: false,
           execOptions: {
@@ -40,7 +40,7 @@ module.exports = function(grunt) {
         }
       },
       make_test: {
-        command: 'make -j4 susi_test',
+        command: 'make -j8 susi_test',
         options: {
           stderr: false,
           execOptions: {
@@ -57,7 +57,7 @@ module.exports = function(grunt) {
         }
       },
       make_install: {
-        command: 'make -j4 install',
+        command: 'make -j8 install',
         options: {
           stderr: false,
           execOptions: {
