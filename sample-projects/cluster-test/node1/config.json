@@ -23,8 +23,10 @@
   "cluster": {
     "nodes": [
       {
+        "id": "node2",
         "addr": "127.0.0.1:4002",
-	"topics": ["*@node1","*@all"]
+        "processors": ["*@node1"],
+        "forward": ["*@n1-to-n2"]
       }
     ]
   }

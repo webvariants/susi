@@ -48,6 +48,7 @@ void Susi::ClusterComponent::validateNode(BSON::Value & node){
 }
 
 void Susi::ClusterComponent::setupNode(BSON::Value & node){
+	LOG(DEBUG) << "configure cluster node: "<<node.toJSON();
 	std::string id = node["id"];
 	auto apiClient = std::make_shared<Susi::Api::ApiClient>(node["addr"].getString());
 	apiClients[id] = apiClient;
@@ -62,15 +63,20 @@ void Susi::ClusterComponent::setupNode(BSON::Value & node){
 		}
 	}
 	if(!node["forward"].isUndefined()){
-		for(std::string & topic : node["consumers"].getArray()){
+		for(std::string & topic : node["forward"].getArray()){
 			registerForwardingForNode(id,topic);
 		}
 	}
 }
 
 void Susi::ClusterComponent::registerProcessorForNode(std::string nodeId, std::string topic){
+	LOG(DEBUG) << "setup processor for "<<nodeId<<": "<<topic;
 	auto & apiClient = apiClients[nodeId];
 	apiClient->registerProcessor(topic,[this,nodeId](Susi::Events::EventPtr remoteEvent){
+		if(checkIfInBlacklist(remoteEvent->id)){
+			return;
+		}
+		addToBlacklist(remoteEvent->id);
 		struct FinishCallback {
 			Susi::Events::EventPtr remoteEvent;
 			FinishCallback(Susi::Events::EventPtr evt) : 
@@ -91,8 +97,13 @@ void Susi::ClusterComponent::registerProcessorForNode(std::string nodeId, std::s
 }
 
 void Susi::ClusterComponent::registerConsumerForNode(std::string nodeId, std::string topic){
+	LOG(DEBUG) << "setup consumer for "<<nodeId<<": "<<topic;
 	auto & apiClient = apiClients[nodeId];
 	apiClient->registerConsumer(topic,[this,nodeId](Susi::Events::SharedEventPtr remoteEvent){
+		if(checkIfInBlacklist(remoteEvent->id)){
+			return;
+		}
+		addToBlacklist(remoteEvent->id);
 		auto localEvent = this->createEvent(remoteEvent->topic);
 		*localEvent = *remoteEvent;
 		this->publish(std::move(localEvent));
@@ -100,7 +111,13 @@ void Susi::ClusterComponent::registerConsumerForNode(std::string nodeId, std::st
 }
 
 void Susi::ClusterComponent::registerForwardingForNode(std::string nodeId, std::string topic){
-	this->subscribe(topic,[this,nodeId](Susi::Events::EventPtr localEvent){
+	LOG(DEBUG) << "setup forwarding to "<<nodeId<<": "<<topic;
+	this->subscribe(topic,[this,nodeId,topic](Susi::Events::EventPtr localEvent){
+		if(checkIfInBlacklist(localEvent->id)){
+			return;
+		}
+		addToBlacklist(localEvent->id);
+		LOG(DEBUG) << "Forwarding to "<<nodeId<<": "<<topic;
 		struct FinishCallback {
 			Susi::Events::EventPtr localEvent;
 			FinishCallback(Susi::Events::EventPtr evt) : 
@@ -110,11 +127,13 @@ void Susi::ClusterComponent::registerForwardingForNode(std::string nodeId, std::
 			FinishCallback(FinishCallback & other) : 
 				localEvent{std::move(other.localEvent)} {}
 			void operator()(Susi::Events::SharedEventPtr remoteEvent){
+				LOG(DEBUG) << "Forwarding finished.";
 				*localEvent = *remoteEvent;
 			}
 		};
 		auto & apiClient = apiClients[nodeId];
-		auto remoteEvent = apiClient->createEvent(localEvent->id);
+		auto remoteEvent = apiClient->createEvent(localEvent->topic);
+		*remoteEvent = *localEvent;
 		FinishCallback finishCallback{std::move(localEvent)};
 		apiClient->publish(std::move(remoteEvent),std::move(finishCallback));
 	});
