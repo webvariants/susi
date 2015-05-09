@@ -22,15 +22,12 @@ namespace Susi {
 
         class ApiClient : protected BasicApiClient, public Susi::Events::Manager {
         public:
-            ApiClient( std::string addr ) : BasicApiClient {addr}, addr{addr} {
-                Susi::Api::TCPClient::setMaxReconnectCount(5);
-            }
+            ApiClient( std::string addr ) : BasicApiClient {addr}, addr{addr} {}
             void close() {
                 BasicApiClient::close();
             }
             virtual ~ApiClient() {
                 close();
-                LOG(INFO) << "Stopped ApiClient-Component.";
             }
             virtual void publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback = Susi::Events::Consumer {}, bool processorsOnly = false, bool consumersOnly = false , bool highPrio = true);
             virtual long subscribe( std::string topic, Susi::Events::Processor processor , std::string name = "");
@@ -53,10 +50,12 @@ namespace Susi {
             virtual void onAck( Susi::Events::Event & event ) override;
 
             virtual void onConnect() override {
-                LOG(INFO) << "Connected ApiClient to " << addr;
+                auto event = createEvent("connection::connect");
+                Susi::Events::Manager::publish(std::move(event));
             };
             virtual void onClose() override {
-                LOG(INFO) << "Lost connection to " << addr;
+                auto event = createEvent("connection::close");
+                Susi::Events::Manager::publish(std::move(event));
             };
             virtual void onReconnect() override;
 

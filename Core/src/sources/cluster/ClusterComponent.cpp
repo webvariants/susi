@@ -52,6 +52,24 @@ void Susi::ClusterComponent::setupNode(BSON::Value & node){
 	std::string id = node["id"];
 	auto apiClient = std::make_shared<Susi::Api::ApiClient>(node["addr"].getString());
 	apiClients[id] = apiClient;
+
+	apiClient->registerConsumer("connection::connect",[this,id](Susi::Events::SharedEventPtr evt){
+		LOG(INFO) << "ClusterComponent: node " << id <<" is now online";
+		auto event = createEvent("cluster::node::open");
+		event->payload = id;
+		publish(std::move(event));
+	});
+
+	apiClient->registerConsumer("connection::close",[this,id](Susi::Events::SharedEventPtr evt){
+		LOG(INFO) << "ClusterComponent: node " << id <<" is now offline";
+		auto event = createEvent("cluster::node::close");
+		event->payload = id;
+		publish(std::move(event));
+	});
+
+	//forward all events "*@$NODE_ID" to this node.
+	registerForwardingForNode(id,"*@"+id);
+
 	if(!node["processors"].isUndefined()){
 		for(std::string & topic : node["processors"].getArray()){
 			registerProcessorForNode(id,topic);

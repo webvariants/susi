@@ -81,6 +81,7 @@ void Susi::Api::BasicApiClient::onMessage( BSON::Value & message ) {
         Susi::Events::Event event {message["data"]};
         onProcessorEvent( event );
     }
-    else {
+    else if( type=="shutdown"){
+        onClose();
     }
 }

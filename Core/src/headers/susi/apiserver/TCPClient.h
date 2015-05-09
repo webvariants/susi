@@ -41,15 +41,9 @@ namespace Susi {
             void join() ;
             virtual ~TCPClient() ;
 
-            void setMaxReconnectCount(size_t count) {
-                maxReconnectCount = count;
-            }
-
         private:
 
             void startRunloop();
-
-            size_t maxReconnectCount = 5;
 
             std::atomic<bool> isClosed{false};
             Poco::Net::SocketAddress sa;

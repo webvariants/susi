@@ -51,6 +51,9 @@ public:
 	}
 
 	virtual void stop() override {
+		for(auto & kv : apiClients){
+			kv.second->close();
+		}
 		apiClients.clear();
 	}
 

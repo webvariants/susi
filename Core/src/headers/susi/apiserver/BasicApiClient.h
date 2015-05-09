@@ -41,6 +41,8 @@ namespace Susi {
             virtual void onProcessorEvent( Susi::Events::Event & event ) {};
             virtual void onAck( Susi::Events::Event & event ) {};
 
+            virtual void onClose() {};
+
             void sendPublish( Susi::Events::Event & event );
             void sendRegisterConsumer( std::string topic , std::string name = "");
             void sendRegisterProcessor( std::string topic , std::string name = "");

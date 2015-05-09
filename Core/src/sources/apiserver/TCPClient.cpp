@@ -51,7 +51,7 @@ void Susi::Api::TCPClient::startRunloop(){
         [this]() {
             char buff[1024];
             int bs;
-            bool onCloseCalled = false;
+            bool onCloseCalled = true;
             while( !(isClosed.load()) ) { // data chunk loop
                 try {
                     bs = sock.receiveBytes( buff,1024 );
