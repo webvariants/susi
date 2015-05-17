@@ -26,6 +26,9 @@ protected:
 	std::map<std::string,std::shared_ptr<Susi::Api::ApiClient>> apiClients;
 	std::deque<std::string> eventBlacklist;
 
+	//@TODO: implement the housekeeping for this list!
+	std::vector<std::string> onlineList;
+
 	void addToBlacklist(std::string & id);
 	bool checkIfInBlacklist(std::string & id);
 
