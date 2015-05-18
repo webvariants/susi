@@ -48,6 +48,24 @@ public:
 			validateNode(node);
 			setupNode(node);
 		}
+		subscribe(std::string{"cluster::registerProcessor"},[this](Susi::Events::EventPtr evt){
+			if(!evt->payload.isObject() || !evt->payload["node"].isString() || !evt->payload["topic"].isString()){
+				throw std::runtime_error{"you must specify 'node' and 'topic'"};
+			}
+			registerProcessorForNode(evt->payload["node"].getString(), evt->payload["topic"].getString());
+		});
+		subscribe(std::string{"cluster::registerConsumer"},[this](Susi::Events::EventPtr evt){
+			if(!evt->payload.isObject() || !evt->payload["node"].isString() || !evt->payload["topic"].isString()){
+				throw std::runtime_error{"you must specify 'node' and 'topic'"};
+			}
+			registerConsumerForNode(evt->payload["node"].getString(), evt->payload["topic"].getString());
+		});
+		subscribe(std::string{"cluster::forward"},[this](Susi::Events::EventPtr evt){
+			if(!evt->payload.isObject() || !evt->payload["node"].isString() || !evt->payload["topic"].isString()){
+				throw std::runtime_error{"you must specify 'node' and 'topic'"};
+			}
+			registerForwardingForNode(evt->payload["node"].getString(), evt->payload["topic"].getString());
+		});
 	}
 
 	virtual void stop() override {
