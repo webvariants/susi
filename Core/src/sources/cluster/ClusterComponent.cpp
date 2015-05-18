@@ -110,7 +110,7 @@ void Susi::ClusterComponent::registerProcessorForNode(std::string nodeId, std::s
 		auto localEvent = this->createEvent(remoteEvent->topic);
 		*localEvent = *remoteEvent;
 		FinishCallback finishCallback{std::move(remoteEvent)};
-		this->publish(std::move(localEvent),std::move(finishCallback));
+		this->publish(std::move(localEvent),std::move(Susi::Events::Consumer{finishCallback}));
 	});
 }
 
