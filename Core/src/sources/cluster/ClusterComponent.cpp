@@ -146,7 +146,9 @@ void Susi::ClusterComponent::registerForwardingForNode(std::string nodeId, std::
 				localEvent{std::move(other.localEvent)} {}
 			void operator()(Susi::Events::SharedEventPtr remoteEvent){
 				LOG(DEBUG) << "Forwarding finished.";
-				*localEvent = *remoteEvent;
+				if(localEvent){
+					*localEvent = *remoteEvent;
+				}
 			}
 		};
 		auto & apiClient = apiClients[nodeId];
