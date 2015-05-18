@@ -18,6 +18,7 @@
 #include <map>
 #include <tuple>
 #include <memory>
+#include <random>
 
 #include "susi/db/DBComponent.h"
 #include "susi/sessions/SessionManagerComponent.h"
