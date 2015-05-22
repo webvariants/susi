@@ -42,18 +42,26 @@ namespace Susi {
                 return Susi::Events::Manager::createEvent( topic );
             }
             
+            bool isConnected(){
+                return connected;
+            }
+
         protected:
             std::string addr;
+
+            bool connected = false;
 
             virtual void onConsumerEvent( Susi::Events::Event & event ) override;
             virtual void onProcessorEvent( Susi::Events::Event & event ) override;
             virtual void onAck( Susi::Events::Event & event ) override;
 
             virtual void onConnect() override {
+                connected = true;
                 auto event = createEvent("connection::connect");
                 Susi::Events::Manager::publish(std::move(event));
             };
             virtual void onClose() override {
+                connected = false;
                 auto event = createEvent("connection::close");
                 Susi::Events::Manager::publish(std::move(event));
             };

@@ -1,6 +1,7 @@
 #include "susi/apiserver/ApiClient.h"
 
 void Susi::Api::ApiClient::publish( Susi::Events::EventPtr event, Susi::Events::Consumer finishCallback, bool processorsOnly, bool consumersOnly, bool highPrio) {
+    if(!connected)throw std::runtime_error{"apiclient currently not connected"};
     PublishData data{*event,finishCallback};
     publishs[event->getID()] = data;
     sendPublish( *event );

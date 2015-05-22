@@ -66,6 +66,12 @@ public:
 			}
 			registerForwardingForNode(evt->payload["node"].getString(), evt->payload["topic"].getString());
 		});
+		subscribe(std::string{"heartbeat::five"},Susi::Events::Consumer{[this](Susi::Events::SharedEventPtr){
+	                    for(auto & kv : apiClients){
+	                    	auto evt = kv.second->createEvent("session::update");
+	                    	kv.second->publish(std::move(evt));
+	                    } 
+  	            }});
 	}
 
 	virtual void stop() override {

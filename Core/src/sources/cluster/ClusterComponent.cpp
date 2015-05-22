@@ -131,7 +131,8 @@ void Susi::ClusterComponent::registerConsumerForNode(std::string nodeId, std::st
 void Susi::ClusterComponent::registerForwardingForNode(std::string nodeId, std::string topic){
 	LOG(DEBUG) << "setup forwarding to "<<nodeId<<": "<<topic;
 	this->subscribe(topic,[this,nodeId,topic](Susi::Events::EventPtr localEvent){
-		if(checkIfInBlacklist(localEvent->id)){
+		auto & apiClient = apiClients[nodeId];
+		if(!apiClient->isConnected() || checkIfInBlacklist(localEvent->id)){
 			return;
 		}
 		addToBlacklist(localEvent->id);
@@ -151,7 +152,6 @@ void Susi::ClusterComponent::registerForwardingForNode(std::string nodeId, std::
 				}
 			}
 		};
-		auto & apiClient = apiClients[nodeId];
 		auto remoteEvent = apiClient->createEvent(localEvent->topic);
 		*remoteEvent = *localEvent;
 		FinishCallback finishCallback{std::move(localEvent)};
