@@ -7,3 +7,4 @@ cppcheck_output.txt
 /.project
 /susi_package.deb
 /node_modules
+core
