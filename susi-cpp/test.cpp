@@ -1,8 +1,10 @@
-#include "headers/SSLClient.h"
+#include "susi/SusiClient.h"
 
-class Test : public Susi::SSLClient {
+#include "susi/ThreadPool.h"
+
+class Test : public Susi::SusiClient {
 public:
-	Test(std::string host, short port,std::string key,std::string cert) : SSLClient{host,port,key,cert} {}
+	Test(std::string host, short port,std::string key,std::string cert) : SusiClient{host,port,key,cert} {}
 
 	virtual void onConnect() override {
 		std::cout<<"connected"<<std::endl;
@@ -10,8 +12,8 @@ public:
 		send(msg);
 	}
 
-	virtual void onData(char * data, size_t len) override {
-		std::cout<<std::string{data,len};
+	virtual void onFrame(std::string & frame) override {
+		std::cout<<"special onFrame: "<<frame<<std::endl;
 	}
 
 	virtual void onClose() override {
@@ -20,7 +22,14 @@ public:
 };
 
 int main(){
-	Test client{"localhost",4000,"server.key","server.cert"};
-	client.join();
+	Susi::ThreadPool pool{4};
+	pool.add([](){std::cout<<"1"<<std::endl;});
+	pool.add([](){std::cout<<"2"<<std::endl;});
+	pool.add([](){std::cout<<"3"<<std::endl;});
+	pool.add([](){std::cout<<"4"<<std::endl;});
+	pool.add([](){std::cout<<"5"<<std::endl;});
+	pool.add([](){std::cout<<"6"<<std::endl;});
+	pool.add([](){std::cout<<"7"<<std::endl;});
+
 	return 0;
 }
