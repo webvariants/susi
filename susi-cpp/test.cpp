@@ -23,13 +23,15 @@ public:
 
 int main(){
 	Susi::ThreadPool pool{4};
-	pool.add([](){std::cout<<"1"<<std::endl;});
-	pool.add([](){std::cout<<"2"<<std::endl;});
-	pool.add([](){std::cout<<"3"<<std::endl;});
-	pool.add([](){std::cout<<"4"<<std::endl;});
-	pool.add([](){std::cout<<"5"<<std::endl;});
-	pool.add([](){std::cout<<"6"<<std::endl;});
-	pool.add([](){std::cout<<"7"<<std::endl;});
+	pool.add([](){std::cout<<"task 1"<<std::endl;});
+	pool.add([](){std::cout<<"task 2"<<std::endl;});
+	pool.add([](){std::cout<<"task 3"<<std::endl;});
+	pool.add([](){std::cout<<"task 4"<<std::endl;});
+	pool.add([](){std::cout<<"task 5"<<std::endl;});
+	pool.add([](){std::cout<<"task 6"<<std::endl;});
+	pool.add([](){std::cout<<"task 7"<<std::endl;});
+
+	std::this_thread::sleep_for(std::chrono::seconds{1});
 
 	return 0;
 }

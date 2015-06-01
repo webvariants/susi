@@ -27,14 +27,14 @@ namespace Susi{
             for(size_t i=0;i<numWorkers;i++){
                 workers_.emplace_back([this](){
                     while(!stop_.load()){
-                        Work work;
+                        Work work{};
                         {
                             std::unique_lock<std::mutex> lock( mutex_ );
                             workAvailable_.wait( lock,[this]() {
-                                return workQueue_.size() > 0 || stop_.load()==false;
+                                return workQueue_.size() > 0 || stop_.load();
                             });
                             if(!stop_.load()){
-                                work = std::move(workQueue_[0]);
+                                work = std::move(workQueue_.front());
                                 workQueue_.pop_front();
                             }
                         }
@@ -52,10 +52,26 @@ namespace Susi{
             }
         }
 
-        void add(std::function<void()> work, std::function<void(const std::string &)> error =  std::function<void(const std::string &)>{}){
+        void add(std::function<void()> && work, std::function<void(const std::string &)> && error =  std::function<void(const std::string &)>{}){
             std::unique_lock<std::mutex> lock( mutex_ );                
-            workQueue_.emplace_back(Work{std::move(work),std::move(error)});
+            workQueue_.push_back(Work{work,error});
             workAvailable_.notify_one();
+        }
+
+        void join(){
+            for(auto & t : workers_){
+                t.join();
+            }
+        }
+
+        void stop(){
+            stop_.store(true);
+            workAvailable_.notify_all();
+        }
+
+        ~ThreadPool(){
+            stop();
+            join();
         }
 
     protected:
