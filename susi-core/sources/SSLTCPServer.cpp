@@ -11,7 +11,11 @@
 
 #include "susi/SSLTCPServer.h"
 #include "susi/base64.h"  
- 
+
+using X509_ptr = std::unique_ptr<X509, decltype(&::X509_free)>;
+using BIO_MEM_ptr = std::unique_ptr<BIO, decltype(&::BIO_free)>;
+
+
 Susi::SSLTCPServer::SSLTCPServer(short port, std::string keyFile, std::string certFile) : 
   keyFile{keyFile},
   certFile{certFile}, 
@@ -40,15 +44,26 @@ Susi::SSLTCPServer::~SSLTCPServer(){
 }
 
 std::string Susi::SSLTCPServer::getPeerCertificateHash(int id){
-    return sessions[id]->getPeerCertificateHash();
+    try{
+        return sessions.at(id)->getPeerCertificateHash();
+    }catch(...){
+        return "";
+    }
+}
+
+std::string Susi::SSLTCPServer::getPeerCertificate(int id){
+    try{
+        return sessions.at(id)->getPeerCertificate();
+    }catch(...){
+        return "";
+    }
 }
 
 void Susi::SSLTCPServer::send(int id, const char *data, size_t len){
-    auto session = sessions[id];
-    if(!session){
-        throw std::runtime_error{"no such session"};
-    }
-    session->do_write(data,len);
+    try{
+        auto & session = sessions.at(id);
+        session->do_write(data,len);
+    }catch(...){}
 }
 
 
@@ -127,4 +142,14 @@ std::string Susi::SSLTCPServer::Session::getPeerCertificateHash(){
         return "";
     }
     return base64_encode((const unsigned char*)buf, len);
+}
+
+std::string Susi::SSLTCPServer::Session::getPeerCertificate(){
+    X509* cert = SSL_get_peer_certificate(socket_.native_handle());
+    BIO_MEM_ptr bio(BIO_new(BIO_s_mem()), ::BIO_free);
+    PEM_write_bio_X509(bio.get(), cert);
+    BUF_MEM *mem = NULL;
+    BIO_get_mem_ptr(bio.get(), &mem);
+    std::string pem{mem->data, mem->length};
+    return pem;
 }

@@ -33,6 +33,8 @@ namespace Susi {
         virtual void onClose(int id) = 0;
 
         std::string getPeerCertificateHash(int id);
+        std::string getPeerCertificate(int id);
+
 
         void send(int id, const char *data, size_t len);
 

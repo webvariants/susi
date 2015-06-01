@@ -56,6 +56,11 @@ namespace Susi {
         virtual void onConnect(int id) override {
             std::cout<<"got new client "<<id<<std::endl;
             FramingServer<JSONFramer,BaseServer>::onConnect(id);
+            BSON::Value sessionNewEvent = BSON::Object{
+                {"topic","core::session::new"},
+                {"payload", id}
+            };
+            publish(sessionNewEvent,0);
         }
 
         virtual void onClose(int id) override {
@@ -109,6 +114,11 @@ namespace Susi {
             for(auto & p : orphanedProcesses){
                 ack(p->lastState);
             }
+            BSON::Value sessionLostEvent = BSON::Object{
+                {"topic","core::session::lost"},
+                {"payload", id}
+            };
+            publish(sessionLostEvent,0);
         }
 
         virtual void onFrame(int id, std::string & frame) override {
@@ -279,9 +289,13 @@ namespace Susi {
         }
 
         void checkAndReactToSusiEvents(BSON::Value & event){
-            std::regex susiEventTopic{"susi::core::.*"};
+            std::regex susiEventTopic{"core::.*"};
             if(std::regex_match(event["topic"].getString(),susiEventTopic)){
-                std::cout<<"susi event!"<<std::endl;
+                if(event["topic"].getString() == "core::session::getCertificate"){
+                    long long id = event["payload"].getInt64();
+                    std::string cert = BaseServer::getPeerCertificate(id);
+                    event["payload"] = cert;
+                }
             }
         }
 

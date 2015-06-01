@@ -31,6 +31,10 @@ std::string Susi::TCPServer::getPeerCertificateHash(int id){
     return "";
 }
 
+std::string Susi::TCPServer::getPeerCertificate(int id){
+    return "";
+}
+
 void Susi::TCPServer::send(int id, const char *data, size_t len){
     auto session = sessions[id];
     if(!session){

@@ -7,3 +7,6 @@
 [submodule "Core/submodules/soci"]
 	path = Core/submodules/soci
 	url = https://github.com/SOCI/soci
+[submodule "submodules/libbson"]
+	path = submodules/libbson
+	url = https://github.com/trusch/libbson
