@@ -64,6 +64,7 @@ bool Susi::Auth::Controller::updateUser( std::string username, std::string passw
                    "VALUES('"+pwHash+"','"+salt+"',"+authlevelStr+") WHERE username='"+username+"';" );
     }
     catch( const std::exception & e ) {
+        LOG(ERROR) << e.what();
         return false;
     }
     return true;
