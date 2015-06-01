@@ -12,7 +12,6 @@
 #include "susi/SSLTCPServer.h"
 #include "susi/base64.h"  
 
-using X509_ptr = std::unique_ptr<X509, decltype(&::X509_free)>;
 using BIO_MEM_ptr = std::unique_ptr<BIO, decltype(&::BIO_free)>;
 
 
