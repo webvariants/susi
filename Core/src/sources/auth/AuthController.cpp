@@ -60,7 +60,7 @@ bool Susi::Auth::Controller::updateUser( std::string username, std::string passw
             LOG(ERROR) <<  "username seems to be an sql injection: "+username ;
             return false;
         }
-        db->query( "UPDATE users SET password='"+pwHash+"', salt='"+salt+"', authlevel="+authlevelStr+" WHERE username='"+username+"';";
+        db->query( "UPDATE users SET password='"+pwHash+"', salt='"+salt+"', authlevel="+authlevelStr+" WHERE username='"+username+"';");
     }
     catch( const std::exception & e ) {
         LOG(ERROR) << e.what();
