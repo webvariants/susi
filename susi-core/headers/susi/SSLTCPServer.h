@@ -14,6 +14,7 @@
 
 #include <memory>
 #include <utility>
+#include <deque>
 #include <thread>
 #include <boost/asio.hpp>
 #include <boost/asio/ssl.hpp>
@@ -45,6 +46,7 @@ namespace Susi {
 
         class Session : public std::enable_shared_from_this<Session> {
         public:
+            boost::asio::io_service& io_service_;
             ssl_socket socket_;
             Susi::SSLTCPServer *server;
 
@@ -56,7 +58,9 @@ namespace Susi {
 
             void do_read();
 
-            void do_write(const char *data, size_t len);
+            void do_write();
+
+            void send(std::string msg);
 
             std::string getPeerCertificateHash();
             std::string getPeerCertificate();
@@ -65,6 +69,7 @@ namespace Susi {
             std::string certFile;
             enum { max_length = 1024 };
             char data_[max_length];
+            std::deque<std::string> write_msgs_;
         };
 
 

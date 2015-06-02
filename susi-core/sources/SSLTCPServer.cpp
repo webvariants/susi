@@ -61,7 +61,7 @@ std::string Susi::SSLTCPServer::getPeerCertificate(int id){
 void Susi::SSLTCPServer::send(int id, const char *data, size_t len){
     try{
         auto & session = sessions.at(id);
-        session->do_write(data,len);
+        session->send({data,len});
     }catch(...){}
 }
 
@@ -85,6 +85,7 @@ ssl_socket::lowest_layer_type& Susi::SSLTCPServer::Session::socket() {
 }
 
 Susi::SSLTCPServer::Session::Session(boost::asio::io_service& io_service, boost::asio::ssl::context& context, SSLTCPServer * server) : 
+  io_service_{io_service},
   socket_{io_service, context}, 
   server{server} {}
 
@@ -116,15 +117,33 @@ void Susi::SSLTCPServer::Session::do_read() {
         });
 }
 
-void Susi::SSLTCPServer::Session::do_write(const char *data, size_t len) {
+void Susi::SSLTCPServer::Session::do_write() {
     auto self(shared_from_this());
-    boost::asio::async_write(socket_, boost::asio::buffer(data,len),
-        [this, self](boost::system::error_code ec, std::size_t /*length*/) {
-            if(ec){
-                server->onClose(socket().native_handle());
-                server->sessions.erase(socket().native_handle());
+    boost::asio::async_write(socket_,
+        boost::asio::buffer(write_msgs_.front().data(), write_msgs_.front().length()),
+        [this,self](boost::system::error_code ec, std::size_t /*length*/) {
+          if (!ec) {
+            write_msgs_.pop_front();
+            if (!write_msgs_.empty()) {
+              do_write();
             }
+          }else{
+            server->onClose(socket().native_handle());
+            server->sessions.erase(socket().native_handle());
+          }
         });
+}
+
+void Susi::SSLTCPServer::Session::send(std::string msg){
+        io_service_.post(
+            [this, msg]()
+            {
+              bool write_in_progress = !write_msgs_.empty();
+              write_msgs_.push_back(msg);
+              if (!write_in_progress) {
+                do_write();
+              }
+            });
 }
 
 std::string Susi::SSLTCPServer::Session::getPeerCertificateHash(){

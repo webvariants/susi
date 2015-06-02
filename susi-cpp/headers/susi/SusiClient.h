@@ -16,6 +16,9 @@
 #include "susi/JSONFramer.h"
 
 #include <iostream>
+#include <functional>
+#include <chrono>
+#include <regex>
 
 #ifdef WITH_SSL
     #include "SSLClient.h"
@@ -26,20 +29,50 @@
 #endif
 
 namespace Susi {
+
+    typedef std::function<void(BSON::Value &)> Processor;
+    typedef std::function<void(const BSON::Value &)> Consumer;
+
     class SusiClient : public FramingClient<JSONFramer,Client> {
     public:
         SusiClient(std::string host, short port) : FramingClient<JSONFramer,Client>{host,port} {}
+        
         #ifdef WITH_SSL
             SusiClient(std::string host, short port, std::string keyFile, std::string certificateFile) :
                 FramingClient<JSONFramer,Client>{host,port,keyFile,certificateFile} {}
         #endif
-
-        virtual void onFrame(std::string & frame) override {
-            std::cout<<"onFrame: "<<frame;
-        }
-
-
+        
         virtual ~SusiClient() {}
+
+        void publish(std::string topic, BSON::Value payload, Consumer finishCallback = Consumer{});
+
+        std::uint64_t registerProcessor(std::string topic, Processor processor);
+        std::uint64_t registerConsumer(std::string topic, Consumer consumer);
+        bool unregisterProcessor(std::uint64_t id);
+        bool unregisterConsumer(std::uint64_t id);
+
+    protected:
+        bool isConnected = false;
+        std::deque<std::shared_ptr<BSON::Value>> messageQueue;
+        std::map<std::string,int> registerProcessorCounter;
+        std::map<std::string,int> registerConsumerCounter;
+
+        void sendRegisterProcessor(std::string proc);
+        void sendRegisterConsumer(std::string proc);
+
+        virtual void onConnect() override;
+        virtual void onFrame(std::string & frame) override;
+        virtual void onClose() override;
+
+        void onAck(BSON::Value & event);
+        void onConsumerEvent(BSON::Value & event);
+        void onProcessorEvent(BSON::Value & event);
+
+        std::uint64_t generateId();
+
+        std::map<std::uint64_t,std::pair<std::string,Processor>> processors;
+        std::map<std::uint64_t,std::pair<std::string,Consumer>> consumers;
+        std::map<std::string,Consumer> finishCallbacks;
 
     };
 

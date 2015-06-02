@@ -22,7 +22,8 @@ if(WITH_SSL)
 	set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 -DWITH_SSL" )
 	
 	file( GLOB SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/TCPClient.cpp
-			       ${CMAKE_CURRENT_SOURCE_DIR}/sources/SSLClient.cpp )
+			       ${CMAKE_CURRENT_SOURCE_DIR}/sources/SSLClient.cpp 
+			       ${CMAKE_CURRENT_SOURCE_DIR}/sources/SusiClient.cpp )
 	
 	file( GLOB HEADERFILES ${CMAKE_CURRENT_SOURCE_DIR}/headers/TCPClient.h )
 	

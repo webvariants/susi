@@ -172,12 +172,14 @@ namespace Susi {
         }
 
         void registerConsumer(std::string & topic, int id){
+            std::cout<<"register consumer for "<<id<<std::endl;
             if(!contains(consumers[topic],id)){
                 consumers[topic].push_back(id);
             }
         }
 
         void registerProcessor(std::string & topic, int id){
+            std::cout<<"register processor for "<<id<<std::endl;
             if(!contains(processors[topic],id)){
                 processors[topic].push_back(id);
             }
@@ -202,6 +204,7 @@ namespace Susi {
         }
 
         void publish(BSON::Value & event, int publisher){
+            std::cout<<"publish event for "<<publisher<<std::endl;
             std::string & topic = event["topic"];
             if(!event["id"].isString()){
                 long id = std::chrono::system_clock::now().time_since_epoch().count();
@@ -268,9 +271,11 @@ namespace Susi {
                     {"type","ack"},
                     {"data", event}
                 };
+                std::cout<<"send ack to publisher "<<process->publisher<<std::endl;
                 send(process->publisher,publisherAck);
                 publishProcesses.erase(id);
             }else{
+                std::cout<<"forward event to "<<process->processors[process->nextProcessor]<<std::endl;
                 BSON::Value processorEvent = BSON::Object{
                     {"type","processorEvent"},
                     {"data", event}
