@@ -101,3 +101,20 @@ void Susi::SSLClient::do_write(){
           }
         });
 }
+
+std::string Susi::SSLClient::getCertificateHash(){
+    std::string cert = getCertificate();
+    SHA3 sha3;
+    return sha3(cert);
+}
+
+std::string Susi::SSLClient::getCertificate(){
+    using BIO_MEM_ptr = std::unique_ptr<BIO, decltype(&::BIO_free)>;
+    X509* cert = SSL_get_certificate(socket_->native_handle());
+    BIO_MEM_ptr bio(BIO_new(BIO_s_mem()), ::BIO_free);
+    PEM_write_bio_X509(bio.get(), cert);
+    BUF_MEM *mem = NULL;
+    BIO_get_mem_ptr(bio.get(), &mem);
+    std::string pem{mem->data, mem->length};
+    return pem;
+}

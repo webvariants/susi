@@ -39,6 +39,8 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/susi-core)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-core/headers)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/susi-cpp)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-cpp/headers)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/susi-util)
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-util/headers)
 
 SET(CPACK_GENERATOR "DEB")
 SET(CPACK_SET_DESTDIR ON)

@@ -14,40 +14,26 @@
 
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
-project(susi-cpp)
+project(susi-util)
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/headers )
 
 if(WITH_SSL)
 	set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 -DWITH_SSL" )
 	
-	file( GLOB SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/TCPClient.cpp
-			       ${CMAKE_CURRENT_SOURCE_DIR}/sources/SSLClient.cpp 
-			       ${CMAKE_CURRENT_SOURCE_DIR}/sources/SusiClient.cpp )
+	file( GLOB SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/main.cpp)
 	
-	file( GLOB HEADERFILES ${CMAKE_CURRENT_SOURCE_DIR}/headers/TCPClient.h )
-	
-	add_library( ${PROJECT_NAME} SHARED ${SRCFILES})
-	target_link_libraries(${PROJECT_NAME}
-		${CMAKE_THREAD_LIBS_INIT}
-		${Boost_LIBRARIES}
-		${OPENSSL_LIBRARIES}
-		bson
-		susi-common)
+	add_executable( ${PROJECT_NAME} ${SRCFILES})
+	target_link_libraries(${PROJECT_NAME} susi-cpp)
 else(WITH_SSL)
 	set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11" )	
 	
 	file( GLOB SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/TCPClient.cpp )
 	
-	file( GLOB HEADERFILES ${CMAKE_CURRENT_SOURCE_DIR}/headers/TCPClient.h )
-	
-	add_library( ${PROJECT_NAME} SHARED ${SRCFILES})
-	target_link_libraries(${PROJECT_NAME}
-		${CMAKE_THREAD_LIBS_INIT}
-		${Boost_LIBRARIES}
-		bson
-		susi-common)	
+	add_executable( ${PROJECT_NAME} ${SRCFILES})
+	target_link_libraries(${PROJECT_NAME} susi-cpp)	
 endif(WITH_SSL)
 
-install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION "/usr/local/lib")
+
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "/usr/local/bin")
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/headers/ DESTINATION /usr/local/include)

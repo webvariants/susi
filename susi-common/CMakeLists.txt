@@ -20,7 +20,9 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/headers )
 
 set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 -Os -DWITH_SSL" )
 
-file( GLOB SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/JSONFramer.cpp)
+file( GLOB SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/JSONFramer.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/sources/base64.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/sources/sha3.cpp)
 
 file( GLOB HEADERFILES ${CMAKE_CURRENT_SOURCE_DIR}/headers/*.h )
 

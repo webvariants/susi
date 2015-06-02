@@ -19,6 +19,8 @@
 #include <boost/asio/ssl.hpp>
 #include <chrono>
 
+#include "susi/sha3.h"
+
 using boost::asio::ip::tcp;
 
 namespace Susi {
@@ -37,6 +39,10 @@ namespace Susi {
         virtual void onClose() = 0;
 
         void send(std::string msg);
+
+        std::string getCertificateHash();
+        std::string getCertificate();
+  
 
     protected:
 

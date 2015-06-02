@@ -54,7 +54,8 @@ namespace Susi {
         virtual ~SusiServer() {}
 
         virtual void onConnect(int id) override {
-            std::cout<<"got new client "<<id<<std::endl;
+            std::cout<<"got new client "<<BaseServer::getPeerCertificateHash(id)<<std::endl;
+            std::cout<<BaseServer::getPeerCertificate(id)<<std::endl;
             FramingServer<JSONFramer,BaseServer>::onConnect(id);
             BSON::Value sessionNewEvent = BSON::Object{
                 {"topic","core::session::new"},

@@ -92,8 +92,6 @@ Susi::SSLTCPServer::Session::Session(boost::asio::io_service& io_service, boost:
 void Susi::SSLTCPServer::Session::start() {
     socket_.async_handshake(boost::asio::ssl::stream_base::server,[this](boost::system::error_code ec){
         if(!ec){
-            std::cout<<"handshake ready"<<std::endl;
-            std::cout<<"peer cert: "<<getPeerCertificateHash()<<std::endl;
             do_read(); 
         }else{
             std::cerr<<ec.message()<<std::endl;
@@ -135,35 +133,25 @@ void Susi::SSLTCPServer::Session::do_write() {
 }
 
 void Susi::SSLTCPServer::Session::send(std::string msg){
-        io_service_.post(
-            [this, msg]()
-            {
-              bool write_in_progress = !write_msgs_.empty();
-              write_msgs_.push_back(msg);
-              if (!write_in_progress) {
-                do_write();
-              }
-            });
+    io_service_.post(
+        [this, msg]()
+        {
+          bool write_in_progress = !write_msgs_.empty();
+          write_msgs_.push_back(msg);
+          if (!write_in_progress) {
+            do_write();
+          }
+        });
 }
 
 std::string Susi::SSLTCPServer::Session::getPeerCertificateHash(){
-    X509* cert = SSL_get_peer_certificate(socket_.native_handle());
-    #define SHA1LEN 20
-    char buf[SHA1LEN];
-    
-    const EVP_MD *digest = EVP_sha1();
-    unsigned int len = 0;
-    
-    int rc = X509_digest(cert, digest, (unsigned char*) buf, &len);
-    std::cout<<"rc: "<<rc<<" len: "<<len<<std::endl;
-    if (rc == 0 || len != SHA1LEN) {
-        return "";
-    }
-    return base64_encode((const unsigned char*)buf, len);
+    std::string cert = getPeerCertificate();
+    SHA3 sha3;
+    return sha3(cert);
 }
 
 std::string Susi::SSLTCPServer::Session::getPeerCertificate(){
-    X509* cert = SSL_get_peer_certificate(socket_.native_handle());
+    X509* cert = SSL_get_certificate(socket_.native_handle());
     BIO_MEM_ptr bio(BIO_new(BIO_s_mem()), ::BIO_free);
     PEM_write_bio_X509(bio.get(), cert);
     BUF_MEM *mem = NULL;
