@@ -49,24 +49,48 @@ bool Susi::Auth::Controller::addUser( std::string username, std::string password
     return true;
 }
 
-bool Susi::Auth::Controller::updateUser( std::string username, std::string password , char authlevel ) {
+bool Susi::Auth::Controller::updateUsername(std::string oldName, std::string newName){
+    if( !checkForSqlSafety( oldName ) || !checkForSqlSafety( newName ) ) {
+        return false;
+    }
     auto db = _dbManager->getDatabase( this->_dbIdentifier );
     try {
-        std::string authlevelStr = std::to_string( ( int )authlevel );
-        std::string salt = generateSalt();
-        SHA3 hasher;
-        std::string pwHash = hasher( password+salt );
-        if( !checkForSqlSafety( username ) ) {
-            LOG(ERROR) <<  "username seems to be an sql injection: "+username ;
-            return false;
-        }
-        db->query( "UPDATE INTO users(password,salt,authlevel) "
-                   "VALUES('"+pwHash+"','"+salt+"',"+authlevelStr+") WHERE username='"+username+"';" );
+        db->query( "UPDATE INTO users(username) VALUES('"+newName+"') WHERE username='"+oldName+"';");
     }
     catch( const std::exception & e ) {
         return false;
     }
     return true;
+}
+bool Susi::Auth::Controller::updatePassword(std::string name, std::string password){
+    if( !checkForSqlSafety( name ) || !checkForSqlSafety(password) ) {
+        return false;
+    }
+    auto db = _dbManager->getDatabase( this->_dbIdentifier );
+    std::string salt = generateSalt();
+    SHA3 hasher;
+    std::string pwHash = hasher( password+salt );
+    try {
+        db->query( "UPDATE INTO users(password,salt) VALUES('"+pwHash+"','"+salt+"') WHERE username='"+name+"';");
+    }
+    catch( const std::exception & e ) {
+        return false;
+    }
+    return true;
+}
+
+bool Susi::Auth::Controller::updateAuthlevel(std::string name, char authlevel){
+    if( !checkForSqlSafety( name ) ) {
+        return false;
+    }
+    auto db = _dbManager->getDatabase( this->_dbIdentifier );
+    std::string authlevelStr = std::to_string( ( int )authlevel );    
+    try {
+        db->query( "UPDATE INTO users(authlevel) VALUES("+authlevelStr+") WHERE username='"+name+"';");
+    }
+    catch( const std::exception & e ) {
+        return false;
+    }
 }
 
 bool Susi::Auth::Controller::delUser( std::string username ) {

@@ -44,6 +44,7 @@ namespace Susi {
                 return std::find_if( subject.begin(),subject.end(),pred ) == subject.end();
             }
 
+
         public:
             Controller( std::shared_ptr<Susi::DB::DBComponent> dbManager,
                         std::shared_ptr<Susi::Sessions::SessionManagerComponent> sessionManager,
@@ -58,7 +59,9 @@ namespace Susi {
             bool isLoggedIn( std::string sessionID );
 
             bool addUser( std::string username, std::string password , char authlevel );
-            bool updateUser( std::string username, std::string password , char authlevel );
+            bool updateUsername(std::string oldName, std::string newName);
+            bool updatePassword(std::string name, std::string password);
+            bool updateAuthlevel(std::string name, char authlevel);
             bool delUser( std::string username );
 
             std::string getUsername( std::string sessionID );

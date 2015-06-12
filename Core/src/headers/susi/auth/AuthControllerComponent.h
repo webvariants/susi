@@ -30,7 +30,9 @@ namespace Susi {
 
             void handleAddUser( Susi::Events::EventPtr event );
             void handleDelUser( Susi::Events::EventPtr event );
-            void handleUpdateUser( Susi::Events::EventPtr event );
+            void handleUpdateUsername( Susi::Events::EventPtr event );
+            void handleUpdateAuthlevel( Susi::Events::EventPtr event );
+            void handleUpdatePassword( Susi::Events::EventPtr event );
 
         public:
             ControllerComponent( Susi::System::ComponentManager * mgr, std::string db_identifier ) :
@@ -67,10 +69,21 @@ namespace Susi {
                     assertAuthlevel(*evt,0);
                     handleDelUser( std::move( evt ) );
                 }});
-                subscribe( std::string{"auth::updateUser"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
+
+                subscribe( std::string{"auth::updateUsername"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
                     markConfidential(*evt,0);
                     assertAuthlevel(*evt,0);
-                    handleUpdateUser( std::move( evt ) );
+                    handleUpdateUsername( std::move( evt ) );
+                }});
+                subscribe( std::string{"auth::updateAuthlevel"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
+                    markConfidential(*evt,0);
+                    assertAuthlevel(*evt,0);
+                    handleUpdateAuthlevel( std::move( evt ) );
+                }});
+                subscribe( std::string{"auth::updatePassword"}, Susi::Events::Processor{[this]( Susi::Events::EventPtr evt ) {
+                    markConfidential(*evt,0);
+                    assertAuthlevel(*evt,0);
+                    handleUpdatePassword( std::move( evt ) );
                 }});
                 LOG(INFO) <<  "started AuthControllerComponent" ;
             }

@@ -63,10 +63,23 @@ void Susi::Auth::ControllerComponent::handleDelUser( Susi::Events::EventPtr even
     event->payload["success"] = delUser( payload["username"] );
 }
 
-void Susi::Auth::ControllerComponent::handleUpdateUser( Susi::Events::EventPtr event ) {
-    std::string username = event->payload["username"];
-    std::string password  = event->payload["password"];
-    long authlevel  = event->payload["authlevel"];
+
+void Susi::Auth::ControllerComponent::handleUpdateUsername( Susi::Events::EventPtr event ){
+    std::string name = event->payload["username"];
+    std::string newName = event->payload["newname"];
     event->payload.reset();
-    event->payload["success"] = updateUser( username,password,authlevel );
+    event->payload["success"] = updateUsername(name,newName);
 }
+void Susi::Auth::ControllerComponent::handleUpdateAuthlevel( Susi::Events::EventPtr event ){
+    std::string name = event->payload["username"];
+    int authlevel = event->payload["authlevel"];
+    event->payload.reset();
+    event->payload["success"] = updateAuthlevel(name,(char)authlevel);
+}
+void Susi::Auth::ControllerComponent::handleUpdatePassword( Susi::Events::EventPtr event ){
+    std::string name = event->payload["username"];
+    std::string password = event->payload["password"];
+    event->payload.reset();
+    event->payload["success"] = updatePassword(name,password);
+}
+
