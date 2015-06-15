@@ -23,7 +23,7 @@ Susi::SSLTCPServer::SSLTCPServer(short port, std::string keyFile, std::string ce
             boost::asio::ssl::context::default_workarounds
             | boost::asio::ssl::context::no_sslv2
             | boost::asio::ssl::context::single_dh_use);
-        context.set_verify_mode(boost::asio::ssl::verify_peer);
+        context.set_verify_mode(boost::asio::ssl::verify_fail_if_no_peer_cert | boost::asio::ssl::verify_peer);
         context.set_verify_callback([](bool preverified, boost::asio::ssl::verify_context& ctx){return true;});
         context.use_private_key_file(keyFile, boost::asio::ssl::context::pem);
         context.use_certificate_chain_file(certFile);
@@ -151,7 +151,7 @@ std::string Susi::SSLTCPServer::Session::getPeerCertificateHash(){
 }
 
 std::string Susi::SSLTCPServer::Session::getPeerCertificate(){
-    X509* cert = SSL_get_certificate(socket_.native_handle());
+    X509* cert = SSL_get_peer_certificate(socket_.native_handle());
     BIO_MEM_ptr bio(BIO_new(BIO_s_mem()), ::BIO_free);
     PEM_write_bio_X509(bio.get(), cert);
     BUF_MEM *mem = NULL;

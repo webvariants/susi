@@ -1,55 +1,41 @@
 #include <iostream>
 #include "susi/SusiServer.h"
 
-std::string progName = "";
+#include <boost/program_options.hpp>
+namespace po = boost::program_options;
 
+
+std::string progName;
 short port = 4000;
 std::string keyFile = "server.key";
 std::string certFile = "server.cert";
 
+po::variables_map vm_;
+po::options_description desc_{"Allowed options"};
+
 void showHelp(){
     std::cout<<"usage: "<<progName<<std::endl;
-    std::cout<<"\t"<<"--port <port number>"<<std::endl;
-#ifdef WITH_SSL
-    std::cout<<"\t"<<"--cert <certificate file>"<<std::endl;
-    std::cout<<"\t"<<"--key <key file>"<<std::endl;
-#endif
+    std::cout<<desc_<<std::endl;
     exit(0);
 }
 
 void parseCommandLine(int argc, char **argv){
     progName = argv[0];
-    for(int i=1;i<argc;i++){
-        if(std::strcmp(argv[i],"--port")==0){
-            if(i+1<argc){
-                port = std::atoi(argv[i+1]);
-                i++;
-            }else{
-                showHelp();
-            }
-        }else if(std::strcmp(argv[i],"--key")==0){
-            if(i+1<argc){
-                keyFile = argv[i+1];
-                i++;
-            }else{
-                showHelp();
-            }
-        }else if(std::strcmp(argv[i],"--cert")==0){
-            if(i+1<argc){
-                certFile = argv[i+1];
-                i++;
-            }else{
-                showHelp();
-            }
-        }else{
-            showHelp();
-        }
-    }
+    desc_.add_options()
+        ("help,h", "produce help message")
+        ("port,p", po::value<short>(&port)->default_value(4000), "port to listen")
+        ("key,k", po::value<std::string>(&keyFile)->default_value("server.key"), "keyfile to use")
+        ("cert,c", po::value<std::string>(&certFile)->default_value("server.cert"), "certificate to use");
+    po::store(po::parse_command_line(argc, argv, desc_), vm_);
+    po::notify(vm_);
 }
 
 int main(int argc, char **argv){
-    parseCommandLine(argc,argv);
     try{
+        parseCommandLine(argc,argv);
+        if(vm_.count("help")){
+            showHelp();
+        }
         std::cout<<"starting susi server on port "<<port<<std::endl;
         #ifdef WITH_SSL
             std::cout<<"using ssl certificate "<<certFile<<std::endl;

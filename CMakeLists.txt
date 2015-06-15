@@ -23,7 +23,7 @@ set( CMAKE_COLOR_MAKEFILE ON )
 
 find_package(Threads REQUIRED)
 find_package(OpenSSL REQUIRED)
-find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED COMPONENTS system program_options)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -41,6 +41,9 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/susi-cpp)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-cpp/headers)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/susi-util)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-util/headers)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/susi-leveldb)
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-leveldb/headers)
+
 
 SET(CPACK_GENERATOR "DEB")
 SET(CPACK_SET_DESTDIR ON)
