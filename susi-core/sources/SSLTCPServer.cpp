@@ -24,7 +24,9 @@ Susi::SSLTCPServer::SSLTCPServer(short port, std::string keyFile, std::string ce
             | boost::asio::ssl::context::no_sslv2
             | boost::asio::ssl::context::single_dh_use);
         context.set_verify_mode(boost::asio::ssl::verify_fail_if_no_peer_cert | boost::asio::ssl::verify_peer);
-        context.set_verify_callback([](bool preverified, boost::asio::ssl::verify_context& ctx){return true;});
+        context.set_verify_callback([this](bool preverified, boost::asio::ssl::verify_context& ctx){
+            return true;
+        });
         context.use_private_key_file(keyFile, boost::asio::ssl::context::pem);
         context.use_certificate_chain_file(certFile);
     do_accept();
@@ -74,7 +76,6 @@ void Susi::SSLTCPServer::do_accept(){
         int id = session->socket().native_handle();
         session->start();
         sessions[id] = std::move(session);
-        onConnect(id);
       }
       do_accept();
     });
@@ -92,6 +93,7 @@ Susi::SSLTCPServer::Session::Session(boost::asio::io_service& io_service, boost:
 void Susi::SSLTCPServer::Session::start() {
     socket_.async_handshake(boost::asio::ssl::stream_base::server,[this](boost::system::error_code ec){
         if(!ec){
+            server->onConnect(socket().native_handle());
             do_read(); 
         }else{
             std::cerr<<ec.message()<<std::endl;
