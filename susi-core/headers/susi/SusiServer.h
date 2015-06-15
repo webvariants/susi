@@ -55,7 +55,7 @@ namespace Susi {
 
         virtual void onConnect(int id) override {
             std::cout<<"got new client "<<BaseServer::getPeerCertificateHash(id)<<std::endl;
-            std::cout<<BaseServer::getPeerCertificate(id)<<std::endl;
+            //std::cout<<BaseServer::getPeerCertificate(id)<<std::endl;
             FramingServer<JSONFramer,BaseServer>::onConnect(id);
             BSON::Value sessionNewEvent = BSON::Object{
                 {"topic","core::session::new"},
@@ -65,7 +65,7 @@ namespace Susi {
         }
 
         virtual void onClose(int id) override {
-            std::cout<<"lost client "<<id<<std::endl;
+            std::cout<<"lost client "<<BaseServer::getPeerCertificateHash(id)<<std::endl;
             FramingServer<JSONFramer,BaseServer>::onClose(id);
 
             //remove all publish processes associated with this client
@@ -113,7 +113,7 @@ namespace Susi {
                 }
             }
             for(auto & p : orphanedProcesses){
-                ack(p->lastState);
+                ack(p->lastState,0);
             }
             BSON::Value sessionLostEvent = BSON::Object{
                 {"topic","core::session::lost"},
@@ -151,7 +151,7 @@ namespace Susi {
                     publish(data,id);
                 }
                 if(type == "ack"){
-                    ack(data);
+                    ack(data,id);
                 }
             }
         }
@@ -173,15 +173,15 @@ namespace Susi {
         }
 
         void registerConsumer(std::string & topic, int id){
-            std::cout<<"register consumer for "<<id<<std::endl;
             if(!contains(consumers[topic],id)){
+                std::cout<<"register consumer "+topic+" for "<<BaseServer::getPeerCertificateHash(id)<<std::endl;
                 consumers[topic].push_back(id);
             }
         }
 
         void registerProcessor(std::string & topic, int id){
-            std::cout<<"register processor for "<<id<<std::endl;
             if(!contains(processors[topic],id)){
+                std::cout<<"register processor "+topic+" for "<<BaseServer::getPeerCertificateHash(id)<<std::endl;
                 processors[topic].push_back(id);
             }
         }
@@ -189,6 +189,7 @@ namespace Susi {
         void unregisterConsumer(std::string & topic, int id){
             for(int i=0;i<consumers[topic].size();i++){
                 if(id == consumers[topic][i]){
+                    std::cout<<"unregister consumer "+topic+" for "<<BaseServer::getPeerCertificateHash(id)<<std::endl;
                     consumers[topic].erase(consumers[topic].begin()+i);
                     break;
                 }
@@ -198,6 +199,7 @@ namespace Susi {
         void unregisterProcessor(std::string & topic, int id){
             for(int i=0;i<processors[topic].size();i++){
                 if(id == processors[topic][i]){
+                    std::cout<<"unregister processor "+topic+" for "<<BaseServer::getPeerCertificateHash(id)<<std::endl;
                     processors[topic].erase(processors[topic].begin()+i);
                     break;
                 }
@@ -205,7 +207,7 @@ namespace Susi {
         }
 
         void publish(BSON::Value & event, int publisher){
-            std::cout<<"publish event for "<<publisher<<std::endl;
+            std::cout<<"publish event "+event["topic"].getString()+" for "<<BaseServer::getPeerCertificateHash(publisher)<<std::endl;
             std::string & topic = event["topic"];
             if(!event["id"].isString()){
                 long id = std::chrono::system_clock::now().time_since_epoch().count();
@@ -249,10 +251,11 @@ namespace Susi {
                 }
             }
             publishProcesses[event["id"].getString()] = process;
-            ack(event);
+            ack(event,0);
         }
 
-        void ack(BSON::Value & event){
+        void ack(BSON::Value & event, int acker){
+            std::cout<<"got ack for event "+event["topic"].getString()+" from "<<BaseServer::getPeerCertificateHash(acker)<<std::endl;
             std::string & id = event["id"];
             if(publishProcesses.count(id)==0){
                 return;
@@ -272,11 +275,11 @@ namespace Susi {
                     {"type","ack"},
                     {"data", event}
                 };
-                std::cout<<"send ack to publisher "<<process->publisher<<std::endl;
+                std::cout<<"send ack for event "+event["topic"].getString()+" to publisher "<<BaseServer::getPeerCertificateHash(process->publisher)<<std::endl;
                 send(process->publisher,publisherAck);
                 publishProcesses.erase(id);
             }else{
-                std::cout<<"forward event to "<<process->processors[process->nextProcessor]<<std::endl;
+                std::cout<<"forward event "+event["topic"].getString()+" to "<<BaseServer::getPeerCertificateHash(process->processors[process->nextProcessor])<<std::endl;
                 BSON::Value processorEvent = BSON::Object{
                     {"type","processorEvent"},
                     {"data", event}

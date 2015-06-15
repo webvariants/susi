@@ -48,7 +48,7 @@ std::string Susi::SSLTCPServer::getPeerCertificateHash(int id){
     try{
         return sessions.at(id)->getPeerCertificateHash();
     }catch(...){
-        return "";
+        return "0000000000000000000000000000000000000000000000000000000000000000";
     }
 }
 
