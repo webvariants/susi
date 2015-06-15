@@ -44,6 +44,7 @@ bool Susi::Auth::Controller::addUser( std::string username, std::string password
                    "VALUES('"+username+"','"+pwHash+"','"+salt+"',"+authlevelStr+");" );
     }
     catch( const std::exception & e ) {
+        LOG(ERROR) << e.what();
         return false;
     }
     return true;
@@ -58,6 +59,7 @@ bool Susi::Auth::Controller::updateUsername(std::string oldName, std::string new
         db->query( "UPDATE INTO users(username) VALUES('"+newName+"') WHERE username='"+oldName+"';");
     }
     catch( const std::exception & e ) {
+        LOG(ERROR) << e.what();
         return false;
     }
     return true;
@@ -74,6 +76,7 @@ bool Susi::Auth::Controller::updatePassword(std::string name, std::string passwo
         db->query( "UPDATE INTO users(password,salt) VALUES('"+pwHash+"','"+salt+"') WHERE username='"+name+"';");
     }
     catch( const std::exception & e ) {
+        LOG(ERROR) << e.what();
         return false;
     }
     return true;
@@ -89,6 +92,7 @@ bool Susi::Auth::Controller::updateAuthlevel(std::string name, char authlevel){
         db->query( "UPDATE INTO users(authlevel) VALUES("+authlevelStr+") WHERE username='"+name+"';");
     }
     catch( const std::exception & e ) {
+        LOG(ERROR) << e.what();
         return false;
     }
 }
