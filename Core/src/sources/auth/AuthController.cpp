@@ -56,7 +56,7 @@ bool Susi::Auth::Controller::updateUsername(std::string oldName, std::string new
     }
     auto db = _dbManager->getDatabase( this->_dbIdentifier );
     try {
-        db->query( "UPDATE INTO users(username) VALUES('"+newName+"') WHERE username='"+oldName+"';");
+        db->query( "UPDATE users SET username='"+newName+"' WHERE username='"+oldName+"';");
     }
     catch( const std::exception & e ) {
         LOG(ERROR) << e.what();
@@ -73,7 +73,7 @@ bool Susi::Auth::Controller::updatePassword(std::string name, std::string passwo
     SHA3 hasher;
     std::string pwHash = hasher( password+salt );
     try {
-        db->query( "UPDATE INTO users(password,salt) VALUES('"+pwHash+"','"+salt+"') WHERE username='"+name+"';");
+        db->query( "UPDATE users SET password='"+pwHash+"', salt='"+salt+"' WHERE username='"+name+"';");
     }
     catch( const std::exception & e ) {
         LOG(ERROR) << e.what();
@@ -89,7 +89,7 @@ bool Susi::Auth::Controller::updateAuthlevel(std::string name, char authlevel){
     auto db = _dbManager->getDatabase( this->_dbIdentifier );
     std::string authlevelStr = std::to_string( ( int )authlevel );    
     try {
-        db->query( "UPDATE INTO users(authlevel) VALUES("+authlevelStr+") WHERE username='"+name+"';");
+        db->query( "UPDATE users SET authlevel="+authlevelStr+" WHERE username='"+name+"';");
     }
     catch( const std::exception & e ) {
         LOG(ERROR) << e.what();
