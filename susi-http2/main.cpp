@@ -43,8 +43,8 @@ int main(int argc, char *argv[]){
 		}
         Susi::SusiClient susi{addr,port,keyFile,certFile};
 		SusiHTTP2Server server{susi,keyFile,certFile,"localhost",httpPort,docRoot};
+        server.start();
         susi.join();
-		server.join();
 	}catch(const std::exception & e){
 		std::cout << e.what() << std::endl;
 		showHelp();

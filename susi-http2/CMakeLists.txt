@@ -28,7 +28,6 @@ target_link_libraries(${PROJECT_NAME}
 	${OPENSSL_LIBRARIES}
 	bson
 	susi-cpp
-	nghttp2
 	nghttp2_asio)
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "/usr/local/bin")
