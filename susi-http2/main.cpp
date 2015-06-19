@@ -10,6 +10,7 @@ short port = 4000;
 short httpPort = 8080;
 std::string keyFile = "server.key";
 std::string certFile = "server.cert";
+std::vector<std::string> pushFiles;
 
 po::variables_map vm_;
 po::options_description desc_{"Allowed options"};
@@ -29,6 +30,7 @@ void parseCommandLine(int argc, char **argv){
         ("key,k", po::value<std::string>(&keyFile)->default_value("leveldb.key"), "keyfile to use")
         ("cert,c", po::value<std::string>(&certFile)->default_value("leveldb.cert"), "certificate to use")
         ("docroot,d", po::value<std::string>(&docRoot)->default_value("./assets"), "document root directory")
+        ("push", po::value<std::vector<std::string>>(&pushFiles)->multitoken(), "which files to push on index request")
         ("listen,l",po::value<short>(&httpPort)->default_value(8080), "http port" );
     po::store(po::parse_command_line(argc, argv, desc_), vm_);
     po::notify(vm_);
@@ -42,7 +44,7 @@ int main(int argc, char *argv[]){
 			showHelp();
 		}
         Susi::SusiClient susi{addr,port,keyFile,certFile};
-		SusiHTTP2Server server{susi,keyFile,certFile,"localhost",httpPort,docRoot};
+		SusiHTTP2Server server{susi,keyFile,certFile,"localhost",httpPort,docRoot,pushFiles};
         server.start();
         susi.join();
 	}catch(const std::exception & e){
