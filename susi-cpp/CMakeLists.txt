@@ -23,7 +23,8 @@ if(WITH_SSL)
 	
 	file( GLOB SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/TCPClient.cpp
 			       ${CMAKE_CURRENT_SOURCE_DIR}/sources/SSLClient.cpp 
-			       ${CMAKE_CURRENT_SOURCE_DIR}/sources/SusiClient.cpp )
+			       ${CMAKE_CURRENT_SOURCE_DIR}/sources/SusiClient.cpp 
+			       ${CMAKE_CURRENT_SOURCE_DIR}/sources/EventManager.cpp )
 	
 	file( GLOB HEADERFILES ${CMAKE_CURRENT_SOURCE_DIR}/headers/TCPClient.h )
 	
@@ -34,6 +35,18 @@ if(WITH_SSL)
 		${OPENSSL_LIBRARIES}
 		bson
 		susi-common)
+
+
+	add_executable( ${PROJECT_NAME}_test ${CMAKE_CURRENT_SOURCE_DIR}/test.cpp)
+	target_link_libraries(${PROJECT_NAME}_test
+		${CMAKE_THREAD_LIBS_INIT}
+		${Boost_LIBRARIES}
+		${OPENSSL_LIBRARIES}
+		bson
+		susi-common
+		susi-cpp)
+
+
 else(WITH_SSL)
 	set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11" )	
 	

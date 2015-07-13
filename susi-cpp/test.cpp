@@ -1,31 +1,28 @@
-#include "susi/SusiClient.h"
+#include "susi/EventManager.h"
 
-#include <algorithm>
+#include <chrono>
 
 int main(){
 
-	Susi::SusiClient client{"localhost",4000,"server.key","server.cert"};
-	
-	client.registerProcessor("foobar",[](BSON::Value & event){
-		event["payload"] = BSON::Array{};
-		event["payload"].push_back("fuck");
+	auto eventsystem = std::make_shared<Susi::EventManager>();
+	eventsystem->registerProcessor("test-topic", [eventsystem](Susi::EventPtr event){
+		std::cout<<"processor: "<<event->topic<<std::endl;
+	});
+	eventsystem->registerConsumer("test-topic", [](Susi::SharedEventPtr event){
+		std::cout<<"consumer1: "<<event->topic<<std::endl;
+	});
+	eventsystem->registerConsumer("test-topic", [](Susi::SharedEventPtr event){
+		std::cout<<"consumer2: "<<event->topic<<std::endl;
+	});
+	eventsystem->registerConsumer("test-topic", [](Susi::SharedEventPtr event){
+		std::cout<<"consumer3: "<<event->topic<<std::endl;
+	});
+	auto event = eventsystem->createEvent("test-topic");
+	eventsystem->publish(std::move(event),[](Susi::SharedEventPtr event){
+		std::cout<<"finish callback: "<<event->topic<<std::endl;
 	});
 
+	eventsystem->join();
 
-	client.registerProcessor("foobar",[](BSON::Value & event){
-		if(event["payload"].isArray()){
-			event["payload"].push_back("yeah");
-		}
-	});
-
-	client.registerConsumer("foobar",[](const BSON::Value & event){
-		std::cout<<"consumer: "<<event.toJSON()<<std::endl;
-	});
-
-	client.publish("foobar",BSON::Value{},[](const BSON::Value & event){
-		std::cout<<"ack: "<<event.toJSON()<<std::endl;
-	});
-
-	client.join();
 	return 0;
 }
