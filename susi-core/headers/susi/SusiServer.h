@@ -153,6 +153,9 @@ namespace Susi {
                 if(type == "ack"){
                     ack(data,id);
                 }
+                if(type == "dismiss"){
+                    dismiss(data,id);
+                }
             }
         }
 
@@ -255,7 +258,9 @@ namespace Susi {
         }
 
         void ack(BSON::Value & event, int acker){
-            std::cout<<"got ack for event "+event["topic"].getString()+" from "<<BaseServer::getPeerCertificateHash(acker)<<std::endl;
+            if(acker != 0){
+                std::cout<<"got ack for event "+event["topic"].getString()+" from "<<BaseServer::getPeerCertificateHash(acker)<<std::endl;
+            }
             std::string & id = event["id"];
             if(publishProcesses.count(id)==0){
                 return;
@@ -269,14 +274,17 @@ namespace Susi {
                     {"data", event}
                 };
                 for(auto & id : process->consumers){
+                    std::cout<<"send consumer event "+event["topic"].getString()+" to "<<BaseServer::getPeerCertificateHash(id)<<std::endl;
                     send(id,consumerEvent);
                 }
                 BSON::Value publisherAck = BSON::Object{
                     {"type","ack"},
                     {"data", event}
                 };
-                std::cout<<"send ack for event "+event["topic"].getString()+" to publisher "<<BaseServer::getPeerCertificateHash(process->publisher)<<std::endl;
-                send(process->publisher,publisherAck);
+                if(process->publisher != 0){
+                    std::cout<<"send ack for event "+event["topic"].getString()+" to publisher "<<BaseServer::getPeerCertificateHash(process->publisher)<<std::endl;
+                    send(process->publisher,publisherAck);
+                }
                 publishProcesses.erase(id);
             }else{
                 std::cout<<"forward event "+event["topic"].getString()+" to "<<BaseServer::getPeerCertificateHash(process->processors[process->nextProcessor])<<std::endl;
@@ -287,6 +295,35 @@ namespace Susi {
                 send(process->processors[process->nextProcessor++], processorEvent);
             }
         }
+
+        void dismiss(BSON::Value & event, int acker){
+            if(acker != 0){
+                std::cout<<"got dismiss for event "+event["topic"].getString()+" from "<<BaseServer::getPeerCertificateHash(acker)<<std::endl;
+            }
+            std::string & id = event["id"];
+            if(publishProcesses.count(id)==0){
+                return;
+            }
+            auto process = publishProcesses[id];
+            BSON::Value consumerEvent = BSON::Object{
+                {"type","consumerEvent"},
+                {"data", event}
+            };
+            for(auto & id : process->consumers){
+                std::cout<<"send consumer event "+event["topic"].getString()+" to "<<BaseServer::getPeerCertificateHash(id)<<std::endl;
+                send(id,consumerEvent);
+            }
+            BSON::Value publisherDismiss = BSON::Object{
+                {"type","dismiss"},
+                {"data", event}
+            };
+            if(process->publisher != 0){
+                std::cout<<"send dismiss for event "+event["topic"].getString()+" to publisher "<<BaseServer::getPeerCertificateHash(process->publisher)<<std::endl;
+                send(process->publisher,publisherDismiss);
+            }
+            publishProcesses.erase(id);
+        }
+
 
         bool contains(std::vector<int> & vec, int elem){
             for(auto & id : vec){

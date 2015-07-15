@@ -45,7 +45,7 @@ long Susi::EventManager::subscribe( Predicate pred, Consumer consumer, std::stri
     return subscribe( "",pred,std::move( consumer ),Processor {},name );
 }
 
-bool Susi::EventManager::unsubscribe( long id ) {
+bool Susi::EventManager::unregister( long id ) {
     std::lock_guard<std::mutex> lock( mutex );
     for( auto & kv : subscriptionsByTopic ) {
         auto & subs = kv.second;
@@ -66,7 +66,7 @@ bool Susi::EventManager::unsubscribe( long id ) {
 }
 
 // public publish api function
-void Susi::EventManager::publish( Susi::EventPtr event, Susi::Consumer finishCallback, bool processorsOnly, bool consumersOnly, bool highPrio) {
+void Susi::EventManager::publish( Susi::EventPtr event, Susi::Consumer finishCallback, bool processorsOnly, bool consumersOnly) {
     if( event.get()==nullptr ) {
         //std::cout<<"event is nullptr"<<std::endl;
         event.release();
@@ -121,11 +121,37 @@ void Susi::EventManager::publish( Susi::EventPtr event, Susi::Consumer finishCal
         process->consumers.push_back( finishCallback );
         publishProcesses[event->id] = process;
     } // release lock
-    ack( std::move( event ) , highPrio);
+    ack( std::move( event ) );
+}
+
+void Susi::EventManager::dismiss( EventPtr event ) {
+    if( event.get()==nullptr ) {
+        event.release();
+        return;
+    }
+    std::shared_ptr<PublishProcess> process;
+    {
+        std::unique_lock<std::mutex> lock( mutex );
+        for( auto & kv : publishProcesses ) {
+            if( kv.first == event->id ) {
+                process = kv.second;
+                break;
+            }
+        }
+    }
+    if( process.get()==nullptr ) {
+        /*std::cout<<"cant find process, this should not happen"<<std::endl;
+        std::cout<<event->topic<<std::endl;*/
+        delete event.release();
+        return;
+    }
+    event->headers.push_back({"error","dismissed"});
+    process->current = process->processors.size();
+    ack(std::move(event));
 }
 
 // pass event back to system
-void Susi::EventManager::ack( EventPtr event , bool highPrio) {
+void Susi::EventManager::ack( EventPtr event ) {
     if( event.get()==nullptr ) {
         event.release();
         return;
@@ -220,6 +246,14 @@ void Susi::EventManager::ack( EventPtr event , bool highPrio) {
 
     Work work {std::move( event ),this};
     pool.add( std::move( work ),error );
+}
+
+Susi::EventPtr Susi::EventManager::createEvent( BSON::Value & evt ){
+    auto event = Susi::EventPtr {new Susi::Event{evt},[this]( Event * event ) {
+            this->deleter( event );
+        }
+    };
+    return event;    
 }
 
 Susi::EventPtr Susi::EventManager::createEvent( std::string topic ) {

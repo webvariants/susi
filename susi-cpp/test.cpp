@@ -1,28 +1,41 @@
-#include "susi/EventManager.h"
-
-#include <chrono>
+#include "susi/SusiClient.h"
 
 int main(){
 
-	auto eventsystem = std::make_shared<Susi::EventManager>();
-	eventsystem->registerProcessor("test-topic", [eventsystem](Susi::EventPtr event){
-		std::cout<<"processor: "<<event->topic<<std::endl;
-	});
-	eventsystem->registerConsumer("test-topic", [](Susi::SharedEventPtr event){
-		std::cout<<"consumer1: "<<event->topic<<std::endl;
-	});
-	eventsystem->registerConsumer("test-topic", [](Susi::SharedEventPtr event){
-		std::cout<<"consumer2: "<<event->topic<<std::endl;
-	});
-	eventsystem->registerConsumer("test-topic", [](Susi::SharedEventPtr event){
-		std::cout<<"consumer3: "<<event->topic<<std::endl;
-	});
-	auto event = eventsystem->createEvent("test-topic");
-	eventsystem->publish(std::move(event),[](Susi::SharedEventPtr event){
-		std::cout<<"finish callback: "<<event->topic<<std::endl;
+	Susi::SusiClient client{"localhost",4000,"key1.pem","cert1.pem"};
+
+	client.registerProcessor("test-topic",[](Susi::EventPtr event){
+		std::cout<<"processor 1"<<std::endl;
 	});
 
-	eventsystem->join();
+	client.registerProcessor("test-topic",[&client](Susi::EventPtr event){
+		std::cout<<"processor 2"<<std::endl;
+		client.dismiss(std::move(event));
+	});
+
+	client.registerProcessor("test-topic",[&client](Susi::EventPtr event){
+		std::cout<<"processor 3"<<std::endl;
+	});
+
+	client.registerConsumer("test-topic",[](Susi::SharedEventPtr event){
+		std::cout<<"consumer 3"<<std::endl;
+	});
+
+	auto event = client.createEvent("test-topic");
+	event->payload = BSON::Object{
+		{"value",123},
+		{"name","foo"}
+	};
+	client.publish(std::move(event),[](Susi::SharedEventPtr event){
+		std::cout << "finish callback" << std::endl;
+		for(const auto & kv : event->headers){
+			if(kv.first == "error" && kv.second == "dismissed"){
+				std::cout<<"event got dismissed"<<std::endl;
+			}
+		}
+	});
+
+	client.join();
 
 	return 0;
 }

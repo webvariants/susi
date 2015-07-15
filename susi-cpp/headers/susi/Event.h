@@ -132,6 +132,20 @@ namespace Susi {
             return toAny().toJSON();
         }
 
+        bool hasDismissedHeader(){
+            for(const auto & kv : headers){
+                if(kv.first == "error" && kv.second == "dismissed"){
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        void setDismissedHeader(){
+            if(!hasDismissedHeader()){
+                headers.push_back({"error","dismissed"});
+            }
+        }
 
     };
 

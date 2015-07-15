@@ -14,6 +14,7 @@
 
 #include "susi/FramingClient.h"
 #include "susi/JSONFramer.h"
+#include "susi/EventManager.h"
 
 #include <iostream>
 #include <functional>
@@ -30,9 +31,6 @@
 
 namespace Susi {
 
-    typedef std::function<void(BSON::Value &)> Processor;
-    typedef std::function<void(const BSON::Value &)> Consumer;
-
     class SusiClient : public FramingClient<JSONFramer,Client> {
     public:
         SusiClient(std::string host, short port) : FramingClient<JSONFramer,Client>{host,port} {}
@@ -44,14 +42,30 @@ namespace Susi {
         
         virtual ~SusiClient() {}
 
-        void publish(std::string topic, BSON::Value payload, Consumer finishCallback = Consumer{});
+        void publish(EventPtr event, Consumer finishCallback = Consumer{});
 
         std::uint64_t registerProcessor(std::string topic, Processor processor);
         std::uint64_t registerConsumer(std::string topic, Consumer consumer);
         bool unregisterProcessor(std::uint64_t id);
         bool unregisterConsumer(std::uint64_t id);
 
+        EventPtr createEvent(std::string topic){
+            return eventmanager.createEvent(topic);
+        }
+        EventPtr createEvent(BSON::Value & event){
+            return eventmanager.createEvent(event);
+        }
+
+        void ack(EventPtr evt){
+            eventmanager.ack(std::move(evt));
+        }
+
+        void dismiss(EventPtr evt){
+            eventmanager.dismiss(std::move(evt));
+        }
+
     protected:
+        EventManager eventmanager;
         bool isConnected = false;
         std::deque<std::shared_ptr<BSON::Value>> messageQueue;
         std::map<std::string,int> registerProcessorCounter;
@@ -65,13 +79,14 @@ namespace Susi {
         virtual void onClose() override;
 
         void onAck(BSON::Value & event);
+        void onDismiss(BSON::Value & event);
         void onConsumerEvent(BSON::Value & event);
         void onProcessorEvent(BSON::Value & event);
 
         std::uint64_t generateId();
 
-        std::map<std::uint64_t,std::pair<std::string,Processor>> processors;
-        std::map<std::uint64_t,std::pair<std::string,Consumer>> consumers;
+        /*std::map<std::uint64_t,std::pair<std::string,Processor>> processors;
+        std::map<std::uint64_t,std::pair<std::string,Consumer>> consumers;*/
         std::map<std::string,Consumer> finishCallbacks;
 
     };

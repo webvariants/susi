@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
@@ -14,95 +14,113 @@
 
 void Susi::SusiClient::onFrame(std::string & frame) {
     BSON::Value packet = BSON::Value::fromJSON(frame);
-    if(packet.isObject()){
-        if(packet["type"].isString() && packet["data"].isObject()) {
-            const std::string & type = packet["type"];  
-            if(type == "ack"){
+    if (packet.isObject()) {
+        if (packet["type"].isString() && packet["data"].isObject()) {
+            const std::string & type = packet["type"];
+            if (type == "ack") {
                 onAck(packet["data"]);
             }
-            if(type == "consumerEvent" && packet["data"]["topic"].isString()){
+            if (type == "dismiss") {
+                onDismiss(packet["data"]);
+            }
+            if (type == "consumerEvent" && packet["data"]["topic"].isString()) {
                 onConsumerEvent(packet["data"]);
             }
-            if(type == "processorEvent" && packet["data"]["topic"].isString()){
+            if (type == "processorEvent" && packet["data"]["topic"].isString()) {
                 onProcessorEvent(packet["data"]);
             }
         }
     }
 }
 
-void Susi::SusiClient::onAck(BSON::Value & event){
-    if(event["id"].isString()){
+void Susi::SusiClient::onAck(BSON::Value & event) {
+    if (event["id"].isString()) {
         const std::string & id = event["id"];
-        if(finishCallbacks.count(id)){
-            finishCallbacks[id](event);
+        if (finishCallbacks.count(id)) {
+            auto evt = std::make_shared<Event>(event);
+            finishCallbacks[id](evt);
             finishCallbacks.erase(id);
         }
     }
 }
 
-void Susi::SusiClient::onConsumerEvent(BSON::Value & event){
-    const std::string & topic = event["topic"];
-    for(auto & kv : consumers){
-        std::regex reg{kv.second.first};
-        if(std::regex_match(topic,reg)){
-            kv.second.second(event);
+void Susi::SusiClient::onDismiss(BSON::Value & event) {
+    if (event["id"].isString()) {
+        const std::string & id = event["id"];
+        if (finishCallbacks.count(id)) {
+            auto evt = std::make_shared<Event>(event);
+            evt->setDismissedHeader();
+            finishCallbacks[id](evt);
+            finishCallbacks.erase(id);
         }
     }
 }
 
-void Susi::SusiClient::onProcessorEvent(BSON::Value & event){
-    const std::string & topic = event["topic"];
-    for(auto & kv : processors){
-        std::regex reg{kv.second.first};
-        if(std::regex_match(topic,reg)){
-            kv.second.second(event);
+void Susi::SusiClient::onConsumerEvent(BSON::Value & event) {
+    auto evt = eventmanager.createEvent(event);
+    eventmanager.publish(std::move(evt), [this](SharedEventPtr evt) {
+        BSON::Value packet = BSON::Object{
+            {"type", "ack"},
+            {"data", evt->toAny()}
+        };
+        if (isConnected) {
+            send(packet.toJSON());
+        } else {
+            messageQueue.emplace_back(new BSON::Value{packet});
         }
-    }
-    BSON::Value packet = BSON::Object{
-        {"type","ack"},
-        {"data",event}
-    };
-    if(isConnected){
-        send(packet.toJSON());
-    }else{
-        messageQueue.emplace_back(new BSON::Value{packet});
-    }
+    }, false, true);
+}
+
+void Susi::SusiClient::onProcessorEvent(BSON::Value & event) {
+    auto evt = eventmanager.createEvent(event);
+    eventmanager.publish(std::move(evt), [this](SharedEventPtr evt) {
+        BSON::Value packet = BSON::Object{
+            {"type", evt->hasDismissedHeader() ? "dismiss" : "ack"},
+            {"data", evt->toAny()}
+        };
+        if (isConnected) {
+            send(packet.toJSON());
+        } else {
+            messageQueue.emplace_back(new BSON::Value{packet});
+        }
+    }, true, false);
 }
 
 
-void Susi::SusiClient::sendRegisterProcessor(std::string topic){
+void Susi::SusiClient::sendRegisterProcessor(std::string topic) {
     BSON::Value packet = BSON::Object{
-        {"type","registerProcessor"},
-        {"data",BSON::Object{
-            {"topic",topic}
-        }}
+        {"type", "registerProcessor"},
+        {   "data", BSON::Object{
+                {"topic", topic}
+            }
+        }
     };
     send(packet.toJSON());
 }
 
-void Susi::SusiClient::sendRegisterConsumer(std::string topic){
+void Susi::SusiClient::sendRegisterConsumer(std::string topic) {
     BSON::Value packet = BSON::Object{
-        {"type","registerConsumer"},
-        {"data",BSON::Object{
-            {"topic",topic}
-        }}
+        {"type", "registerConsumer"},
+        {   "data", BSON::Object{
+                {"topic", topic}
+            }
+        }
     };
     send(packet.toJSON());
 }
 
 void Susi::SusiClient::onConnect() {
     isConnected = true;
-    
 
-    for(auto & kv : registerProcessorCounter){
+    for (auto & kv : registerProcessorCounter) {
         sendRegisterProcessor(kv.first);
     }
 
-    for(auto & kv : registerConsumerCounter){
+    for (auto & kv : registerConsumerCounter) {
         sendRegisterConsumer(kv.first);
     }
 
-    while(!messageQueue.empty()){
+    while (!messageQueue.empty()) {
         send(messageQueue.front()->toJSON());
         messageQueue.pop_front();
     }
@@ -112,63 +130,49 @@ void Susi::SusiClient::onClose() {
     isConnected = false;
 }
 
-void Susi::SusiClient::publish(std::string topic, BSON::Value payload, Consumer finishCallback){
-    std::string id = std::to_string(generateId());
+void Susi::SusiClient::publish(EventPtr event, Consumer finishCallback) {
+    std::string id = event->id;
     BSON::Value packet = BSON::Object{
-        {"type","publish"},
-        {"data",BSON::Object{
-            {"topic",topic},
-            {"id",id},
-            {"payload",payload}
-        }}
+        {"type", "publish"},
+        {"data", event->toAny()}
     };
-    if(finishCallback){
+    if (finishCallback) {
         finishCallbacks[id] = finishCallback;
     }
-    if(isConnected){
-        send(packet.toJSON());        
-    }else{
+    if (isConnected) {
+        send(packet.toJSON());
+    } else {
         messageQueue.emplace_back(new BSON::Value{packet});
     }
 }
 
-std::uint64_t Susi::SusiClient::registerProcessor(std::string topic, Processor processor){
-    std::uint64_t id = generateId();
-    processors[id] = {topic,processor};
+std::uint64_t Susi::SusiClient::registerProcessor(std::string topic, Processor processor) {
+    auto id = eventmanager.registerProcessor(topic, processor);
     registerProcessorCounter[topic]++;
-    if(registerProcessorCounter[topic] == 1 && isConnected){
+    if (registerProcessorCounter[topic] == 1 && isConnected) {
         sendRegisterProcessor(topic);
     }
     return id;
 }
 
-std::uint64_t Susi::SusiClient::registerConsumer(std::string topic, Consumer consumer){
-    std::uint64_t id = generateId();
-    consumers[id] = {topic,consumer};
+std::uint64_t Susi::SusiClient::registerConsumer(std::string topic, Consumer consumer) {
+    auto id = eventmanager.registerConsumer(topic, consumer);
     registerConsumerCounter[topic]++;
-    if(registerConsumerCounter[topic] == 1 && isConnected){
+    if (registerConsumerCounter[topic] == 1 && isConnected) {
         sendRegisterConsumer(topic);
     }
     return id;
 }
 
-bool Susi::SusiClient::unregisterProcessor(std::uint64_t id){
-    if(processors.count(id)){
-        processors.erase(id);
-        return true;
-    }
-    return false;
+bool Susi::SusiClient::unregisterProcessor(std::uint64_t id) {
+    return eventmanager.unregister(id);
 }
 
-bool Susi::SusiClient::unregisterConsumer(std::uint64_t id){
-    if(consumers.count(id)){
-        consumers.erase(id);
-        return true;
-    }
-    return false;
+bool Susi::SusiClient::unregisterConsumer(std::uint64_t id) {
+    return eventmanager.unregister(id);
 }
 
-std::uint64_t Susi::SusiClient::generateId(){
+std::uint64_t Susi::SusiClient::generateId() {
     return std::chrono::system_clock::now().time_since_epoch().count();
 }
 

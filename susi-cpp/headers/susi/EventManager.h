@@ -44,17 +44,20 @@ namespace Susi {
         virtual long registerConsumer( Predicate pred, Consumer consumer, std::string name="" ){
             return subscribe(pred, consumer,name);
         }
-        virtual bool unsubscribe( long id );
+        virtual bool unregister( long id );
         // public publish api function
-        virtual void publish( EventPtr event, Consumer finishCallback = Consumer {}, bool processorsOnly = false, bool consumersOnly = false, bool highPrio = true );
+        virtual void publish( EventPtr event, Consumer finishCallback = Consumer {}, bool processorsOnly = false, bool consumersOnly = false );
         // pass event back to system
-        virtual void ack( EventPtr event , bool highPrio = true);
+        virtual void ack( EventPtr event );
+        // pass event back to system and dismiss
+        virtual void dismiss( EventPtr event );
 
         void addConstraint( std::pair<std::string,std::string> constraint ) {
             scheduler.addConstraint( constraint );
         }
 
         virtual EventPtr createEvent( std::string topic );
+        virtual EventPtr createEvent( BSON::Value & event );
 
         void join(){
             pool.join();
