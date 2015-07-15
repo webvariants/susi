@@ -5,7 +5,7 @@
  * complete text in the attached LICENSE file or online at:
  *
  * http://www.opensource.org/licenses/mit-license.php
- * 
+ *
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
@@ -15,34 +15,35 @@
 #include <map>
 
 namespace Susi {
-    template <class Framer,class BaseServer>
-    class FramingServer : public BaseServer {
-    protected:
-        std::map<int,Framer> framers;
-    public:
-        FramingServer(short port) : BaseServer{port} {}
-        #ifdef WITH_SSL
-            FramingServer(short port, std::string keyFile, std::string certificateFile) :
-                BaseServer{port,keyFile,certificateFile} {}
-        #endif
-        virtual ~FramingServer() {}
 
-        virtual void onConnect(int id) override {
-            framers[id] = Framer{[this,id](std::string & msg){
-                onFrame(id,msg);
-            }};
-        }
+template <class Framer, class BaseServer>
+class FramingServer : public BaseServer {
+  protected:
+    std::map<int, Framer> framers;
+  public:
+    FramingServer(short port) : BaseServer{port} {}
+#ifdef WITH_SSL
+    FramingServer(short port, std::string keyFile, std::string certificateFile) :
+        BaseServer{port, keyFile, certificateFile} {}
+#endif
+    virtual ~FramingServer() {}
 
-        virtual void onData(int id, char *data, size_t len) override {
-            framers[id].collect(data,len);
-        }
+    virtual void onConnect(int id) override {
+        framers[id] = Framer{[this, id](std::string & msg) {
+            onFrame(id, msg);
+        }};
+    }
 
-        virtual void onFrame(int id, std::string & msg) = 0;
+    virtual void onData(int id, char *data, size_t len) override {
+        framers[id].collect(data, len);
+    }
 
-        virtual void onClose(int id) override {
-            framers.erase(id);
-        }
-    };
+    virtual void onFrame(int id, std::string & msg) = 0;
+
+    virtual void onClose(int id) override {
+        framers.erase(id);
+    }
+};
 
 }
 

@@ -90,7 +90,8 @@ void Susi::SusiClient::onProcessorEvent(BSON::Value & event) {
 void Susi::SusiClient::sendRegisterProcessor(std::string topic) {
     BSON::Value packet = BSON::Object{
         {"type", "registerProcessor"},
-        {   "data", BSON::Object{
+        {
+            "data", BSON::Object{
                 {"topic", topic}
             }
         }
@@ -101,7 +102,8 @@ void Susi::SusiClient::sendRegisterProcessor(std::string topic) {
 void Susi::SusiClient::sendRegisterConsumer(std::string topic) {
     BSON::Value packet = BSON::Object{
         {"type", "registerConsumer"},
-        {   "data", BSON::Object{
+        {
+            "data", BSON::Object{
                 {"topic", topic}
             }
         }

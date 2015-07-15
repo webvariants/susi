@@ -114,13 +114,15 @@ protected:
             *closed = true;
         });
         std::cout<<"publish "<<requestData.toJSON()<<std::endl;
-        susi_.publish("http::api::request",requestData,[this,&req,&res,closed](const BSON::Value & evt){
+        auto event = susi_.createEvent("http::api::request");
+        event->payload = requestData;
+        susi_.publish(std::move(event),[this,&req,&res,closed](Susi::SharedEventPtr evt){
             std::cout<<"got ack for api request"<<std::endl;
             if(!(*closed)){
                 std::cout<<"its not closed"<<std::endl;
                 auto headers = header_map();
                 sessionHandling(req,headers);
-                for(auto headerPair : evt["payload"]["responseHeaders"].getArray()){
+                for(auto headerPair : evt->payload["responseHeaders"].getArray()){
                     if(headerPair.isObject()){
                         for(auto & kv : headerPair){
                             auto key = kv.first;
@@ -130,8 +132,8 @@ protected:
                     }
                 }
                 std::cout<<"ok, write headers and body..."<<std::endl;
-                res.write_head(evt["payload"]["status"].getInt64(),headers);
-                res.end(evt["payload"]["body"].getString());
+                res.write_head(evt->payload["status"].getInt64(),headers);
+                res.end(evt->payload["body"].getString());
             }
         });
 
