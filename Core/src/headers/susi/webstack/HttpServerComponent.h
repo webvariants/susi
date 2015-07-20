@@ -24,46 +24,46 @@
 namespace Susi {
 
 class HttpServerComponent : public Susi::System::BaseComponent {
-protected:
-	std::shared_ptr<Susi::Api::ApiServerComponent> _api;
+  protected:
 	Poco::Net::SocketAddress address;
 	Poco::Net::ServerSocket serverSocket;
 	Poco::Net::HTTPServerParams *params;
 	Poco::Net::HTTPServer server;
-
 	std::string _addr;
-public:
+  public:
 	HttpServerComponent (Susi::System::ComponentManager * mgr,
-						 std::string addr,
-						 std::string assetRoot,
-						 std::string uploadDirectory,
-						 size_t threads = 4,
-						 size_t backlog = 16) :
+	                     std::string addr,
+	                     std::string assetRoot,
+	                     std::string uploadDirectory,
+	                     size_t threads = 4,
+	                     size_t backlog = 16) :
 		Susi::System::BaseComponent{mgr},
-		_api{mgr->getComponent<Susi::Api::ApiServerComponent>("apiserver")},
 		address{addr},
 		serverSocket{address},
 		params{new Poco::Net::HTTPServerParams},
-		server(new RequestHandlerFactory(assetRoot, uploadDirectory, _api, mgr->getComponent<Susi::Sessions::SessionManagerComponent>("sessionmanager")),serverSocket,params)
-		{
-			_addr = addr;
-			params->setMaxThreads(threads);
-			params->setMaxQueued(backlog);
-		}
+	server(new RequestHandlerFactory(assetRoot, 
+					     uploadDirectory, 
+					     mgr->getComponent<Susi::Events::IEventSystem>("eventsystem"),
+					     mgr->getComponent<Susi::Api::ApiServerComponent>("apiserver"), 
+					     mgr->getComponent<Susi::Sessions::SessionManagerComponent>("sessionmanager")), serverSocket, params) {
+		_addr = addr;
+		params->setMaxThreads(threads);
+		params->setMaxQueued(backlog);
+	}
 
 	virtual void start() override {
 		server.start();
-		LOG(INFO) << "started HTTP server on addr "+_addr;
+		LOG(INFO) << "started HTTP server on addr " + _addr;
 	}
 
-    virtual void stop() override {
-        server.stop();
-    }
+	virtual void stop() override {
+		server.stop();
+	}
 
-    ~HttpServerComponent() {
-        stop();
-        LOG(INFO) <<  "stopped HTTPServerComponent" ;
-    }
+	~HttpServerComponent() {
+		stop();
+		LOG(INFO) <<  "stopped HTTPServerComponent" ;
+	}
 };
 
 }
