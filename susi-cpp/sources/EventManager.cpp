@@ -79,7 +79,7 @@ void Susi::EventManager::publish( Susi::EventPtr event, Susi::Consumer finishCal
         std::vector<Subscription> affectedProcessorSubscriptions;
         //collect consumers, processors by topic
         for ( auto & kv : subscriptionsByTopic ) {
-            if ( std::regex_match(kv.first, std::regex{event->topic} )) {
+            if ( std::regex_match(event->topic, std::regex{kv.first} )) {
                 for ( auto & sub : kv.second ) {
                     if ( sub.consumer && !processorsOnly ) {
                         process->consumers.push_back( sub.consumer );
@@ -87,7 +87,6 @@ void Susi::EventManager::publish( Susi::EventPtr event, Susi::Consumer finishCal
                         affectedProcessorSubscriptions.push_back( sub );
                     }
                 }
-                break;
             }
         }
         //collect consumers, processors by predicate
