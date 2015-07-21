@@ -42,6 +42,7 @@ void Susi::ApiRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& reque
             response.setChunkedTransferEncoding( true );
             response.setContentType( "application/json" );
             response.set("Access-Control-Allow-Origin", "*");
+            response.set("Access-Control-Allow-Credentials", "*");
             std::ostream& ostr = response.send();
             ostr << evt->toString();
             done.store(true);
