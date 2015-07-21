@@ -37,12 +37,12 @@ void Susi::ApiRequestHandler::handleRequest( Poco::Net::HTTPServerRequest& reque
         std::atomic<bool> done;
         done.store(false);
 
-        _eventManager->publish(std::move(evt),[this,&response,&done,&cond_var](Susi::Events::SharedEventPtr evt){
+        _eventManager->publish(std::move(evt),[this,&request,&response,&done,&cond_var](Susi::Events::SharedEventPtr evt){
             LOG(DEBUG) << "finished publishing of "<<evt->toString();
             response.setChunkedTransferEncoding( true );
             response.setContentType( "application/json" );
-            response.set("Access-Control-Allow-Origin", "*");
-            response.set("Access-Control-Allow-Credentials", "*");
+            response.set("Access-Control-Allow-Origin", request.get("Origin"));
+            response.set("Access-Control-Allow-Credentials", "true");
             std::ostream& ostr = response.send();
             ostr << evt->toString();
             done.store(true);
