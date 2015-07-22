@@ -684,7 +684,7 @@ Any Any::fromJSONString( std::string str ) {
         if( Susi::Util::Any::isJsonPrimitive( str ) ) {
             Susi::Util::Any v;
             if( Susi::Util::Helpers::isInteger( str ) ) {
-                v = Susi::Util::Any {std::stoi( str )};
+                v = Susi::Util::Any {std::stoll( str )};
             }
             else if( Susi::Util::Helpers::isDouble( str ) ) {
                 v = Susi::Util::Any {std::stod( str )};
