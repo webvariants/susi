@@ -45,8 +45,6 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-cpp/headers)
 # include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-leveldb/headers)
 # add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/susi-http2)
 # include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-http2/headers)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/susi-tinyjs)
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-tinyjs/headers)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/susi-duktape)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-duktape/headers)
 
