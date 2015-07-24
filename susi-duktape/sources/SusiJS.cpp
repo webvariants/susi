@@ -168,4 +168,38 @@ function _processAck(event){
     susi._processAck(event); 
 }
 
+var duktapeLogger = new Duktape.Logger('susi-js');
+duktapeLogger.l = 0;
+
+var console = {
+    _prepareArguments: function(args){
+        var newArgs = [];
+        for(var i=0;i<args.length;i++){
+            if(typeof args[i] === 'object'){
+                newArgs.push(Duktape.enc('jx',args[i]));
+            }else{
+                newArgs.push(args[i]);
+            }
+        }
+        return newArgs;
+    },
+    _getLine: function(){
+        var e = new Error(arguments);
+        return e.stack.split('\n')[3].trim().split(' ')[1];
+    },
+    log: function(){
+        duktapeLogger.info.apply(duktapeLogger,this._prepareArguments(arguments));
+    },
+    debug: function(){
+        duktapeLogger.n = 'susi-js: '+this._getLine();
+        duktapeLogger.debug.apply(duktapeLogger,this._prepareArguments(arguments));
+        duktapeLogger.n = 'susi-js';
+    },
+    error: function(){
+        duktapeLogger.n = 'susi-js: '+this._getLine();
+        duktapeLogger.error.apply(duktapeLogger,this._prepareArguments(arguments));
+        duktapeLogger.n = 'susi-js';
+    }
+};
+
 )SUSIJS";
