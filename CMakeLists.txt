@@ -47,6 +47,8 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-cpp/headers)
 # include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-http2/headers)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/susi-duktape)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-duktape/headers)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/susi-cluster)
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-cluster/headers)
 
 SET(CPACK_GENERATOR "DEB")
 SET(CPACK_SET_DESTDIR ON)
