@@ -51,3 +51,42 @@ bool SusiCluster::forwardConsumerEvent(std::string topic, std::string id){
     }); 
     return true;
 }
+
+bool SusiCluster::registerProcessor(std::string topic, std::string id){
+    if(_nodes.count(id)==0){
+        return false;
+    }
+    auto & node = _nodes[id];
+    node->registerProcessor(topic,[this](Susi::EventPtr remoteEvent){
+        struct FinishCallback {
+            Susi::EventPtr remoteEvent;
+            FinishCallback(Susi::EventPtr evt) : 
+                remoteEvent{std::move(evt)} {}
+            FinishCallback(FinishCallback && other) : 
+                remoteEvent{std::move(other.remoteEvent)} {}
+            FinishCallback(FinishCallback & other) : 
+                remoteEvent{std::move(other.remoteEvent)} {}
+            void operator()(Susi::SharedEventPtr localEvent){
+                *remoteEvent = *localEvent;
+            }
+        };    
+        auto localEvent = _susi->createEvent(remoteEvent->topic);
+        *localEvent = *remoteEvent;
+        FinishCallback cb{std::move(remoteEvent)};
+        _susi->publish(std::move(localEvent),std::move(cb));
+    });
+    return true;
+}
+
+bool SusiCluster::registerConsumer(std::string topic, std::string id){
+    if(_nodes.count(id)==0){
+        return false;
+    }
+    auto & node = _nodes[id];
+    node->registerConsumer(topic,[this](Susi::SharedEventPtr remoteEvent){
+        auto localEvent = _susi->createEvent(remoteEvent->topic);
+        *localEvent = *remoteEvent;
+        _susi->publish(std::move(localEvent));
+    });
+    return true;
+}

@@ -55,6 +55,18 @@ int main(int argc, char *argv[]){
                         cluster.forwardConsumerEvent(topic,node["id"]);
                     }
                 }
+                if(node["registerConsumers"].isArray()){
+                    for(std::size_t i=0;i< node["registerConsumers"].size();i++){
+                        std::string & topic = node["registerConsumers"][i];
+                        cluster.registerConsumer(topic,node["id"]);
+                    }
+                }
+                if(node["registerProcessors"].isArray()){
+                    for(std::size_t i=0;i< node["registerProcessors"].size();i++){
+                        std::string & topic = node["registerProcessors"][i];
+                        cluster.registerProcessor(topic,node["id"]);
+                    }
+                }
             }
         }
         cluster.join();
