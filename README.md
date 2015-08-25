@@ -9,10 +9,9 @@ For more detailed documentation please visit [susi.readme.io](http://susi.readme
 ## Getting started
 
 ### Clone
-First, clone the repo from [Github](https://github.com/webvariants/susi)!
+First, clone the repo and its submodules from [Github](https://github.com/webvariants/susi)
 ```
-git clone https://github.com/webvariants/susi
-git checkout experimental
+git clone --recursive https://github.com/webvariants/susi
 ```
 
 ### Build
