@@ -19,7 +19,7 @@
     </section>
 
     <section class="main-content">
-      <p><img src="https://raw.githubusercontent.com/webvariants/susi/experimental/Scripts/susi-header.png" alt="Image of SUSI"></p>
+      <p><img src="http://webvariants.github.io/susi/resources/SUSI_Icon.svg" alt="Image of SUSI"></p>
 
 <p>Susi is an application framework, to build interfaces to arbitary systems.
 It is intended to enable even novice programmers to build robust asyncronous applications, on both ends of the system: frontend and backend.</p>
@@ -114,9 +114,9 @@ You can use the same key/certificate pair you used to start the server, but you 
 <pre><code>openssl req -nodes -x509 -newkey rsa:2048 -keyout duktape_key.pem -out duktape_cert.pem -days 36500
 </code></pre>
 
-<p>Now its time to start susi-duktape. </p>
+<p>Now its time to start susi-duktape.</p>
 
-<pre><code>susi-duktape --src susi-sample.js --addr localhost --port 4000 --key duktape_key.pem --cert duktape_cert.pem 
+<pre><code>susi-duktape --src susi-sample.js --addr localhost --port 4000 --key duktape_key.pem --cert duktape_cert.pem
 &gt; started Susi::duktape engine and loaded source.js
 &gt; 2015-08-25T09:35:31.934Z DBG susi-js: source.js:2: in processor
 &gt; 2015-08-25T09:35:31.934Z DBG susi-js: source.js:8: in foo proc 1
@@ -173,7 +173,7 @@ If you have a look at the supplied JS sources, you can see how SUSI works.</p>
 </li>
 </ul>
 
-<p>As you see in the example, we register four processors: </p>
+<p>As you see in the example, we register four processors:</p>
 
 <pre><code>susi.registerProcessor('.*', function (evt) {
     console.debug('in processor');
@@ -182,10 +182,10 @@ If you have a look at the supplied JS sources, you can see how SUSI works.</p>
 });
 </code></pre>
 
-<p>This is the first processor. It takes a string/regex to specify the event topic this processor is interested in, 
+<p>This is the first processor. It takes a string/regex to specify the event topic this processor is interested in,
 and a callback which is called. The first processor matches all events (topic: ".*") and ensures that the
 event payload is an empty object. Notice that we call ack() at the end, to tell susi that the event can now be processed by
-other processors. </p>
+other processors.</p>
 
 <div class="highlight highlight-javascript"><pre>susi.<span class="pl-c1">registerProcessor</span>(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
     <span class="pl-en">console</span>.<span class="pl-c1">debug</span>(<span class="pl-s"><span class="pl-pds">'</span>in foo proc 1<span class="pl-pds">'</span></span>);
