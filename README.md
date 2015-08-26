@@ -137,8 +137,7 @@ susi.registerProcessor('foo', function (evt) {
 	susi.ack(evt);
 });
 ```
-This is the second processor. It matches all events with the topic 'foo'.
-It attaches the string 'foo' to the payload field 'a'. After this it acknoledges the event back to susi.
+This is the second processor. It matches all events with the topic 'foo' and attaches the string 'foo' to the payload field 'a'. After this it acknowledges the event back to susi.
 
 ```javascript
 susi.registerProcessor('foo', function (evt) {
@@ -147,7 +146,7 @@ susi.registerProcessor('foo', function (evt) {
 	susi.dismiss(evt);
 });
 ```
-This is the third processor. It also matches all events with the topic 'foo'.
+The third processor matches also all events with the topic 'foo'.
 Notice that we call dismiss() at the end of the callback. This prevents all later declared processors to be called.
 
 ```javascript
@@ -173,7 +172,7 @@ susi.publish({ topic: 'foo' }, function (evt) {
 	console.log('finish:', evt.payload);
 });
 ```
-Now after the setup of all those processors and consumers, we can finally publish an event!
+Now, after the setup of all those processors and consumers, we can finally publish an event!
 publish() takes the event as first parameter. All events MUST have a topic field. Additionally they can have a payload field
 which can contain arbitrary data. As a second argument you can specify a finish callback. This is somewhat a one-time-consumer.
 It gets called after all processors for this event finished, but gets immediatly deleted afterwards.
