@@ -28,7 +28,7 @@ sudo ldconfig
 
 ### Start the susi-core server
 The main component of SUSI is its core-server for handling the entire event dispatching and serves as a communication base for all other components.
-You need to specify a valid TLS key / certificate pair to let the server start. To create a self signed certificate run the following command:
+You need to specify a valid TLS key / certificate pair to let the server start. To create a self-signed certificate run the following command:
 ```
 openssl req -nodes -x509 -newkey rsa:2048 -keyout server_key.pem -out server_cert.pem -days 36500
 ```
