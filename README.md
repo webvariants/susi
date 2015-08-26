@@ -1,9 +1,9 @@
 ![Image of SUSI](http://webvariants.github.io/susi/resources/SUSI_Icon.svg)
 
-Susi is an application framework, to build interfaces to arbitary systems.
-It is intended to enable even novice programmers to build robust asyncronous applications, on both ends of the system: frontend and backend.
+Susi is an application framework to build interfaces for arbitary systems.
+It intendeds to enable even novice programmers to build robust asyncronous applications on both ends of the system: front-end and back-end.
 
-For more detailed documentation please visit [susi.readme.io](http://susi.readme.io/).
+For a more detailed documentation please visit [susi.readme.io](http://susi.readme.io/).
 
 ## Getting started
 
@@ -14,7 +14,7 @@ git clone --recursive https://github.com/webvariants/susi
 ```
 
 ### Build
-SUSI's build process is CMake based, so simply build with cmake.
+SUSI's build process is CMake based. Therefore simply build with cmake.
 After building, install the libraries and binaries and run ldconfig to update your shared library cache.
 ```
 cd $SUSI
@@ -27,8 +27,8 @@ sudo ldconfig
 ```
 
 ### Start the susi-core server
-The main component of SUSI is its core-server. This is the server which does all event dispatching, and serves as a communication base for all other components.
-You need to specify a valid TLS key / certificate pair to let the server start. To create a slef signed certificate run the following command:
+The main component of SUSI is its core-server for handling the entire event dispatching and serves as a communication base for all other components.
+You need to specify a valid TLS key / certificate pair to let the server start. To create a self signed certificate run the following command:
 ```
 openssl req -nodes -x509 -newkey rsa:2048 -keyout server_key.pem -out server_cert.pem -days 36500
 ```
@@ -36,12 +36,12 @@ After this, you can start the susi-core server:
 ```
 susi-core --key server_key.pem --cert server_cert.pem --port 4000
 ```
-This starts the susi-core server accepting TLS-connection on port 4000
+Now the susi-core server is accepting TLS-connection on port 4000
 
 ### Start one or more services
-Once your core-server is started, you can start other components which connects to it.
-One example would be, that you start the susi-duktape component, a server side javascript interpreter.
-To do so, create a Javascript source file. This could look like this:
+Once your core-server is started, you can start other components that connect to it.
+An example would be, that you start the susi-duktape component - a server side javascript interpreter.
+To do so create a Javascript source file which could look like this:
 ```javascript
 susi.registerProcessor('.*', function (evt) {
 	console.debug('in processor');
@@ -101,14 +101,14 @@ There are 5 essential actions you need to know about:
 	* This attaches an active event handler to a specific topic.
 	* All active event handlers run sequentially in the order they are declared.
 * registerConsumer()
-	* This attaches an passive event handler to a specific topic
+	* This attaches a passive event handler to a specific topic
 	* All passive event handlers run after all active event handlers finished.
 * publish()
 	* This publishes an event.
 	* The event is firstly processed by all processors
 	* After all processors finished, the consumers for this topic are called
 * ack()
-	* This needs to be called when an processor finished.
+	* This needs to be called when a processor finished.
 	* It tells susi, to continue with the event processing.
 * dismiss()
 	* This can also be called if a processor finished
@@ -124,10 +124,10 @@ susi.registerProcessor('.*', function (evt) {
 	susi.ack(evt);
 });
 ```
-This is the first processor. It takes a string/regex to specify the event topic this processor is interested in,
+This is the first processor. It takes a string/regex to specify the event topic the processor is interested in,
 and a callback which is called. The first processor matches all events (topic: ".*") and ensures that the
-event payload is an empty object. Notice that we call ack() at the end, to tell susi that the event can now be processed by
-other processors.
+event payload is an empty object. Notice that we call ack() at the end, to tell susi that the event can be processed by
+other processors now.
 
 
 ```javascript
@@ -138,7 +138,7 @@ susi.registerProcessor('foo', function (evt) {
 });
 ```
 This is the second processor. It matches all events with the topic 'foo'.
-It attaches the string 'foo' to the payload field 'a'. After this, it acknoledges the event back to susi.
+It attaches the string 'foo' to the payload field 'a'. After this it acknoledges the event back to susi.
 
 ```javascript
 susi.registerProcessor('foo', function (evt) {
@@ -148,8 +148,7 @@ susi.registerProcessor('foo', function (evt) {
 });
 ```
 This is the third processor. It also matches all events with the topic 'foo'.
-Notice that we call dismiss() in the end of the callback. This prevents all later declared processors to be called.
-Especially fourth processor we declared after this, will NOT be called.
+Notice that we call dismiss() at the end of the callback. This prevents all later declared processors to be called.
 
 ```javascript
 susi.registerProcessor('foo', function (evt) {
@@ -176,7 +175,7 @@ susi.publish({ topic: 'foo' }, function (evt) {
 ```
 Now after the setup of all those processors and consumers, we can finally publish an event!
 publish() takes the event as first parameter. All events MUST have a topic field. Additionally they can have a payload field
-which can contain arbitary data. As a second argument you can specify a finish callback. This is somewhat a one-time-consumer.
+which can contain arbitrary data. As a second argument you can specify a finish callback. This is somewhat a one-time-consumer.
 It gets called after all processors for this event finished, but gets immediatly deleted afterwards.
 
 ## Contributors
