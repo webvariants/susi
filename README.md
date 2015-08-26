@@ -117,7 +117,7 @@ There are 5 essential actions you need to know about:
 
 As you see in the example, we register four processors:
 
-```
+```javascript
 susi.registerProcessor('.*', function (evt) {
 	console.debug('in processor');
 	evt.payload = {};
