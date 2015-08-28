@@ -1,3 +1,5 @@
+#  [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
+
 ![Image of SUSI](http://webvariants.github.io/susi/resources/SUSI_Icon.svg)
 # SUSI, a Universal System Interface
 
@@ -198,3 +200,16 @@ SUSI is released under the [MIT License](https://github.com/webvariants/susi/blo
 
 *Many thanks to the whole SUSIProject Team and all [contributors](https://github.com/webvariants/susi/graphs/contributors).*
 
+
+[npm-image]: https://badge.fury.io/js/susi-node.svg
+[npm-url]: https://npmjs.org/package/susi-node
+[npm-image]: https://badge.fury.io/js/node-susi.svg
+[npm-url]: https://npmjs.org/package/node-susi
+
+[travis-image]: https://travis-ci.org/webvariants/susi.svg?branch=feature/travis
+[travis-url]: https://travis-ci.org/webvariants/susi
+
+[daviddm-image]: https://travis-ci.org/webvariants/susi.svg?theme=shields.io
+
+[daviddm-url]: https://david-dm.org/webvariants/susi-node
+[daviddm-url]: https://david-dm.org/webvariants/node-susi
