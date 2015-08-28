@@ -33,16 +33,18 @@
         <section id="main_content">
           <p><img src="http://webvariants.github.io/susi/resources/SUSI_Icon.svg" alt="Image of SUSI"></p>
 
-<p>Susi is an application framework, to build interfaces to arbitary systems.
-It is intended to enable even novice programmers to build robust asyncronous applications, on both ends of the system: frontend and backend.</p>
+<h1>
+<a id="susi-a-universal-system-interface" class="anchor" href="#susi-a-universal-system-interface" aria-hidden="true"><span class="octicon octicon-link"></span></a>SUSI, a Universal System Interface</h1>
 
-<p>For more detailed documentation please visit <a href="http://susi.readme.io/">susi.readme.io</a>.</p>
+<p>SUSI is an application framework to build interfaces for arbitary systems.</p>
+
+<p>It intendeds to enable even novice programmers to build robust asyncronous applications on both ends of the system: front-end and back-end.</p>
 
 <h2>
 <a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting started</h2>
 
 <h3>
-<a id="clone" class="anchor" href="#clone" aria-hidden="true"><span class="octicon octicon-link"></span></a>Clone</h3>
+<a id="1-clone" class="anchor" href="#1-clone" aria-hidden="true"><span class="octicon octicon-link"></span></a>1. Clone</h3>
 
 <p>First, clone the repo and its submodules from <a href="https://github.com/webvariants/susi">Github</a></p>
 
@@ -50,10 +52,11 @@ It is intended to enable even novice programmers to build robust asyncronous app
 </code></pre>
 
 <h3>
-<a id="build" class="anchor" href="#build" aria-hidden="true"><span class="octicon octicon-link"></span></a>Build</h3>
+<a id="2-build" class="anchor" href="#2-build" aria-hidden="true"><span class="octicon octicon-link"></span></a>2. Build</h3>
 
-<p>SUSI's build process is CMake based, so simply build with cmake.
-After building, install the libraries and binaries and run ldconfig to update your shared library cache.</p>
+<p>SUSI's build process is <em>CMake</em> based. Therefore simply build with <strong>cmake</strong>.</p>
+
+<p>After building, install the libraries and binaries and run ldconfig to update your shared library cache.</p>
 
 <pre><code>cd $SUSI
 mkdir build
@@ -65,27 +68,31 @@ sudo ldconfig
 </code></pre>
 
 <h3>
-<a id="start-the-susi-core-server" class="anchor" href="#start-the-susi-core-server" aria-hidden="true"><span class="octicon octicon-link"></span></a>Start the susi-core server</h3>
+<a id="3-start-the-susi-core-server" class="anchor" href="#3-start-the-susi-core-server" aria-hidden="true"><span class="octicon octicon-link"></span></a>3. Start the SUSI core server</h3>
 
-<p>The main component of SUSI is its core-server. This is the server which does all event dispatching, and serves as a communication base for all other components.
-You need to specify a valid TLS key / certificate pair to let the server start. To create a slef signed certificate run the following command:</p>
+<p>The main component of SUSI is its <em>core server</em> for handling the entire event dispatching and serves as a communication base for all other components.</p>
+
+<p>You need to specify a valid TLS key / certificate pair to let the server start.
+To create a self-signed certificate run the following command:</p>
 
 <pre><code>openssl req -nodes -x509 -newkey rsa:2048 -keyout server_key.pem -out server_cert.pem -days 36500
 </code></pre>
 
-<p>After this, you can start the susi-core server:</p>
+<p>After this, you can start the SUSI core server:</p>
 
 <pre><code>susi-core --key server_key.pem --cert server_cert.pem --port 4000
 </code></pre>
 
-<p>This starts the susi-core server accepting TLS-connection on port 4000</p>
+<p>Now the SUSI core server is accepting TLS-connection on port 4000</p>
 
-<h3>
-<a id="start-one-or-more-services" class="anchor" href="#start-one-or-more-services" aria-hidden="true"><span class="octicon octicon-link"></span></a>Start one or more services</h3>
+<h4>
+<a id="start-one-or-more-services" class="anchor" href="#start-one-or-more-services" aria-hidden="true"><span class="octicon octicon-link"></span></a>Start one or more services</h4>
 
-<p>Once your core-server is started, you can start other components which connects to it.
-One example would be, that you start the susi-duktape component, a server side javascript interpreter.
-To do so, create a Javascript source file. This could look like this:</p>
+<p>Once your core server is started, you can start other components that connect to it.</p>
+
+<p>For our first example, lets start with susi-duktape - our server side javascript interpreter.</p>
+
+<p>Create a Javascript source file, which look like this:</p>
 
 <div class="highlight highlight-javascript"><pre>susi.<span class="pl-c1">registerProcessor</span>(<span class="pl-s"><span class="pl-pds">'</span>.*<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
     <span class="pl-en">console</span>.<span class="pl-c1">debug</span>(<span class="pl-s"><span class="pl-pds">'</span>in processor<span class="pl-pds">'</span></span>);
@@ -120,13 +127,14 @@ susi.<span class="pl-c1">publish</span>({ topic<span class="pl-k">:</span> <span
 });
 </pre></div>
 
-<p>Place this file somewhere in your filesystem with the name susi-sample.js.
-You can use the same key/certificate pair you used to start the server, but you can create another pair:</p>
+<p>Place this file somewhere in your filesystem with the name <em>susi-sample.js</em>.</p>
+
+<p>You can use the same key/certificate pair you used to start the server, but you can create another pair:</p>
 
 <pre><code>openssl req -nodes -x509 -newkey rsa:2048 -keyout duktape_key.pem -out duktape_cert.pem -days 36500
 </code></pre>
 
-<p>Now its time to start susi-duktape.</p>
+<p>Now its time to start <em>susi-duktape</em>.</p>
 
 <pre><code>susi-duktape --src susi-sample.js --addr localhost --port 4000 --key duktape_key.pem --cert duktape_cert.pem
 &gt; started Susi::duktape engine and loaded source.js
@@ -141,26 +149,29 @@ You can use the same key/certificate pair you used to start the server, but you 
 If you have a look at the supplied JS sources, you can see how SUSI works.</p>
 
 <h3>
-<a id="understand-the-code" class="anchor" href="#understand-the-code" aria-hidden="true"><span class="octicon octicon-link"></span></a>Understand the code</h3>
+<a id="4-understand-the-code" class="anchor" href="#4-understand-the-code" aria-hidden="true"><span class="octicon octicon-link"></span></a>4. Understand the code</h3>
 
 <p>There are 5 essential actions you need to know about:</p>
 
 <ul>
-<li>registerProcessor()
+<li>
+<strong>registerProcessor()</strong>
 
 <ul>
 <li>This attaches an active event handler to a specific topic.</li>
 <li>All active event handlers run sequentially in the order they are declared.</li>
 </ul>
 </li>
-<li>registerConsumer()
+<li>
+<strong>registerConsumer()</strong>
 
 <ul>
-<li>This attaches an passive event handler to a specific topic</li>
+<li>This attaches a passive event handler to a specific topic</li>
 <li>All passive event handlers run after all active event handlers finished.</li>
 </ul>
 </li>
-<li>publish()
+<li>
+<strong>publish()</strong>
 
 <ul>
 <li>This publishes an event.</li>
@@ -168,14 +179,16 @@ If you have a look at the supplied JS sources, you can see how SUSI works.</p>
 <li>After all processors finished, the consumers for this topic are called</li>
 </ul>
 </li>
-<li>ack()
+<li>
+<strong>ack()</strong>
 
 <ul>
-<li>This needs to be called when an processor finished.</li>
+<li>This needs to be called when a processor finished.</li>
 <li>It tells susi, to continue with the event processing.</li>
 </ul>
 </li>
-<li>dismiss()
+<li>
+<strong>dismiss()</strong>
 
 <ul>
 <li>This can also be called if a processor finished</li>
@@ -187,17 +200,16 @@ If you have a look at the supplied JS sources, you can see how SUSI works.</p>
 
 <p>As you see in the example, we register four processors:</p>
 
-<pre><code>susi.registerProcessor('.*', function (evt) {
-    console.debug('in processor');
-    evt.payload = {};
-    susi.ack(evt);
-});
-</code></pre>
+<div class="highlight highlight-javascript"><pre>susi.<span class="pl-c1">registerProcessor</span>(<span class="pl-s"><span class="pl-pds">'</span>.*<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
+    <span class="pl-en">console</span>.<span class="pl-c1">debug</span>(<span class="pl-s"><span class="pl-pds">'</span>in processor<span class="pl-pds">'</span></span>);
+    evt.<span class="pl-c1">payload</span> <span class="pl-k">=</span> {};
+    susi.<span class="pl-c1">ack</span>(evt);
+});</pre></div>
 
-<p>This is the first processor. It takes a string/regex to specify the event topic this processor is interested in,
+<p>This is the first processor. It takes a string/regex to specify the event topic the processor is interested in,
 and a callback which is called. The first processor matches all events (topic: ".*") and ensures that the
-event payload is an empty object. Notice that we call ack() at the end, to tell susi that the event can now be processed by
-other processors.</p>
+event payload is an empty object. Notice that we call ack() at the end, to tell susi that the event can be processed by
+other processors now.</p>
 
 <div class="highlight highlight-javascript"><pre>susi.<span class="pl-c1">registerProcessor</span>(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
     <span class="pl-en">console</span>.<span class="pl-c1">debug</span>(<span class="pl-s"><span class="pl-pds">'</span>in foo proc 1<span class="pl-pds">'</span></span>);
@@ -205,8 +217,7 @@ other processors.</p>
     susi.<span class="pl-c1">ack</span>(evt);
 });</pre></div>
 
-<p>This is the second processor. It matches all events with the topic 'foo'.
-It attaches the string 'foo' to the payload field 'a'. After this, it acknoledges the event back to susi.</p>
+<p>This is the second processor. It matches all events with the topic 'foo' and attaches the string 'foo' to the payload field 'a'. After this it acknowledges the event back to susi.</p>
 
 <div class="highlight highlight-javascript"><pre>susi.<span class="pl-c1">registerProcessor</span>(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
     <span class="pl-en">console</span>.<span class="pl-c1">debug</span>(<span class="pl-s"><span class="pl-pds">'</span>in foo proc 2<span class="pl-pds">'</span></span>);
@@ -214,9 +225,8 @@ It attaches the string 'foo' to the payload field 'a'. After this, it acknoledge
     susi.<span class="pl-c1">dismiss</span>(evt);
 });</pre></div>
 
-<p>This is the third processor. It also matches all events with the topic 'foo'.
-Notice that we call dismiss() in the end of the callback. This prevents all later declared processors to be called.
-Especially fourth processor we declared after this, will NOT be called.</p>
+<p>The third processor matches also all events with the topic 'foo'.
+Notice that we call dismiss() at the end of the callback. This prevents all later declared processors to be called.</p>
 
 <div class="highlight highlight-javascript"><pre>susi.<span class="pl-c1">registerProcessor</span>(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
     <span class="pl-en">console</span>.<span class="pl-c1">debug</span>(<span class="pl-s"><span class="pl-pds">'</span>in foo proc 3 (should never be called)<span class="pl-pds">'</span></span>);
@@ -238,42 +248,38 @@ In the callback we simply log the event payload to stdout.</p>
     <span class="pl-en">console</span><span class="pl-c1">.log</span>(<span class="pl-s"><span class="pl-pds">'</span>finish:<span class="pl-pds">'</span></span>, evt.<span class="pl-c1">payload</span>);
 });</pre></div>
 
-<p>Now after the setup of all those processors and consumers, we can finally publish an event!
+<p>Now, after the setup of all those processors and consumers, we can finally publish an event!
 publish() takes the event as first parameter. All events MUST have a topic field. Additionally they can have a payload field
-which can contain arbitary data. As a second argument you can specify a finish callback. This is somewhat a one-time-consumer.
+which can contain arbitrary data. As a second argument you can specify a finish callback. This is somewhat a one-time-consumer.
 It gets called after all processors for this event finished, but gets immediatly deleted afterwards.</p>
 
-<h2>
-<a id="contributors" class="anchor" href="#contributors" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contributors</h2>
-
-<p>Tino Rusch, Thomas Krause, Christian Sonderfeld</p>
-
 <h3>
-<a id="third-party-libraries" class="anchor" href="#third-party-libraries" aria-hidden="true"><span class="octicon octicon-link"></span></a>Third party libraries</h3>
+<a id="5-learn-more-about-susi" class="anchor" href="#5-learn-more-about-susi" aria-hidden="true"><span class="octicon octicon-link"></span></a>5. Learn More about SUSI</h3>
+
+<ul>
+<li>Documentation @ <a href="http://susi.readme.io/">susi.readme.io</a>.</li>
+<li>
+<a href="https://github.com/webvariants/susi/blob/experimental/LIBRARIES.md">Libraries</a>
 
 <ul>
 <li><a href="https://github.com/boostorg/boost">Boost</a></li>
 <li><a href="https://github.com/openssl/openssl">OpenSSL</a></li>
 </ul>
-
-<h2>
-<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
-
-<ul>
-<li>see <a href="https://github.com/webvariants/susi/blob/experimental/LICENSE.md">LICENSE</a> file</li>
+</li>
 </ul>
 
-<h2>
-<a id="contact" class="anchor" href="#contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>Contact</h2>
-
-<h4>
-<a id="developercompany" class="anchor" href="#developercompany" aria-hidden="true"><span class="octicon octicon-link"></span></a>Developer/Company</h4>
+<h3>
+<a id="6-stay-in-contact" class="anchor" href="#6-stay-in-contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>6. Stay in contact</h3>
 
 <ul>
-<li>Homepage: <a href="http://www.webvariants.de">www.webvariants.de</a>
+<li>Homepage: <a href="http://www.webvariants.de/SUSI">http://www.webvariants.de/SUSI</a>
 </li>
 <li>e-mail: tino[<em>dot</em>]rusch[<em>at</em>]webvariants[<em>dot</em>]de</li>
 </ul>
+
+<p>SUSI is released under the <a href="https://github.com/webvariants/susi/blob/experimental/LICENSE.md">MIT License</a>.</p>
+
+<p><em>Many thanks to the whole SUSIProject Team and all <a href="https://github.com/webvariants/susi/graphs/contributors">contributors</a>.</em></p>
         </section>
 
         <footer>
