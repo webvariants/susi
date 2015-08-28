@@ -1,42 +1,39 @@
 {
-  "name": "susi",
-  {
-    "scripts" :
-    {
-      "preinstall" : "./setup.sh",
-      "install" : "./install.sh",
-      "test" : "./test.sh"
+    "name": "susi",
+    "scripts": {
+        "preinstall": "./setup.sh",
+        "install": "./install.sh",
+        "test": "./test.sh"
+    },
+    "version": "0.1.6",
+    "author": {
+        "name": "Tino Rusch",
+        "email": "tino.rusch@webvariants.de"
+    },
+    "keywords": [
+        "susi-client-js",
+        "iot",
+        "app server",
+        "client",
+        "javascript"
+    ],
+    "license": "MIT",
+    "repository": "https://github.com/webvariants/susi",
+    "homepage": "http://webvariants.github.io/susi/",
+    "devDependencies": {
+        "grunt": "~0.4.5",
+        "grunt-contrib-clean": "*",
+        "grunt-contrib-copy": "*",
+        "grunt-contrib-watch": "*",
+        "grunt-shell": "^0.7.0",
+        "grunt-newer": "*",
+        "grunt-mkdir": "*"
+    },
+    "project": {
+        "directories": {
+            "bin": "bin/",
+            "build": "build/",
+            "core": "Core/"
+        }
     }
-  },
-  "version": "0.1.6",
-  "author": {
-     "name": "Tino Rusch",
-     "email": "tino.rusch@webvariants.de"
-  },
-  "keywords": [
-    "susi-client-js",
-    "iot",
-    "app server",
-    "client",
-    "javascript"
-  ],
-  "license": "MIT",
-  "repository": "https://github.com/webvariants/susi",
-  "homepage": "http://webvariants.github.io/susi/"
-  "devDependencies": {
-    "grunt": "~0.4.5",
-    "grunt-contrib-clean": "*",
-    "grunt-contrib-copy": "*",
-    "grunt-contrib-watch": "*",
-    "grunt-shell": "^0.7.0",
-    "grunt-newer": "*",
-    "grunt-mkdir": "*"
-  },  
-  "project": {
-    "directories": {
-      "bin": "bin/",
-      "build": "build/",
-      "core": "Core/"
-    }
-  }
 }
