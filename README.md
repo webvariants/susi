@@ -1,4 +1,5 @@
 ![Image of SUSI](http://webvariants.github.io/susi/resources/SUSI_Icon.svg)
+# SUSI, a Universal System Interface
 
 SUSI is an application framework to build interfaces for arbitary systems.
 
@@ -6,13 +7,13 @@ It intendeds to enable even novice programmers to build robust asyncronous appli
 
 ## Getting started
 
-### Clone
+### 1. Clone
 First, clone the repo and its submodules from [Github](https://github.com/webvariants/susi)
 ```
 git clone --recursive https://github.com/webvariants/susi
 ```
 
-### Build
+### 2. Build
 SUSI's build process is *CMake* based. Therefore simply build with **cmake**.
 
 After building, install the libraries and binaries and run ldconfig to update your shared library cache.
@@ -26,7 +27,7 @@ sudo make install
 sudo ldconfig
 ```
 
-### Start the SUSI core server
+### 3. Start the SUSI core server
 The main component of SUSI is its *core server* for handling the entire event dispatching and serves as a communication base for all other components.
 
 You need to specify a valid TLS key / certificate pair to let the server start.
@@ -40,7 +41,7 @@ susi-core --key server_key.pem --cert server_cert.pem --port 4000
 ```
 Now the SUSI core server is accepting TLS-connection on port 4000
 
-### Start one or more services
+#### Start one or more services
 Once your core server is started, you can start other components that connect to it.
 
 For our first example, lets start with susi-duktape - our server side javascript interpreter.
@@ -99,7 +100,7 @@ susi-duktape --src susi-sample.js --addr localhost --port 4000 --key duktape_key
 If you see an output like this, everything's fine :)
 If you have a look at the supplied JS sources, you can see how SUSI works.
 
-### Understand the code
+### 4. Understand the code
 There are 5 essential actions you need to know about:
 
 * **registerProcessor()**
@@ -182,21 +183,18 @@ publish() takes the event as first parameter. All events MUST have a topic field
 which can contain arbitrary data. As a second argument you can specify a finish callback. This is somewhat a one-time-consumer.
 It gets called after all processors for this event finished, but gets immediatly deleted afterwards.
 
-### Documentation
-For a more detailed documentation please visit [susi.readme.io](http://susi.readme.io/).
+### 5. Learn More about SUSI
+* Documentation @ [susi.readme.io](http://susi.readme.io/).
+* [Libraries](https://github.com/webvariants/susi/blob/experimental/LIBRARIES.md)
+  * [Boost](https://github.com/boostorg/boost)
+  * [OpenSSL](https://github.com/openssl/openssl)
 
-## Contributors
-Tino Rusch, Thomas Krause, Christian Sonderfeld
-
-### Third party libraries
-* [Boost](https://github.com/boostorg/boost)
-* [OpenSSL](https://github.com/openssl/openssl)
-
-## MIT License
-* see [LICENSE](https://github.com/webvariants/susi/blob/experimental/LICENSE.md) file
-
-## Contact
-#### Developer/Company
+### 6. Stay in contact
 * Homepage: http://www.webvariants.de/SUSI
 * e-mail: tino[*dot*]rusch[*at*]webvariants[*dot*]de
+
+
+SUSI is released under the [MIT License](https://github.com/webvariants/susi/blob/experimental/LICENSE.md).
+
+*Many thanks to the whole SUSIProject Team and all [contributors]().*
 
