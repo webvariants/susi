@@ -196,5 +196,5 @@ It gets called after all processors for this event finished, but gets immediatly
 
 SUSI is released under the [MIT License](https://github.com/webvariants/susi/blob/experimental/LICENSE.md).
 
-*Many thanks to the whole SUSIProject Team and all [contributors]().*
+*Many thanks to the whole SUSIProject Team and all [contributors](https://github.com/webvariants/susi/graphs/contributors).*
 
