@@ -1,0 +1,42 @@
+#include "susi/SusiUDPServer.h"
+
+#include <boost/program_options.hpp>
+#include <fstream>
+namespace po = boost::program_options;
+
+std::string progName;
+std::string config;
+
+po::variables_map vm_;
+po::options_description desc_{"Allowed options"};
+
+void showHelp(){
+    std::cout<<"usage: "<<progName<<std::endl;
+    std::cout<<desc_<<std::endl;
+    exit(0);
+}
+
+void parseCommandLine(int argc, char **argv){
+    progName = argv[0];
+    desc_.add_options()
+        ("help,h", "produce help message")
+        ("conf,c", po::value<std::string>(&config)->default_value("clusterconfig.json"), "address of susi instance");
+    po::store(po::parse_command_line(argc, argv, desc_), vm_);
+    po::notify(vm_);
+}
+
+
+int main(int argc, char *argv[]){
+    try{
+        parseCommandLine(argc,argv);
+        if(vm_.count("help")){
+            showHelp();
+        }
+        Susi::SusiUDPServer server{"localhost",4000,"server_key.pem","server_cert.pem",12345};
+        server.join();
+    }catch(const std::exception & e){
+        std::cout << e.what() << std::endl;
+        showHelp();
+    }
+    return 0;
+}
