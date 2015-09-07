@@ -2,11 +2,11 @@
 
 Susi::SusiUDPServer::SusiUDPServer(std::string addr,short port, std::string key, std::string cert, unsigned short udpPort) : 
 	_susi{new Susi::SusiClient{addr,port,key,cert}},
-	_socket{_io_service, boost::asio::ip::udp::endpoint{boost::asio::ip::udp::v4(),udpPort}} {
+	_socket{_io_service, boost::asio::ip::udp::endpoint{boost::asio::ip::udp::v6(),udpPort}} {
+		do_receive();
 		_runloop = std::move(std::thread{[this](){
 			_io_service.run();
 		}});
-		do_receive();
 }
 
 void Susi::SusiUDPServer::stop() {
@@ -31,13 +31,17 @@ void Susi::SusiUDPServer::do_receive() {
 			auto doc = BSON::Value::fromJSON(packetString);            
 			if(doc["type"].isString() && doc["type"].getString() == "publish"){
 				if(doc["data"].isObject() && doc["data"]["topic"].isString()){
-					auto event = _susi->createEvent(doc["data"]);
-					auto endpoint = _sender_endpoint;
-					_susi->publish(std::move(event),[this,endpoint](Susi::SharedEventPtr event){
-						do_send(event->toString(), _sender_endpoint);
-					});
+					handlePublish(doc["data"],_sender_endpoint);
 				}
-			}
+			}else if(doc["type"].isString() && doc["type"].getString() == "register"){
+				if(doc["data"].isObject() && doc["data"]["topic"].isString()){
+					handleRegister(doc["data"],_sender_endpoint);
+				}
+			}else if(doc["type"].isString() && doc["type"].getString() == "unregister"){
+				if(doc["data"].isObject() && doc["data"]["topic"].isString()){
+					handleUnregister(doc["data"],_sender_endpoint);
+				}
+			} 
 		}
 		do_receive();
 	});
@@ -46,5 +50,61 @@ void Susi::SusiUDPServer::do_receive() {
 void Susi::SusiUDPServer::do_send(const std::string & message, boost::asio::ip::udp::endpoint receiver) {
 	_socket.async_send_to(
 		boost::asio::buffer(message.c_str(), message.size()), receiver,
-		[this](boost::system::error_code /*ec*/, std::size_t /*bytes_sent*/){});
+		[this](boost::system::error_code ec, std::size_t /*bytes_sent*/){
+			if(ec){
+				std::cout<<"error while sending packet: "<<ec<<std::endl;
+			}
+		});
 }
+
+void Susi::SusiUDPServer::handlePublish(BSON::Value & eventData, boost::asio::ip::udp::endpoint & sender){
+	auto event = _susi->createEvent(eventData);
+	auto endpoint = _sender_endpoint;
+	_susi->publish(std::move(event),[this,endpoint](Susi::SharedEventPtr event){
+		BSON::Value packet = BSON::Object{
+			{"type","ack"},
+			{"data",event->toAny()}
+		};
+		//do_send(packet->toJSON(), _sender_endpoint); //BAD ERROR ;)
+		do_send(packet.toJSON(), endpoint);
+	});
+}
+
+void Susi::SusiUDPServer::handleRegister(BSON::Value & eventData, boost::asio::ip::udp::endpoint & sender){
+	auto topic = eventData["topic"].getString();
+	auto & sendersRegistrations = _registrations[sender];
+	if(sendersRegistrations.count(topic) == 1) {
+		BSON::Value result = BSON::Object{
+			{"type","error"},
+			{"data","you are already registered for the topic "+topic}
+		};
+		do_send(result.toJSON(),sender);
+	}else{
+		auto endpoint = _sender_endpoint;
+		sendersRegistrations[topic] = _susi->registerConsumer(topic,[this,endpoint](Susi::SharedEventPtr event){
+			BSON::Value packet = BSON::Object{
+				{"type","event"},
+				{"data",event->toAny()}
+			};
+			do_send(packet.toJSON(), endpoint);
+		});
+	}
+}
+
+void Susi::SusiUDPServer::handleUnregister(BSON::Value & eventData, boost::asio::ip::udp::endpoint & sender){
+	auto topic = eventData["topic"].getString();
+	auto & sendersRegistrations = _registrations[sender];
+	if(sendersRegistrations.count(topic) == 0) {
+		BSON::Value result = BSON::Object{
+			{"type","error"},
+			{"data","you are not registered for the topic "+topic}
+		};
+		do_send(result.toJSON(),sender);
+	}else{
+		sendersRegistrations.erase(topic);
+		if(sendersRegistrations.size() == 0){
+			_registrations.erase(sender);
+		}
+	}
+}
+
