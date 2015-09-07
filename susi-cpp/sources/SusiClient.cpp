@@ -112,6 +112,7 @@ void Susi::SusiClient::sendRegisterConsumer(std::string topic) {
 }
 
 void Susi::SusiClient::onConnect() {
+
     isConnected = true;
 
     for (auto & kv : registerProcessorCounter) {

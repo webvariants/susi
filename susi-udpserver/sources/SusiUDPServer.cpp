@@ -60,13 +60,15 @@ void Susi::SusiUDPServer::do_send(const std::string & message, boost::asio::ip::
 void Susi::SusiUDPServer::handlePublish(BSON::Value & eventData, boost::asio::ip::udp::endpoint & sender){
 	auto event = _susi->createEvent(eventData);
 	auto endpoint = _sender_endpoint;
+	std::cout<<"publish event with topic "<<event->topic<<" for "<<sender<<std::endl;
 	_susi->publish(std::move(event),[this,endpoint](Susi::SharedEventPtr event){
+		std::cout<<"forward ack with topic "<<event->topic<<" to "<<endpoint<<std::endl;
 		BSON::Value packet = BSON::Object{
 			{"type","ack"},
 			{"data",event->toAny()}
 		};
-		//do_send(packet->toJSON(), _sender_endpoint); //BAD ERROR ;)
-		do_send(packet.toJSON(), endpoint);
+		//do_send(packet->toJSON()+"\n", _sender_endpoint); //BAD ERROR ;)
+		do_send(packet.toJSON()+"\n", endpoint);
 	});
 }
 
@@ -78,28 +80,32 @@ void Susi::SusiUDPServer::handleRegister(BSON::Value & eventData, boost::asio::i
 			{"type","error"},
 			{"data","you are already registered for the topic "+topic}
 		};
-		do_send(result.toJSON(),sender);
+		do_send(result.toJSON()+"\n",sender);
 	}else{
 		auto endpoint = _sender_endpoint;
+
+		std::cout<<"register consumer for topic "<<topic<<" for "<<endpoint<<std::endl;
 		sendersRegistrations[topic] = _susi->registerConsumer(topic,[this,endpoint](Susi::SharedEventPtr event){
+			std::cout<<"forward event with topic "<<event->topic<<" to "<<endpoint<<std::endl;
 			BSON::Value packet = BSON::Object{
 				{"type","event"},
 				{"data",event->toAny()}
 			};
-			do_send(packet.toJSON(), endpoint);
+			do_send(packet.toJSON()+"\n", endpoint);
 		});
 	}
 }
 
 void Susi::SusiUDPServer::handleUnregister(BSON::Value & eventData, boost::asio::ip::udp::endpoint & sender){
 	auto topic = eventData["topic"].getString();
+	std::cout<<"unregister consumer for topic "<<topic<<" for "<<sender<<std::endl;
 	auto & sendersRegistrations = _registrations[sender];
 	if(sendersRegistrations.count(topic) == 0) {
 		BSON::Value result = BSON::Object{
 			{"type","error"},
 			{"data","you are not registered for the topic "+topic}
 		};
-		do_send(result.toJSON(),sender);
+		do_send(result.toJSON()+"\n",sender);
 	}else{
 		sendersRegistrations.erase(topic);
 		if(sendersRegistrations.size() == 0){
