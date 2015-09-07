@@ -14,12 +14,12 @@ protected:
 	std::string dbPath_;
 	std::shared_ptr<leveldb::DB> db_;
 
-	bool validateFieldsForPut(const BSON::Value & event);
-	bool validateFieldsForGet(const BSON::Value & event);
+	bool validateFieldsForPut(const Susi::EventPtr & event);
+	bool validateFieldsForGet(const Susi::EventPtr & event);
 
-	void handlePut(BSON::Value & event);
-	void handleGet(BSON::Value & event);
-	void handleDelete(BSON::Value & event);
+	void handlePut(Susi::EventPtr event);
+	void handleGet(Susi::EventPtr event);
+	void handleDelete(Susi::EventPtr event);
 
 };
 
