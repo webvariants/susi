@@ -51,6 +51,7 @@ class SSLTCPServer {
         boost::asio::io_service& io_service_;
         ssl_socket socket_;
         Susi::SSLTCPServer *server;
+        bool onCloseCalled = false;
 
         ssl_socket::lowest_layer_type& socket();
 

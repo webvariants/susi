@@ -97,7 +97,11 @@ void Susi::SSLTCPServer::Session::start() {
             do_read();
         } else {
             std::cerr << ec.message() << std::endl;
+            if(!this->onCloseCalled){
+            }
             server->onClose(socket().native_handle());
+            this->onCloseCalled = true;
+            server->sessions.erase(socket().native_handle());
             socket().close();
         }
     });
@@ -108,8 +112,12 @@ void Susi::SSLTCPServer::Session::do_read() {
     socket_.async_read_some(boost::asio::buffer(data_, max_length),
     [this, self](boost::system::error_code ec, std::size_t length) {
         if (ec) {
-            server->onClose(socket().native_handle());
+            if(!this->onCloseCalled){
+                server->onClose(socket().native_handle());
+                this->onCloseCalled = true;
+            }
             server->sessions.erase(socket().native_handle());
+            socket().close();
         } else {
             server->onData(socket().native_handle(), data_, length);
             do_read();
@@ -128,8 +136,12 @@ void Susi::SSLTCPServer::Session::do_write() {
                 do_write();
             }
         } else {
+            if(!this->onCloseCalled){
+            }
             server->onClose(socket().native_handle());
+            this->onCloseCalled = true;
             server->sessions.erase(socket().native_handle());
+            socket().close();
         }
     });
 }
