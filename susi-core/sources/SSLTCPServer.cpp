@@ -102,7 +102,6 @@ void Susi::SSLTCPServer::Session::start() {
             server->onClose(socket().native_handle());
             this->onCloseCalled = true;
             server->sessions.erase(socket().native_handle());
-            socket().close();
         }
     });
 }
@@ -117,7 +116,6 @@ void Susi::SSLTCPServer::Session::do_read() {
                 this->onCloseCalled = true;
             }
             server->sessions.erase(socket().native_handle());
-            socket().close();
         } else {
             server->onData(socket().native_handle(), data_, length);
             do_read();
@@ -141,7 +139,6 @@ void Susi::SSLTCPServer::Session::do_write() {
             server->onClose(socket().native_handle());
             this->onCloseCalled = true;
             server->sessions.erase(socket().native_handle());
-            socket().close();
         }
     });
 }
