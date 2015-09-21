@@ -51,6 +51,8 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/susi-cluster)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-cluster/headers)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/susi-udpserver)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-udpserver/headers)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/susi-heartbeat)
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-heartbeat/headers)
 
 SET(CPACK_GENERATOR "DEB")
 SET(CPACK_SET_DESTDIR ON)
