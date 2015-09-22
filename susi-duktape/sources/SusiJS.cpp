@@ -2,8 +2,8 @@
 
 std::string Susi::Duktape::susiJS = R"SUSIJS(
 
-var susi = {  
-    _consumerCallbacks: [], 
+var susi = {
+    _consumerCallbacks: [],
     _processorCallbacks: [],
 
     _processorTopicCounter: {},
@@ -15,30 +15,30 @@ var susi = {
     _processed: [],
 
     registerConsumer: function(topic,callback) {
-        var id = this._genID(); 
-        this._consumerCallbacks.push({topic: topic, callback: callback, id: id}); 
+        var id = this._genID();
+        this._consumerCallbacks.push({topic: topic, callback: callback, id: id});
         var count = this._consumerTopicCounter[topic] || 0;
         count++;
         this._consumerTopicCounter[topic] = count;
-        if(count == 1){ 
-            _registerConsumer(topic); 
-        } 
-        return id; 
+        if(count == 1){
+            _registerConsumer(topic);
+        }
+        return id;
     },
 
-    registerProcessor: function(topic,callback) { 
-        var id = this._genID(); 
-        this._processorCallbacks.push({topic: topic, callback: callback, id: id}); 
+    registerProcessor: function(topic,callback) {
+        var id = this._genID();
+        this._processorCallbacks.push({topic: topic, callback: callback, id: id});
         var count = this._processorTopicCounter[topic] || 0;
         count++;
         this._processorTopicCounter[topic] = count;
-        if(count == 1){ 
+        if(count == 1){
             _registerProcessor(topic);
-        } 
-        return id; 
+        }
+        return id;
     },
 
-    unregisterConsumer: function(id){ 
+    unregisterConsumer: function(id){
         for(var i=0;i<this._consumerCallbacks;i++){
             if(this._consumerCallbacks[i].id === id){
                 var topic = this._consumerCallbacks[i].topic;
@@ -54,10 +54,10 @@ var susi = {
                 return true;
             }
         }
-        return false; 
+        return false;
     },
 
-    unregisterProcessor: function(id){ 
+    unregisterProcessor: function(id){
         for(var i=0;i<this._processorCallbacks;i++){
             if(this._processorCallbacks[i].id === id){
                 var topic = this._processorCallbacks[i].topic;
@@ -73,31 +73,31 @@ var susi = {
                 return true;
             }
         }
-        return false; 
+        return false;
     },
 
-    publish: function(event,callback) { 
-        if(event.id === undefined){ 
-            event.id = ''+this._genID(); 
-        } 
-        if(callback !== undefined) { 
-            this._publishCallbacks[event.id] = callback; 
+    publish: function(event,callback) {
+        if(event.id === undefined){
+            event.id = ''+this._genID();
         }
-        _publish(JSON.stringify(event)); 
+        if(callback !== undefined) {
+            this._publishCallbacks[event.id] = callback;
+        }
+        _publish(JSON.stringify(event));
     },
 
     ack: function(event){
         var process = this._processorProcesses[event.id];
         if(process.next >= process.processors.length){
             delete this._processorProcesses[event.id];
-            _ack(JSON.stringify(event)); 
+            _ack(JSON.stringify(event));
         }else{
             process.next++;
             process.processors[process.next-1](event);
         }
     },
 
-    dismiss: function(event){ 
+    dismiss: function(event){
         delete(this._processorProcesses[event.id]);
         _dismiss(JSON.stringify(event));
     },
@@ -113,7 +113,7 @@ var susi = {
     },
 
     _processProcessorEvent: function(event,topic){
-        event = JSON.parse(event); 
+        event = JSON.parse(event);
         if(this._processed.indexOf(event.id) !== -1){
             _ack(JSON.stringify(event));
             return;
@@ -122,8 +122,8 @@ var susi = {
         if(this._processed.length > 64){
             this._processed.splice(0,1);
         }
-        Duktape.fin(event,function(event){ 
-            susi.ack(event); 
+        Duktape.fin(event,function(event){
+            susi.ack(event);
         });
         var process = {
             processors: [],
@@ -133,39 +133,39 @@ var susi = {
         for (var i = 0; i<this._processorCallbacks.length; i++) {
             if(event.topic.match(this._processorCallbacks[i].topic)){
                 process.processors.push(this._processorCallbacks[i].callback);
-            } 
+            }
         }
 
         this._processorProcesses[event.id] = process;
         this.ack(event);
-        Duktape.gc(); 
+        Duktape.gc();
     },
 
-    _processAck: function(event){ 
-        event = JSON.parse(event); 
-        var cb = this._publishCallbacks[event.id]; 
-        if(cb !== undefined) { 
-            cb(event); 
-            delete this._publishCallbacks[event.id]; 
+    _processAck: function(event){
+        event = JSON.parse(event);
+        var cb = this._publishCallbacks[event.id];
+        if(cb !== undefined) {
+            cb(event);
+            delete this._publishCallbacks[event.id];
         }
     },
 
-    _genID: function(){ 
-        return Math.floor(Math.random()*1000000000000); 
-    } 
-}; 
+    _genID: function(){
+        return Math.floor(Math.random()*1000000000000);
+    }
+};
 
 //called by c++ part
-function _processConsumerEvent(event,topic){ 
-    susi._processConsumerEvent(event,topic); 
+function _processConsumerEvent(event,topic){
+    susi._processConsumerEvent(event,topic);
 }
 
-function _processProcessorEvent(event,topic){ 
-    susi._processProcessorEvent(event,topic) 
+function _processProcessorEvent(event,topic){
+    susi._processProcessorEvent(event,topic)
 }
 
-function _processAck(event){ 
-    susi._processAck(event); 
+function _processAck(event){
+    susi._processAck(event);
 }
 
 var duktapeLogger = new Duktape.Logger('susi-js');
