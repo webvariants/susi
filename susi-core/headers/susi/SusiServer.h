@@ -13,7 +13,7 @@
 #define __SUSISERVER__
 
 #include "susi/FramingServer.h"
-#include "susi/JSONFramer.h"
+#include "susi/LineFramer.h"
 #include <regex>
 #include <chrono>
 #include <bson/Value.h>
@@ -28,7 +28,7 @@
 namespace Susi {
 
 template<class BaseServer>
-class SusiServer : public FramingServer<JSONFramer, BaseServer> {
+class SusiServer : public FramingServer<LineFramer, BaseServer> {
   protected:
     std::map<std::string, std::vector<int>> consumers;  //topic to list of client id's
     std::map<std::string, std::vector<int>> processors; //topic to list of client id's
@@ -44,10 +44,10 @@ class SusiServer : public FramingServer<JSONFramer, BaseServer> {
     std::map<std::string, std::shared_ptr<PublishProcess>> publishProcesses; //event id to publish process
 
   public:
-    SusiServer(short port) : FramingServer<JSONFramer, BaseServer> {port} {}
+    SusiServer(short port) : FramingServer<LineFramer, BaseServer> {port} {}
 #ifdef WITH_SSL
     SusiServer(short port, std::string keyFile, std::string certificateFile) :
-        FramingServer<JSONFramer, BaseServer> {port, keyFile, certificateFile} {}
+        FramingServer<LineFramer, BaseServer> {port, keyFile, certificateFile} {}
 #endif
 
 
@@ -56,7 +56,7 @@ class SusiServer : public FramingServer<JSONFramer, BaseServer> {
     virtual void onConnect(int id) override {
         std::cout << "got new client " << BaseServer::getPeerCertificateHash(id) << std::endl;
         //std::cout<<BaseServer::getPeerCertificate(id)<<std::endl;
-        FramingServer<JSONFramer, BaseServer>::onConnect(id);
+        FramingServer<LineFramer, BaseServer>::onConnect(id);
         BSON::Value sessionNewEvent = BSON::Object{
             {"topic", "core::session::new"},
             {"payload", id}
@@ -66,7 +66,7 @@ class SusiServer : public FramingServer<JSONFramer, BaseServer> {
 
     virtual void onClose(int id) override {
         std::cout << "lost client " << BaseServer::getPeerCertificateHash(id) << std::endl;
-        FramingServer<JSONFramer, BaseServer>::onClose(id);
+        FramingServer<LineFramer, BaseServer>::onClose(id);
 
         //remove all publish processes associated with this client
         for (auto it = publishProcesses.cbegin(); it != publishProcesses.cend();) {
@@ -174,7 +174,7 @@ class SusiServer : public FramingServer<JSONFramer, BaseServer> {
 
     void send(int id, BSON::Value & doc) {
         std::string frame = doc.toJSON() + "\n";
-        FramingServer<JSONFramer, BaseServer>::send(id, frame.c_str(), frame.size());
+        FramingServer<LineFramer, BaseServer>::send(id, frame.c_str(), frame.size());
     }
 
     void registerConsumer(std::string & topic, int id) {
