@@ -59,15 +59,7 @@ void Susi::SusiClient::onDismiss(BSON::Value & event) {
 void Susi::SusiClient::onConsumerEvent(BSON::Value & event) {
     auto evt = eventmanager.createEvent(event);
     eventmanager.publish(std::move(evt), [this](SharedEventPtr evt) {
-        BSON::Value packet = BSON::Object{
-            {"type", "ack"},
-            {"data", evt->toAny()}
-        };
-        if (isConnected) {
-            send(packet.toJSON());
-        } else {
-            messageQueue.emplace_back(new BSON::Value{packet});
-        }
+        std::cerr<<"susi-cpp: publish consumer event ready"<<std::endl;
     }, false, true);
 }
 
@@ -178,5 +170,3 @@ bool Susi::SusiClient::unregisterConsumer(std::uint64_t id) {
 std::uint64_t Susi::SusiClient::generateId() {
     return std::chrono::system_clock::now().time_since_epoch().count();
 }
-
-
