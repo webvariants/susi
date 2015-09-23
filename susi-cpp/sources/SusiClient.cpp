@@ -18,15 +18,19 @@ void Susi::SusiClient::onFrame(std::string & frame) {
         if (packet["type"].isString() && packet["data"].isObject()) {
             const std::string & type = packet["type"];
             if (type == "ack") {
+                std::cerr<<"got ack to event "<<packet["data"]["topic"].getString()<<std::endl;
                 onAck(packet["data"]);
             }
             if (type == "dismiss") {
+                std::cerr<<"got dismiss to event "<<packet["data"]["topic"].getString()<<std::endl;
                 onDismiss(packet["data"]);
             }
             if (type == "consumerEvent" && packet["data"]["topic"].isString()) {
+                std::cerr<<"got consumer event "<<packet["data"]["topic"].getString()<<std::endl;
                 onConsumerEvent(packet["data"]);
             }
             if (type == "processorEvent" && packet["data"]["topic"].isString()) {
+                std::cerr<<"got processor event "<<packet["data"]["topic"].getString()<<std::endl;
                 onProcessorEvent(packet["data"]);
             }
         }
@@ -71,7 +75,7 @@ void Susi::SusiClient::onProcessorEvent(BSON::Value & event) {
             {"data", evt->toAny()}
         };
         if (isConnected) {
-            send(packet.toJSON());
+            send(packet.toJSON()+"\n");
         } else {
             messageQueue.emplace_back(new BSON::Value{packet});
         }
@@ -88,7 +92,7 @@ void Susi::SusiClient::sendRegisterProcessor(std::string topic) {
             }
         }
     };
-    send(packet.toJSON());
+    send(packet.toJSON()+"\n");
 }
 
 void Susi::SusiClient::sendRegisterConsumer(std::string topic) {
@@ -100,7 +104,7 @@ void Susi::SusiClient::sendRegisterConsumer(std::string topic) {
             }
         }
     };
-    send(packet.toJSON());
+    send(packet.toJSON()+"\n");
 }
 
 void Susi::SusiClient::onConnect() {
@@ -116,7 +120,7 @@ void Susi::SusiClient::onConnect() {
     }
 
     while (!messageQueue.empty()) {
-        send(messageQueue.front()->toJSON());
+        send(messageQueue.front()->toJSON()+"\n");
         messageQueue.pop_front();
     }
 }
@@ -135,7 +139,7 @@ void Susi::SusiClient::publish(EventPtr event, Consumer finishCallback) {
         finishCallbacks[id] = finishCallback;
     }
     if (isConnected) {
-        send(packet.toJSON());
+        send(packet.toJSON()+"\n");
     } else {
         messageQueue.emplace_back(new BSON::Value{packet});
     }

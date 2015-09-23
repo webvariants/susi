@@ -13,7 +13,7 @@
 #define __SUSICLIENT__
 
 #include "susi/FramingClient.h"
-#include "susi/JSONFramer.h"
+#include "susi/LineFramer.h"
 #include "susi/EventManager.h"
 
 #include <iostream>
@@ -31,13 +31,13 @@
 
 namespace Susi {
 
-class SusiClient : public FramingClient<JSONFramer, Client> {
+class SusiClient : public FramingClient<LineFramer, Client> {
   public:
-    SusiClient(std::string host, short port) : FramingClient<JSONFramer, Client> {host, port} {}
+    SusiClient(std::string host, short port) : FramingClient<LineFramer, Client> {host, port} {}
 
 #ifdef WITH_SSL
     SusiClient(std::string host, short port, std::string keyFile, std::string certificateFile) :
-        FramingClient<JSONFramer, Client> {host, port, keyFile, certificateFile} {}
+        FramingClient<LineFramer, Client> {host, port, keyFile, certificateFile} {}
 #endif
 
     virtual ~SusiClient() {}
