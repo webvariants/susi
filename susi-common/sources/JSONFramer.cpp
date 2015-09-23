@@ -9,7 +9,7 @@
  * @author: Tino Rusch (tino.rusch@webvariants.de)
  */
 
-#include "susi/JSONFramer.h" 
+#include "susi/JSONFramer.h"
 
 Susi::JSONFramer::JSONFramer( std::function<void( std::string& )> onMessage ) : _onMessage {onMessage} {}
 Susi::JSONFramer::JSONFramer() {}
@@ -19,6 +19,7 @@ void Susi::JSONFramer::operator=( const JSONFramer & other ) {
 };
 
 void Susi::JSONFramer::collect( char * data, size_t len ) {
+    std::cout<<"got data in framer"<<std::endl;
     for( size_t i=0; i<len; i++ ) {
         char c = data[i];
         message += c;
