@@ -10,5 +10,5 @@ public:
 protected:
 	std::shared_ptr<Susi::SusiClient> susi_;
 	std::thread runloop_;
-
+	std::atomic<bool> stopVar_{false};
 };
