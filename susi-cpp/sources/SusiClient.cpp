@@ -18,19 +18,19 @@ void Susi::SusiClient::onFrame(std::string & frame) {
         if (packet["type"].isString() && packet["data"].isObject()) {
             const std::string & type = packet["type"];
             if (type == "ack") {
-                std::cerr<<"got ack to event "<<packet["data"]["topic"].getString()<<std::endl;
+                //std::cerr<<"got ack to event "<<packet["data"]["topic"].getString()<<std::endl;
                 onAck(packet["data"]);
             }
             if (type == "dismiss") {
-                std::cerr<<"got dismiss to event "<<packet["data"]["topic"].getString()<<std::endl;
+                //std::cerr<<"got dismiss to event "<<packet["data"]["topic"].getString()<<std::endl;
                 onDismiss(packet["data"]);
             }
             if (type == "consumerEvent" && packet["data"]["topic"].isString()) {
-                std::cerr<<"got consumer event "<<packet["data"]["topic"].getString()<<std::endl;
+                //std::cerr<<"got consumer event "<<packet["data"]["topic"].getString()<<std::endl;
                 onConsumerEvent(packet["data"]);
             }
             if (type == "processorEvent" && packet["data"]["topic"].isString()) {
-                std::cerr<<"got processor event "<<packet["data"]["topic"].getString()<<std::endl;
+                //std::cerr<<"got processor event "<<packet["data"]["topic"].getString()<<std::endl;
                 onProcessorEvent(packet["data"]);
             }
         }
@@ -63,7 +63,7 @@ void Susi::SusiClient::onDismiss(BSON::Value & event) {
 void Susi::SusiClient::onConsumerEvent(BSON::Value & event) {
     auto evt = eventmanager.createEvent(event);
     eventmanager.publish(std::move(evt), [this](SharedEventPtr evt) {
-        std::cerr<<"susi-cpp: publish consumer event ready"<<std::endl;
+        //std::cerr<<"susi-cpp: publish consumer event ready"<<std::endl;
     }, false, true);
 }
 

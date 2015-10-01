@@ -184,7 +184,6 @@ void Susi::Duktape::JSEngine::publish(std::string eventData) {
     auto event = _client.createEvent(rawEvent.topic);
     *event = rawEvent;
     _client.publish(std::move(event), [this](Susi::SharedEventPtr event) {
-        std::cerr<<"duktape: publish ready, calling ack in js..."<<std::endl;
         std::lock_guard<std::mutex> lock{mutex};
         duk_push_global_object(ctx);
         duk_get_prop_string(ctx, -1 /*index*/, "_processAck");
