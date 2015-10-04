@@ -18,17 +18,12 @@
 #include <chrono>
 #include <bson/Value.h>
 
-#ifdef WITH_SSL
 #include "susi/TCPServer.h"
 #include "susi/SSLTCPServer.h"
-#else
-#include "susi/TCPServer.h"
-#endif
 
 namespace Susi {
 
-template<class BaseServer>
-class SusiServer : public FramingServer<LineFramer, BaseServer> {
+class SusiServer : public FramingServer<LineFramer, SSLTCPServer> {
   protected:
     std::map<std::string, std::vector<int>> consumers;  //topic to list of client id's
     std::map<std::string, std::vector<int>> processors; //topic to list of client id's
@@ -44,316 +39,32 @@ class SusiServer : public FramingServer<LineFramer, BaseServer> {
     std::map<std::string, std::shared_ptr<PublishProcess>> publishProcesses; //event id to publish process
 
   public:
-    SusiServer(short port) : FramingServer<LineFramer, BaseServer> {port} {}
+    SusiServer(short port);
 #ifdef WITH_SSL
-    SusiServer(short port, std::string keyFile, std::string certificateFile) :
-        FramingServer<LineFramer, BaseServer> {port, keyFile, certificateFile} {}
+    SusiServer(short port, std::string keyFile, std::string certificateFile);
 #endif
 
+    virtual ~SusiServer();
 
-    virtual ~SusiServer() {}
-
-    virtual void onConnect(int id) override {
-        std::cout << "got new client " << BaseServer::getPeerCertificateHash(id) << std::endl;
-        //std::cout<<BaseServer::getPeerCertificate(id)<<std::endl;
-        FramingServer<LineFramer, BaseServer>::onConnect(id);
-        BSON::Value sessionNewEvent = BSON::Object{
-            {"topic", "core::session::new"},
-            {"payload", id}
-        };
-        publish(sessionNewEvent, 0);
-    }
-
-    virtual void onClose(int id) override {
-        std::cout << "lost client " << BaseServer::getPeerCertificateHash(id) << std::endl;
-        FramingServer<LineFramer, BaseServer>::onClose(id);
-
-        //remove all publish processes associated with this client
-        for (auto it = publishProcesses.cbegin(); it != publishProcesses.cend();) {
-            if (it->second->publisher == id) {
-                publishProcesses.erase(it++);
-            } else {
-                ++it;
-            }
-        }
-
-        //remove all associated consumers
-        for (auto & kv : consumers) {
-            kv.second.erase(std::remove_if(kv.second.begin(), kv.second.end(),
-            [id](int currentId) { return currentId == id; }), kv.second.end());
-        }
-
-        //remove all associated processors
-        for (auto & kv : processors) {
-            kv.second.erase(std::remove_if(kv.second.begin(), kv.second.end(),
-            [id](int currentId) { return currentId == id; }), kv.second.end());
-        }
-
-        //cleanup publishProcesses
-        std::vector<std::shared_ptr<PublishProcess>> orphanedProcesses;
-        for (auto & kv : publishProcesses) {
-            auto process = kv.second;
-            std::cout << "process: " << process << std::endl;
-            // check if there are pending processorEvents for this client
-            if (process->nextProcessor - 1 < process->processors.size() && process->processors[process->nextProcessor - 1] == id) {
-                orphanedProcesses.push_back(process);
-            }
-            //remove all id occurences from the process
-            for (size_t i = process->nextProcessor; i < process->processors.size(); i++) {
-                if (process->processors[i] == id) {
-                    process->processors.erase(process->processors.begin() + i);
-                    break;
-                }
-            }
-            for (size_t i = 0; i < process->consumers.size(); i++) {
-                if (process->consumers[i] == id) {
-                    process->consumers.erase(process->consumers.begin() + i);
-                    break;
-                }
-            }
-        }
-        for (auto & p : orphanedProcesses) {
-            ack(p->lastState, 0);
-        }
-        BSON::Value sessionLostEvent = BSON::Object{
-            {"topic", "core::session::lost"},
-            {"payload", id}
-        };
-        publish(sessionLostEvent, 0);
-    }
-
-    virtual void onFrame(int id, std::string & frame) override {
-        auto doc = BSON::Value::fromJSON(frame);
-        if (!validateFrame(doc)) {
-            BSON::Value res = BSON::Object{
-                {"type", "error"},
-                {
-                    "data", BSON::Object{
-                        {"reason", "your request is invalid"}
-                    }
-                }
-            };
-            send(id, res);
-        } else {
-            std::string & type = doc["type"];
-            BSON::Value & data = doc["data"];
-            if (type == "registerConsumer") {
-                registerConsumer(data["topic"], id);
-            }
-            if (type == "registerProcessor") {
-                registerProcessor(data["topic"], id);
-            }
-            if (type == "unregisterConsumer") {
-                unregisterConsumer(data["topic"], id);
-            }
-            if (type == "unregisterProcessor") {
-                unregisterProcessor(data["topic"], id);
-            }
-            if (type == "publish") {
-                publish(data, id);
-            }
-            if (type == "ack") {
-                ack(data, id);
-            }
-            if (type == "dismiss") {
-                dismiss(data, id);
-            }
-        }
-    }
+    virtual void onConnect(int id) override;
+    virtual void onClose(int id) override;
+    virtual void onFrame(int id, std::string & frame) override;
 
   protected:
-    bool validateFrame(BSON::Value & doc) {
-        if ( !doc.isObject() ||
-                !doc["type"].isString() ||
-                !doc["data"].isObject() ||
-                !doc["data"]["topic"].isString()) {
-            return false;
-        }
-        return true;
-    }
 
-    void send(int id, BSON::Value & doc) {
-        std::string frame = doc.toJSON() + "\n";
-        FramingServer<LineFramer, BaseServer>::send(id, frame.c_str(), frame.size());
-    }
-
-    void registerConsumer(std::string & topic, int id) {
-        if (!contains(consumers[topic], id)) {
-            std::cout << "register consumer " + topic + " for " << BaseServer::getPeerCertificateHash(id) << std::endl;
-            consumers[topic].push_back(id);
-        }
-    }
-
-    void registerProcessor(std::string & topic, int id) {
-        if (!contains(processors[topic], id)) {
-            std::cout << "register processor " + topic + " for " << BaseServer::getPeerCertificateHash(id) << std::endl;
-            processors[topic].push_back(id);
-        }
-    }
-
-    void unregisterConsumer(std::string & topic, int id) {
-        for (int i = 0; i < consumers[topic].size(); i++) {
-            if (id == consumers[topic][i]) {
-                std::cout << "unregister consumer " + topic + " for " << BaseServer::getPeerCertificateHash(id) << std::endl;
-                consumers[topic].erase(consumers[topic].begin() + i);
-                break;
-            }
-        }
-    }
-
-    void unregisterProcessor(std::string & topic, int id) {
-        for (int i = 0; i < processors[topic].size(); i++) {
-            if (id == processors[topic][i]) {
-                std::cout << "unregister processor " + topic + " for " << BaseServer::getPeerCertificateHash(id) << std::endl;
-                processors[topic].erase(processors[topic].begin() + i);
-                break;
-            }
-        }
-    }
-
-    void publish(BSON::Value & event, int publisher) {
-        std::cout << "publish event " + event["topic"].getString() + " for " << BaseServer::getPeerCertificateHash(publisher) << std::endl;
-        std::string & topic = event["topic"];
-        if (!event["id"].isString()) {
-            long id = std::chrono::system_clock::now().time_since_epoch().count();
-            event["id"] = std::to_string(id);
-        }
-        if (!event["sessionid"].isString()) {
-            event["sessionid"] = std::to_string(publisher);
-        }
-
-        auto peerCertHash = BaseServer::getPeerCertificateHash(publisher);
-        if (peerCertHash != "") {
-            if (event["headers"].isArray()) {
-                event["headers"].push_back(BSON::Object{{"certHash", peerCertHash}});
-            } else {
-                event["headers"] = BSON::Array{BSON::Object{{"certHash", peerCertHash}}};
-            }
-        }
-
-        checkAndReactToSusiEvents(event);
-
-        auto process = std::make_shared<PublishProcess>();
-        process->publisher = publisher;
-        for (auto & kv : processors) {
-            std::regex e{kv.first};
-            if (std::regex_match(topic, e)) {
-                for (auto & id : kv.second) {
-                    if (!contains(process->processors, id)) {
-                        process->processors.push_back(id);
-                    }
-                }
-            }
-        }
-        for (auto & kv : consumers) {
-            std::regex e{kv.first};
-            if (std::regex_match(topic, e)) {
-                for (auto & id : kv.second) {
-                    if (!contains(process->consumers, id)) {
-                        process->consumers.push_back(id);
-                    }
-                }
-            }
-        }
-        publishProcesses[event["id"].getString()] = process;
-        ack(event, 0);
-    }
-
-    void ack(BSON::Value & event, int acker) {
-        if (acker != 0) {
-            std::cout << "got ack for event " + event["topic"].getString() + " from " << BaseServer::getPeerCertificateHash(acker) << std::endl;
-        }
-        std::string & id = event["id"];
-        if (publishProcesses.count(id) == 0) {
-            return;
-        }
-        auto process = publishProcesses[id];
-        process->lastState = event;
-        if (process->nextProcessor >= process->processors.size()) {
-            //processor phase finished, send to all consumers and to publisher
-            BSON::Value consumerEvent = BSON::Object{
-                {"type", "consumerEvent"},
-                {"data", event}
-            };
-            for (auto & id : process->consumers) {
-                std::cout << "send consumer event " + event["topic"].getString() + " to " << BaseServer::getPeerCertificateHash(id) << std::endl;
-                send(id, consumerEvent);
-            }
-            BSON::Value publisherAck = BSON::Object{
-                {"type", "ack"},
-                {"data", event}
-            };
-            if (process->publisher != 0) {
-                std::cout << "send ack for event " + event["topic"].getString() + " to publisher " << BaseServer::getPeerCertificateHash(process->publisher) << std::endl;
-                send(process->publisher, publisherAck);
-            }
-            publishProcesses.erase(id);
-        } else {
-            std::cout << "forward event " + event["topic"].getString() + " to " << BaseServer::getPeerCertificateHash(process->processors[process->nextProcessor]) << std::endl;
-            BSON::Value processorEvent = BSON::Object{
-                {"type", "processorEvent"},
-                {"data", event}
-            };
-            send(process->processors[process->nextProcessor++], processorEvent);
-        }
-    }
-
-    void dismiss(BSON::Value & event, int acker) {
-        if (acker != 0) {
-            std::cout << "got dismiss for event " + event["topic"].getString() + " from " << BaseServer::getPeerCertificateHash(acker) << std::endl;
-        }
-        std::string & id = event["id"];
-        if (publishProcesses.count(id) == 0) {
-            return;
-        }
-        auto process = publishProcesses[id];
-        BSON::Value consumerEvent = BSON::Object{
-            {"type", "consumerEvent"},
-            {"data", event}
-        };
-        for (auto & id : process->consumers) {
-            std::cout << "send consumer event " + event["topic"].getString() + " to " << BaseServer::getPeerCertificateHash(id) << std::endl;
-            send(id, consumerEvent);
-        }
-        BSON::Value publisherDismiss = BSON::Object{
-            {"type", "dismiss"},
-            {"data", event}
-        };
-        if (process->publisher != 0) {
-            std::cout << "send dismiss for event " + event["topic"].getString() + " to publisher " << BaseServer::getPeerCertificateHash(process->publisher) << std::endl;
-            send(process->publisher, publisherDismiss);
-        }
-        publishProcesses.erase(id);
-    }
-
-
-    bool contains(std::vector<int> & vec, int elem) {
-        for (auto & id : vec) {
-            if (id == elem) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    void checkAndReactToSusiEvents(BSON::Value & event) {
-        std::regex susiEventTopic{"core::.*"};
-        if (std::regex_match(event["topic"].getString(), susiEventTopic)) {
-            if (event["topic"].getString() == "core::session::getCertificate") {
-                long long id = event["payload"].getInt64();
-                std::string cert = BaseServer::getPeerCertificate(id);
-                event["payload"] = cert;
-            }
-        }
-    }
-
+    bool validateFrame(BSON::Value & doc);
+    void send(int id, BSON::Value & doc);
+    void registerConsumer(std::string & topic, int id);
+    void registerProcessor(std::string & topic, int id);
+    void unregisterConsumer(std::string & topic, int id);
+    void unregisterProcessor(std::string & topic, int id);
+    void publish(BSON::Value & event, int publisher);
+    void ack(BSON::Value & event, int acker);
+    void dismiss(BSON::Value & event, int acker);
+    bool contains(std::vector<int> & vec, int elem);
+    void checkAndReactToSusiEvents(BSON::Value & event);
 };
 
-
-typedef SusiServer<TCPServer> SmallSusiServer;
-#ifdef WITH_SSL
-typedef SusiServer<SSLTCPServer> SecureSusiServer;
-#endif
 
 }
 

@@ -37,15 +37,10 @@ int main(int argc, char **argv) {
             showHelp();
         }
         std::cout << "starting susi server on port " << port << std::endl;
-#ifdef WITH_SSL
         std::cout << "using ssl certificate " << certFile << std::endl;
         std::cout << "using ssl key " << keyFile << std::endl;
-        Susi::SecureSusiServer server{port, keyFile, certFile};
+        Susi::SusiServer server{port, keyFile, certFile};
         server.join();
-#else
-        Susi::SmallSusiServer server {port};
-        server.join();
-#endif
     } catch (const std::exception & e) {
         std::cerr << e.what() << std::endl;
         showHelp();

@@ -22,7 +22,8 @@ if(WITH_SSL)
 	set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 -Os -DWITH_SSL" )
 	file( GLOB SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/JSONFramer.cpp
 			      ${CMAKE_CURRENT_SOURCE_DIR}/sources/SSLTCPServer.cpp
-			      ${CMAKE_CURRENT_SOURCE_DIR}/sources/TCPServer.cpp )
+			      ${CMAKE_CURRENT_SOURCE_DIR}/sources/TCPServer.cpp
+			      ${CMAKE_CURRENT_SOURCE_DIR}/sources/SusiServer.cpp )
 	file( GLOB HEADERFILES ${CMAKE_CURRENT_SOURCE_DIR}/headers/*.h )
 	add_executable( ${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp ${SRCFILES})
 	target_link_libraries(${PROJECT_NAME}
@@ -32,7 +33,7 @@ if(WITH_SSL)
 		bson
 		susi-common)
 else(WITH_SSL)
-	set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 -Os" )	
+	set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 -Os" )
 	file( GLOB SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/JSONFramer.cpp
 			      ${CMAKE_CURRENT_SOURCE_DIR}/sources/TCPServer.cpp )
 	file( GLOB HEADERFILES ${CMAKE_CURRENT_SOURCE_DIR}/headers/*.h )
@@ -41,7 +42,7 @@ else(WITH_SSL)
 		${CMAKE_THREAD_LIBS_INIT}
 		${Boost_LIBRARIES}
 		bson
-		susi-common)	
+		susi-common)
 endif(WITH_SSL)
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "/usr/local/bin")

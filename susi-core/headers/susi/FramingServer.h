@@ -21,11 +21,8 @@ class FramingServer : public BaseServer {
   protected:
     std::map<int, Framer> framers;
   public:
-    FramingServer(short port) : BaseServer{port} {}
-#ifdef WITH_SSL
     FramingServer(short port, std::string keyFile, std::string certificateFile) :
         BaseServer{port, keyFile, certificateFile} {}
-#endif
     virtual ~FramingServer() {}
 
     virtual void onConnect(int id) override {
