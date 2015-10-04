@@ -18,7 +18,6 @@
 #include <chrono>
 #include <bson/Value.h>
 
-#include "susi/TCPServer.h"
 #include "susi/SSLTCPServer.h"
 
 namespace Susi {
