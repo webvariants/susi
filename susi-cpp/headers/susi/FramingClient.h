@@ -23,15 +23,10 @@ class FramingClient : public Client {
   protected:
     std::shared_ptr<Framer> framer;
   public:
-    FramingClient(std::string host, short port) : Client{host, port} {
-        framer = std::make_shared<Framer>([this](std::string & frame) {onFrame(frame);});
-    }
-#ifdef WITH_SSL
     FramingClient(std::string host, short port, std::string keyFile, std::string certificateFile) :
         Client{host, port, keyFile, certificateFile} {
         framer = std::make_shared<Framer>([this](std::string & frame) {onFrame(frame);});
     }
-#endif
     virtual ~FramingClient() {}
 
     virtual void onData(char *data, size_t len) override {

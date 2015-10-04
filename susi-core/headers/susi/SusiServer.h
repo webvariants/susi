@@ -39,10 +39,7 @@ class SusiServer : public FramingServer<LineFramer, SSLTCPServer> {
     std::map<std::string, std::shared_ptr<PublishProcess>> publishProcesses; //event id to publish process
 
   public:
-    SusiServer(short port);
-#ifdef WITH_SSL
     SusiServer(short port, std::string keyFile, std::string certificateFile);
-#endif
 
     virtual ~SusiServer();
 

@@ -19,7 +19,7 @@ project(susi-util)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/headers )
 
 if(WITH_SSL)
-	set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 -DWITH_SSL" )
+	set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 " )
 	
 	file( GLOB SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/main.cpp)
 	

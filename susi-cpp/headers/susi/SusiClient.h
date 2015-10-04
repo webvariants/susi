@@ -21,24 +21,15 @@
 #include <chrono>
 #include <regex>
 
-#ifdef WITH_SSL
 #include "SSLClient.h"
 #define Client SSLClient
-#else
-#include "TCPClient.h"
-#define Client TCPClient
-#endif
 
 namespace Susi {
 
 class SusiClient : public FramingClient<LineFramer, Client> {
   public:
-    SusiClient(std::string host, short port) : FramingClient<LineFramer, Client> {host, port} {}
-
-#ifdef WITH_SSL
     SusiClient(std::string host, short port, std::string keyFile, std::string certificateFile) :
         FramingClient<LineFramer, Client> {host, port, keyFile, certificateFile} {}
-#endif
 
     virtual ~SusiClient() {}
 

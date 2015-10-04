@@ -19,7 +19,7 @@ project(susi-duktape)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/headers )
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/headers/susi )
 
-set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 -Os -DWITH_SSL" )
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 -Os " )
 file( GLOB SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/DuktapeEngine.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/sources/SusiJS.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/sources/duktape.cpp)

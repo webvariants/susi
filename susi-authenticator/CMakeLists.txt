@@ -14,12 +14,12 @@
 
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
-project(susi-udpserver)
+project(susi-authenticator)
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/headers )
 
 set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 -Os " )
-file( GLOB SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/SusiUDPServer.cpp)
+file( GLOB SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/Authenticator.cpp)
 file( GLOB HEADERFILES ${CMAKE_CURRENT_SOURCE_DIR}/headers/*.h )
 add_executable( ${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp ${SRCFILES})
 target_link_libraries(${PROJECT_NAME}
@@ -27,7 +27,8 @@ target_link_libraries(${PROJECT_NAME}
 	${Boost_LIBRARIES}
 	${OPENSSL_LIBRARIES}
 	bson
-	susi-cpp)
+	susi-cpp
+	leveldb)
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "/usr/local/bin")
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/headers/ DESTINATION /usr/local/include)

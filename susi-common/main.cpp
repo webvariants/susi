@@ -10,10 +10,8 @@ std::string certFile = "server.cert";
 void showHelp(){
     std::cout<<"usage: "<<progName<<std::endl;
     std::cout<<"\t"<<"--port <port number>"<<std::endl;
-#ifdef WITH_SSL
     std::cout<<"\t"<<"--cert <certificate file>"<<std::endl;
     std::cout<<"\t"<<"--key <key file>"<<std::endl;
-#endif
     exit(0);
 }
 
@@ -51,15 +49,10 @@ int main(int argc, char **argv){
     parseCommandLine(argc,argv);
     try{
         std::cout<<"starting susi server on port "<<port<<std::endl;
-        #ifdef WITH_SSL
-            std::cout<<"using ssl certificate "<<certFile<<std::endl;
-            std::cout<<"using ssl key "<<keyFile<<std::endl;
-            Susi::SecureSusiServer server{port,keyFile,certFile};
-            server.join();
-        #else
-            Susi::SmallSusiServer server{port};
-            server.join();
-        #endif
+        std::cout<<"using ssl certificate "<<certFile<<std::endl;
+        std::cout<<"using ssl key "<<keyFile<<std::endl;
+        Susi::SecureSusiServer server{port,keyFile,certFile};
+        server.join();
     }catch(const std::exception & e){
         std::cerr<<e.what()<<std::endl;
         showHelp();

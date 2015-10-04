@@ -16,8 +16,6 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 project(susi)
 
-option(WITH_SSL "enable ssl support" ON)
-
 set(CMAKE_BUILD_TYPE Debug)
 set( CMAKE_COLOR_MAKEFILE ON )
 
@@ -57,6 +55,8 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/susi-mqtt)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-mqtt/headers)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/susi-webhooks)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-webhooks/headers)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/susi-authenticator)
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-authenticator/headers)
 
 SET(CPACK_GENERATOR "DEB")
 SET(CPACK_SET_DESTDIR ON)
