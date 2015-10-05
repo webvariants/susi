@@ -1,0 +1,5 @@
+//setInterval(function(){
+	susi.publish({topic:'serial::write',payload: {id: 'ardu1', msg: 'theaterWhite\n'}},function(event){
+		console.debug(event);
+	});
+//},2000);

@@ -1,0 +1,13 @@
+{
+    "addr": "localhost",
+    "port": 4000,
+    "cert": "/home/benjamin/susi/sample-projects/ssl-tests/cert1.pem",
+    "key": "/home/benjamin/susi/sample-projects/ssl-tests/key1.pem",
+    "ports" : [ 
+        {
+            "id" : "ardu1",
+            "port" : "/dev/ttyACM0",
+            "baudrate" : 9600
+        }
+    ]
+}

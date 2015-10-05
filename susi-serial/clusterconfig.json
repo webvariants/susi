@@ -1,0 +1,14 @@
+{
+    "addr": "10.8.0.6",
+    "port": 4000,
+    "cert": "cert1.pem",
+    "key": "key1.pem",
+    "nodes": [{
+        "id": "node1",
+        "addr": "localhost",
+        "port": 4000,
+        "cert": "cert1.pem",
+        "key": "key1.pem",
+        "forwardConsumers": ["prosign.*"]
+    }]
+}
