@@ -57,6 +57,8 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/susi-webhooks)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-webhooks/headers)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/susi-authenticator)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-authenticator/headers)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/susi-serial)
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/susi-serial/headers)
 
 SET(CPACK_GENERATOR "DEB")
 SET(CPACK_SET_DESTDIR ON)
