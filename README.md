@@ -1,7 +1,6 @@
 ![Image of SUSI](http://webvariants.github.io/susi/resources/SUSI_Icon.svg)
 # SUSI, a Universal System Interface
 
-
 SUSI is an application framework to build interfaces for arbitary systems.
 
 It intendeds to enable even novice programmers to build robust asyncronous applications on both ends of the system: front-end and back-end.
