@@ -44,7 +44,7 @@ int main(int argc, char *argv[]){
             const BSON::int64 baudrate = port["baudrate"].getInt64();
             serial.initPort(id, portname, baudrate);
         }
-
+        serial.run();
         serial.join();
     }catch(const std::exception & e){
         std::cout << e.what() << std::endl;
