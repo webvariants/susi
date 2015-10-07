@@ -50,7 +50,7 @@ module.exports = function(grunt) {
         }
       },
       makeInstall: {
-        command: 'make -j8 install',
+        command: 'sudo make -j8 install',
         options: {
           stderr: false,
           execOptions: {
