@@ -2,7 +2,7 @@
 #include "susi/SusiClient.h"
 #include "susi/sha3.h"
 #include <uuid/uuid.h>
-
+#include <regex>
 
 class Authenticator {
 public:
@@ -23,11 +23,11 @@ protected:
 		std::vector<std::string> roles;
 	};
 
-	std::map<std::string,User> usersByName;
-	std::map<std::string,User> usersByToken;
+	std::map<std::string,std::shared_ptr<User>> usersByName;
+	std::map<std::string,std::shared_ptr<User>> usersByToken;
 	std::map<std::string,Permission> permissionsByTopic;
 
-	void addUser(User user);
+	void addUser(std::shared_ptr<User> user);
 	void addPermission(Permission permission);
 	void load();
 	void save();
@@ -37,7 +37,9 @@ protected:
 
 	void login(Susi::EventPtr event);
 	void logout(Susi::EventPtr event);
-	void registerGuard(std::string topic);
+	void registerGuard(Permission permission);
+
+	bool checkIfPayloadMatchesPattern(BSON::Value pattern, BSON::Value payload);
 
 	std::shared_ptr<Susi::SusiClient> susi_;
 };
