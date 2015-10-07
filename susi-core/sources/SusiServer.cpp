@@ -221,30 +221,37 @@ void Susi::SusiServer::ack(BSON::Value & event, int acker) {
     process->lastState = event;
     if (process->nextProcessor >= process->processors.size()) {
         //processor phase finished, send to all consumers and to publisher
-        BSON::Value consumerEvent = BSON::Object{
-            {"type", "consumerEvent"},
-            {"data", event}
-        };
-        for (auto & id : process->consumers) {
-            std::cout << "send consumer event " + event["topic"].getString() + " to " << Susi::SSLTCPServer::getPeerCertificateHash(id) << std::endl;
-            send(id, consumerEvent);
+        if(!checkForNoConsumerHeader(event)){
+            BSON::Value consumerEvent = BSON::Object{
+                {"type", "consumerEvent"},
+                {"data", event}
+            };
+            for (auto & id : process->consumers) {
+                std::cout << "send consumer event " + event["topic"].getString() + " to " << Susi::SSLTCPServer::getPeerCertificateHash(id) << std::endl;
+                send(id, consumerEvent);
+            }
         }
-        BSON::Value publisherAck = BSON::Object{
-            {"type", "ack"},
-            {"data", event}
-        };
-        if (process->publisher != 0) {
+        if (process->publisher != 0 && !checkForNoAckHeader(event)) {
+            BSON::Value publisherAck = BSON::Object{
+                {"type", "ack"},
+                {"data", event}
+            };
             std::cout << "send ack for event " + event["topic"].getString() + " to publisher " << Susi::SSLTCPServer::getPeerCertificateHash(process->publisher) << std::endl;
             send(process->publisher, publisherAck);
         }
         publishProcesses.erase(id);
     } else {
-        std::cout << "forward event " + event["topic"].getString() + " to " << Susi::SSLTCPServer::getPeerCertificateHash(process->processors[process->nextProcessor]) << std::endl;
-        BSON::Value processorEvent = BSON::Object{
-            {"type", "processorEvent"},
-            {"data", event}
-        };
-        send(process->processors[process->nextProcessor++], processorEvent);
+        if(!checkForNoProcessorHeader(event)){
+            std::cout << "forward event " + event["topic"].getString() + " to " << Susi::SSLTCPServer::getPeerCertificateHash(process->processors[process->nextProcessor]) << std::endl;
+            BSON::Value processorEvent = BSON::Object{
+                {"type", "processorEvent"},
+                {"data", event}
+            };
+            send(process->processors[process->nextProcessor++], processorEvent);
+        }else{
+            process->nextProcessor++;
+            ack(event,acker);
+        }
     }
 }
 
@@ -257,21 +264,23 @@ void Susi::SusiServer::dismiss(BSON::Value & event, int acker) {
         return;
     }
     auto process = publishProcesses[id];
-    BSON::Value consumerEvent = BSON::Object{
-        {"type", "consumerEvent"},
-        {"data", event}
-    };
-    for (auto & id : process->consumers) {
-        std::cout << "send consumer event " + event["topic"].getString() + " to " << Susi::SSLTCPServer::getPeerCertificateHash(id) << std::endl;
-        send(id, consumerEvent);
+    if(!checkForNoConsumerHeader(event)){
+        BSON::Value consumerEvent = BSON::Object{
+            {"type", "consumerEvent"},
+            {"data", event}
+        };
+        for (auto & id : process->consumers) {
+            std::cout << "send consumer event " + event["topic"].getString() + " to " << Susi::SSLTCPServer::getPeerCertificateHash(id) << std::endl;
+            send(id, consumerEvent);
+        }
     }
-    BSON::Value publisherDismiss = BSON::Object{
-        {"type", "dismiss"},
-        {"data", event}
-    };
-    if (process->publisher != 0) {
+    if (process->publisher != 0 && !checkForNoAckHeader(event)) {
+        BSON::Value publisherAck = BSON::Object{
+            {"type", "dismiss"},
+            {"data", event}
+        };
         std::cout << "send dismiss for event " + event["topic"].getString() + " to publisher " << Susi::SSLTCPServer::getPeerCertificateHash(process->publisher) << std::endl;
-        send(process->publisher, publisherDismiss);
+        send(process->publisher, publisherAck);
     }
     publishProcesses.erase(id);
 }
@@ -295,4 +304,25 @@ void Susi::SusiServer::checkAndReactToSusiEvents(BSON::Value & event) {
             event["payload"] = cert;
         }
     }
+}
+
+bool Susi::SusiServer::checkForHeader(BSON::Value & event, const std::string & key, const std::string & value){
+    if(event["headers"].isArray()){
+        for(auto & header : event["headers"].getArray()){
+            if(header[key].isString() && header[key].getString() == value ){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool Susi::SusiServer::checkForNoAckHeader(BSON::Value & event){
+    return checkForHeader(event,"Event-Control","No-Ack");
+}
+bool Susi::SusiServer::checkForNoConsumerHeader(BSON::Value & event){
+    return checkForHeader(event,"Event-Control","No-Consumer");
+}
+bool Susi::SusiServer::checkForNoProcessorHeader(BSON::Value & event){
+    return checkForHeader(event,"Event-Control","No-Processor");
 }

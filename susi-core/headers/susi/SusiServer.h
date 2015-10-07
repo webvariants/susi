@@ -59,6 +59,10 @@ class SusiServer : public FramingServer<LineFramer, SSLTCPServer> {
     void dismiss(BSON::Value & event, int acker);
     bool contains(std::vector<int> & vec, int elem);
     void checkAndReactToSusiEvents(BSON::Value & event);
+    bool checkForNoAckHeader(BSON::Value & event);
+    bool checkForNoConsumerHeader(BSON::Value & event);
+    bool checkForNoProcessorHeader(BSON::Value & event);
+    bool checkForHeader(BSON::Value & event, const std::string & key, const std::string & value);
 };
 
 

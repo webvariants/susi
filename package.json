@@ -13,12 +13,12 @@
     "grunt-shell": "^0.7.0",
     "grunt-newer": "*",
     "grunt-mkdir": "*"
-  },  
+  },
   "project": {
     "directories": {
       "bin": "bin/",
       "build": "build/",
-      "core": "Core/"
+      "root": "./"
     }
   }
 }
