@@ -16,7 +16,6 @@ cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 project(susi)
 
-set(CMAKE_BUILD_TYPE Debug)
 set( CMAKE_COLOR_MAKEFILE ON )
 
 find_package(Threads REQUIRED)

@@ -1,8 +1,9 @@
+'use strict';
+
 module.exports = function(grunt) {
 
-  // Project configuration.
   grunt.initConfig({
-    
+
     pkg: grunt.file.readJSON('package.json'),
 
     clean: {
@@ -14,54 +15,55 @@ module.exports = function(grunt) {
       all: {
         options: {
           create: [
-            '<%= pkg.project.directories.build %>/core'
+            '<%= pkg.project.directories.build %>'
           ]
         }
       }
     },
 
     shell: {
-      cmake_core: {
-        command: 'cmake ' +(grunt.option("buildmode")?'-DCMAKE_BUILD_TYPE='+grunt.option("buildmode"):'')+ ' -DPOCO_INCLUDE_DIR=../../node_modules/poco/include -DSOCI_INCLUDE_DIR=../../node_modules/soci/include/soci -DCMAKE_LIBRARY_PATH=../../node_modules/ ../../<%= pkg.project.directories.core %>',
+      cmakeDebug: {
+        command: 'cmake -DCMAKE_BUILD_TYPE=Debug ..',
         options: {
           stderr: false,
           execOptions: {
-            cwd: '<%= pkg.project.directories.build %>/core'
+            cwd: '<%= pkg.project.directories.build %>'
           }
         }
       },
-      make_core: {
-        command: 'make -j8 susi',
+      cmakeRelease: {
+        command: 'cmake -DCMAKE_BUILD_TYPE=Release ..',
         options: {
           stderr: false,
           execOptions: {
-            cwd: '<%= pkg.project.directories.build %>/core'
+            cwd: '<%= pkg.project.directories.build %>'
           }
         }
       },
-      make_test: {
-        command: 'make -j8 susi_test',
+      make: {
+        command: 'make -j8',
         options: {
           stderr: false,
           execOptions: {
-            cwd: '<%= pkg.project.directories.build %>/core'
+            cwd: '<%= pkg.project.directories.build %>'
           }
         }
       },
-      test_core: {
-        command: './susi_test --gtest_filter="'+(grunt.option("filter")||"*")+'"',
-        options: {
-          execOptions: {
-            cwd: '<%= pkg.project.directories.build %>/core'
-          }
-        }
-      },
-      make_install: {
+      makeInstall: {
         command: 'make -j8 install',
         options: {
           stderr: false,
           execOptions: {
-            cwd: '<%= pkg.project.directories.build %>/core'
+            cwd: '<%= pkg.project.directories.build %>'
+          }
+        }
+      },
+      strip: {
+        command: 'strip bin/* lib/*',
+        options: {
+          stderr: true,
+          execOptions: {
+            cwd: '<%= pkg.project.directories.build %>'
           }
         }
       }
@@ -77,8 +79,8 @@ module.exports = function(grunt) {
             expand: true,
             flatten: true,
             src: [
-              '<%= pkg.project.directories.build %>/core/bin/susi',
-              '<%= pkg.project.directories.build %>/core/lib/libsusi.so'
+              '<%= pkg.project.directories.build %>/bin/*',
+              '<%= pkg.project.directories.build %>/lib/libsusi*.so'
             ],
             dest: '<%= pkg.project.directories.bin %>'
           }
@@ -100,27 +102,32 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-newer');
 
-  var register = function(name){
-    grunt.registerTask(name,'build '+name,[
-      'mkdir',
-      'shell:cmake_'+name,
-      'shell:make_'+name,
-      'newer:copy:'+name
-    ]);
-  };
+  grunt.registerTask('build','build everything', [
+    'clean',
+    'mkdir',
+    'shell:cmakeDebug',
+    'shell:make',
+    'copy'
+  ]);
 
-  register('core');
-  
-  grunt.registerTask('development', ['core']);
-  grunt.registerTask('build', ['clean','core']);
-  grunt.registerTask('install', ['shell:make_install']);
+  grunt.registerTask('development','build everything, but do not clean directories before', [
+    'mkdir',
+    'shell:cmakeDebug',
+    'shell:make',
+    'copy'
+  ]);
 
-  grunt.registerTask('test', 'run the susi tests', ['development','shell:make_test','shell:test_core']);
-  grunt.registerTask('dev', ['development']);
 
+  grunt.registerTask('release','build everything, but do not clean directories before', [
+    'mkdir',
+    'shell:cmakeRelease',
+    'shell:make',
+    'shell:strip',
+    'copy'
+  ]);
+
+  grunt.registerTask('install', ['shell:makeInstall']);
 
   grunt.registerTask('default', ['development']);
-
-
 
 };
