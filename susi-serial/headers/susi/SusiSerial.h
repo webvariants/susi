@@ -25,8 +25,8 @@ protected:
           parent{serial},
           lineframer{[this](std::string & message){
             auto event = parent->_susi->createEvent("serial::data");
-            std::cout << message << std::endl;
-            event->payload = message;
+            std::cout << "\033[1;32m Data: " << message << "\033[0m" << std::endl;
+	    event->payload = message;
             parent->_susi->publish( std::move(event) );
         }} {}
         std::shared_ptr<boost::asio::serial_port> port;
@@ -35,9 +35,7 @@ protected:
         char data[4096];
         void do_read(){
             port->async_read_some(boost::asio::buffer(data, sizeof data), [this](boost::system::error_code ec, std::size_t length){
-                //std::cout << "got data!" << std::endl;
                 if (!ec){
-                    std::cout << "\033[1;32m Data: " << std::string{data,length} << " with length:" << length << "\033[0m" << std::endl;
                     lineframer.collect(data,length);
                 }else{
                     std::this_thread::sleep_for(std::chrono::milliseconds{500});
