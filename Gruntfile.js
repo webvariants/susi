@@ -58,6 +58,15 @@ module.exports = function(grunt) {
           }
         }
       },
+      makePackage: {
+        command: 'make -j8 package',
+        options: {
+          stderr: false,
+          execOptions: {
+            cwd: '<%= pkg.project.directories.build %>'
+          }
+        }
+      },
       strip: {
         command: 'strip bin/* lib/*',
         options: {
@@ -70,27 +79,38 @@ module.exports = function(grunt) {
     },
 
     copy: {
+      package: {
+        options: {
+          mode: true
+        },
+        files: [{
+          expand: true,
+          flatten: true,
+          src: [
+            '<%= pkg.project.directories.build %>/susi-*.deb',
+          ],
+          dest: '<%= pkg.project.directories.build %>..'
+        }]
+      },
       core: {
         options: {
           mode: true
         },
-        files: [
-          {
-            expand: true,
-            flatten: true,
-            src: [
-              '<%= pkg.project.directories.build %>/bin/*',
-              '<%= pkg.project.directories.build %>/lib/libsusi*.so'
-            ],
-            dest: '<%= pkg.project.directories.bin %>'
-          }
-        ]
+        files: [{
+          expand: true,
+          flatten: true,
+          src: [
+            '<%= pkg.project.directories.build %>/bin/*',
+            '<%= pkg.project.directories.build %>/lib/libsusi*.so'
+          ],
+          dest: '<%= pkg.project.directories.bin %>'
+        }]
       }
     },
     watch: {
       sources: {
-        files: ['**/*.cpp','**/*.h'],
-        tasks: ['development','watch:sources']
+        files: ['**/*.cpp', '**/*.h'],
+        tasks: ['development', 'watch:sources']
       }
     },
   });
@@ -102,7 +122,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-newer');
 
-  grunt.registerTask('build','build everything', [
+  grunt.registerTask('build', 'build everything', [
     'clean',
     'mkdir',
     'shell:cmakeDebug',
@@ -110,7 +130,7 @@ module.exports = function(grunt) {
     'copy'
   ]);
 
-  grunt.registerTask('development','build everything, but do not clean directories before', [
+  grunt.registerTask('development', 'build everything, but do not clean directories before', [
     'mkdir',
     'shell:cmakeDebug',
     'shell:make',
@@ -118,12 +138,12 @@ module.exports = function(grunt) {
   ]);
 
 
-  grunt.registerTask('release','build everything, but do not clean directories before', [
+  grunt.registerTask('release', 'build everything, but do not clean directories before', [
+    'clean',
     'mkdir',
     'shell:cmakeRelease',
-    'shell:make',
-    'shell:strip',
-    'copy'
+    'shell:makePackage',
+    'copy:package'
   ]);
 
   grunt.registerTask('install', ['shell:makeInstall']);
