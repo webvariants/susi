@@ -40,8 +40,8 @@ int main(int argc, char *argv[]){
 			showHelp();
 		}
 		Susi::SusiClient client{addr,port,keyFile,certFile};
-                        Susi::Duktape::JSEngine js{client,source};
-                        js.start();
+    Susi::Duktape::JSEngine js{client,source};
+    js.start();
 		client.join();
                         std::cout<<"after client join()"<<std::endl;
 	}catch(const std::exception & e){

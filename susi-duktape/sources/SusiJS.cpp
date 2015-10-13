@@ -20,7 +20,7 @@ var susi = {
         var count = this._consumerTopicCounter[topic] || 0;
         count++;
         this._consumerTopicCounter[topic] = count;
-        if(count == 1){
+        if(count === 1){
             _registerConsumer(topic);
         }
         return id;
@@ -201,5 +201,34 @@ var console = {
         duktapeLogger.n = 'susi-js';
     }
 };
+
+var TimeoutManager = {
+    timeoutFunctions: [],
+    add: function(cb, millis){
+        this.timeoutFunctions.push({
+            deadline: Date.now()+millis,
+            cb: cb
+        });
+    },
+    check: function(){
+        var now = Date.now();
+        for(var i=this.timeoutFunctions.length-1;i>=0;i--){
+            if(this.timeoutFunctions[i].deadline <= now){
+                this.timeoutFunctions[i].cb();
+                this.timeoutFunctions.splice(i,1);
+            }
+        }
+    }
+};
+
+function setTimeout(cb,millis){
+    TimeoutManager.add(cb,millis);
+    _setTimeout(millis);
+}
+
+function _checkTimeouts(){
+    TimeoutManager.check();
+}
+
 
 )SUSIJS";

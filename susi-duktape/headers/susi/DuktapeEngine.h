@@ -16,6 +16,8 @@
 #include "susi/SusiClient.h"
 #include "susi/duktape.h"
 
+#include <boost/date_time/posix_time/posix_time.hpp>
+
 namespace Susi {
 namespace Duktape {
 
@@ -37,11 +39,21 @@ class JSEngine {
     void stop();
 
   protected:
+    boost::asio::io_service _ioservice;
     Susi::SusiClient & _client;
     std::string _script;
 
     duk_context *ctx;
     std::mutex mutex;
+    boost::asio::deadline_timer _keepAliveTimeout{_ioservice, boost::posix_time::seconds(5)};
+    std::thread _runloop;
+
+    void _kickoffKeepAlive(){
+      _keepAliveTimeout.async_wait([this](const boost::system::error_code&){
+        this->_kickoffKeepAlive();
+      });
+    }
+
 
     enum {
         OUTPUT = 0,
@@ -60,6 +72,7 @@ class JSEngine {
     static duk_ret_t js_log(duk_context *ctx) ;
     static duk_ret_t js_unregisterConsumer(duk_context *ctx) ;
     static duk_ret_t js_unregisterProcessor(duk_context *ctx) ;
+    static duk_ret_t js_setTimeout(duk_context *ctx) ;
 
     void registerProcessor(std::string topic);
     void registerConsumer(std::string topic);

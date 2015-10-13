@@ -5,6 +5,12 @@ Susi::Duktape::JSEngine *Susi::Duktape::enginePtr;
 void Susi::Duktape::JSEngine::start() {
     Susi::Duktape::enginePtr = this;
 
+    //keep the asio event loop running;
+    _kickoffKeepAlive();
+    _runloop = std::move(std::thread{[this](){
+      _ioservice.run();
+    }});
+
     init();
 
     if (_script != "") {
@@ -39,6 +45,8 @@ void Susi::Duktape::JSEngine::init() {
     duk_put_prop_string(ctx, -2, "_dismiss");
     duk_push_c_function(ctx, js_log, 1 /*nargs*/);
     duk_put_prop_string(ctx, -2, "log");
+    duk_push_c_function(ctx, js_setTimeout, 1 /*nargs*/);
+    duk_put_prop_string(ctx, -2, "_setTimeout");
 
     if (duk_peval_lstring(ctx, Susi::Duktape::susiJS.c_str(), Susi::Duktape::susiJS.size()) != 0) {
         std::cerr << "processing susiJS: " << duk_safe_to_string(ctx, -1) << std::endl;
@@ -110,6 +118,25 @@ duk_ret_t Susi::Duktape::JSEngine::js_log(duk_context *ctx) {
     duk_push_true(ctx);
     return 1;
 }
+
+duk_ret_t Susi::Duktape::JSEngine::js_setTimeout(duk_context *ctx) {
+    int arg = duk_require_int(ctx, 0 /*index*/);
+    auto timeout = std::make_shared<boost::asio::deadline_timer>(enginePtr->_ioservice, boost::posix_time::milliseconds(arg));
+    timeout->async_wait([timeout,ctx](const boost::system::error_code&){
+        std::lock_guard<std::mutex> lock{enginePtr->mutex};
+        duk_push_global_object(ctx);
+        duk_get_prop_string(ctx, -1 /*index*/, "_checkTimeouts");
+        if (duk_pcall(ctx, 0 /*nargs*/) != 0) {
+            std::string err = duk_safe_to_string(ctx, -1);
+            std::cerr << err << std::endl;
+            throw std::runtime_error{err};
+        }
+        duk_pop(ctx);  /* pop result/error */
+    });
+    return 1;
+}
+
+
 
 duk_ret_t Susi::Duktape::JSEngine::js_unregisterConsumer(duk_context *ctx) {
     size_t sz;
