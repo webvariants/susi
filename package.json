@@ -1,18 +1,19 @@
 {
   "name": "susi",
   "version": "0.1.6",
-  "maintainers": [{
-     "name": "Tino Rusch",
-     "email": "tino.rusch@webvariants.de"
-  }],
+  "maintainers": [
+    {
+      "name": "Tino Rusch",
+      "email": "tino.rusch@webvariants.de"
+    }
+  ],
   "devDependencies": {
     "grunt": "~0.4.5",
     "grunt-contrib-clean": "*",
-    "grunt-contrib-copy": "*",
+    "grunt-contrib-copy": "^0.8.1",
     "grunt-contrib-watch": "*",
-    "grunt-shell": "^0.7.0",
-    "grunt-newer": "*",
-    "grunt-mkdir": "*"
+    "grunt-mkdir": "*",
+    "grunt-shell": "^0.7.0"
   },
   "project": {
     "directories": {
