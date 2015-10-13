@@ -14,6 +14,7 @@ void Susi::Duktape::JSEngine::start() {
     init();
 
     if (_script != "") {
+        std::lock_guard<std::mutex> lock{enginePtr->mutex};
         if (duk_peval_file(ctx, _script.c_str()) != 0) {
             std::cerr << "processing usersource: " << duk_safe_to_string(ctx, -1) << std::endl;
         }
