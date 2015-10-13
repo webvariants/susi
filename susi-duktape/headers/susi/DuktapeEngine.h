@@ -54,7 +54,6 @@ class JSEngine {
       });
     }
 
-
     enum {
         OUTPUT = 0,
         INPUT = 1
@@ -85,7 +84,6 @@ class JSEngine {
     void init();
 
 };
-
 
 }
 }
