@@ -1,9 +1,9 @@
 ![Image of SUSI](http://webvariants.github.io/susi/resources/SUSI_Icon.svg)
 # SUSI, a Universal System Interface
 
-SUSI is an application framework to build interfaces for arbitary systems.
+SUSI is an application framework to build interfaces for arbitrary systems.
 
-It intendeds to enable even novice programmers to build robust asyncronous applications on both ends of the system: front-end and back-end.
+It intends to enable even novice programmers to build robust asyncronous applications on both ends of the system: front-end and back-end.
 
 ## Getting started
 
@@ -30,23 +30,23 @@ sudo ldconfig
 ### 3. Start the SUSI core server
 The main component of SUSI is its *core server* for handling the entire event dispatching and serves as a communication base for all other components.
 
-You need to specify a valid TLS key / certificate pair to let the server start.
+You need to specify a valid TLS key / certificate pair to start the server.
 To create a self-signed certificate run the following command:
 ```
 openssl req -nodes -x509 -newkey rsa:2048 -keyout server_key.pem -out server_cert.pem -days 36500
 ```
-After this, you can start the SUSI core server:
+Following, you can start the SUSI core server:
 ```
 susi-core --key server_key.pem --cert server_cert.pem --port 4000
 ```
 Now the SUSI core server is accepting TLS-connection on port 4000
 
 #### Start one or more services
-Once your core server is started, you can start other components that connect to it.
+Once your core server has been started, you can start other components that connect to it.
 
-For our first example, lets start with susi-duktape - our server side javascript interpreter.
+For our first example lets start with susi-duktape - our server side javascript interpreter.
 
-Create a Javascript source file, which look like this:
+Create a Javascript source file, which looks like this:
 ```javascript
 susi.registerProcessor('.*', function (evt) {
 	console.debug('in processor');
@@ -98,17 +98,17 @@ susi-duktape --src susi-sample.js --addr localhost --port 4000 --key duktape_key
 > 2015-08-25T09:35:31.935Z INF susi-js: finish: {a:"foo",b:"bar"}
 ```
 If you see an output like this, everything's fine :)
-If you have a look at the supplied JS sources, you can see how SUSI works.
+If you take a look at the supplied JS sources, you can see how SUSI works.
 
 ### 4. Understand the code
 There are 5 essential actions you need to know about:
 
 * **registerProcessor()**
 	* This attaches an active event handler to a specific topic.
-	* All active event handlers run sequentially in the order they are declared.
+	* All active event handlers run sequentially in the order of their declaration.
 * **registerConsumer()**
 	* This attaches a passive event handler to a specific topic
-	* All passive event handlers run after all active event handlers finished.
+	* All passive event handlers will run after all active event handlers have finished.
 * **publish()**
 	* This publishes an event.
 	* The event is firstly processed by all processors
@@ -132,8 +132,7 @@ susi.registerProcessor('.*', function (evt) {
 ```
 This is the first processor. It takes a string/regex to specify the event topic the processor is interested in,
 and a callback which is called. The first processor matches all events (topic: ".*") and ensures that the
-event payload is an empty object. Notice that we call ack() at the end, to tell susi that the event can be processed by
-other processors now.
+event payload is an empty object. Notice that we call ack() at the end, to tell SUSI that the event can be processed by other processors now.
 
 
 ```javascript
@@ -143,7 +142,7 @@ susi.registerProcessor('foo', function (evt) {
 	susi.ack(evt);
 });
 ```
-This is the second processor. It matches all events with the topic 'foo' and attaches the string 'foo' to the payload field 'a'. After this it acknowledges the event back to susi.
+This is the second processor. It matches all events with the topic 'foo' and attaches the string 'foo' to the payload field 'a'. After this it acknowledges the event back to SUSI.
 
 ```javascript
 susi.registerProcessor('foo', function (evt) {
@@ -152,7 +151,7 @@ susi.registerProcessor('foo', function (evt) {
 	susi.dismiss(evt);
 });
 ```
-The third processor matches also all events with the topic 'foo'.
+The third processor matches all events with the topic 'foo' as well.
 Notice that we call dismiss() at the end of the callback. This prevents all later declared processors to be called.
 
 ```javascript
@@ -169,8 +168,8 @@ susi.registerConsumer('foo', function (evt) {
 	console.log('consumer:', evt.payload);
 });
 ```
-Here we declared a Consumer / passive event handler.
-It gets called after all processors, which are interested in this event, finished.
+Here we declare a Consumer / passive event handler.
+It gets called after all processors, that are interested in this event, have finished.
 In the callback we simply log the event payload to stdout.
 
 ```javascript
@@ -179,9 +178,7 @@ susi.publish({ topic: 'foo' }, function (evt) {
 });
 ```
 Now, after the setup of all those processors and consumers, we can finally publish an event!
-publish() takes the event as first parameter. All events MUST have a topic field. Additionally they can have a payload field
-which can contain arbitrary data. As a second argument you can specify a finish callback. This is somewhat a one-time-consumer.
-It gets called after all processors for this event finished, but gets immediatly deleted afterwards.
+publish() takes the event as first parameter. All events HAVE TO have a topic field. Additionally they can have a payload field which can contain arbitrary data. As a second argument you can specify a finish callback. This is somewhat a one-time-consumer. It gets called after all processors for this event finished, but gets immediatly deleted afterwards.
 
 ### 5. Learn More about SUSI
 * Documentation @ [susi.readme.io](http://susi.readme.io/).
@@ -190,7 +187,7 @@ It gets called after all processors for this event finished, but gets immediatly
   * [OpenSSL](https://github.com/openssl/openssl)
 
 ### 6. Stay in contact
-* Homepage: http://www.webvariants.de/SUSI
+* Homepage: http://susi.io
 * e-mail: tino[*dot*]rusch[*at*]webvariants[*dot*]de
 
 
