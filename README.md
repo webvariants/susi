@@ -178,7 +178,7 @@ susi.publish({ topic: 'foo' }, function (evt) {
 });
 ```
 Now, after the setup of all those processors and consumers, we can finally publish an event!
-publish() takes the event as first parameter. All events HAVE TO have a topic field. Additionally they can have a payload field which can contain arbitrary data. As a second argument you can specify a finish callback. This is somewhat a one-time-consumer. It gets called after all processors for this event finished, but gets immediatly deleted afterwards.
+publish() takes the event as first parameter. All events HAVE TO contain a topic field. Additionally they can have a payload field which can contain arbitrary data. As a second argument you can specify a finish callback. This is somewhat a one-time-consumer. It gets called after all processors for this event finished, but gets immediatly deleted afterwards.
 
 ### 5. Learn More about SUSI
 * Documentation @ [susi.readme.io](http://susi.readme.io/).
