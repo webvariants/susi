@@ -45,11 +45,12 @@ class JSEngine {
 
     duk_context *ctx;
     std::mutex mutex;
-    boost::asio::deadline_timer _keepAliveTimeout{_ioservice, boost::posix_time::seconds(5)};
+    std::shared_ptr<boost::asio::deadline_timer> _keepAliveTimeout;
     std::thread _runloop;
 
     void _kickoffKeepAlive(){
-      _keepAliveTimeout.async_wait([this](const boost::system::error_code&){
+      _keepAliveTimeout.reset(new boost::asio::deadline_timer{_ioservice,boost::posix_time::seconds(5)});
+      _keepAliveTimeout->async_wait([this](const boost::system::error_code&){
         this->_kickoffKeepAlive();
       });
     }
