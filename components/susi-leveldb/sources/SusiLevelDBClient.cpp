@@ -7,13 +7,13 @@ SusiLevelDBClient::SusiLevelDBClient(std::string addr,short port, std::string ke
 	leveldb::DB *dbPtr;
 	leveldb::DB::Open(dbOptions_, dbPath_, &dbPtr);
 	db_.reset(dbPtr);
-	susi_->registerProcessor("leveldb::put",[this](Susi::EventPtr event){
+	susi_->registerProcessor("(leveldb|state)::put",[this](Susi::EventPtr event){
 		handlePut(std::move(event));
 	});
-	susi_->registerProcessor("leveldb::get",[this](Susi::EventPtr event){
+	susi_->registerProcessor("(leveldb|state)::get",[this](Susi::EventPtr event){
 		handleGet(std::move(event));
 	});
-	susi_->registerProcessor("leveldb::delete",[this](Susi::EventPtr event){
+	susi_->registerProcessor("(leveldb|state)::delete",[this](Susi::EventPtr event){
 		handleDelete(std::move(event));
 	});
 }
@@ -78,4 +78,3 @@ void SusiLevelDBClient::handleDelete(Susi::EventPtr event){
 	}
 	event->payload["success"] = true;
 }
-
