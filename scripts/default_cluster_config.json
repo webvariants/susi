@@ -1,0 +1,14 @@
+{
+    "addr": "localhost",
+    "port": 4000,
+    "cert": "/etc/susi/keys/susi-cluster_cert.pem",
+    "key": "/etc/susi/keys/susi-cluster_key.pem",
+    "nodes": [{
+        "id": "susi-forge",
+        "addr": "susi-forge.gcloud.webvariants.de",
+        "port": 4000,
+        "cert": "/etc/susi/keys/susi-cluster_cert.pem",
+        "key": "/etc/susi/keys/susi-cluster_key.pem",
+        "forwardConsumers": [".*"]
+    }]
+}
