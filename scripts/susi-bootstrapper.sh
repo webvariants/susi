@@ -198,6 +198,7 @@ echo "deleting old project $CONTAINER_NAME..."
 rm -rf /var/lib/machines/$CONTAINER_NAME
 echo "create new container from debian jessie..."
 create_new_container $CONTAINER_NAME
+read -p "Tell me where your susi binaries are located! " SUSI_BINARY_PATH
 
 setup_core $CONTAINER_NAME
 
