@@ -1,3 +1,6 @@
 [submodule "submodules/libbson"]
 	path = submodules/libbson
 	url = https://github.com/trusch/libbson
+[submodule "submodules/libbcrypt"]
+	path = submodules/libbcrypt
+	url = git@github.com:trusch/libbcrypt.git
