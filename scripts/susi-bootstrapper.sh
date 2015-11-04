@@ -123,6 +123,19 @@ function setup_leveldb {
     add_to_start_script susi-leveldb $CONTAINER "--db $LEVELDB_PATH"
 }
 
+function setup_statefile {
+    CONTAINER=$1
+    install_binary_to_container $SUSI_BINARY_PATH/susi-statefile $CONTAINER
+    create_keys susi-statefile $CONTAINER
+    read -p "Tell me where the statefile should be saved! [/usr/share/susi/susi-state.json]" STATEFILE
+    if [ x"$STATEFILE" = x"" ]; then
+        STATEFILE="/usr/share/susi/susi-state.json"
+    fi
+    dir=$(printf "%s%s" /var/lib/machines/$CONTAINER $(dirname $STATEFILE))
+    mkdir -p $dir
+    add_to_start_script susi-statefile $CONTAINER "--file $STATEFILE"
+}
+
 function setup_mqtt {
     CONTAINER=$1
     install_binary_to_container $SUSI_BINARY_PATH/susi-mqtt $CONTAINER
@@ -210,6 +223,7 @@ ask_and_install susi-mqtt
 ask_and_install susi-serial
 ask_and_install susi-udpserver
 ask_and_install susi-webhooks
+ask_and_install susi-statefile
 
 finish_start_script $CONTAINER_NAME
 

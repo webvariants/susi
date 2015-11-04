@@ -25,6 +25,7 @@ option(WITH_MQTT "Include susi-mqtt binary" ON)
 option(WITH_SERIAL "Include susi-serial binary" ON)
 option(WITH_UDPSERVER "Include susi-udpserver binary" ON)
 option(WITH_WEBHOOKS "Include susi-webhooks binary" ON)
+option(WITH_STATEFILE "Include susi-webhooks binary" ON)
 
 set( CMAKE_COLOR_MAKEFILE ON )
 
@@ -91,6 +92,11 @@ if(WITH_WEBHOOKS)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/components/susi-webhooks)
     include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/components/susi-webhooks/headers)
 endif(WITH_WEBHOOKS)
+
+if(WITH_STATEFILE)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/components/susi-statefile)
+    include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/components/susi-statefile/headers)
+endif(WITH_STATEFILE)
 
 SET(CPACK_GENERATOR "DEB")
 SET(CPACK_SET_DESTDIR ON)
