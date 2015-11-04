@@ -8,6 +8,16 @@ public:
 	void join();
 
 protected:
+	void login(Susi::EventPtr event);
+	void logout(Susi::EventPtr event);
+
+	void addUser(Susi::EventPtr event);
+	void delUser(Susi::EventPtr event);
+	void getUsers(Susi::EventPtr event);
+
+	void addPermission(Susi::EventPtr event);
+	void delPermission(Susi::EventPtr event);
+	void getPermissions(Susi::EventPtr event);
 
 	struct User {
 		std::string name;
@@ -33,8 +43,6 @@ protected:
 	std::string generateToken();
 	std::string getTokenFromEvent(const Susi::EventPtr & event);
 
-	void login(Susi::EventPtr event);
-	void logout(Susi::EventPtr event);
 	void registerGuard(Permission permission);
 
 	bool checkIfPayloadMatchesPattern(BSON::Value pattern, BSON::Value payload);

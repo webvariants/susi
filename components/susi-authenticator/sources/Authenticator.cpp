@@ -2,13 +2,98 @@
 
 Authenticator::Authenticator(std::string addr,short port, std::string key, std::string cert) :
   susi_{new Susi::SusiClient{addr,port,key,cert}} {
-      load();
-      susi_->registerProcessor("authenticator::login",[this](Susi::EventPtr event){
-         login(std::move(event));
-      });
-      susi_->registerProcessor("authenticator::logout",[this](Susi::EventPtr event){
-         logout(std::move(event));
-      });
+    load();
+    susi_->registerProcessor("authenticator::login",[this](Susi::EventPtr event){
+     login(std::move(event));
+    });
+    susi_->registerProcessor("authenticator::logout",[this](Susi::EventPtr event){
+     logout(std::move(event));
+    });
+    susi_->registerProcessor("authenticator::users::add",[this](Susi::EventPtr event){
+     addUser(std::move(event));
+    });
+    susi_->registerProcessor("authenticator::users::delete",[this](Susi::EventPtr event){
+     delUser(std::move(event));
+    });
+    susi_->registerProcessor("authenticator::users::get",[this](Susi::EventPtr event){
+     getUsers(std::move(event));
+    });
+}
+
+void Authenticator::login(Susi::EventPtr event){
+    auto name = event->payload["username"].getString();
+    // check username and password
+    if(usersByName.count(name) == 0){
+        throw std::runtime_error{"no such user"};
+    }
+    auto & user = usersByName[name];
+    if(!BCrypt::validatePassword(event->payload["password"].getString(),user->pwHash)){
+        std::this_thread::sleep_for(std::chrono::milliseconds{100}); //this is agains brute forcers
+        throw std::runtime_error{"wrong password"};
+    }
+    user->token = generateToken();
+    event->payload["token"] = user->token;
+    usersByToken[user->token] = user;
+
+    // prevent arbitary consumers from reading sensitive data
+    event->headers.push_back({"Event-Control","No-Consumer"});
+    susi_->ack(std::move(event));
+}
+
+void Authenticator::logout(Susi::EventPtr event){
+    std::string token = getTokenFromEvent(event);
+    auto & user = usersByToken[token];
+    user->token = "";
+    usersByToken.erase(user->token);
+    event->headers.push_back({"Event-Control","No-Consumer"});
+    susi_->ack(std::move(event));
+}
+
+void Authenticator::addUser(Susi::EventPtr event){
+    std::string username = event->payload["username"];
+    std::string password = event->payload["password"];
+    auto roles = event->payload["roles"];
+    auto user = std::make_shared<User>();
+    user->name = username;
+    user->pwHash = BCrypt::generateHash(password);
+    for(size_t i=0;i<roles.size();i++){
+        user->roles.emplace_back(roles[i].getString());
+    }
+    addUser(user);
+    save();
+    event->payload = true;
+}
+
+void Authenticator::delUser(Susi::EventPtr event){
+    std::string username = event->payload["username"];
+    auto user = usersByName[username];
+    usersByName.erase(username);
+    usersByToken.erase(user->token);
+    event->payload = true;
+}
+
+void Authenticator::getUsers(Susi::EventPtr event){
+    BSON::Array resultData;
+    for(auto & kv : usersByName){
+        auto & user = kv.second;
+        resultData.push_back(BSON::Object{
+            {"username",user->name},
+            {"roles",BSON::Array{user->roles.begin(),user->roles.end()}}
+        });
+    }
+    event->payload = resultData;
+}
+
+void Authenticator::addPermission(Susi::EventPtr event){
+
+}
+
+void Authenticator::delPermission(Susi::EventPtr event){
+
+}
+
+void Authenticator::getPermissions(Susi::EventPtr event){
+
 }
 
 void Authenticator::addUser(std::shared_ptr<User> user){
@@ -128,35 +213,6 @@ std::string Authenticator::getTokenFromEvent(const Susi::EventPtr & event){
         }
     }
     return "";
-}
-
-void Authenticator::login(Susi::EventPtr event){
-    auto name = event->payload["username"].getString();
-    // check username and password
-    if(usersByName.count(name) == 0){
-        throw std::runtime_error{"no such user"};
-    }
-    auto & user = usersByName[name];
-    if(!BCrypt::validatePassword(event->payload["password"].getString(),user->pwHash)){
-        std::this_thread::sleep_for(std::chrono::milliseconds{100}); //this is agains brute forcers
-        throw std::runtime_error{"wrong password"};
-    }
-    user->token = generateToken();
-    event->payload["token"] = user->token;
-    usersByToken[user->token] = user;
-
-    // prevent arbitary consumers from reading sensitive data
-    event->headers.push_back({"Event-Control","No-Consumer"});
-    susi_->ack(std::move(event));
-}
-
-void Authenticator::logout(Susi::EventPtr event){
-    std::string token = getTokenFromEvent(event);
-    auto & user = usersByToken[token];
-    user->token = "";
-    usersByToken.erase(user->token);
-    event->headers.push_back({"Event-Control","No-Consumer"});
-    susi_->ack(std::move(event));
 }
 
 bool Authenticator::checkIfPayloadMatchesPattern(BSON::Value pattern, BSON::Value payload){
