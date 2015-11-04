@@ -195,6 +195,13 @@ function setup_webhooks {
     add_to_start_script susi-webhooks $CONTAINER
 }
 
+function setup_authenticator {
+    CONTAINER=$1
+    install_binary_to_container $SUSI_BINARY_PATH/susi-authenticator $CONTAINER
+    create_keys susi-authenticator $CONTAINER
+    add_to_start_script susi-authenticator $CONTAINER
+}
+
 
 function ask_and_install {
     BINARY=$1
@@ -207,11 +214,17 @@ function ask_and_install {
 }
 
 read -p "Tell me the name of your project! " CONTAINER_NAME
+
 echo "deleting old project $CONTAINER_NAME..."
 rm -rf /var/lib/machines/$CONTAINER_NAME
+
 echo "create new container from debian jessie..."
 create_new_container $CONTAINER_NAME
-read -p "Tell me where your susi binaries are located! " SUSI_BINARY_PATH
+
+read -p "Tell me where your susi binaries are located! [/home/tino/Code/susi/susi/bin]" SUSI_BINARY_PATH
+if [ x"$SUSI_BINARY_PATH" = x"" ];then
+    SUSI_BINARY_PATH=/home/tino/Code/susi/susi/bin
+fi
 
 setup_core $CONTAINER_NAME
 
@@ -224,6 +237,7 @@ ask_and_install susi-serial
 ask_and_install susi-udpserver
 ask_and_install susi-webhooks
 ask_and_install susi-statefile
+ask_and_install susi-authenticator
 
 finish_start_script $CONTAINER_NAME
 

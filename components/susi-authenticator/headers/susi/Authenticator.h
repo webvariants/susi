@@ -1,7 +1,5 @@
-#include "leveldb/db.h"
 #include "susi/SusiClient.h"
-#include "susi/sha3.h"
-#include <uuid/uuid.h>
+#include "bcrypt/BCrypt.hpp"
 #include <regex>
 
 class Authenticator {

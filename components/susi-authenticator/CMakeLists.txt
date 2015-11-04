@@ -28,7 +28,7 @@ target_link_libraries(${PROJECT_NAME}
 	${OPENSSL_LIBRARIES}
 	bson
 	susi-cpp
-	leveldb)
+	bcrypt)
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "/usr/local/bin")
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/headers/ DESTINATION /usr/local/include)

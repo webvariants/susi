@@ -26,6 +26,7 @@ option(WITH_SERIAL "Include susi-serial binary" ON)
 option(WITH_UDPSERVER "Include susi-udpserver binary" ON)
 option(WITH_WEBHOOKS "Include susi-webhooks binary" ON)
 option(WITH_STATEFILE "Include susi-webhooks binary" ON)
+option(WITH_AUTHENTICATOR "Include susi-authenticator binary" ON)
 
 set( CMAKE_COLOR_MAKEFILE ON )
 
@@ -40,6 +41,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 #submodules
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/submodules/libbson)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/libbson/src/headers)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/submodules/libbcrypt)
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/libbcrypt/include)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/components/susi-common)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/components/susi-common/headers)
@@ -97,6 +100,11 @@ if(WITH_STATEFILE)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/components/susi-statefile)
     include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/components/susi-statefile/headers)
 endif(WITH_STATEFILE)
+
+if(WITH_AUTHENTICATOR)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/components/susi-authenticator)
+    include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/components/susi-authenticator/headers)
+endif(WITH_AUTHENTICATOR)
 
 SET(CPACK_GENERATOR "DEB")
 SET(CPACK_SET_DESTDIR ON)

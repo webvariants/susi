@@ -3,6 +3,12 @@
 Authenticator::Authenticator(std::string addr,short port, std::string key, std::string cert) :
   susi_{new Susi::SusiClient{addr,port,key,cert}} {
       load();
+      susi_->registerProcessor("authenticator::login",[this](Susi::EventPtr event){
+         login(std::move(event));
+      });
+      susi_->registerProcessor("authenticator::logout",[this](Susi::EventPtr event){
+         logout(std::move(event));
+      });
 }
 
 void Authenticator::addUser(std::shared_ptr<User> user){
@@ -18,7 +24,14 @@ void Authenticator::load(){
     userRequestEvent->payload["key"] = "authenticator::users";
     susi_->publish(std::move(userRequestEvent),[this](Susi::SharedEventPtr event){
         auto & users = event->payload["value"];
-        for(size_t i=0;i<users.size();i++){
+        if(!users.isArray() || users.size()==0){
+            auto user = std::make_shared<User>();
+            user->name = "root";
+            user->pwHash = BCrypt::generateHash("toor");
+            user->roles.push_back("admin");
+            addUser(user);
+            save();
+        }else for(size_t i=0;i<users.size();i++){
             auto & user = users[i];
             auto u = std::shared_ptr<User>{ new User{
                 .name = user["name"].getString(),
@@ -35,15 +48,17 @@ void Authenticator::load(){
     permissionRequestEvent->payload["key"] = "authenticator::permissions";
     susi_->publish(std::move(permissionRequestEvent),[this](Susi::SharedEventPtr event){
         auto & permissions = event->payload["value"];
-        for(size_t i=0;i<permissions.size();i++){
-            auto & permission = permissions[i];
-            Permission p = {
-                .pattern = Susi::Event{permission["pattern"]}
-            };
-            for(size_t j=0;j<permission["roles"].size();j++){
-                p.roles.push_back(permission["roles"][j].getString());
+        if(permissions.isArray()){
+            for(size_t i=0;i<permissions.size();i++){
+                auto & permission = permissions[i];
+                Permission p = {
+                    .pattern = Susi::Event{permission["pattern"]}
+                };
+                for(size_t j=0;j<permission["roles"].size();j++){
+                    p.roles.push_back(permission["roles"][j].getString());
+                }
+                addPermission(p);
             }
-            addPermission(p);
         }
     });
 }
@@ -116,16 +131,13 @@ std::string Authenticator::getTokenFromEvent(const Susi::EventPtr & event){
 }
 
 void Authenticator::login(Susi::EventPtr event){
-    SHA3 sha3;
     auto name = event->payload["username"].getString();
-    auto pwHash = sha3(event->payload["password"].getString());
-
     // check username and password
     if(usersByName.count(name) == 0){
         throw std::runtime_error{"no such user"};
     }
     auto & user = usersByName[name];
-    if(pwHash != user->pwHash){
+    if(!BCrypt::validatePassword(event->payload["password"].getString(),user->pwHash)){
         std::this_thread::sleep_for(std::chrono::milliseconds{100}); //this is agains brute forcers
         throw std::runtime_error{"wrong password"};
     }
@@ -137,6 +149,7 @@ void Authenticator::login(Susi::EventPtr event){
     event->headers.push_back({"Event-Control","No-Consumer"});
     susi_->ack(std::move(event));
 }
+
 void Authenticator::logout(Susi::EventPtr event){
     std::string token = getTokenFromEvent(event);
     auto & user = usersByToken[token];
@@ -145,7 +158,6 @@ void Authenticator::logout(Susi::EventPtr event){
     event->headers.push_back({"Event-Control","No-Consumer"});
     susi_->ack(std::move(event));
 }
-
 
 bool Authenticator::checkIfPayloadMatchesPattern(BSON::Value pattern, BSON::Value payload){
     if(pattern.getType() != payload.getType()){
