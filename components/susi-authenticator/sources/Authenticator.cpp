@@ -4,19 +4,19 @@ Authenticator::Authenticator(std::string addr,short port, std::string key, std::
   susi_{new Susi::SusiClient{addr,port,key,cert}} {
     load();
     susi_->registerProcessor("authenticator::login",[this](Susi::EventPtr event){
-     login(std::move(event));
+        login(std::move(event));
     });
     susi_->registerProcessor("authenticator::logout",[this](Susi::EventPtr event){
-     logout(std::move(event));
+        logout(std::move(event));
     });
     susi_->registerProcessor("authenticator::users::add",[this](Susi::EventPtr event){
-     addUser(std::move(event));
+        addUser(std::move(event));
     });
     susi_->registerProcessor("authenticator::users::delete",[this](Susi::EventPtr event){
-     delUser(std::move(event));
+        delUser(std::move(event));
     });
     susi_->registerProcessor("authenticator::users::get",[this](Susi::EventPtr event){
-     getUsers(std::move(event));
+        getUsers(std::move(event));
     });
 }
 
@@ -85,7 +85,21 @@ void Authenticator::getUsers(Susi::EventPtr event){
 }
 
 void Authenticator::addPermission(Susi::EventPtr event){
-
+    auto & pattern = event->payload["pattern"];
+    auto roles = event->payload["roles"];
+    std::string topic = pattern["topic"].getString();
+    BSON::Value & payload = pattern["payload"];
+    Susi::Event evt;
+    evt.topic = topic;
+    evt.payload = payload;
+    Permission permission;
+    permission.pattern = evt;
+    std::vector<std::string> roleArray;
+    for(size_t i=0;i<roles.size();i++){
+        roleArray.emplace_back(roles[i].getString());
+    }
+    permission.roles = roleArray;
+    addPermission(permission);
 }
 
 void Authenticator::delPermission(Susi::EventPtr event){
@@ -208,7 +222,7 @@ std::string Authenticator::generateToken(){
 
 std::string Authenticator::getTokenFromEvent(const Susi::EventPtr & event){
     for(const auto & header : event->headers){
-        if(header.first == "authenticator::token"){
+        if(header.first == "User-Token"){
             return header.second;
         }
     }
