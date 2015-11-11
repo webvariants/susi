@@ -39,7 +39,7 @@ bool SusiStateFileClient::validateFieldsForGet(const Susi::EventPtr & event){
 
 void SusiStateFileClient::handlePut(Susi::EventPtr event){
 	if(!validateFieldsForPut(event)){
-		event->headers.push_back({"error","leveldb put error"});
+		event->headers.push_back({"Error","statefile put error"});
 		return;
 	}
     state_[event->payload["key"].getString()] = event->payload["value"];
@@ -48,7 +48,7 @@ void SusiStateFileClient::handlePut(Susi::EventPtr event){
 
 void SusiStateFileClient::handleGet(Susi::EventPtr event){
 	if(!validateFieldsForGet(event)){
-		event->headers.push_back({"error","leveldb get error"});
+		event->headers.push_back({"Error","statefile get error"});
 		return;
 	}
     BSON::Value value = state_[event->payload["key"].getString()];
@@ -57,7 +57,7 @@ void SusiStateFileClient::handleGet(Susi::EventPtr event){
 
 void SusiStateFileClient::handleDelete(Susi::EventPtr event){
 	if(!validateFieldsForGet(event)){
-		event->headers.push_back({"error","leveldb delete error"});
+		event->headers.push_back({"Error","statefile delete error"});
 		return;
 	}
     state_[event->payload["key"].getString()].reset();

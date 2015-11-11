@@ -36,7 +36,7 @@ Webhooks::Webhooks(std::string addr,short port, std::string key, std::string cer
       std::string status_message;
       std::getline(response_stream, status_message);
       if (!response_stream || http_version.substr(0, 5) != "HTTP/" || status_code != 200) {
-        event->headers.push_back({"error","Invalid response"});
+        event->headers.push_back({"Error","Invalid response"});
         event->payload["statuscode"] = (BSON::int64)status_code;
         susi_->ack(std::move(event));
         return;

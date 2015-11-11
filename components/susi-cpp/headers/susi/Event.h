@@ -133,7 +133,7 @@ class Event {
 
     bool hasDismissedHeader() {
         for (const auto & kv : headers) {
-            if (kv.first == "error" && kv.second == "dismissed") {
+            if (kv.first == "Error" && kv.second == "Dismissed") {
                 return true;
             }
         }
@@ -142,7 +142,7 @@ class Event {
 
     void setDismissedHeader() {
         if (!hasDismissedHeader()) {
-            headers.push_back({"error", "dismissed"});
+            headers.push_back({"Error", "Dismissed"});
         }
     }
 

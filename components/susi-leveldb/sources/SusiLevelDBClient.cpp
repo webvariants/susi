@@ -41,12 +41,12 @@ bool SusiLevelDBClient::validateFieldsForGet(const Susi::EventPtr & event){
 
 void SusiLevelDBClient::handlePut(Susi::EventPtr event){
 	if(!validateFieldsForPut(event)){
-		event->headers.push_back({"error","leveldb put error"});
+		event->headers.push_back({"Error","leveldb put error"});
 		return;
 	}
 	leveldb::Status s = db_.get()->Put(leveldb::WriteOptions(), event->payload["key"].getString(), event->payload["value"].toJSON());
 	if(!s.ok()){
-		event->headers.push_back({"error","leveldb put error: "+s.ToString()});
+		event->headers.push_back({"Error","leveldb put error: "+s.ToString()});
 		return;
 	}
 	event->payload["success"] = true;
@@ -54,13 +54,13 @@ void SusiLevelDBClient::handlePut(Susi::EventPtr event){
 
 void SusiLevelDBClient::handleGet(Susi::EventPtr event){
 	if(!validateFieldsForGet(event)){
-		event->headers.push_back({"error","leveldb get error"});
+		event->headers.push_back({"Error","leveldb get error"});
 		return;
 	}
 	std::string valueStr;
 	leveldb::Status s = db_.get()->Get(leveldb::ReadOptions(), event->payload["key"].getString(), &valueStr);
 	if(!s.ok()){
-		event->headers.push_back({"error","leveldb get error: "+s.ToString()});
+		event->headers.push_back({"Error","leveldb get error: "+s.ToString()});
 		return;
 	}
 	event->payload["value"] = BSON::Value::fromJSON(valueStr);
@@ -68,12 +68,12 @@ void SusiLevelDBClient::handleGet(Susi::EventPtr event){
 
 void SusiLevelDBClient::handleDelete(Susi::EventPtr event){
 	if(!validateFieldsForGet(event)){
-		event->headers.push_back({"error","leveldb delete error"});
+		event->headers.push_back({"Error","leveldb delete error"});
 		return;
 	}
 	leveldb::Status s = db_.get()->Delete(leveldb::WriteOptions(), event->payload["key"].getString());
 	if(!s.ok()){
-		event->headers.push_back({"error","leveldb delete error: "+s.ToString()});
+		event->headers.push_back({"Error","leveldb delete error: "+s.ToString()});
 		return;
 	}
 	event->payload["success"] = true;

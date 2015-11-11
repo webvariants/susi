@@ -175,7 +175,7 @@ void Susi::Duktape::JSEngine::registerProcessor(std::string topic) {
         } catch (const std::exception & e) {
             std::string err = e.what();
             auto & pendingEvent = pendingEvents.at(eventID);
-            pendingEvent->headers.push_back({"error", err});
+            pendingEvent->headers.push_back({"Error", err});
             pendingEvents.erase(eventID);
         }
     });

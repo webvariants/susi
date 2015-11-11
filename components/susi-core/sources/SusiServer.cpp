@@ -175,9 +175,9 @@ void Susi::SusiServer::publish(BSON::Value & event, int publisher) {
     auto peerCertHash = Susi::SSLTCPServer::getPeerCertificateHash(publisher);
     if (peerCertHash != "") {
         if (event["headers"].isArray()) {
-            event["headers"].push_back(BSON::Object{{"certHash", peerCertHash}});
+            event["headers"].push_back(BSON::Object{{"Cert-Hash", peerCertHash}});
         } else {
-            event["headers"] = BSON::Array{BSON::Object{{"certHash", peerCertHash}}};
+            event["headers"] = BSON::Array{BSON::Object{{"Cert-Hash", peerCertHash}}};
         }
     }
 
@@ -249,7 +249,7 @@ void Susi::SusiServer::ack(BSON::Value & event, int acker) {
             };
             send(process->processors[process->nextProcessor++], processorEvent);
         }else{
-            process->nextProcessor++;
+            process->nextProcessor = process->processors.size();
             ack(event,acker);
         }
     }

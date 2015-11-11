@@ -140,7 +140,7 @@ void Susi::EventManager::dismiss( EventPtr event ) {
         delete event.release();
         return;
     }
-    event->headers.push_back({"error", "dismissed"});
+    event->headers.push_back({"Error", "Dismissed"});
     process->current = process->processors.size();
     ack(std::move(event));
 }
@@ -180,7 +180,7 @@ void Susi::EventManager::ack( EventPtr event ) {
 
             std::unique_lock<std::mutex> lock( process->mutex );
             while ( process->errors.size() > 0 ) {
-                event->headers.push_back( std::make_pair( "error", process->errors.back() ) );
+                event->headers.push_back( std::make_pair( "Error", process->errors.back() ) );
                 process->errors.pop_back();
             }
             if ( process->current < process->processors.size() ) {
