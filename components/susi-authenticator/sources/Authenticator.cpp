@@ -44,6 +44,14 @@ void Authenticator::login(Susi::EventPtr event){
     event->payload["token"] = user->token;
     usersByToken[user->token] = user;
 
+    // add all topics which require a valid token
+    // (tokens will not be deleted if sended to others than this topics)
+    BSON::Array topics;
+    for(auto & kv : permissionsByTopic){
+        topics.push_back(kv.first);
+    }
+    event->payload["topics"] = topics;
+
     // prevent arbitary consumers from reading sensitive data
     event->headers.push_back({"Event-Control","No-Consumer"});
     event->headers.push_back({"Event-Control","No-Processor"});

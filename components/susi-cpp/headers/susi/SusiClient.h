@@ -55,9 +55,16 @@ class SusiClient : public FramingClient<LineFramer, Client> {
         eventmanager.dismiss(std::move(evt));
     }
 
+    void login(const std::string & username, const std::string & password);
+    void logout();
+
   protected:
     EventManager eventmanager;
     bool isConnected = false;
+
+    std::string token;
+    std::regex authRequiredRegex;
+
     std::deque<std::shared_ptr<BSON::Value>> messageQueue;
     std::map<std::string, int> registerProcessorCounter;
     std::map<std::string, int> registerConsumerCounter;

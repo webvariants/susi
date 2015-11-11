@@ -130,6 +130,9 @@ void Susi::SusiClient::onClose() {
 }
 
 void Susi::SusiClient::publish(EventPtr event, Consumer finishCallback) {
+    if(std::regex_match(event->topic, authRequiredRegex)){
+        event->headers.push_back({"User-Token",this->token});
+    }
     std::string id = event->id;
     BSON::Value packet = BSON::Object{
         {"type", "publish"},
@@ -173,4 +176,26 @@ bool Susi::SusiClient::unregisterConsumer(std::uint64_t id) {
 
 std::uint64_t Susi::SusiClient::generateId() {
     return std::chrono::system_clock::now().time_since_epoch().count();
+}
+
+void Susi::SusiClient::login(const std::string & username, const std::string & password){
+    auto event = createEvent("authenticator::login");
+    event->payload = BSON::Object{
+        {"username", username},
+        {"password", password}
+    };
+    publish(std::move(event),[this](Susi::SharedEventPtr event){
+        this->token = event->payload["token"].getString();
+        std::string regexString = "(authenticator::logout)|";
+        for(size_t i=0; i<event->payload["topics"].size(); i++){
+            regexString += "("+event->payload["topics"][i].getString()+")|";
+        }
+        regexString = regexString.substr(0,regexString.size()-1);
+        authRequiredRegex = regexString;
+    });
+}
+
+void Susi::SusiClient::logout(){
+    auto event = createEvent("authenticator::logout");
+    publish(std::move(event));
 }
