@@ -27,25 +27,35 @@ protected:
 	};
 
 	struct Permission {
+		std::string id;
 		Susi::Event pattern;
 		std::vector<std::string> roles;
 	};
 
 	std::map<std::string,std::shared_ptr<User>> usersByName;
 	std::map<std::string,std::shared_ptr<User>> usersByToken;
-	std::map<std::string,Permission> permissionsByTopic;
+	std::map<std::string,std::map<std::string,Permission>> permissionsByTopic;
 
 	void addUser(std::shared_ptr<User> user);
 	void addPermission(Permission permission);
 	void load();
+	void loadUsers();
+	void loadPermissions();
 	void save();
+	void saveUsers();
+	void savePermissions();
+
+	void setupDefaults();
 
 	std::string generateToken();
 	std::string getTokenFromEvent(const Susi::EventPtr & event);
 
 	void registerGuard(Permission permission);
 
-	bool checkIfPayloadMatchesPattern(BSON::Value pattern, BSON::Value payload);
+	bool checkIfPayloadMatchesPattern(const BSON::Value & pattern, const BSON::Value & payload);
+
+	BSON::Value permissionsToBSON();
+	bool BSONToPermissions(BSON::Value permissions);
 
 	std::shared_ptr<Susi::SusiClient> susi_;
 };

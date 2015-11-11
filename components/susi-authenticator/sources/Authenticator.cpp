@@ -18,6 +18,15 @@ Authenticator::Authenticator(std::string addr,short port, std::string key, std::
     susi_->registerProcessor("authenticator::users::get",[this](Susi::EventPtr event){
         getUsers(std::move(event));
     });
+    susi_->registerProcessor("authenticator::permissions::add",[this](Susi::EventPtr event){
+        addPermission(std::move(event));
+    });
+    susi_->registerProcessor("authenticator::permissions::delete",[this](Susi::EventPtr event){
+        delPermission(std::move(event));
+    });
+    susi_->registerProcessor("authenticator::permissions::get",[this](Susi::EventPtr event){
+        getPermissions(std::move(event));
+    });
 }
 
 void Authenticator::login(Susi::EventPtr event){
@@ -37,6 +46,7 @@ void Authenticator::login(Susi::EventPtr event){
 
     // prevent arbitary consumers from reading sensitive data
     event->headers.push_back({"Event-Control","No-Consumer"});
+    event->headers.push_back({"Event-Control","No-Processor"});
     susi_->ack(std::move(event));
 }
 
@@ -45,7 +55,6 @@ void Authenticator::logout(Susi::EventPtr event){
     auto & user = usersByToken[token];
     user->token = "";
     usersByToken.erase(user->token);
-    event->headers.push_back({"Event-Control","No-Consumer"});
     susi_->ack(std::move(event));
 }
 
@@ -60,7 +69,6 @@ void Authenticator::addUser(Susi::EventPtr event){
         user->roles.emplace_back(roles[i].getString());
     }
     addUser(user);
-    save();
     event->payload = true;
 }
 
@@ -69,6 +77,7 @@ void Authenticator::delUser(Susi::EventPtr event){
     auto user = usersByName[username];
     usersByName.erase(username);
     usersByToken.erase(user->token);
+    saveUsers();
     event->payload = true;
 }
 
@@ -81,6 +90,8 @@ void Authenticator::getUsers(Susi::EventPtr event){
             {"roles",BSON::Array{user->roles.begin(),user->roles.end()}}
         });
     }
+    event->headers.push_back({"Event-Control","No-Consumer"});
+    event->headers.push_back({"Event-Control","No-Processor"});
     event->payload = resultData;
 }
 
@@ -94,42 +105,96 @@ void Authenticator::addPermission(Susi::EventPtr event){
     evt.payload = payload;
     Permission permission;
     permission.pattern = evt;
+    permission.id = generateToken();
     std::vector<std::string> roleArray;
     for(size_t i=0;i<roles.size();i++){
         roleArray.emplace_back(roles[i].getString());
     }
     permission.roles = roleArray;
     addPermission(permission);
+    event->payload = BSON::Object{
+        {"id",permission.id}
+    };
 }
 
 void Authenticator::delPermission(Susi::EventPtr event){
-
+    std::string id = event->payload["id"].getString();
+    for(auto & kv : permissionsByTopic){
+        for(auto & idAndPerm : kv.second){
+            if(idAndPerm.first == id){
+                kv.second.erase(id);
+                savePermissions();
+                event->payload["success"] = true;
+                return;
+            }
+        }
+    }
+    event->payload["success"] = false;
 }
 
 void Authenticator::getPermissions(Susi::EventPtr event){
-
+    event->payload = permissionsToBSON();
+    event->headers.push_back({"Event-Control","No-Consumer"});
+    event->headers.push_back({"Event-Control","No-Processor"});
 }
 
 void Authenticator::addUser(std::shared_ptr<User> user){
     usersByName[user->name] = user;
+    saveUsers();
 }
 
 void Authenticator::addPermission(Permission permission){
-    permissionsByTopic[permission.pattern.topic] = permission;
+    permissionsByTopic[permission.pattern.topic][permission.id] = permission;
+    registerGuard(permission);
+    savePermissions();
 }
 
-void Authenticator::load(){
+BSON::Value Authenticator::permissionsToBSON(){
+    BSON::Object permissionObject;
+    for(auto & kv : permissionsByTopic){
+        auto & permissions = kv.second;
+        for(auto & idAndPerm : permissions){
+            auto & permission = idAndPerm.second;
+            permissionObject[permission.id] = BSON::Object{
+                {"pattern",permission.pattern.toAny()},
+                {"roles",BSON::Array{
+                    permission.roles.begin(),
+                    permission.roles.end()
+                }}
+            };
+        }
+    }
+    return permissionObject;
+}
+
+bool Authenticator::BSONToPermissions(BSON::Value permissions){
+    if(!permissions.isObject()){
+        return false;
+    }
+    for(auto & kv : permissions.getObject()){
+        auto & id = kv.first;
+        auto & permission = kv.second;
+        Permission p = {
+            .id = id,
+            .pattern = Susi::Event{permission["pattern"]}
+        };
+        for(size_t j=0;j<permission["roles"].size();j++){
+            p.roles.push_back(permission["roles"][j].getString());
+        }
+        addPermission(p);
+    }
+    return true;
+}
+
+void Authenticator::loadUsers(){
     auto userRequestEvent = susi_->createEvent("state::get");
     userRequestEvent->payload["key"] = "authenticator::users";
     susi_->publish(std::move(userRequestEvent),[this](Susi::SharedEventPtr event){
+        usersByName.clear();
+        usersByToken.clear();
         auto & users = event->payload["value"];
         if(!users.isArray() || users.size()==0){
-            auto user = std::make_shared<User>();
-            user->name = "root";
-            user->pwHash = BCrypt::generateHash("toor");
-            user->roles.push_back("admin");
-            addUser(user);
-            save();
+            setupDefaults();
         }else for(size_t i=0;i<users.size();i++){
             auto & user = users[i];
             auto u = std::shared_ptr<User>{ new User{
@@ -143,26 +208,26 @@ void Authenticator::load(){
             addUser(u);
         }
     });
+}
+
+void Authenticator::loadPermissions(){
     auto permissionRequestEvent = susi_->createEvent("state::get");
     permissionRequestEvent->payload["key"] = "authenticator::permissions";
     susi_->publish(std::move(permissionRequestEvent),[this](Susi::SharedEventPtr event){
+        permissionsByTopic.clear();
         auto & permissions = event->payload["value"];
-        if(permissions.isArray()){
-            for(size_t i=0;i<permissions.size();i++){
-                auto & permission = permissions[i];
-                Permission p = {
-                    .pattern = Susi::Event{permission["pattern"]}
-                };
-                for(size_t j=0;j<permission["roles"].size();j++){
-                    p.roles.push_back(permission["roles"][j].getString());
-                }
-                addPermission(p);
-            }
-        }
+        BSONToPermissions(permissions);
     });
 }
 
-void Authenticator::save(){
+
+void Authenticator::load(){
+    loadUsers();
+    loadPermissions();
+}
+
+
+void Authenticator::saveUsers(){
     BSON::Array userArray;
     for(auto & kv : usersByName){
         auto & user = kv.second;
@@ -179,22 +244,18 @@ void Authenticator::save(){
     userSaveEvent->payload["key"] = "authenticator::users";
     userSaveEvent->payload["value"] = userArray;
     susi_->publish(std::move(userSaveEvent));
-
-    BSON::Array permissionArray;
-    for(auto & kv : permissionsByTopic){
-        auto & permission = kv.second;
-        permissionArray.push_back(BSON::Object{
-            {"pattern",permission.pattern.toAny()},
-            {"roles",BSON::Array{
-                permission.roles.begin(),
-                permission.roles.end()
-            }}
-        });
-    }
+}
+void Authenticator::savePermissions(){
+    BSON::Value permissions = permissionsToBSON();
     auto permissionSaveEvent = susi_->createEvent("state::put");
     permissionSaveEvent->payload["key"] = "authenticator::permissions";
-    permissionSaveEvent->payload["value"] = userArray;
+    permissionSaveEvent->payload["value"] = permissions;
     susi_->publish(std::move(permissionSaveEvent));
+}
+
+void Authenticator::save(){
+    saveUsers();
+    savePermissions();
 }
 
 void Authenticator::join(){
@@ -221,15 +282,17 @@ std::string Authenticator::generateToken(){
 }
 
 std::string Authenticator::getTokenFromEvent(const Susi::EventPtr & event){
-    for(const auto & header : event->headers){
+    for(auto & header : event->headers){
         if(header.first == "User-Token"){
-            return header.second;
+            std::string token = header.second;
+            header.second = "";
+            return token;
         }
     }
     return "";
 }
 
-bool Authenticator::checkIfPayloadMatchesPattern(BSON::Value pattern, BSON::Value payload){
+bool Authenticator::checkIfPayloadMatchesPattern(const BSON::Value & pattern, const BSON::Value & payload){
     if(pattern.getType() != payload.getType()){
         return false;
     }
@@ -272,9 +335,10 @@ bool Authenticator::checkIfPayloadMatchesPattern(BSON::Value pattern, BSON::Valu
 
 void Authenticator::registerGuard(Permission permission){
     susi_->registerProcessor(permission.pattern.topic,[permission,this](Susi::EventPtr event){
+        std::string token = getTokenFromEvent(event);
         if(checkIfPayloadMatchesPattern(permission.pattern.payload,event->payload)){
-            std::string token = getTokenFromEvent(event);
             if(!usersByToken.count(token)){
+                event->headers.push_back({"Error","Unauthenticated"});
                 susi_->dismiss(std::move(event));
             }else{
                 auto & u = usersByToken[token];
@@ -286,8 +350,26 @@ void Authenticator::registerGuard(Permission permission){
                         }
                     }
                 }
+                event->headers.push_back({"Error","Unauthenticated"});
                 susi_->dismiss(std::move(event));
             }
         }
     });
+}
+
+void Authenticator::setupDefaults(){
+    auto user = std::make_shared<User>();
+    user->name = "root";
+    user->pwHash = BCrypt::generateHash("toor");
+    user->roles.push_back("admin");
+    addUser(user);
+    BSON::Value pattern = BSON::Object{
+        {"topic","authenticator::(users|permissions)::.*"}
+    };
+    auto permission = Permission{
+        .id = generateToken(),
+        .pattern = Susi::Event{pattern},
+        .roles = std::vector<std::string>{"admin"}
+    };
+    addPermission(permission);
 }
