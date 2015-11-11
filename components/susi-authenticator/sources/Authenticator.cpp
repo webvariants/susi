@@ -63,6 +63,7 @@ void Authenticator::logout(Susi::EventPtr event){
     auto & user = usersByToken[token];
     user->token = "";
     usersByToken.erase(user->token);
+    event->payload = true;
     susi_->ack(std::move(event));
 }
 
@@ -132,12 +133,12 @@ void Authenticator::delPermission(Susi::EventPtr event){
             if(idAndPerm.first == id){
                 kv.second.erase(id);
                 savePermissions();
-                event->payload["success"] = true;
+                event->payload = true;
                 return;
             }
         }
     }
-    event->payload["success"] = false;
+    event->payload = false;
 }
 
 void Authenticator::getPermissions(Susi::EventPtr event){
