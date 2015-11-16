@@ -36,9 +36,9 @@
 <h1>
 <a id="susi-a-universal-system-interface" class="anchor" href="#susi-a-universal-system-interface" aria-hidden="true"><span class="octicon octicon-link"></span></a>SUSI, a Universal System Interface</h1>
 
-<p>SUSI is an application framework to build interfaces for arbitary systems.</p>
+<p>SUSI is an application framework to build interfaces for arbitrary systems.</p>
 
-<p>It intendeds to enable even novice programmers to build robust asyncronous applications on both ends of the system: front-end and back-end.</p>
+<p>It intends to enable even novice programmers to build robust asyncronous applications on both ends of the system: front-end and back-end.</p>
 
 <h2>
 <a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting started</h2>
@@ -72,13 +72,13 @@ sudo ldconfig
 
 <p>The main component of SUSI is its <em>core server</em> for handling the entire event dispatching and serves as a communication base for all other components.</p>
 
-<p>You need to specify a valid TLS key / certificate pair to let the server start.
+<p>You need to specify a valid TLS key / certificate pair to start the server.
 To create a self-signed certificate run the following command:</p>
 
 <pre><code>openssl req -nodes -x509 -newkey rsa:2048 -keyout server_key.pem -out server_cert.pem -days 36500
 </code></pre>
 
-<p>After this, you can start the SUSI core server:</p>
+<p>Following, you can start the SUSI core server:</p>
 
 <pre><code>susi-core --key server_key.pem --cert server_cert.pem --port 4000
 </code></pre>
@@ -88,42 +88,42 @@ To create a self-signed certificate run the following command:</p>
 <h4>
 <a id="start-one-or-more-services" class="anchor" href="#start-one-or-more-services" aria-hidden="true"><span class="octicon octicon-link"></span></a>Start one or more services</h4>
 
-<p>Once your core server is started, you can start other components that connect to it.</p>
+<p>Once your core server has been started, you can start other components that connect to it.</p>
 
-<p>For our first example, lets start with susi-duktape - our server side javascript interpreter.</p>
+<p>For our first example lets start with susi-duktape - our server side javascript interpreter.</p>
 
-<p>Create a Javascript source file, which look like this:</p>
+<p>Create a Javascript source file, which looks like this:</p>
 
-<div class="highlight highlight-javascript"><pre>susi.<span class="pl-c1">registerProcessor</span>(<span class="pl-s"><span class="pl-pds">'</span>.*<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
+<div class="highlight highlight-source-js"><pre>susi.registerProcessor(<span class="pl-s"><span class="pl-pds">'</span>.*<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
     <span class="pl-en">console</span>.<span class="pl-c1">debug</span>(<span class="pl-s"><span class="pl-pds">'</span>in processor<span class="pl-pds">'</span></span>);
-    evt.<span class="pl-c1">payload</span> <span class="pl-k">=</span> {};
-    susi.<span class="pl-c1">ack</span>(evt);
+    evt.payload <span class="pl-k">=</span> {};
+    susi.ack(evt);
 });
 
-susi.<span class="pl-c1">registerProcessor</span>(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
+susi.registerProcessor(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
     <span class="pl-en">console</span>.<span class="pl-c1">debug</span>(<span class="pl-s"><span class="pl-pds">'</span>in foo proc 1<span class="pl-pds">'</span></span>);
-    evt.<span class="pl-c1">payload</span>.<span class="pl-c1">a</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>;
-    susi.<span class="pl-c1">ack</span>(evt);
+    evt.payload.a <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>;
+    susi.ack(evt);
 });
 
-susi.<span class="pl-c1">registerProcessor</span>(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
+susi.registerProcessor(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
     <span class="pl-en">console</span>.<span class="pl-c1">debug</span>(<span class="pl-s"><span class="pl-pds">'</span>in foo proc 2<span class="pl-pds">'</span></span>);
-    evt.<span class="pl-c1">payload</span>.<span class="pl-c1">b</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>bar<span class="pl-pds">'</span></span>;
-    susi.<span class="pl-c1">dismiss</span>(evt);
+    evt.payload.b <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>bar<span class="pl-pds">'</span></span>;
+    susi.dismiss(evt);
 });
 
-susi.<span class="pl-c1">registerProcessor</span>(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
+susi.registerProcessor(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
     <span class="pl-en">console</span>.<span class="pl-c1">debug</span>(<span class="pl-s"><span class="pl-pds">'</span>in foo proc 3 (should never be called)<span class="pl-pds">'</span></span>);
-    evt.<span class="pl-c1">payload</span>.<span class="pl-c1">c</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>baz<span class="pl-pds">'</span></span>;
-    susi.<span class="pl-c1">ack</span>(evt);
+    evt.payload.c <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>baz<span class="pl-pds">'</span></span>;
+    susi.ack(evt);
 });
 
-susi.<span class="pl-c1">registerConsumer</span>(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
-    <span class="pl-en">console</span><span class="pl-c1">.log</span>(<span class="pl-s"><span class="pl-pds">'</span>consumer:<span class="pl-pds">'</span></span>, evt.<span class="pl-c1">payload</span>);
+susi.registerConsumer(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
+    <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">'</span>consumer:<span class="pl-pds">'</span></span>, evt.payload);
 });
 
-susi.<span class="pl-c1">publish</span>({ topic<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span> }, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
-    <span class="pl-en">console</span><span class="pl-c1">.log</span>(<span class="pl-s"><span class="pl-pds">'</span>finish:<span class="pl-pds">'</span></span>, evt.<span class="pl-c1">payload</span>);
+susi.publish({ topic<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span> }, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
+    <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">'</span>finish:<span class="pl-pds">'</span></span>, evt.payload);
 });
 </pre></div>
 
@@ -146,7 +146,7 @@ susi.<span class="pl-c1">publish</span>({ topic<span class="pl-k">:</span> <span
 </code></pre>
 
 <p>If you see an output like this, everything's fine :)
-If you have a look at the supplied JS sources, you can see how SUSI works.</p>
+If you take a look at the supplied JS sources, you can see how SUSI works.</p>
 
 <h3>
 <a id="4-understand-the-code" class="anchor" href="#4-understand-the-code" aria-hidden="true"><span class="octicon octicon-link"></span></a>4. Understand the code</h3>
@@ -159,7 +159,7 @@ If you have a look at the supplied JS sources, you can see how SUSI works.</p>
 
 <ul>
 <li>This attaches an active event handler to a specific topic.</li>
-<li>All active event handlers run sequentially in the order they are declared.</li>
+<li>All active event handlers run sequentially in the order of their declaration.</li>
 </ul>
 </li>
 <li>
@@ -167,7 +167,7 @@ If you have a look at the supplied JS sources, you can see how SUSI works.</p>
 
 <ul>
 <li>This attaches a passive event handler to a specific topic</li>
-<li>All passive event handlers run after all active event handlers finished.</li>
+<li>All passive event handlers will run after all active event handlers have finished.</li>
 </ul>
 </li>
 <li>
@@ -200,58 +200,55 @@ If you have a look at the supplied JS sources, you can see how SUSI works.</p>
 
 <p>As you see in the example, we register four processors:</p>
 
-<div class="highlight highlight-javascript"><pre>susi.<span class="pl-c1">registerProcessor</span>(<span class="pl-s"><span class="pl-pds">'</span>.*<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
+<div class="highlight highlight-source-js"><pre>susi.registerProcessor(<span class="pl-s"><span class="pl-pds">'</span>.*<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
     <span class="pl-en">console</span>.<span class="pl-c1">debug</span>(<span class="pl-s"><span class="pl-pds">'</span>in processor<span class="pl-pds">'</span></span>);
-    evt.<span class="pl-c1">payload</span> <span class="pl-k">=</span> {};
-    susi.<span class="pl-c1">ack</span>(evt);
+    evt.payload <span class="pl-k">=</span> {};
+    susi.ack(evt);
 });</pre></div>
 
 <p>This is the first processor. It takes a string/regex to specify the event topic the processor is interested in,
 and a callback which is called. The first processor matches all events (topic: ".*") and ensures that the
-event payload is an empty object. Notice that we call ack() at the end, to tell susi that the event can be processed by
-other processors now.</p>
+event payload is an empty object. Notice that we call ack() at the end, to tell SUSI that the event can be processed by other processors now.</p>
 
-<div class="highlight highlight-javascript"><pre>susi.<span class="pl-c1">registerProcessor</span>(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
+<div class="highlight highlight-source-js"><pre>susi.registerProcessor(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
     <span class="pl-en">console</span>.<span class="pl-c1">debug</span>(<span class="pl-s"><span class="pl-pds">'</span>in foo proc 1<span class="pl-pds">'</span></span>);
-    evt.<span class="pl-c1">payload</span>.<span class="pl-c1">a</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>;
-    susi.<span class="pl-c1">ack</span>(evt);
+    evt.payload.a <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>;
+    susi.ack(evt);
 });</pre></div>
 
-<p>This is the second processor. It matches all events with the topic 'foo' and attaches the string 'foo' to the payload field 'a'. After this it acknowledges the event back to susi.</p>
+<p>This is the second processor. It matches all events with the topic 'foo' and attaches the string 'foo' to the payload field 'a'. After this it acknowledges the event back to SUSI.</p>
 
-<div class="highlight highlight-javascript"><pre>susi.<span class="pl-c1">registerProcessor</span>(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
+<div class="highlight highlight-source-js"><pre>susi.registerProcessor(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
     <span class="pl-en">console</span>.<span class="pl-c1">debug</span>(<span class="pl-s"><span class="pl-pds">'</span>in foo proc 2<span class="pl-pds">'</span></span>);
-    evt.<span class="pl-c1">payload</span>.<span class="pl-c1">b</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>bar<span class="pl-pds">'</span></span>;
-    susi.<span class="pl-c1">dismiss</span>(evt);
+    evt.payload.b <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>bar<span class="pl-pds">'</span></span>;
+    susi.dismiss(evt);
 });</pre></div>
 
-<p>The third processor matches also all events with the topic 'foo'.
+<p>The third processor matches all events with the topic 'foo' as well.
 Notice that we call dismiss() at the end of the callback. This prevents all later declared processors to be called.</p>
 
-<div class="highlight highlight-javascript"><pre>susi.<span class="pl-c1">registerProcessor</span>(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
+<div class="highlight highlight-source-js"><pre>susi.registerProcessor(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
     <span class="pl-en">console</span>.<span class="pl-c1">debug</span>(<span class="pl-s"><span class="pl-pds">'</span>in foo proc 3 (should never be called)<span class="pl-pds">'</span></span>);
-    evt.<span class="pl-c1">payload</span>.<span class="pl-c1">c</span> <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>baz<span class="pl-pds">'</span></span>;
-    susi.<span class="pl-c1">ack</span>(evt);
+    evt.payload.c <span class="pl-k">=</span> <span class="pl-s"><span class="pl-pds">'</span>baz<span class="pl-pds">'</span></span>;
+    susi.ack(evt);
 });</pre></div>
 
 <p>This is the fourth processor. It will never be called due to the dismiss() statement in the third processor.</p>
 
-<div class="highlight highlight-javascript"><pre>susi.<span class="pl-c1">registerConsumer</span>(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
-    <span class="pl-en">console</span><span class="pl-c1">.log</span>(<span class="pl-s"><span class="pl-pds">'</span>consumer:<span class="pl-pds">'</span></span>, evt.<span class="pl-c1">payload</span>);
+<div class="highlight highlight-source-js"><pre>susi.registerConsumer(<span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span>, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
+    <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">'</span>consumer:<span class="pl-pds">'</span></span>, evt.payload);
 });</pre></div>
 
-<p>Here we declared a Consumer / passive event handler.
-It gets called after all processors, which are interested in this event, finished.
+<p>Here we declare a Consumer / passive event handler.
+It gets called after all processors, that are interested in this event, have finished.
 In the callback we simply log the event payload to stdout.</p>
 
-<div class="highlight highlight-javascript"><pre>susi.<span class="pl-c1">publish</span>({ topic<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span> }, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
-    <span class="pl-en">console</span><span class="pl-c1">.log</span>(<span class="pl-s"><span class="pl-pds">'</span>finish:<span class="pl-pds">'</span></span>, evt.<span class="pl-c1">payload</span>);
+<div class="highlight highlight-source-js"><pre>susi.publish({ topic<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>foo<span class="pl-pds">'</span></span> }, <span class="pl-k">function</span> (<span class="pl-smi">evt</span>) {
+    <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">'</span>finish:<span class="pl-pds">'</span></span>, evt.payload);
 });</pre></div>
 
 <p>Now, after the setup of all those processors and consumers, we can finally publish an event!
-publish() takes the event as first parameter. All events MUST have a topic field. Additionally they can have a payload field
-which can contain arbitrary data. As a second argument you can specify a finish callback. This is somewhat a one-time-consumer.
-It gets called after all processors for this event finished, but gets immediatly deleted afterwards.</p>
+publish() takes the event as first parameter. All events HAVE TO contain a topic field. Additionally they can have a payload field which can contain arbitrary data. As a second argument you can specify a finish callback. This is somewhat a one-time-consumer. It gets called after all processors for this event finished, but gets immediatly deleted afterwards.</p>
 
 <h3>
 <a id="5-learn-more-about-susi" class="anchor" href="#5-learn-more-about-susi" aria-hidden="true"><span class="octicon octicon-link"></span></a>5. Learn More about SUSI</h3>
@@ -272,14 +269,14 @@ It gets called after all processors for this event finished, but gets immediatly
 <a id="6-stay-in-contact" class="anchor" href="#6-stay-in-contact" aria-hidden="true"><span class="octicon octicon-link"></span></a>6. Stay in contact</h3>
 
 <ul>
-<li>Homepage: <a href="http://www.webvariants.de/SUSI">http://www.webvariants.de/SUSI</a>
+<li>Homepage: <a href="http://susi.io">http://susi.io</a>
 </li>
 <li>e-mail: tino[<em>dot</em>]rusch[<em>at</em>]webvariants[<em>dot</em>]de</li>
 </ul>
 
 <p>SUSI is released under the <a href="https://github.com/webvariants/susi/blob/experimental/LICENSE.md">MIT License</a>.</p>
 
-<p><em>Many thanks to the whole SUSIProject Team and all <a href="https://github.com/webvariants/susi/graphs/contributors">contributors</a>.</em></p>
+<p><em>Many thanks to the whole SUSIProject Team and all <a href="https://github.com/webvariants/susi/graphs/contributors">contributors</a> and especially to Anja Pydde for designing our great logo!</em></p>
         </section>
 
         <footer>
