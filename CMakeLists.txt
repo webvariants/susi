@@ -27,6 +27,7 @@ option(WITH_UDPSERVER "Include susi-udpserver binary" ON)
 option(WITH_WEBHOOKS "Include susi-webhooks binary" ON)
 option(WITH_STATEFILE "Include susi-webhooks binary" ON)
 option(WITH_AUTHENTICATOR "Include susi-authenticator binary" ON)
+option(WITH_SHELL "Include susi-shell binary" ON)
 
 set( CMAKE_COLOR_MAKEFILE ON )
 
@@ -105,6 +106,11 @@ if(WITH_AUTHENTICATOR)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/components/susi-authenticator)
     include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/components/susi-authenticator/headers)
 endif(WITH_AUTHENTICATOR)
+
+if(WITH_SHELL)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/components/susi-shell)
+    include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/components/susi-shell/headers)
+endif(WITH_SHELL)
 
 SET(CPACK_GENERATOR "DEB")
 SET(CPACK_SET_DESTDIR ON)

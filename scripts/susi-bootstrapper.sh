@@ -77,17 +77,17 @@ function setup_core {
     add_to_start_script susi-core $CONTAINER
 }
 
-function setup_cluster {
+function setup_shell {
     CONTAINER=$1
-    install_binary_to_container $SUSI_BINARY_PATH/susi-cluster $CONTAINER
-    create_keys susi-cluster $CONTAINER
-    cp default_cluster_config.json /var/lib/machines/$CONTAINER/etc/susi/cluster-config.json
-    read -p "Do you wish to edit the cluster config now? [y/N]" yn
+    install_binary_to_container $SUSI_BINARY_PATH/susi-shell $CONTAINER
+    create_keys susi-shell $CONTAINER
+    cp default_shell_config.json /var/lib/machines/$CONTAINER/etc/susi/shell-config.json
+    read -p "Do you wish to edit the shell config now? [y/N]" yn
     case $yn in
-        [Yy]* ) nano /var/lib/machines/$CONTAINER/etc/susi/cluster-config.json ;;
+        [Yy]* ) nano /var/lib/machines/$CONTAINER/etc/susi/shell-config.json ;;
         * ) ;;
     esac
-    echo "susi-cluster -c /etc/susi/cluster-config.json &" >> /var/lib/machines/$CONTAINER/bin/start_susi.sh
+    echo "susi-shell -c /etc/susi/shell-config.json &" >> /var/lib/machines/$CONTAINER/bin/start_susi.sh
     echo "sleep 0.1" >> /var/lib/machines/$CONTAINER/bin/start_susi.sh
 }
 
@@ -202,6 +202,19 @@ function setup_authenticator {
     add_to_start_script susi-authenticator $CONTAINER
 }
 
+function setup_cluster {
+    CONTAINER=$1
+    install_binary_to_container $SUSI_BINARY_PATH/susi-cluster $CONTAINER
+    create_keys susi-cluster $CONTAINER
+    cp default_cluster_config.json /var/lib/machines/$CONTAINER/etc/susi/cluster-config.json
+    read -p "Do you wish to edit the cluster config now? [y/N]" yn
+    case $yn in
+        [Yy]* ) nano /var/lib/machines/$CONTAINER/etc/susi/cluster-config.json ;;
+        * ) ;;
+    esac
+    echo "susi-cluster -c /etc/susi/cluster-config.json &" >> /var/lib/machines/$CONTAINER/bin/start_susi.sh
+    echo "sleep 0.1" >> /var/lib/machines/$CONTAINER/bin/start_susi.sh
+}
 
 function ask_and_install {
     BINARY=$1
@@ -238,6 +251,7 @@ ask_and_install susi-udpserver
 ask_and_install susi-webhooks
 ask_and_install susi-statefile
 ask_and_install susi-authenticator
+ask_and_install susi-shell
 
 finish_start_script $CONTAINER_NAME
 
