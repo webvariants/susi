@@ -15,6 +15,7 @@ public:
 int main(int argc, char *argv[]){
     try{
         SampleApp app{argc,argv};
+        app.start();
         app.join();
     }catch(const std::exception & e){
         std::cout << e.what() << std::endl;
