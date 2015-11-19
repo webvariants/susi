@@ -140,6 +140,8 @@ void Susi::SusiClient::publish(EventPtr event, Consumer finishCallback) {
     };
     if (finishCallback) {
         finishCallbacks[id] = finishCallback;
+    }else{
+        event->headers.push_back({"Event-Control","No-Ack"});
     }
     if (isConnected) {
         send(packet.toJSON()+"\n");
