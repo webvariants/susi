@@ -1,4 +1,3 @@
-#include "leveldb/db.h"
 #include "susi/SusiClient.h"
 
 class HeartBeat {
