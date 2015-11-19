@@ -67,7 +67,7 @@ function add_to_start_script {
 
 function finish_start_script {
     CONTAINER=$1
-    echo "wait" >> /var/lib/machines/$CONTAINER/bin/start_susi.sh
+    echo "bash" >> /var/lib/machines/$CONTAINER/bin/start_susi.sh
 }
 
 function setup_core {
@@ -199,7 +199,14 @@ function setup_authenticator {
     CONTAINER=$1
     install_binary_to_container $SUSI_BINARY_PATH/susi-authenticator $CONTAINER
     create_keys susi-authenticator $CONTAINER
-    add_to_start_script susi-authenticator $CONTAINER
+    cp default_authenticator_config.json /var/lib/machines/$CONTAINER/etc/susi/authenticator-config.json
+    read -p "Do you wish to edit the authenticator config now? [y/N]" yn
+    case $yn in
+        [Yy]* ) nano /var/lib/machines/$CONTAINER/etc/susi/authenticator-config.json ;;
+        * ) ;;
+    esac
+    echo "susi-authenticator -c /etc/susi/authenticator-config.json &" >> /var/lib/machines/$CONTAINER/bin/start_susi.sh
+    echo "sleep 0.1" >> /var/lib/machines/$CONTAINER/bin/start_susi.sh
 }
 
 function setup_cluster {
@@ -241,6 +248,7 @@ fi
 
 setup_core $CONTAINER_NAME
 
+ask_and_install susi-authenticator
 ask_and_install susi-cluster
 ask_and_install susi-duktape
 ask_and_install susi-heartbeat
@@ -250,7 +258,6 @@ ask_and_install susi-serial
 ask_and_install susi-udpserver
 ask_and_install susi-webhooks
 ask_and_install susi-statefile
-ask_and_install susi-authenticator
 ask_and_install susi-shell
 
 finish_start_script $CONTAINER_NAME
