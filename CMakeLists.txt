@@ -28,12 +28,13 @@ option(WITH_WEBHOOKS "Include susi-webhooks binary" ON)
 option(WITH_STATEFILE "Include susi-webhooks binary" ON)
 option(WITH_AUTHENTICATOR "Include susi-authenticator binary" ON)
 option(WITH_SHELL "Include susi-shell binary" ON)
+option(WITH_HTTP "Include susi-http binary" ON)
 
 set( CMAKE_COLOR_MAKEFILE ON )
 
 find_package(Threads REQUIRED)
 find_package(OpenSSL REQUIRED)
-find_package(Boost REQUIRED COMPONENTS system program_options)
+find_package(Boost REQUIRED COMPONENTS system regex coroutine context thread program_options REQUIRED)
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -111,6 +112,11 @@ if(WITH_SHELL)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/components/susi-shell)
     include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/components/susi-shell/headers)
 endif(WITH_SHELL)
+
+if(WITH_HTTP)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/components/susi-http)
+    include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/components/susi-http/headers)
+endif(WITH_HTTP)
 
 SET(CPACK_GENERATOR "DEB")
 SET(CPACK_SET_DESTDIR ON)

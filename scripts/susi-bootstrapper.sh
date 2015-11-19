@@ -216,6 +216,17 @@ function setup_cluster {
     echo "sleep 0.1" >> /var/lib/machines/$CONTAINER/bin/start_susi.sh
 }
 
+function setup_http {
+    CONTAINER=$1
+    install_binary_to_container $SUSI_BINARY_PATH/susi-http $CONTAINER
+    create_keys susi-http $CONTAINER
+    read -p "Tell me the port the HTTP server should listen on! [4443]" HTTP_PORT
+    if [ x"$HTTP_PORT" = x"" ]; then
+        HTTP_PORT="4443"
+    fi
+    add_to_start_script susi-http $CONTAINER "-l $HTTP_PORT"
+}
+
 function ask_and_install {
     BINARY=$1
     read -p "Do you wish to install $BINARY? [Y/n]" yn
@@ -252,6 +263,7 @@ ask_and_install susi-webhooks
 ask_and_install susi-statefile
 ask_and_install susi-authenticator
 ask_and_install susi-shell
+ask_and_install susi-http
 
 finish_start_script $CONTAINER_NAME
 
