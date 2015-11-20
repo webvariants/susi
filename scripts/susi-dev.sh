@@ -94,19 +94,33 @@ function setup_component {
 }
 
 function init {
-    
+    SUSI_PROJECT_FILE=$1
+    if [ x"$SUSI_PROJECT_FILE" = x"" ]; then
+        echo usage: "$0 init <project-file.json>"
+        exit 1
+    fi
+    cat $SUSI_PROJECT_FILE | jq -c ".nodes[]" | while read line; do
+        CONTAINER=$(echo $line | jq -c .id|cut -d\" -f2)
+        create_new_container $CONTAINER
+        setup_core $CONTAINER
+        echo $line|jq -c .components|tr -d '[]"'| tr ',' '\n'|while read COMPONENT; do
+            echo setup component $COMPONENT ...
+            setup_component $CONTAINER $COMPONENT
+        done
+    done
 }
 
-if [ x"$SUSI_PROJECT_FILE" = x"" ]; then
-    echo usage: "$0 <project-file.json>"
-    exit 1
-fi
-cat $SUSI_PROJECT_FILE | jq -c ".nodes[]" | while read line; do
-    CONTAINER=$(echo $line | jq -c .id|cut -d\" -f2)
-    create_new_container $CONTAINER
-    setup_core $CONTAINER
-    echo $line|jq -c .components|tr -d '[]"'| tr ',' '\n'|while read COMPONENT; do
-        echo setup component $COMPONENT ...
-        setup_component $CONTAINER $COMPONENT
-    done
-done
+function start {
+    CONTAINER=$1
+    if [ x"$CONTAINER" = x"" ]; then
+        echo usage: "$0 start <node>"
+        exit 1
+    fi
+    xterm -e "systemd-nspawn -b -D /var/lib/machines/$CONTAINER" &
+}
+
+case $1 in
+    init) init $2;;
+    start) start $2;;
+    *) echo usage: "$0 <init|start|stop> <other arguments>"
+esac
