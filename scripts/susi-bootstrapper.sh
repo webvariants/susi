@@ -151,27 +151,8 @@ function setup_mqtt {
     CONTAINER=$1
     install_binary_to_container $SUSI_BINARY_PATH/susi-mqtt $CONTAINER
     create_keys susi-mqtt $CONTAINER
-    read -p "Tell me the host address of your MQTT server! [localhost]" MQTT_ADDR
-    read -p "Tell me the port of your MQTT server! [1883]" MQTT_PORT
-    read -p "Tell me which topics should be forwarded to the MQTT server (comma seperated list)! [.*]" MQTT_FORWARD
-    read -p "Tell me which topics should be subscribed from the MQTT server (comma seperated list)! [susi]" MQTT_SUBSCRIBE
-    if [ x"$MQTT_ADDR" = x"" ]; then
-        MQTT_ADDR="localhost"
-    fi
-    if [ x"$MQTT_PORT" = x"" ]; then
-        MQTT_PORT="1883"
-    fi
-    if [ x"$MQTT_FORWARD" = x"" ]; then
-        MQTT_FORWARD=".*"
-    fi
-    if [ x"$MQTT_SUBSCRIBE" = x"" ]; then
-        MQTT_SUBSCRIBE="susi"
-    fi
-    case $yn in
-        [Yy]* ) nano /var/lib/machines/$CONTAINER/etc/susi/cluster-config.json ;;
-        * ) ;;
-    esac
-    install_initd_script susi-mqtt "susi-core.service" $CONTAINER "/bin/susi-mqtt --mqttAddr $MQTT_ADDR --mqttPort $MQTT_PORT -s '$MQTT_SUBSCRIBE' -f '$MQTT_FORWARD' -k /etc/susi/keys/susi-mqtt_key.pem -c /etc/susi/keys/susi-mqtt_cert.pem"
+    cp default_mqtt_config.json /var/lib/machines/$CONTAINER/etc/susi/mqtt-config.json
+    install_initd_script susi-mqtt "susi-core.service" $CONTAINER "/bin/susi-mqtt -c /etc/susi/mqtt-config.json"
 }
 
 function setup_serial {

@@ -1,0 +1,12 @@
+{
+    "susi-addr": "localhost",
+    "susi-port": 4000,
+    "cert": "/etc/susi/keys/susi-mqtt_cert.pem",
+    "key": "/etc/susi/keys/susi-mqtt_key.pem",
+    "component": {
+        "mqtt-addr": "localhost",
+        "mqtt-port": 1883,
+        "forward": [".*@mqtt"],
+        "subscribe": ["susi/#"]
+    }
+}
