@@ -23,6 +23,7 @@ function create_new_container {
         bootstrap_debian
     fi
     cp -rf /var/lib/machines/jessie /var/lib/machines/$CONTAINER
+    echo $CONTAINER > /var/lib/machines/$CONTAINER/etc/hostname
 }
 
 function install_binary_to_container {
@@ -55,14 +56,25 @@ function create_keys {
         -out /var/lib/machines/$CONTAINER/etc/susi/keys/$CERT 2>/dev/null
 }
 
-function add_to_start_script {
-    BINARY=$1
-    CONTAINER=$2
-    ADDITIONAL=$3
-    KEY=$(printf "/etc/susi/keys/%s_key.pem" $BINARY)
-    CERT=$(printf "/etc/susi/keys/%s_cert.pem" $BINARY)
-    echo "$BINARY -k $KEY -c $CERT $ADDITIONAL &" >> /var/lib/machines/$CONTAINER/bin/start_susi.sh
-    echo "sleep 0.1" >> /var/lib/machines/$CONTAINER/bin/start_susi.sh
+
+function install_initd_script {
+    NAME=$1
+    DEPS=$2
+    CONTAINER=$3
+
+    CMD=$4
+
+    template=$(cat unitfile.template)
+    script=${template//__NAME__/$NAME}
+    script=${script//__CMD__/$CMD}
+    script=${script//__DEPS__/$DEPS}
+    echo "$script" > /var/lib/machines/$CONTAINER/etc/systemd/system/$NAME.service
+    ln -s /var/lib/machines/$CONTAINER/etc/systemd/system/$NAME.service /var/lib/machines/$CONTAINER/etc/systemd/system/multi-user.target.wants/$NAME.service
+    #template=$(cat initscript.template)
+    #script=${template/START_CMD/$CMD}
+    #echo -n "$script" > /var/lib/machines/$CONTAINER/etc/init.d/$NAME
+    #chmod +x /var/lib/machines/$CONTAINER/etc/init.d/$NAME
+    #ln -s /var/lib/machines/$CONTAINER/etc/init.d/$NAME /var/lib/machines/$CONTAINER/etc/rc2.d/S03$NAME
 }
 
 function finish_start_script {
@@ -74,7 +86,7 @@ function setup_core {
     CONTAINER=$1
     install_binary_to_container $SUSI_BINARY_PATH/susi-core $CONTAINER
     create_keys susi-core $CONTAINER
-    add_to_start_script susi-core $CONTAINER
+    install_initd_script susi-core "" $CONTAINER "/bin/susi-core -k /etc/susi/keys/susi-core_key.pem -c /etc/susi/keys/susi-core_cert.pem"
 }
 
 function setup_shell {
@@ -87,8 +99,7 @@ function setup_shell {
         [Yy]* ) nano /var/lib/machines/$CONTAINER/etc/susi/shell-config.json ;;
         * ) ;;
     esac
-    echo "susi-shell -c /etc/susi/shell-config.json &" >> /var/lib/machines/$CONTAINER/bin/start_susi.sh
-    echo "sleep 0.1" >> /var/lib/machines/$CONTAINER/bin/start_susi.sh
+    install_initd_script susi-shell "susi-core.service" $CONTAINER "/bin/susi-shell -c /etc/susi/shell-config.json"
 }
 
 function setup_duktape {
@@ -96,20 +107,21 @@ function setup_duktape {
     install_binary_to_container $SUSI_BINARY_PATH/susi-duktape $CONTAINER
     create_keys susi-duktape $CONTAINER
     mkdir -p /var/lib/machines/$CONTAINER/usr/share/susi
-    cp default_js_source.js /var/lib/machines/$CONTAINER/usr/share/susi/duktape_script.js
+    cp default_duktape_config.json /var/lib/machines/$CONTAINER/etc/susi/duktape-config.json
+    cp default_js_source.js /var/lib/machines/$CONTAINER/usr/share/susi/duktape-script.js
     read -p "Do you wish to edit the js source now? [y/N]" yn
     case $yn in
-        [Yy]* ) nano /var/lib/machines/$CONTAINER/usr/share/susi/duktape_script.js ;;
+        [Yy]* ) nano /var/lib/machines/$CONTAINER/usr/share/susi/duktape-script.js ;;
         * ) ;;
     esac
-    add_to_start_script susi-duktape $CONTAINER "-s /usr/share/susi/duktape_script.js"
+    install_initd_script susi-duktape "susi-core.service" $CONTAINER "/bin/susi-duktape -c /etc/susi/duktape-config.json"
 }
 
 function setup_heartbeat {
     CONTAINER=$1
     install_binary_to_container $SUSI_BINARY_PATH/susi-heartbeat $CONTAINER
     create_keys susi-heartbeat $CONTAINER
-    add_to_start_script susi-heartbeat $CONTAINER
+    install_initd_script susi-heartbeat "susi-core.service" $CONTAINER "/bin/susi-heartbeat -k /etc/susi/keys/susi-heartbeat_key.pem -c /etc/susi/keys/susi-heartbeat_cert.pem"
 }
 
 function setup_leveldb {
@@ -120,7 +132,7 @@ function setup_leveldb {
     if [ x"$LEVELDB_PATH" = x"" ]; then
         LEVELDB_PATH="/usr/share/susi/susi.ldb"
     fi
-    add_to_start_script susi-leveldb $CONTAINER "--db $LEVELDB_PATH"
+    install_initd_script susi-leveldb "susi-core.service" $CONTAINER "/bin/susi-leveldb --db $LEVELDB_PATH -k /etc/susi/keys/susi-leveldb_key.pem -c /etc/susi/keys/susi-leveldb_cert.pem"
 }
 
 function setup_statefile {
@@ -133,7 +145,8 @@ function setup_statefile {
     fi
     dir=$(printf "%s%s" /var/lib/machines/$CONTAINER $(dirname $STATEFILE))
     mkdir -p $dir
-    add_to_start_script susi-statefile $CONTAINER "--file $STATEFILE"
+    install_initd_script susi-statefile "susi-core.service" $CONTAINER "/bin/susi-statefile --file $STATEFILE -k /etc/susi/keys/susi-statefile_key.pem -c /etc/susi/keys/susi-statefile_cert.pem"
+
 }
 
 function setup_mqtt {
@@ -160,7 +173,7 @@ function setup_mqtt {
         [Yy]* ) nano /var/lib/machines/$CONTAINER/etc/susi/cluster-config.json ;;
         * ) ;;
     esac
-    add_to_start_script susi-mqtt $CONTAINER "--mqttAddr $MQTT_ADDR --mqttPort $MQTT_PORT -s '$MQTT_SUBSCRIBE' -f '$MQTT_FORWARD'"
+    install_initd_script susi-mqtt "susi-core.service" $CONTAINER "/bin/susi-mqtt --mqttAddr $MQTT_ADDR --mqttPort $MQTT_PORT -s '$MQTT_SUBSCRIBE' -f '$MQTT_FORWARD' -k /etc/susi/keys/susi-mqtt_key.pem -c /etc/susi/keys/susi-mqtt_cert.pem"
 }
 
 function setup_serial {
@@ -173,7 +186,7 @@ function setup_serial {
         [Yy]* ) nano /var/lib/machines/$CONTAINER/etc/susi/serial-config.json ;;
         * ) ;;
     esac
-    echo "susi-serial -c /etc/susi/serial-config.json &" >> /var/lib/machines/$CONTAINER/bin/start_susi.sh
+    install_initd_script susi-serial "susi-core.service" $CONTAINER "/bin/susi-serial -c /etc/susi/serial-config.json"
     echo "sleep 0.1" >> /var/lib/machines/$CONTAINER/bin/start_susi.sh
 }
 
@@ -185,14 +198,14 @@ function setup_udpserver {
     if [ x"$UDP_PORT" = x"" ]; then
         UDP_PORT="4001"
     fi
-    add_to_start_script susi-udpserver $CONTAINER "-l $UDP_PORT"
+    install_initd_script susi-udpserver "susi-core.service" $CONTAINER "/bin/susi-udpserver -l $UDP_PORT -k /etc/susi/keys/susi-udpserver_key.pem -c /etc/susi/keys/susi-udpserver_cert.pem"
 }
 
 function setup_webhooks {
     CONTAINER=$1
     install_binary_to_container $SUSI_BINARY_PATH/susi-webhooks $CONTAINER
     create_keys susi-webhooks $CONTAINER
-    add_to_start_script susi-webhooks $CONTAINER
+    install_initd_script susi-webhooks "susi-core.service" $CONTAINER "/bin/susi-webhooks -k /etc/susi/keys/susi-webhooks_key.pem -c /etc/susi/keys/susi-webhooks_cert.pem"
 }
 
 function setup_authenticator {
@@ -205,8 +218,7 @@ function setup_authenticator {
         [Yy]* ) nano /var/lib/machines/$CONTAINER/etc/susi/authenticator-config.json ;;
         * ) ;;
     esac
-    echo "susi-authenticator -c /etc/susi/authenticator-config.json &" >> /var/lib/machines/$CONTAINER/bin/start_susi.sh
-    echo "sleep 0.1" >> /var/lib/machines/$CONTAINER/bin/start_susi.sh
+    install_initd_script susi-authenticator "susi-core.service" $CONTAINER "/bin/susi-authenticator -c /etc/susi/authenticator-config.json"
 }
 
 function setup_cluster {
@@ -219,8 +231,7 @@ function setup_cluster {
         [Yy]* ) nano /var/lib/machines/$CONTAINER/etc/susi/cluster-config.json ;;
         * ) ;;
     esac
-    echo "susi-cluster -c /etc/susi/cluster-config.json &" >> /var/lib/machines/$CONTAINER/bin/start_susi.sh
-    echo "sleep 0.1" >> /var/lib/machines/$CONTAINER/bin/start_susi.sh
+    install_initd_script susi-cluster "susi-core.service" $CONTAINER "/bin/susi-cluster -c /etc/susi/cluster-config.json"
 }
 
 function ask_and_install {
@@ -259,8 +270,6 @@ ask_and_install susi-udpserver
 ask_and_install susi-webhooks
 ask_and_install susi-statefile
 ask_and_install susi-shell
-
-finish_start_script $CONTAINER_NAME
 
 echo "your container is now ready to use! you can start it with susi-starter.sh $CONTAINER_NAME"
 

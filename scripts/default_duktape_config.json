@@ -1,0 +1,9 @@
+{
+    "susi-addr": "localhost",
+    "susi-port": 4000,
+    "cert": "/etc/susi/keys/susi-duktape_cert.pem",
+    "key": "/etc/susi/keys/susi-duktape_key.pem",
+    "component": {
+        "src": "/usr/share/susi/duktape-script.js"
+    }
+}

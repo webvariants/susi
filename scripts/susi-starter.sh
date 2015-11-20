@@ -7,7 +7,7 @@ if [[ x"$CONTAINER" == x"" ]]; then
 fi
 
 # on debian 8 and above (we need systemd)
-systemd-nspawn -D /var/lib/machines/$CONTAINER /bin/bash /bin/start_susi.sh
+systemd-nspawn -b -D /var/lib/machines/$CONTAINER
 
 # on other systems
 # chroot /var/lib/machines/$CONTAINER /bin/bash /bin/start_susi.sh
