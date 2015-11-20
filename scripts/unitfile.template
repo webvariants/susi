@@ -1,6 +1,6 @@
 [Unit]
 Description=__NAME__ service
-Wants=__DEPS__
+Requiers=__DEPS__
 
 [Service]
 Type=simple

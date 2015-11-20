@@ -1,13 +1,15 @@
 {
-    "addr": "localhost",
-    "port": 4000,
+    "susi-addr": "localhost",
+    "susi-port": 4000,
     "cert": "/etc/susi/keys/susi-serial_cert.pem",
     "key": "/etc/susi/keys/susi-serial_key.pem",
-    "ports" : [
-        {
-            "id" : "arduino",
-            "port" : "/dev/ttyUSB0",
-            "baudrate" : 9600
-        }
-    ]
+    "component": {
+        "ports" : [
+            {
+                "id" : "arduino",
+                "port" : "/dev/ttyUSB0",
+                "baudrate" : 9600
+            }
+        ]
+    }
 }
