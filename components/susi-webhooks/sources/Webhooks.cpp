@@ -2,9 +2,9 @@
 #include <boost/asio.hpp>
 using boost::asio::ip::tcp;
 
-Webhooks::Webhooks(std::string addr,short port, std::string key, std::string cert) :
-  susi_{new Susi::SusiClient{addr,port,key,cert}} {
-    susi_->registerProcessor("webhooks::send",[this](Susi::EventPtr event){
+Susi::Webhooks::Webhooks(Susi::SusiClient & susi) :
+  susi_{susi} {
+    susi_.registerProcessor("webhooks::send",[this](Susi::EventPtr event){
       std::cout<<"got webhook send request"<<std::endl;
       const std::string & host = event->payload["host"];
       const std::string & port = event->payload["port"];
@@ -38,7 +38,7 @@ Webhooks::Webhooks(std::string addr,short port, std::string key, std::string cer
       if (!response_stream || http_version.substr(0, 5) != "HTTP/" || status_code != 200) {
         event->headers.push_back({"Error","Invalid response"});
         event->payload["statuscode"] = (BSON::int64)status_code;
-        susi_->ack(std::move(event));
+        susi_.ack(std::move(event));
         return;
       }
 
@@ -58,10 +58,10 @@ Webhooks::Webhooks(std::string addr,short port, std::string key, std::string cer
         res << &response;
       }
       event->payload["responseBody"] = res.str();
-      susi_->ack(std::move(event));
+      susi_.ack(std::move(event));
     });
 }
 
-void Webhooks::join(){
-	susi_->join();
+void Susi::Webhooks::join(){
+	susi_.join();
 }

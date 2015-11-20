@@ -1,48 +1,25 @@
 #include "susi/Webhooks.h"
+#include "susi/BaseApp.h"
 
-#include <boost/program_options.hpp>
-namespace po = boost::program_options;
-
-std::string progName;
-std::string addr = "localhost";
-short port = 4000;
-std::string keyFile = "server.key";
-std::string certFile = "server.cert";
-std::string dbPath;
-
-po::variables_map vm_;
-po::options_description desc_{"Allowed options"};
-
-void showHelp(){
-	std::cout<<"usage: "<<progName<<std::endl;
-	std::cout<<desc_<<std::endl;
-	exit(0);
-}
-
-void parseCommandLine(int argc, char **argv){
-	progName = argv[0];
-	desc_.add_options()
-		("help,h", "produce help message")
-		("addr,a", po::value<std::string>(&addr)->default_value("localhost"), "address of susi instance")
-		("port,p", po::value<short>(&port)->default_value(4000), "port of susi instance")
-		("key,k", po::value<std::string>(&keyFile)->default_value("webhooks.key"), "keyfile to use")
-		("cert,c", po::value<std::string>(&certFile)->default_value("webhooks.cert"), "certificate to use");
-	po::store(po::parse_command_line(argc, argv, desc_), vm_);
-	po::notify(vm_);
-}
-
+class WebhookApp : public Susi::BaseApp {
+protected:
+    std::shared_ptr<Susi::Webhooks> _webhookComponent;
+public:
+    WebhookApp(int argc, char **argv) : Susi::BaseApp{argc,argv} {}
+    virtual ~WebhookApp() {}
+    virtual void start() override {
+        _webhookComponent.reset(new Susi::Webhooks{*_susi});
+    }
+};
 
 int main(int argc, char *argv[]){
-	try{
-		parseCommandLine(argc,argv);
-		if(vm_.count("help")){
-			showHelp();
-		}
-		Webhooks client{addr,port,keyFile,certFile};
-		client.join();
-	}catch(const std::exception & e){
-		std::cout << e.what() << std::endl;
-		showHelp();
-	}
-	return 0;
+    try{
+        WebhookApp app{argc,argv};
+        app.start();
+        app.join();
+    }catch(const std::exception & e){
+        std::cout << e.what() << std::endl;
+        return 1;
+    }
+    return 0;
 }

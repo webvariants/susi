@@ -175,7 +175,8 @@ function setup_webhooks {
     CONTAINER=$1
     install_binary_to_container $SUSI_BINARY_PATH/susi-webhooks $CONTAINER
     create_keys susi-webhooks $CONTAINER
-    install_initd_script susi-webhooks "susi-core.service" $CONTAINER "/bin/susi-webhooks -k /etc/susi/keys/susi-webhooks_key.pem -c /etc/susi/keys/susi-webhooks_cert.pem"
+    cp default_webhooks_config.json /var/lib/machines/$CONTAINER/etc/susi/webhooks-config.json
+    install_initd_script susi-webhooks "susi-core.service" $CONTAINER "/bin/susi-webhooks -c /etc/susi/webhooks-config.json"
 }
 
 function setup_authenticator {
