@@ -137,14 +137,8 @@ function setup_statefile {
     CONTAINER=$1
     install_binary_to_container $SUSI_BINARY_PATH/susi-statefile $CONTAINER
     create_keys susi-statefile $CONTAINER
-    read -p "Tell me where the statefile should be saved! [/usr/share/susi/susi-state.json]" STATEFILE
-    if [ x"$STATEFILE" = x"" ]; then
-        STATEFILE="/usr/share/susi/susi-state.json"
-    fi
-    dir=$(printf "%s%s" /var/lib/machines/$CONTAINER $(dirname $STATEFILE))
-    mkdir -p $dir
-    install_initd_script susi-statefile "susi-core.service" $CONTAINER "/bin/susi-statefile --file $STATEFILE -k /etc/susi/keys/susi-statefile_key.pem -c /etc/susi/keys/susi-statefile_cert.pem"
-
+    cp default_statefile_config.json /var/lib/machines/$CONTAINER/etc/susi/statefile-config.json
+    install_initd_script susi-statefile "susi-core.service" $CONTAINER "/bin/susi-statefile -c /etc/susi/statefile-config.json"
 }
 
 function setup_mqtt {

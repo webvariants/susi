@@ -1,26 +1,26 @@
-#include "susi/SusiStateFileClient.h"
+#include "susi/StateFileComponent.h"
 #include <fstream>
 
-SusiStateFileClient::SusiStateFileClient(std::string addr,short port, std::string key, std::string cert, std::string stateFile) :
-  susi_{new Susi::SusiClient{addr,port,key,cert}},
-  stateFile_{stateFile} {
+Susi::StateFileComponent::StateFileComponent(Susi::SusiClient & susi, BSON::Value & config) :
+  susi_{susi},
+  stateFile_{config["file"].getString()} {
     readStateFile();
-	susi_->registerProcessor("(statefile|state)::put",[this](Susi::EventPtr event){
+	susi_.registerProcessor("(statefile|state)::put",[this](Susi::EventPtr event){
 		handlePut(std::move(event));
 	});
-	susi_->registerProcessor("(statefile|state)::get",[this](Susi::EventPtr event){
+	susi_.registerProcessor("(statefile|state)::get",[this](Susi::EventPtr event){
 		handleGet(std::move(event));
 	});
-	susi_->registerProcessor("(statefile|state)::delete",[this](Susi::EventPtr event){
+	susi_.registerProcessor("(statefile|state)::delete",[this](Susi::EventPtr event){
 		handleDelete(std::move(event));
 	});
 }
 
-void SusiStateFileClient::join(){
-	susi_->join();
+void Susi::StateFileComponent::join(){
+	susi_.join();
 }
 
-bool SusiStateFileClient::validateFieldsForPut(const Susi::EventPtr & event){
+bool Susi::StateFileComponent::validateFieldsForPut(const Susi::EventPtr & event){
 	if(!(event->payload.isObject()) ||
 	   !(event->payload["key"].isString()) ||
 	   event->payload["value"].isUndefined()){
@@ -29,7 +29,7 @@ bool SusiStateFileClient::validateFieldsForPut(const Susi::EventPtr & event){
 	return true;
 }
 
-bool SusiStateFileClient::validateFieldsForGet(const Susi::EventPtr & event){
+bool Susi::StateFileComponent::validateFieldsForGet(const Susi::EventPtr & event){
 	if(!(event->payload.isObject()) ||
 	   !(event->payload["key"].isString())){
 		return false;
@@ -37,7 +37,7 @@ bool SusiStateFileClient::validateFieldsForGet(const Susi::EventPtr & event){
 	return true;
 }
 
-void SusiStateFileClient::handlePut(Susi::EventPtr event){
+void Susi::StateFileComponent::handlePut(Susi::EventPtr event){
 	if(!validateFieldsForPut(event)){
 		event->headers.push_back({"Error","statefile put error"});
 		return;
@@ -46,7 +46,7 @@ void SusiStateFileClient::handlePut(Susi::EventPtr event){
 	event->payload["success"] = writeStateFile();
 }
 
-void SusiStateFileClient::handleGet(Susi::EventPtr event){
+void Susi::StateFileComponent::handleGet(Susi::EventPtr event){
 	if(!validateFieldsForGet(event)){
 		event->headers.push_back({"Error","statefile get error"});
 		return;
@@ -55,7 +55,7 @@ void SusiStateFileClient::handleGet(Susi::EventPtr event){
 	event->payload["value"] = value;
 }
 
-void SusiStateFileClient::handleDelete(Susi::EventPtr event){
+void Susi::StateFileComponent::handleDelete(Susi::EventPtr event){
 	if(!validateFieldsForGet(event)){
 		event->headers.push_back({"Error","statefile delete error"});
 		return;
@@ -65,7 +65,7 @@ void SusiStateFileClient::handleDelete(Susi::EventPtr event){
 }
 
 
-bool SusiStateFileClient::readStateFile(){
+bool Susi::StateFileComponent::readStateFile(){
     std::ifstream file{stateFile_};
     if(file.is_open()){
         std::string content;
@@ -83,7 +83,7 @@ bool SusiStateFileClient::readStateFile(){
     return false;
 }
 
-bool SusiStateFileClient::writeStateFile(){
+bool Susi::StateFileComponent::writeStateFile(){
     std::ofstream file{stateFile_};
     file << state_.toJSON();
     file.close();
