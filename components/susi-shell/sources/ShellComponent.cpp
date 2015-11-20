@@ -1,25 +1,25 @@
-#include "susi/SusiShell.h"
+#include "susi/ShellComponent.h"
 #include "susi/process/process.hpp"
 
-SusiShell::SusiShell(std::string addr,short port, std::string key, std::string cert, BSON::Object commands) :
-  _susi{new Susi::SusiClient{addr,port,key,cert}}, _commands{commands} {
-    _susi->registerProcessor("shell::exec",[this](Susi::EventPtr event){
+Susi::ShellComponent::ShellComponent(Susi::SusiClient & susi, BSON::Value & config) :
+  _susi{susi}, _commands{config["commands"].getObject()} {
+    _susi.registerProcessor("shell::exec",[this](Susi::EventPtr event){
         handleExecEvent(std::move(event));
     });
 }
 
-void SusiShell::join(){
-    _susi->join();
+void Susi::ShellComponent::join(){
+    _susi.join();
 }
 
-void SusiShell::handleExecEvent(Susi::EventPtr event){
+void Susi::ShellComponent::handleExecEvent(Susi::EventPtr event){
     if(!event->payload.isObject() ||
        !event->payload["command"].isString()){
-           throw std::runtime_error{"SusiShell: need 'command' in payload"};
+           throw std::runtime_error{"ShellComponent: need 'command' in payload"};
     }
     std::string command = event->payload["command"].getString();
     if(_commands.count(command) == 0){
-        throw std::runtime_error{"SusiShell: no valid command, check your config file"};
+        throw std::runtime_error{"ShellComponent: no valid command, check your config file"};
     }
     command = _commands[command].getString();
     if(event->payload["args"].isObject()){
@@ -28,7 +28,7 @@ void SusiShell::handleExecEvent(Susi::EventPtr event){
             size_t pos = std::string::npos;
             if( (pos = command.find("$"+kv.first)) != std::string::npos){
                 if(!kv.second.isString()){
-                    throw std::runtime_error{"SusiShell: all arguments need to be strings"};
+                    throw std::runtime_error{"ShellComponent: all arguments need to be strings"};
                 }
                 std::string replacement = kv.second.getString();
                 command.replace(pos,kv.first.size()+1,replacement);
@@ -44,7 +44,7 @@ void SusiShell::handleExecEvent(Susi::EventPtr event){
     event->payload["stderr"] = stderr;
 }
 
-void SusiShell::handleExec(std::string command,
+void Susi::ShellComponent::handleExec(std::string command,
                 std::string & stdin,
                 std::string & stdout,
                 std::string & stderr){
