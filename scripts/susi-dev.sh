@@ -1,7 +1,12 @@
 #!/bin/bash
 
-SUSI_BINARY_PATH=/home/tino/Code/susi/bin
-CONTAINER_NAME="susi-test"
+SUSI_BINARY_PATH=$(git config susi-dev.binarypath)
+if [ $? != 0 ]; then
+    read -p "tell me where your susi binaries are!" SUSI_BINARY_PATH
+    git config susi-dev.binarypath $SUSI_BINARY_PATH
+fi
+
+SUSI_PROJECT_FILE=$1
 
 function bootstrap_debian {
     debootstrap \
@@ -22,6 +27,7 @@ function create_new_container {
         echo "no debian jessie found, try to bootstrap one."
         bootstrap_debian
     fi
+    rm -rf /var/lib/machines/$CONTAINER
     cp -rf /var/lib/machines/jessie /var/lib/machines/$CONTAINER
     echo $CONTAINER > /var/lib/machines/$CONTAINER/etc/hostname
 }
@@ -87,43 +93,20 @@ function setup_component {
     install_initd_script $COMPONENT "susi-core.service" $CONTAINER "/bin/$COMPONENT -c /etc/susi/$targetConfig"
 }
 
-function ask_and_install {
-    BINARY=$1
-    read -p "Do you wish to install $BINARY? [Y/n]" yn
-    #cmd=$(printf "setup_%s" $(echo $BINARY|cut -d'-' -f2))
-    case $yn in
-        [Nn]* ) ;;
-        * ) setup_component $CONTAINER_NAME $BINARY;;
-    esac
+function init {
+    
 }
 
-read -p "Tell me the name of your project! " CONTAINER_NAME
-
-echo "deleting old project $CONTAINER_NAME..."
-rm -rf /var/lib/machines/$CONTAINER_NAME
-
-echo "create new container from debian jessie..."
-create_new_container $CONTAINER_NAME
-
-read -p "Tell me where your susi binaries are located! [/home/tino/Code/susi/susi/bin]" SUSI_BINARY_PATH
-if [ x"$SUSI_BINARY_PATH" = x"" ];then
-    SUSI_BINARY_PATH=/home/tino/Code/susi/susi/bin
+if [ x"$SUSI_PROJECT_FILE" = x"" ]; then
+    echo usage: "$0 <project-file.json>"
+    exit 1
 fi
-
-setup_core $CONTAINER_NAME
-
-ask_and_install susi-authenticator
-ask_and_install susi-cluster
-ask_and_install susi-duktape
-ask_and_install susi-heartbeat
-ask_and_install susi-leveldb
-ask_and_install susi-mqtt
-ask_and_install susi-serial
-ask_and_install susi-udpserver
-ask_and_install susi-webhooks
-ask_and_install susi-statefile
-ask_and_install susi-shell
-
-echo "your container is now ready to use! you can start it with susi-starter.sh $CONTAINER_NAME"
-
-exit 0
+cat $SUSI_PROJECT_FILE | jq -c ".nodes[]" | while read line; do
+    CONTAINER=$(echo $line | jq -c .id|cut -d\" -f2)
+    create_new_container $CONTAINER
+    setup_core $CONTAINER
+    echo $line|jq -c .components|tr -d '[]"'| tr ',' '\n'|while read COMPONENT; do
+        echo setup component $COMPONENT ...
+        setup_component $CONTAINER $COMPONENT
+    done
+done
