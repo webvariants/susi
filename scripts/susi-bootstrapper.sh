@@ -167,11 +167,8 @@ function setup_udpserver {
     CONTAINER=$1
     install_binary_to_container $SUSI_BINARY_PATH/susi-udpserver $CONTAINER
     create_keys susi-udpserver $CONTAINER
-    read -p "Tell me the port the UDP server should listen on! [4001]" UDP_PORT
-    if [ x"$UDP_PORT" = x"" ]; then
-        UDP_PORT="4001"
-    fi
-    install_initd_script susi-udpserver "susi-core.service" $CONTAINER "/bin/susi-udpserver -l $UDP_PORT -k /etc/susi/keys/susi-udpserver_key.pem -c /etc/susi/keys/susi-udpserver_cert.pem"
+    cp default_udpserver_config.json /var/lib/machines/$CONTAINER/etc/susi/udpserver-config.json
+    install_initd_script susi-udpserver "susi-core.service" $CONTAINER "/bin/susi-udpserver -c /etc/susi/udpserver-config.json"
 }
 
 function setup_webhooks {
