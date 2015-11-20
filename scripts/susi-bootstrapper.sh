@@ -121,7 +121,8 @@ function setup_heartbeat {
     CONTAINER=$1
     install_binary_to_container $SUSI_BINARY_PATH/susi-heartbeat $CONTAINER
     create_keys susi-heartbeat $CONTAINER
-    install_initd_script susi-heartbeat "susi-core.service" $CONTAINER "/bin/susi-heartbeat -k /etc/susi/keys/susi-heartbeat_key.pem -c /etc/susi/keys/susi-heartbeat_cert.pem"
+    cp default_heartbeat_config.json /var/lib/machines/$CONTAINER/etc/susi/heartbeat-config.json
+    install_initd_script susi-heartbeat "susi-core.service" $CONTAINER "/bin/susi-heartbeat -c /etc/susi/heartbeat-config.json"
 }
 
 function setup_leveldb {
