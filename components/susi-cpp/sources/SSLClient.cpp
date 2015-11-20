@@ -14,7 +14,7 @@
 Susi::SSLClient::SSLClient(std::string host, short port) {
     endpoint_iterator_ = resolver_.resolve({host, std::to_string(port)});
     do_connect();
-    runloop_ = std::move(std::thread{[this]() {io_service_.run();}});
+    runloop_ = std::move(std::thread{[this]() {io_service_.run(); std::cout<<"io_service returned..."<<std::endl;}});
 }
 
 Susi::SSLClient::SSLClient(std::string host, short port, std::string keyfile, std::string certfile) {

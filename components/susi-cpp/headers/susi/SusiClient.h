@@ -60,8 +60,8 @@ class SusiClient : public FramingClient<LineFramer, Client> {
 
   protected:
     EventManager eventmanager;
-    bool isConnected = false;
 
+    std::atomic<bool> isConnected{false};
     std::string token;
     std::regex authRequiredRegex;
 

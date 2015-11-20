@@ -18,9 +18,9 @@ project(susi-cluster)
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/headers )
 
-set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 -Os " )
-file( GLOB SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/SusiCluster.cpp)
-file( GLOB HEADERFILES ${CMAKE_CURRENT_SOURCE_DIR}/headers/*.h )
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 -O3 " )
+file( GLOB SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/*.cpp)
+file( GLOB HEADERFILES ${CMAKE_CURRENT_SOURCE_DIR}/headers/**/*.h )
 add_executable( ${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp ${SRCFILES})
 target_link_libraries(${PROJECT_NAME}
 	${CMAKE_THREAD_LIBS_INIT}

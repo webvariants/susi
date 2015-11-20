@@ -108,9 +108,7 @@ void Susi::SusiClient::sendRegisterConsumer(std::string topic) {
 }
 
 void Susi::SusiClient::onConnect() {
-
-    isConnected = true;
-
+    isConnected.store(true);
     for (auto & kv : registerProcessorCounter) {
         sendRegisterProcessor(kv.first);
     }
@@ -126,7 +124,7 @@ void Susi::SusiClient::onConnect() {
 }
 
 void Susi::SusiClient::onClose() {
-    isConnected = false;
+    isConnected.store(false);
 }
 
 void Susi::SusiClient::publish(EventPtr event, Consumer finishCallback) {
@@ -143,9 +141,11 @@ void Susi::SusiClient::publish(EventPtr event, Consumer finishCallback) {
     }else{
         event->headers.push_back({"Event-Control","No-Ack"});
     }
+
     if (isConnected) {
         send(packet.toJSON()+"\n");
     } else {
+        std::cout<<"try to publish, but SusiClient is not connected"<<std::endl;
         messageQueue.emplace_back(new BSON::Value{packet});
     }
 }
@@ -187,7 +187,7 @@ void Susi::SusiClient::login(const std::string & username, const std::string & p
         {"password", password}
     };
     publish(std::move(event),[this](Susi::SharedEventPtr event){
-        this->token = event->payload["token"].getString();
+            this->token = event->payload["token"].getString();
         std::string regexString = "(authenticator::logout)|";
         for(size_t i=0; i<event->payload["topics"].size(); i++){
             regexString += "("+event->payload["topics"][i].getString()+")|";
