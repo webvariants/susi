@@ -1,28 +1,28 @@
-#include "susi/SusiLevelDBClient.h"
+#include "susi/LevelDBComponent.h"
 
-SusiLevelDBClient::SusiLevelDBClient(std::string addr,short port, std::string key, std::string cert, std::string dbPath) :
-  susi_{new Susi::SusiClient{addr,port,key,cert}},
+Susi::LevelDBComponent::LevelDBComponent(Susi::SusiClient & susi, std::string dbPath) :
+  susi_{susi},
   dbPath_{dbPath} {
 	dbOptions_.create_if_missing = true;
 	leveldb::DB *dbPtr;
 	leveldb::DB::Open(dbOptions_, dbPath_, &dbPtr);
 	db_.reset(dbPtr);
-	susi_->registerProcessor("(leveldb|state)::put",[this](Susi::EventPtr event){
+	susi_.registerProcessor("(leveldb|state)::put",[this](Susi::EventPtr event){
 		handlePut(std::move(event));
 	});
-	susi_->registerProcessor("(leveldb|state)::get",[this](Susi::EventPtr event){
+	susi_.registerProcessor("(leveldb|state)::get",[this](Susi::EventPtr event){
 		handleGet(std::move(event));
 	});
-	susi_->registerProcessor("(leveldb|state)::delete",[this](Susi::EventPtr event){
+	susi_.registerProcessor("(leveldb|state)::delete",[this](Susi::EventPtr event){
 		handleDelete(std::move(event));
 	});
 }
 
-void SusiLevelDBClient::join(){
-	susi_->join();
+void Susi::LevelDBComponent::join(){
+	susi_.join();
 }
 
-bool SusiLevelDBClient::validateFieldsForPut(const Susi::EventPtr & event){
+bool Susi::LevelDBComponent::validateFieldsForPut(const Susi::EventPtr & event){
 	if(!(event->payload.isObject()) ||
 	   !(event->payload["key"].isString()) ||
 	   event->payload["value"].isUndefined()){
@@ -31,7 +31,7 @@ bool SusiLevelDBClient::validateFieldsForPut(const Susi::EventPtr & event){
 	return true;
 }
 
-bool SusiLevelDBClient::validateFieldsForGet(const Susi::EventPtr & event){
+bool Susi::LevelDBComponent::validateFieldsForGet(const Susi::EventPtr & event){
 	if(!(event->payload.isObject()) ||
 	   !(event->payload["key"].isString())){
 		return false;
@@ -39,7 +39,7 @@ bool SusiLevelDBClient::validateFieldsForGet(const Susi::EventPtr & event){
 	return true;
 }
 
-void SusiLevelDBClient::handlePut(Susi::EventPtr event){
+void Susi::LevelDBComponent::handlePut(Susi::EventPtr event){
 	if(!validateFieldsForPut(event)){
 		event->headers.push_back({"Error","leveldb put error"});
 		return;
@@ -52,7 +52,7 @@ void SusiLevelDBClient::handlePut(Susi::EventPtr event){
 	event->payload["success"] = true;
 }
 
-void SusiLevelDBClient::handleGet(Susi::EventPtr event){
+void Susi::LevelDBComponent::handleGet(Susi::EventPtr event){
 	if(!validateFieldsForGet(event)){
 		event->headers.push_back({"Error","leveldb get error"});
 		return;
@@ -66,7 +66,7 @@ void SusiLevelDBClient::handleGet(Susi::EventPtr event){
 	event->payload["value"] = BSON::Value::fromJSON(valueStr);
 }
 
-void SusiLevelDBClient::handleDelete(Susi::EventPtr event){
+void Susi::LevelDBComponent::handleDelete(Susi::EventPtr event){
 	if(!validateFieldsForGet(event)){
 		event->headers.push_back({"Error","leveldb delete error"});
 		return;

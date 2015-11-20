@@ -129,11 +129,8 @@ function setup_leveldb {
     CONTAINER=$1
     install_binary_to_container $SUSI_BINARY_PATH/susi-leveldb $CONTAINER
     create_keys susi-leveldb $CONTAINER
-    read -p "Tell me where the db should be saved! [/usr/share/susi/susi.ldb]" LEVELDB_PATH
-    if [ x"$LEVELDB_PATH" = x"" ]; then
-        LEVELDB_PATH="/usr/share/susi/susi.ldb"
-    fi
-    install_initd_script susi-leveldb "susi-core.service" $CONTAINER "/bin/susi-leveldb --db $LEVELDB_PATH -k /etc/susi/keys/susi-leveldb_key.pem -c /etc/susi/keys/susi-leveldb_cert.pem"
+    cp default_leveldb_config.json /var/lib/machines/$CONTAINER/etc/susi/leveldb-config.json
+    install_initd_script susi-leveldb "susi-core.service" $CONTAINER "/bin/susi-leveldb -c /etc/susi/leveldb-config.json"
 }
 
 function setup_statefile {
