@@ -58,6 +58,7 @@ function mount_container {
     mkdir -p $upp
 
     sudo mkdir -p $work
+    sudo umount $mountpoint
     sudo mount -t overlay -o lowerdir="$low",upperdir="$upp",workdir="$work" overlay "$mountpoint"
 
     echo "mounted container $CONTAINER"
@@ -126,16 +127,14 @@ function setup_component {
 }
 
 function install_container_to_local_systemd {
-    echo "install container to local systemd!!!!!!!"
+    echo "install container to local systemd"
     CONTAINER=$1
     NAME=$CONTAINER
     CMD="/usr/bin/systemd-nspawn -b -D $PROJECT_ROOT/container/susi-test-1"
     template=$(cat $SUSI_DEV_ROOT/containerunitfile.template)
     script=${template//__NAME__/$NAME}
     script=${script//__CMD__/$CMD}
-    echo $script
     cmd="echo '$script' > /etc/systemd/system/$CONTAINER.service"
-    echo $cmd
     sudo su root -c "$cmd"
 }
 
@@ -168,8 +167,7 @@ function stop {
     check_for_config
     cat $SUSI_PROJECT_FILE | jq -c ".nodes[]" | while read line; do
         CONTAINER=$(echo $line | jq -c .id|cut -d\" -f2)
-        PID=$(ps -ef|grep -e "container/.*"|grep -v grep|grep -v sudo |tr -s ' '|cut -d' ' -f2)
-        sudo kill $PID 2>/dev/null
+        sudo systemctl stop $CONTAINER
     done
 }
 
@@ -182,13 +180,26 @@ function login {
     sudo machinectl login $CONTAINER
 }
 
+function status {
+    check_for_config
+    cat $SUSI_PROJECT_FILE | jq -c ".nodes[]" | while read line; do
+        CONTAINER=$(echo $line | jq -c .id|cut -d\" -f2)
+	echo "------------------------------------------"
+        sudo systemctl -n0 status $CONTAINER
+	echo ""
+	sudo systemctl -n0 -M $CONTAINER status 'susi-*'
+    done
+
+}
+
 case $1 in
-    setup) setup ;;
+    setup) stop; setup ;;
     start) start ;;
     stop) stop ;;
     init) init ;;
     login) login $2 ;;
-    *) echo usage: "$0 <init|setup|start|stop|login>"
+    status) status ;;
+    *) echo usage: "$0 <init|setup|start|stop|login|status>"
 esac
 
 exit 0
