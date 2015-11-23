@@ -1,0 +1,10 @@
+[Unit]
+Description=__NAME__ service
+
+[Service]
+Type=simple
+PIDFile=/run/__NAME__.pid
+ExecStart=__CMD__
+
+[Install]
+WantedBy=multi-user.target
