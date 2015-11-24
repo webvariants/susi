@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SUSI_DEV_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SUSI_DEV_ROOT="$(dirname $(realpath $0))"
 PROJECT_ROOT="$(pwd)"
 
 SUSI_BINARY_PATH=$(git config susi-dev.binarypath)
@@ -59,11 +59,10 @@ function mount_container {
     mkdir -p $upp
 
     sudo mkdir -p $work
-    sudo umount $mountpoint
+    sudo umount $mountpoint 2>/dev/null
     sudo mount -t overlay -o lowerdir="$low",upperdir="$upp",workdir="$work" overlay "$mountpoint"
 
     echo "mounted container $CONTAINER"
-
 }
 
 function install_binary_to_container {
@@ -131,7 +130,7 @@ function install_container_to_local_systemd {
     echo "install container to local systemd"
     CONTAINER=$1
     NAME=$CONTAINER
-    CMD="/usr/bin/systemd-nspawn --network-bridge susi-bridge -M $NAME -j -b -D $PROJECT_ROOT/container/$NAME"
+    CMD="/usr/bin/systemd-nspawn --network-macvlan eth0 -M $NAME -j -b -D $PROJECT_ROOT/container/$NAME"
     template=$(cat $SUSI_DEV_ROOT/containerunitfile.template)
     script=${template//__NAME__/$NAME}
     script=${script//__CMD__/$CMD}
@@ -139,26 +138,13 @@ function install_container_to_local_systemd {
     sudo su root -c "$cmd"
 }
 
-function setup_global_networking {
-    sudo brctl addbr susi-bridge
-    sudo iptables -A POSTROUTING -t mangle -p udp --dport bootpc -j CHECKSUM --checksum-fill
-    sudo sysctl -w net.ipv4.ip_forward=1
-    sudo iptables -A FORWARD -o eth0 -i susi-bridge -s 192.168.1.0/24 -m conntrack --ctstate NEW -j ACCEPT
-    sudo iptables -A FORWARD -o eth0 -s 192.168.0.0/16 -m conntrack --ctstate NEW -j ACCEPT
-    sudo iptables -A FORWARD -o eth0 -s 192.168.0.0/16 -m conntrack --ctstate NEW -j ACCEPT
-    sudo iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-    sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-    sudo dnsmasq -C $SUSI_DEV_ROOT/dnsmasq.conf
-}
-
 function setup_container_networking {
     CONTAINER=$1
-    sudo echo -en "auto host0\niface host0 inet dhcp\n" > $PROJECT_ROOT/nodes/$CONTAINER/etc/network/interfaces.d/host0
+    sudo echo -en "auto mv-eth0\niface mv-eth0 inet dhcp\n" > $PROJECT_ROOT/nodes/$CONTAINER/etc/network/interfaces.d/mv-eth0
 }
 
 function setup {
     check_for_config
-    setup_global_networking
     cat $SUSI_PROJECT_FILE | jq -c ".nodes[]" | while read line; do
         CONTAINER=$(echo $line | jq -c .id|cut -d\" -f2)
         create_localfs $CONTAINER
@@ -186,6 +172,15 @@ function stop {
     cat $SUSI_PROJECT_FILE | jq -c ".nodes[]" | while read line; do
         CONTAINER=$(echo $line | jq -c .id|cut -d\" -f2)
         sudo systemctl stop $CONTAINER
+    done
+}
+
+function destroy {
+    stop
+    cat $SUSI_PROJECT_FILE | jq -c ".nodes[]" | while read line; do
+        CONTAINER=$(echo $line | jq -c .id|cut -d\" -f2)
+        sudo umount $PROJECT_ROOT/container/$CONTAINER 2>/dev/null
+        sudo rm /etc/systemd/system/$CONTAINER.service
     done
 }
 
@@ -217,7 +212,8 @@ case $1 in
     init) init ;;
     login) login $2 ;;
     status) status ;;
-    *) echo usage: "$0 <init|setup|start|stop|login|status>"
+    destroy) destroy ;;
+    *) echo usage: "$0 <init|setup|start|stop|login|status|destroy>"
 esac
 
 exit 0
