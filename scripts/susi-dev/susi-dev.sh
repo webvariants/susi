@@ -37,6 +37,7 @@ function create_localfs {
     mkdir -p $PROJECT_ROOT/nodes/$CONTAINER/lib
     mkdir -p $PROJECT_ROOT/nodes/$CONTAINER/etc/susi
     mkdir -p $PROJECT_ROOT/nodes/$CONTAINER/etc/systemd/system/multi-user.target.wants
+    mkdir -p $PROJECT_ROOT/nodes/$CONTAINER/etc/network/interfaces.d
     mkdir -p $PROJECT_ROOT/nodes/$CONTAINER/usr/share/susi
     echo $CONTAINER > $PROJECT_ROOT/nodes/$CONTAINER/etc/hostname
     echo "created local filesystem for $CONTAINER"
@@ -130,7 +131,7 @@ function install_container_to_local_systemd {
     echo "install container to local systemd"
     CONTAINER=$1
     NAME=$CONTAINER
-    CMD="/usr/bin/systemd-nspawn -b -D $PROJECT_ROOT/container/susi-test-1"
+    CMD="/usr/bin/systemd-nspawn --network-bridge susi-bridge -M $NAME -j -b -D $PROJECT_ROOT/container/$NAME"
     template=$(cat $SUSI_DEV_ROOT/containerunitfile.template)
     script=${template//__NAME__/$NAME}
     script=${script//__CMD__/$CMD}
@@ -138,11 +139,30 @@ function install_container_to_local_systemd {
     sudo su root -c "$cmd"
 }
 
+function setup_global_networking {
+    sudo brctl addbr susi-bridge
+    sudo iptables -A POSTROUTING -t mangle -p udp --dport bootpc -j CHECKSUM --checksum-fill
+    sudo sysctl -w net.ipv4.ip_forward=1
+    sudo iptables -A FORWARD -o eth0 -i susi-bridge -s 192.168.1.0/24 -m conntrack --ctstate NEW -j ACCEPT
+    sudo iptables -A FORWARD -o eth0 -s 192.168.0.0/16 -m conntrack --ctstate NEW -j ACCEPT
+    sudo iptables -A FORWARD -o eth0 -s 192.168.0.0/16 -m conntrack --ctstate NEW -j ACCEPT
+    sudo iptables -A FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+    sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+    sudo dnsmasq -C $SUSI_DEV_ROOT/dnsmasq.conf
+}
+
+function setup_container_networking {
+    CONTAINER=$1
+    sudo echo -en "auto host0\niface host0 inet dhcp\n" > $PROJECT_ROOT/nodes/$CONTAINER/etc/network/interfaces.d/host0
+}
+
 function setup {
     check_for_config
+    setup_global_networking
     cat $SUSI_PROJECT_FILE | jq -c ".nodes[]" | while read line; do
         CONTAINER=$(echo $line | jq -c .id|cut -d\" -f2)
         create_localfs $CONTAINER
+        setup_container_networking $CONTAINER
         mount_container $CONTAINER
         install_container_to_local_systemd $CONTAINER
         setup_core $CONTAINER
@@ -152,8 +172,6 @@ function setup {
         done
     done
 }
-
-
 
 function start {
     check_for_config
@@ -184,16 +202,16 @@ function status {
     check_for_config
     cat $SUSI_PROJECT_FILE | jq -c ".nodes[]" | while read line; do
         CONTAINER=$(echo $line | jq -c .id|cut -d\" -f2)
-	echo "------------------------------------------"
         sudo systemctl -n0 status $CONTAINER
 	echo ""
-	sudo systemctl -n0 -M $CONTAINER status 'susi-*'
+	sudo systemctl -n0 -M $CONTAINER status 'susi-*'|sed 's/^/    /'
+	echo ""
     done
 
 }
 
 case $1 in
-    setup) stop; setup ;;
+    setup) stop; setup; start ;;
     start) start ;;
     stop) stop ;;
     init) init ;;
