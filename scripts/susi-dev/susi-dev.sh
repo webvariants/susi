@@ -9,6 +9,12 @@ if [ $? != 0 ]; then
     git config susi-dev.binarypath $SUSI_BINARY_PATH
 fi
 
+HOST_NETWORK_DEVICE=$(git config susi-dev.networkdevice)
+if [ $? != 0 ]; then
+    read -p "tell me where your susi binaries are!" HOST_NETWORK_DEVICE
+    git config susi-dev.networkdevice $HOST_NETWORK_DEVICE
+fi
+
 SUSI_PROJECT_FILE="susi-project-config.json"
 function check_for_config {
     if [ ! -f $SUSI_PROJECT_FILE ]; then
@@ -130,7 +136,7 @@ function install_container_to_local_systemd {
     echo "install container to local systemd"
     CONTAINER=$1
     NAME=$CONTAINER
-    CMD="/usr/bin/systemd-nspawn --network-macvlan eth0 -M $NAME -j -b -D /var/lib/machines/$CONTAINER"
+    CMD="/usr/bin/systemd-nspawn --network-macvlan $HOST_NETWORK_DEVICE -M $NAME -j -b -D /var/lib/machines/$CONTAINER"
     template=$(cat $SUSI_DEV_ROOT/containerunitfile.template)
     script=${template//__NAME__/$NAME}
     script=${script//__CMD__/$CMD}
