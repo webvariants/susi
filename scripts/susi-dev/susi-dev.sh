@@ -11,7 +11,7 @@ fi
 
 HOST_NETWORK_DEVICE=$(git config susi-dev.networkdevice)
 if [ $? != 0 ]; then
-    read -p "tell me where your susi binaries are!" HOST_NETWORK_DEVICE
+    read -p "tell me your host network device!" HOST_NETWORK_DEVICE
     git config susi-dev.networkdevice $HOST_NETWORK_DEVICE
 fi
 
