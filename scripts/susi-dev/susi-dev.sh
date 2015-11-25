@@ -39,6 +39,7 @@ function create_localfs {
     mkdir -p $PROJECT_ROOT/nodes/$CONTAINER/etc/systemd/system/multi-user.target.wants
     mkdir -p $PROJECT_ROOT/nodes/$CONTAINER/etc/network/interfaces.d
     mkdir -p $PROJECT_ROOT/nodes/$CONTAINER/usr/share/susi
+    echo -en "[Journal]\nStorage=persistent\n" > $PROJECT_ROOT/nodes/$CONTAINER/etc/systemd/journald.conf
     echo $CONTAINER > $PROJECT_ROOT/nodes/$CONTAINER/etc/hostname
     echo "created local filesystem for $CONTAINER"
 }
@@ -51,18 +52,17 @@ function mount_container {
     fi
 
     work=/tmp/susi-dev/container_workdirs/$CONTAINER
-    low=/var/lib/machines/jessie
-    upp=$PROJECT_ROOT/nodes/$CONTAINER
-    mountpoint=container/$CONTAINER
+    change=/tmp/susi-dev/container_changedirs/$CONTAINER
+    low=$PROJECT_ROOT/nodes/$CONTAINER:/var/lib/machines/jessie
+    upp=$change
+    mountpoint=/var/lib/machines/$CONTAINER
 
-    mkdir -p $mountpoint
-    mkdir -p $upp
-
+    sudo mkdir -p $mountpoint
     sudo mkdir -p $work
+    sudo mkdir -p $change
+    sudo rm -rf $change/*
     sudo umount $mountpoint 2>/dev/null
     sudo mount -t overlay -o lowerdir="$low",upperdir="$upp",workdir="$work" overlay "$mountpoint"
-
-    echo "mounted container $CONTAINER"
 }
 
 function install_binary_to_container {
@@ -130,7 +130,7 @@ function install_container_to_local_systemd {
     echo "install container to local systemd"
     CONTAINER=$1
     NAME=$CONTAINER
-    CMD="/usr/bin/systemd-nspawn --network-macvlan eth0 -M $NAME -j -b -D $PROJECT_ROOT/container/$NAME"
+    CMD="/usr/bin/systemd-nspawn --network-macvlan eth0 -M $NAME -j -b -D /var/lib/machines/$CONTAINER"
     template=$(cat $SUSI_DEV_ROOT/containerunitfile.template)
     script=${template//__NAME__/$NAME}
     script=${script//__CMD__/$CMD}
@@ -157,12 +157,15 @@ function setup {
             setup_component $CONTAINER $COMPONENT
         done
     done
+    sudo systemctl daemon-reload
 }
 
 function start {
     check_for_config
     cat $SUSI_PROJECT_FILE | jq -c ".nodes[]" | while read line; do
         CONTAINER=$(echo $line | jq -c .id|cut -d\" -f2)
+        echo "starting container $CONTAINER..."
+        mount_container $CONTAINER
         sudo systemctl start $CONTAINER
     done
 }
@@ -171,7 +174,9 @@ function stop {
     check_for_config
     cat $SUSI_PROJECT_FILE | jq -c ".nodes[]" | while read line; do
         CONTAINER=$(echo $line | jq -c .id|cut -d\" -f2)
+        echo "stopping container $CONTAINER..."
         sudo systemctl stop $CONTAINER
+        sudo umount /var/lib/machines/$CONTAINER 2>/dev/null
     done
 }
 
@@ -179,9 +184,13 @@ function destroy {
     stop
     cat $SUSI_PROJECT_FILE | jq -c ".nodes[]" | while read line; do
         CONTAINER=$(echo $line | jq -c .id|cut -d\" -f2)
-        sudo umount $PROJECT_ROOT/container/$CONTAINER 2>/dev/null
+        sudo umount /var/lib/machines/$CONTAINER 2>/dev/null
         sudo rm /etc/systemd/system/$CONTAINER.service
+        sudo rm -rf /tmp/susi-dev/container_workdirs/$CONTAINER
+        sudo rm -rf /tmp/susi-dev/container_changedirs/$CONTAINER
     done
+    sudo rm -rvf $PROJECT_ROOT/nodes
+    sudo rm -rvf $PROJECT_ROOT/container
 }
 
 function init {
@@ -205,15 +214,40 @@ function status {
 
 }
 
+function logs {
+    CONTAINER=$1
+    PATTERN=$2
+    sudo journalctl -M $CONTAINER $PATTERN
+}
+
+function deploy {
+    CONTAINER=$1
+    TARGET=$2
+    ssh $TARGET "systemctl stop susi*"
+    rsync -avz $PROJECT_ROOT/nodes/$CONTAINER/bin/* $TARGET:/bin/
+    rsync -avz $PROJECT_ROOT/nodes/$CONTAINER/etc/* $TARGET:/etc/
+    rsync -avz $PROJECT_ROOT/nodes/$CONTAINER/lib/libsusi* $TARGET:/lib/
+    rsync -avz $PROJECT_ROOT/nodes/$CONTAINER/lib/libboost* $TARGET:/lib/
+    rsync -avz $PROJECT_ROOT/nodes/$CONTAINER/lib/libbson* $TARGET:/lib/
+    rsync -avz $PROJECT_ROOT/nodes/$CONTAINER/usr/* $TARGET:/usr/
+}
+
 case $1 in
     setup) stop; setup; start ;;
     start) start ;;
     stop) stop ;;
+    restart) stop; start ;;
     init) init ;;
     login) login $2 ;;
     status) status ;;
+    deploy) deploy $2 $3 ;;
     destroy) destroy ;;
-    *) echo usage: "$0 <init|setup|start|stop|login|status|destroy>"
+    logs)
+        shift
+        CONTAINER=$1
+        shift
+        logs $CONTAINER "$*";;
+    *) echo usage: "$0 <init|setup|start|stop|restart|login|status|deploy|destroy>"
 esac
 
 exit 0
