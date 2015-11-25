@@ -24,9 +24,9 @@ function check_for_config {
 }
 
 function bootstrap_debian {
-    debootstrap \
+    sudo debootstrap \
         --arch amd64 \
-        --include dbus \
+        --include dbus,sudo \
         jessie \
         /var/lib/machines/jessie \
         http://ftp.debian.de/debian
@@ -34,6 +34,9 @@ function bootstrap_debian {
         echo "can not bootstrap debian jessie, is your internet connection broken?"
         exit 1
     fi
+    sudo systemd-nspawn -D /var/lib/machines/jessie /usr/sbin/useradd susi
+    sudo systemd-nspawn -D /var/lib/machines/jessie /bin/bash -c 'echo susi:susi | chpasswd'
+    sudo systemd-nspawn -D /var/lib/machines/jessie /bin/bash -c 'echo "susi ALL=(ALL:ALL) ALL" >> /etc/sudoers'
 }
 
 function create_localfs {
