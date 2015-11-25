@@ -105,7 +105,7 @@ function install_initd_script {
     script=${script//__CMD__/$CMD}
     script=${script//__DEPS__/$DEPS}
     echo "$script" > $PROJECT_ROOT/nodes/$CONTAINER/etc/systemd/system/$NAME.service
-    ln -s $PROJECT_ROOT/nodes/$CONTAINER/etc/systemd/system/$NAME.service $PROJECT_ROOT/nodes/$CONTAINER/etc/systemd/system/multi-user.target.wants/$NAME.service 2>/dev/null
+    ln -s /etc/systemd/system/$NAME.service $PROJECT_ROOT/nodes/$CONTAINER/etc/systemd/system/multi-user.target.wants/$NAME.service 2>/dev/null
 }
 
 function setup_core {
@@ -224,12 +224,12 @@ function deploy {
     CONTAINER=$1
     TARGET=$2
     ssh $TARGET "systemctl stop susi*"
-    rsync -avz $PROJECT_ROOT/nodes/$CONTAINER/bin/* $TARGET:/bin/
-    rsync -avz $PROJECT_ROOT/nodes/$CONTAINER/etc/* $TARGET:/etc/
-    rsync -avz $PROJECT_ROOT/nodes/$CONTAINER/lib/libsusi* $TARGET:/lib/
-    rsync -avz $PROJECT_ROOT/nodes/$CONTAINER/lib/libboost* $TARGET:/lib/
-    rsync -avz $PROJECT_ROOT/nodes/$CONTAINER/lib/libbson* $TARGET:/lib/
-    rsync -avz $PROJECT_ROOT/nodes/$CONTAINER/usr/* $TARGET:/usr/
+    rsync -avzl $PROJECT_ROOT/nodes/$CONTAINER/bin/* $TARGET:/bin/
+    rsync -avzl $PROJECT_ROOT/nodes/$CONTAINER/etc/* $TARGET:/etc/
+    rsync -avzl $PROJECT_ROOT/nodes/$CONTAINER/lib/libsusi* $TARGET:/lib/
+    rsync -avzl $PROJECT_ROOT/nodes/$CONTAINER/lib/libboost* $TARGET:/lib/
+    rsync -avzl $PROJECT_ROOT/nodes/$CONTAINER/lib/libbson* $TARGET:/lib/
+    rsync -avzl $PROJECT_ROOT/nodes/$CONTAINER/usr/* $TARGET:/usr/
 }
 
 case $1 in
