@@ -8,7 +8,22 @@ It intends to enable even novice programmers to build robust asyncronous applica
 ## Getting started
 
 ### 1. Clone
-First, clone the repo and its submodules from [Github](https://github.com/webvariants/susi)
+First, get all dependencies you will need to build every susi core component (I assume you are using a recent debian or some derived distribution):
+```
+sudo apt-get install \\
+    cmake make clang git \\
+    libssl-dev \\
+    libboost-all-dev \\
+    libmosquitto-dev \\
+    libmosquittopp-dev \\
+    libleveldb-dev
+```
+If you want to use the susi-dev tool, you will also need a copy of debootstrap and jq:
+```
+sudo apt-get install debootstrap jq
+```
+
+Then, clone the repo and its submodules from [Github](https://github.com/webvariants/susi)
 ```
 git clone --recursive https://github.com/webvariants/susi
 ```
