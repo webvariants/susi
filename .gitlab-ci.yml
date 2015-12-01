@@ -1,0 +1,47 @@
+image: node
+
+before_script:
+    - apt-get install cmake make clang git libssl-dev libboost-all-dev libmosquitto-dev libmosquittopp-dev libleveldb-dev
+
+stages:
+    - setup
+    - build
+
+submodules:
+    stage: setup
+    script:
+        - git submodules init
+        - git submodules update
+
+build:
+    stage: build
+    script:
+        - cmake .
+        - make -j4 package
+    artifacts:
+        - *.deb
+
+#
+#npm_install:
+#    stage: setup
+#    script:
+#        - npm install
+#
+#
+#update_submodules:
+#    stage: setup
+#    only:
+#        - /^build\/.*$/
+#    script:
+#        - git submodules init
+#        - git submodules update
+#
+#run_grunt:
+#    stage: build
+#    only:
+#        - /^build\/.*$/
+#    script:
+#        - grunt build
+#    artifacts:
+#        - bin/
+#
