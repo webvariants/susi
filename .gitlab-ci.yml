@@ -5,12 +5,6 @@ stages:
     - setup
     - build
 
-#submodules:
-#    stage: setup
-#    script:
-#        - git submodules init
-#        - git submodules update
-
 build:
     stage: build
     script:
