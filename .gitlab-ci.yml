@@ -1,7 +1,10 @@
 before_script:
-    - apt-get install cmake make clang git libssl-dev libboost-all-dev libmosquitto-dev libmosquittopp-dev libleveldb-dev
+    - apt-get update
+    - apt-get -y install cmake make clang git libssl-dev libboost-all-dev libmosquitto-dev libmosquittopp-dev libleveldb-dev
 
 build:
     script:
         - cmake .
         - make -j4 package
+    artifacts:
+        - susi-0.2.0-Linux.deb
