@@ -6,5 +6,3 @@ build:
     script:
         - cmake .
         - make -j4 package
-    artifacts:
-        - susi-0.2.0-Linux.deb
