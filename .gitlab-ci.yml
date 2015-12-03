@@ -3,6 +3,10 @@ before_script:
     - apt-get -y install cmake make clang git libssl-dev libboost-all-dev libmosquitto-dev libmosquittopp-dev libleveldb-dev
 
 build:
+    tags: [docker]
     script:
         - cmake .
         - make -j4 package
+    artifacts:
+        paths:
+            - susi-0.2.0-Linux.deb
