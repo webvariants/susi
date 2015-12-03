@@ -1,6 +1,8 @@
+image: wv/susi-builer:latest
+
 before_script:
     - apt-get update
-    - apt-get -y install cmake make clang git libssl-dev libboost-all-dev libmosquitto-dev libmosquittopp-dev libleveldb-dev
+    - apt-get -y upgrade
 
 build:
     tags: [docker]
