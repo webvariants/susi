@@ -8,6 +8,7 @@ build:
     tags: [docker]
     script:
         - rm -rf submodules/
+        - git submodule init
         - git submodule update
         - cmake .
         - make -j4 package
