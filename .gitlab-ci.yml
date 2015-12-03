@@ -7,7 +7,7 @@ before_script:
 build:
     tags: [docker]
     script:
-        - tree submodules
+        - ls -alh submodules/libbcrypt
         - git submodule update
         - cmake .
         - make -j4 package
