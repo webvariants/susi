@@ -7,9 +7,9 @@ before_script:
 build:
     tags: [docker]
     script:
-	- git submodule init
-	- git submodule update
-	- cmake .
+        - git submodule init
+        - git submodule update
+        - cmake .
         - make -j4 package
     artifacts:
         paths:
