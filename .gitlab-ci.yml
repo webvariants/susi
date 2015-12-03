@@ -1,4 +1,4 @@
-image: wv/susi-builer:latest
+image: wv/susi-builder:latest
 
 before_script:
     - apt-get update
