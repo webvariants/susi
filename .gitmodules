@@ -4,3 +4,12 @@
 [submodule "submodules/libbcrypt"]
 	path = submodules/libbcrypt
 	url = https://github.com/trusch/libbcrypt
+[submodule "engines/susi-go"]
+	path = engines/susi-go
+	url = https://github.com/webvariants/susigo.git
+[submodule "engines/susi-nodejs"]
+	path = engines/susi-nodejs
+	url = https://github.com/webvariants/susi-nodejs.git
+[submodule "engines/susi-python"]
+	path = engines/susi-python
+	url = https://github.com/webvariants/susi-python.git
