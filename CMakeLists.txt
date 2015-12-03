@@ -45,12 +45,11 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/libbson/src/headers)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/submodules/libbcrypt)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/libbcrypt/include)
 
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/components/susi-common)
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/components/susi-common/headers)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/engines/susi-cpp)
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/engines/susi-cpp/headers)
+
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/components/susi-core)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/components/susi-core/headers)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/components/susi-cpp)
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/components/susi-cpp/headers)
 
 if(WITH_CLUSTER)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/components/susi-cluster)
