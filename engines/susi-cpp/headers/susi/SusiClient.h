@@ -58,6 +58,10 @@ class SusiClient : public FramingClient<LineFramer, Client> {
     void login(const std::string & username, const std::string & password);
     void logout();
 
+    bool connected(){
+        return isConnected.load();
+    }
+
   protected:
     EventManager eventmanager;
 

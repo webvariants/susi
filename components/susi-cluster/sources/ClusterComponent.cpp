@@ -49,7 +49,11 @@ bool Susi::ClusterComponent::forwardProcessorEvent(std::string topic, std::strin
         return false;
     }
     auto & node = _nodes[id];
-    _susi.registerProcessor(topic,[node,this](Susi::EventPtr event){
+    _susi.registerProcessor(topic,[node,this,id](Susi::EventPtr event){
+        if(!node->connected()){
+            event->headers.push_back({"Error","node "+id+" not connected"});
+            return;
+        }
         struct FinishCallback {
             Susi::EventPtr localEvent;
             FinishCallback(Susi::EventPtr evt) :
