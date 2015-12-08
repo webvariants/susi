@@ -16,6 +16,9 @@ Susi::LevelDBComponent::LevelDBComponent(Susi::SusiClient & susi, std::string db
 	susi_.registerProcessor("(leveldb|state)::delete",[this](Susi::EventPtr event){
 		handleDelete(std::move(event));
 	});
+    susi_.registerProcessor("leveldb::getPrefix",[this](Susi::EventPtr event){
+        handleGetPrefix(std::move(event));
+    });
 }
 
 void Susi::LevelDBComponent::join(){
@@ -77,4 +80,24 @@ void Susi::LevelDBComponent::handleDelete(Susi::EventPtr event){
 		return;
 	}
 	event->payload["success"] = true;
+}
+
+void Susi::LevelDBComponent::handleGetPrefix(Susi::EventPtr event){
+	if(!validateFieldsForGet(event)){
+		event->headers.push_back({"Error","leveldb get error"});
+		return;
+	}
+    BSON::Value result;
+    auto prefix = event->payload["key"].getString();
+    std::shared_ptr<leveldb::Iterator> dbIter(db_->NewIterator(leveldb::ReadOptions()));
+    for(dbIter->Seek(prefix); dbIter->Valid() && dbIter->key().starts_with(prefix) ; dbIter->Next()){
+        if( !dbIter->value().empty() ) {
+            auto key = dbIter->key();
+            auto value = dbIter->value();
+            std::string keyString{key.data(),key.size()};
+            std::string valueString{value.data(),value.size()};
+            result[keyString] = BSON::Value::fromJSON(valueString);
+        }
+    }
+	event->payload["value"] = result;
 }

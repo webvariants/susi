@@ -20,6 +20,7 @@ namespace Susi {
 		void handlePut(Susi::EventPtr event);
 		void handleGet(Susi::EventPtr event);
 		void handleDelete(Susi::EventPtr event);
+		void handleGetPrefix(Susi::EventPtr event);
 
 	};
 }
