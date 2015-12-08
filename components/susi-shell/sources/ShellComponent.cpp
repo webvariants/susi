@@ -39,19 +39,24 @@ void Susi::ShellComponent::handleExecEvent(Susi::EventPtr event){
     if(event->payload["stdin"].isString()){
         stdin = event->payload["stdin"].getString();
     }
-    handleExec(command,stdin,stdout,stderr);
+    int status;
+    handleExec(command,stdin,stdout,stderr,status);
     event->payload["stdout"] = stdout;
     event->payload["stderr"] = stderr;
+    event->payload["status"] = status;
 }
 
 void Susi::ShellComponent::handleExec(std::string command,
                 std::string & stdin,
                 std::string & stdout,
-                std::string & stderr){
+                std::string & stderr,
+                int & status
+            ){
+    std::cout<<"executing command: "<<command<<std::endl;
     fr::process proc{command};
     proc.start();
     proc.in->stream_out << stdin;
-    proc.join();
+    status = proc.join();
     std::string line;
     while(std::getline(proc.out->stream_in, line)){
         stdout += line + '\n';
@@ -59,4 +64,6 @@ void Susi::ShellComponent::handleExec(std::string command,
     while(std::getline(proc.err->stream_in, line)){
         stderr += line + '\n';
     }
+    std::cout<<"stdout: "<<stdout<<std::endl;
+    std::cout<<"stderr: "<<stderr<<std::endl;
 }

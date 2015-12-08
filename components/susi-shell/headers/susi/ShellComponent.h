@@ -11,7 +11,8 @@ namespace Susi {
         void handleExec(std::string command,
                         std::string & stdin,
                         std::string & stdout,
-                        std::string & stderr);
+                        std::string & stderr,
+                        int & status);
 
     protected:
         Susi::SusiClient & _susi;

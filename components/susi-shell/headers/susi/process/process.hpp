@@ -67,12 +67,30 @@ namespace fr {
 
       process(std::string command) : child(-1), in(nullptr), out(nullptr), err(nullptr)
       {
-	std::vector<std::string> parameter_vector;
-	boost::split(parameter_vector, command, boost::is_any_of("\t "));
-	for(int i = 0 ; i < parameter_vector.size(); ++i) {
-	  parameters.push_back(new char[parameter_vector[i].length() + 1]);
-	  strncpy(parameters[i], parameter_vector[i].c_str(), parameter_vector[i].length() + 1);
-	}
+        std::vector<std::string> parameter_vector;
+        std::string currentParameter = "";
+        for(size_t i=0;i<command.size();i++){
+            char c = command[i];
+            if(i==command.size()-1){
+                currentParameter += c;
+                parameter_vector.push_back(currentParameter);
+            }else if(c==' ' || c=='\t'){
+                parameter_vector.push_back(currentParameter);
+                currentParameter = "";
+            }else if(c == '\"'){
+                while(command[++i]!='\"' && i<command.size()){
+                    currentParameter += command[i];
+                }
+                parameter_vector.push_back(currentParameter);
+                currentParameter = "";
+            }else{
+                currentParameter += c;
+            }
+        }
+        for(int i = 0 ; i < parameter_vector.size(); ++i) {
+          parameters.push_back(new char[parameter_vector[i].length() + 1]);
+          strncpy(parameters[i], parameter_vector[i].c_str(), parameter_vector[i].length() + 1);
+        }
       }
 
       ~process()
