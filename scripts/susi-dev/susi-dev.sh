@@ -131,7 +131,9 @@ function setup_component {
     create_keys $COMPONENT $CONTAINER
     defaultConfig=$(printf "default_%s_config.json" $(echo $COMPONENT|cut -d- -f2))
     targetConfig=$(echo $defaultConfig|cut -d_ -f2,3,4)
-    cp $SUSI_DEV_ROOT/config_files/$defaultConfig $PROJECT_ROOT/nodes/$CONTAINER/etc/susi/$targetConfig
+    if [ ! -f $PROJECT_ROOT/nodes/$CONTAINER/etc/susi/$targetConfig ]; then
+        cp $SUSI_DEV_ROOT/config_files/$defaultConfig $PROJECT_ROOT/nodes/$CONTAINER/etc/susi/$targetConfig
+    fi
     install_initd_script $COMPONENT "susi-core.service" $CONTAINER "/bin/$COMPONENT -c /etc/susi/$targetConfig"
 }
 
@@ -256,7 +258,9 @@ case $1 in
         CONTAINER=$1
         shift
         logs $CONTAINER "$*";;
-    *) echo usage: "$0 <init|setup|start|stop|restart|login|status|deploy|destroy>"
+    install-binary)
+        install_binary_to_container $2 $3;;
+    *) echo usage: "$0 <init|setup|start|stop|restart|login|status|logs|install-binary|deploy|destroy>"
 esac
 
 exit 0
