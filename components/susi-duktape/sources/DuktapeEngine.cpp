@@ -197,8 +197,7 @@ void Susi::Duktape::JSEngine::registerConsumer(std::string topic) {
         duk_push_global_object(ctx);
         duk_get_prop_string(ctx, -1 /*index*/, "_processConsumerEvent");
         duk_push_string(ctx, event->toString().c_str());
-        duk_push_string(ctx, topic.c_str());
-        if (duk_pcall(ctx, 2 /*nargs*/) != 0) {
+        if (duk_pcall(ctx, 1 /*nargs*/) != 0) {
             std::cerr << (std::string{"Error: "} +duk_safe_to_string(ctx, -1)) << std::endl;
         }
         duk_pop(ctx);  /* pop result/error */

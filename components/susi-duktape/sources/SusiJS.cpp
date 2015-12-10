@@ -103,10 +103,10 @@ var susi = {
     },
 
     //used by js to interact with c++ part
-    _processConsumerEvent: function(event,topic){
+    _processConsumerEvent: function(event){
         event = JSON.parse(event);
         for(var i=0;i<this._consumerCallbacks.length;i++){
-            if(topic.match(this._consumerCallbacks[i].topic)){
+            if(event.topic.match(this._consumerCallbacks[i].topic)){
                 this._consumerCallbacks[i].callback(event);
             }
         }
