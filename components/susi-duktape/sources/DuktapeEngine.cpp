@@ -165,8 +165,7 @@ void Susi::Duktape::JSEngine::registerProcessor(std::string topic) {
             duk_push_global_object(ctx);
             duk_get_prop_string(ctx, -1 /*index*/, "_processProcessorEvent");
             duk_push_string(ctx, eventString.c_str());
-            duk_push_string(ctx, topic.c_str());
-            if (duk_pcall(ctx, 2 /*nargs*/) != 0) {
+            if (duk_pcall(ctx, 1 /*nargs*/) != 0) {
                 std::string err = duk_safe_to_string(ctx, -1);
                 std::cerr << err << std::endl;
                 throw std::runtime_error{err};

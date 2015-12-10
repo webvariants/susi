@@ -112,7 +112,7 @@ var susi = {
         }
     },
 
-    _processProcessorEvent: function(event,topic){
+    _processProcessorEvent: function(event){
         event = JSON.parse(event);
         if(this._processed.indexOf(event.id) !== -1){
             _ack(JSON.stringify(event));
