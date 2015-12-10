@@ -243,6 +243,23 @@ function deploy {
     rsync -avzl $PROJECT_ROOT/nodes/$CONTAINER/usr/* $TARGET:/usr/
 }
 
+function connect {
+    ADDR=$1
+    PORT=$2
+    if [ x"$ADDR" = x"" ]; then
+        ADDR="localhost"
+    fi
+    if [ x"$PORT" = x"" ]; then
+        PORT="4000"
+    fi
+    if [ ! -f key.pem -o ! -f cert.pem ]; then
+        openssl req -batch -nodes -x509 -newkey rsa:2048 -days 36500\
+            -keyout /tmp/key.pem \
+            -out /tmp/cert.pem 2>/dev/null
+    fi
+    ledit | ncat --ssl-key /tmp/key.pem --ssl-cert /tmp/cert.pem $ADDR $PORT
+}
+
 case $1 in
     setup) stop; setup; start ;;
     start) start ;;
@@ -252,6 +269,7 @@ case $1 in
     login) login $2 ;;
     status) status ;;
     deploy) deploy $2 $3 ;;
+    connect) connect $2 $3 ;;
     destroy) destroy ;;
     logs)
         shift
@@ -260,7 +278,7 @@ case $1 in
         logs $CONTAINER "$*";;
     install-binary)
         install_binary_to_container $2 $3;;
-    *) echo usage: "$0 <init|setup|start|stop|restart|login|status|logs|install-binary|deploy|destroy>"
+    *) echo usage: "$0 <init|setup|start|stop|restart|login|status|logs|install-binary|deploy|connect|destroy>"
 esac
 
 exit 0
