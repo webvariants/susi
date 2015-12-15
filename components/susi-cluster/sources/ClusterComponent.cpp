@@ -6,30 +6,33 @@ Susi::ClusterComponent::ClusterComponent(Susi::SusiClient & susi, BSON::Value & 
       if(_config["nodes"].isArray()){
           for(std::size_t nodeId=0;nodeId < _config["nodes"].size(); nodeId++){
               auto & node = _config["nodes"][nodeId];
-              std::cout<<"current node: "<<node.toJSON()<<std::endl;
               registerNode(node["id"],node["addr"],static_cast<short>(node["port"].getInt64()),node["key"],node["cert"]);
               if(node["forwardProcessors"].isArray()){
                   for(std::size_t i=0;i< node["forwardProcessors"].size();i++){
                       std::string & topic = node["forwardProcessors"][i];
                       forwardProcessorEvent(topic,node["id"]);
+                      std::cout<<"forward processor "<<topic<<" @ "<<node["id"].getString()<<std::endl;
                   }
               }
               if(node["forwardConsumers"].isArray()){
                   for(std::size_t i=0;i< node["forwardConsumers"].size();i++){
                       std::string & topic = node["forwardConsumers"][i];
                       forwardConsumerEvent(topic,node["id"]);
+                      std::cout<<"forward consumer "<<topic<<" @ "<<node["id"].getString()<<std::endl;
                   }
               }
               if(node["registerConsumers"].isArray()){
                   for(std::size_t i=0;i< node["registerConsumers"].size();i++){
                       std::string & topic = node["registerConsumers"][i];
                       registerConsumer(topic,node["id"]);
+                      std::cout<<"register consumer "<<topic<<" @ "<<node["id"].getString()<<std::endl;
                   }
               }
               if(node["registerProcessors"].isArray()){
                   for(std::size_t i=0;i< node["registerProcessors"].size();i++){
                       std::string & topic = node["registerProcessors"][i];
                       registerProcessor(topic,node["id"]);
+                      std::cout<<"register processor "<<topic<<" @ "<<node["id"].getString()<<std::endl;
                   }
               }
           }
@@ -49,13 +52,15 @@ bool Susi::ClusterComponent::forwardProcessorEvent(std::string topic, std::strin
         return false;
     }
     auto & node = _nodes[id];
-    _susi.registerProcessor(topic,[node,this,id](Susi::EventPtr event){
+    _susi.registerProcessor(topic,[node,this,id,topic](Susi::EventPtr event){
+        std::cout<<"forward processor "<<topic<<" to "<<id<<std::endl;
         if(!node->connected()){
             event->headers.push_back({"Error","node "+id+" not connected"});
             return;
         }
         struct FinishCallback {
             Susi::EventPtr localEvent;
+            std::string id;
             FinishCallback(Susi::EventPtr evt) :
                 localEvent{std::move(evt)} {}
             FinishCallback(FinishCallback && other) :
@@ -78,7 +83,8 @@ bool Susi::ClusterComponent::forwardConsumerEvent(std::string topic, std::string
         return false;
     }
     auto & node = _nodes[id];
-    _susi.registerConsumer(topic,[node,id](Susi::SharedEventPtr event){
+    _susi.registerConsumer(topic,[node,id,topic](Susi::SharedEventPtr event){
+        std::cout<<"forward consumer "<<topic<<" to "<<id<<std::endl;
         auto remoteEvent = node->createEvent(event->topic);
         *remoteEvent = *event;
         std::cout<<"forward consumer event to node "<<id<<std::endl;
@@ -94,7 +100,8 @@ bool Susi::ClusterComponent::registerProcessor(std::string topic, std::string id
         return false;
     }
     auto & node = _nodes[id];
-    node->registerProcessor(topic,[this](Susi::EventPtr remoteEvent){
+    node->registerProcessor(topic,[this,topic,id](Susi::EventPtr remoteEvent){
+        std::cout<<"got processor event "<<topic<<" from "<<id<<std::endl;
         struct FinishCallback {
             Susi::EventPtr remoteEvent;
             FinishCallback(Susi::EventPtr evt) :
@@ -120,7 +127,8 @@ bool Susi::ClusterComponent::registerConsumer(std::string topic, std::string id)
         return false;
     }
     auto & node = _nodes[id];
-    node->registerConsumer(topic,[this](Susi::SharedEventPtr remoteEvent){
+    node->registerConsumer(topic,[this,topic,id](Susi::SharedEventPtr remoteEvent){
+        std::cout<<"got processor event "<<topic<<" from "<<id<<std::endl;
         auto localEvent = _susi.createEvent(remoteEvent->topic);
         *localEvent = *remoteEvent;
         _susi.publish(std::move(localEvent));
