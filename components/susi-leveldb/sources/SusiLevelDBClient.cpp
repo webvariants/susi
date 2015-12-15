@@ -52,6 +52,7 @@ void Susi::LevelDBComponent::handlePut(Susi::EventPtr event){
 		event->headers.push_back({"Error","leveldb put error: "+s.ToString()});
 		return;
 	}
+    std::cout << "wrote "<<event->payload["key"].getString()<<" to disk."<<std::endl;
 	event->payload["success"] = true;
 }
 
@@ -66,6 +67,7 @@ void Susi::LevelDBComponent::handleGet(Susi::EventPtr event){
 		event->headers.push_back({"Error","leveldb get error: "+s.ToString()});
 		return;
 	}
+    std::cout << "got "<<event->payload["key"].getString()<<" from disk."<<std::endl;
 	event->payload["value"] = BSON::Value::fromJSON(valueStr);
 }
 
@@ -79,6 +81,7 @@ void Susi::LevelDBComponent::handleDelete(Susi::EventPtr event){
 		event->headers.push_back({"Error","leveldb delete error: "+s.ToString()});
 		return;
 	}
+    std::cout << "deleted "<<event->payload["key"].getString()<<" from disk."<<std::endl;
 	event->payload["success"] = true;
 }
 
@@ -99,5 +102,6 @@ void Susi::LevelDBComponent::handleGetPrefix(Susi::EventPtr event){
             result[keyString] = BSON::Value::fromJSON(valueString);
         }
     }
+    std::cout << "got all keys with prefix "<<prefix<<" from disk."<<std::endl;
 	event->payload["value"] = result;
 }
