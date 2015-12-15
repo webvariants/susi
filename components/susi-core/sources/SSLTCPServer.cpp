@@ -64,7 +64,10 @@ void Susi::SSLTCPServer::send(int id, const char *data, size_t len) {
     try {
         auto & session = sessions.at(id);
         session->send({data, len});
-    } catch (...) {}
+    } catch (const std::exception & e) {
+        std::cout<<"error in send: "<<e.what()<<std::endl;
+
+    }
 }
 
 
@@ -98,10 +101,10 @@ void Susi::SSLTCPServer::Session::start() {
         } else {
             std::cerr << ec.message() << std::endl;
             if(!this->onCloseCalled){
+                server->onClose(socket().native_handle());
+                this->onCloseCalled = true;
+                server->sessions.erase(socket().native_handle());
             }
-            server->onClose(socket().native_handle());
-            this->onCloseCalled = true;
-            server->sessions.erase(socket().native_handle());
         }
     });
 }
@@ -114,8 +117,8 @@ void Susi::SSLTCPServer::Session::do_read() {
             if(!this->onCloseCalled){
                 server->onClose(socket().native_handle());
                 this->onCloseCalled = true;
+                server->sessions.erase(socket().native_handle());
             }
-            server->sessions.erase(socket().native_handle());
         } else {
             server->onData(socket().native_handle(), data_, length);
             do_read();
@@ -135,10 +138,10 @@ void Susi::SSLTCPServer::Session::do_write() {
             }
         } else {
             if(!this->onCloseCalled){
+                server->onClose(socket().native_handle());
+                this->onCloseCalled = true;
+                server->sessions.erase(socket().native_handle());
             }
-            server->onClose(socket().native_handle());
-            this->onCloseCalled = true;
-            server->sessions.erase(socket().native_handle());
         }
     });
 }
