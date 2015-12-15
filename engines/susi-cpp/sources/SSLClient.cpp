@@ -12,8 +12,13 @@
 #include "susi/SSLClient.h"
 
 Susi::SSLClient::SSLClient(std::string host, short port) {
-    endpoint_iterator_ = resolver_.resolve({host, std::to_string(port)});
-    do_connect();
+    try{
+        endpoint_iterator_ = resolver_.resolve({host, std::to_string(port)});
+    }catch(const std::exception & e){
+        std::cerr<<"error while resolving the given endpoint"<<std::endl;
+        return;
+    }
+    do_resolve(host,std::to_string(port));
     runloop_ = std::move(std::thread{[this]() {io_service_.run(); std::cout<<"io_service returned..."<<std::endl;}});
 }
 
@@ -42,6 +47,19 @@ void Susi::SSLClient::send(std::string msg) {
         write_msgs_.push_back(msg);
         if (!write_in_progress) {
             do_write();
+        }
+    });
+}
+
+void Susi::SSLClient::do_resolve(std::string host, std::string port) {
+    resolver_.async_resolve({host, port},[this,host,port](boost::system::error_code ec,  boost::asio::ip::tcp::resolver::iterator iterator){
+        if(!ec){
+            endpoint_iterator_ = iterator;
+            do_connect();
+        }else{
+            std::this_thread::sleep_for(std::chrono::seconds{1});
+            std::cout << "try reconnecting because of " << ec.message() << std::endl;
+            do_resolve(host,port);
         }
     });
 }

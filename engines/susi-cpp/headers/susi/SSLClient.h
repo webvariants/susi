@@ -46,6 +46,7 @@ class SSLClient {
 
   protected:
 
+    void do_resolve(std::string host, std::string port);
     void do_connect();
     void do_read();
     void do_write();
