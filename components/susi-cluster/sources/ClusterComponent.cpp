@@ -5,6 +5,7 @@ Susi::ClusterComponent::ClusterComponent(Susi::SusiClient & susi, BSON::Value & 
   _config{config} {
       std::cout<<"cluster config: "<<config.toJSON()<<std::endl;
       if(_config["nodes"].isArray()){
+          std::cout<<"config[nodes] is array"<<std::endl;
           for(std::size_t nodeId=0;nodeId < _config["nodes"].size(); nodeId++){
               auto & node = _config["nodes"][nodeId];
               registerNode(node["id"],node["addr"],static_cast<short>(node["port"].getInt64()),node["key"],node["cert"]);
@@ -37,6 +38,8 @@ Susi::ClusterComponent::ClusterComponent(Susi::SusiClient & susi, BSON::Value & 
                   }
               }
           }
+      }else{
+          std::cout<<"config[nodes] is not an array (malformed config file?)"<<std::endl;
       }
 }
 
