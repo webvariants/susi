@@ -11,24 +11,18 @@
 
 #include "susi/SSLClient.h"
 
-Susi::SSLClient::SSLClient(std::string host, short port) {
-    try{
-        endpoint_iterator_ = resolver_.resolve({host, std::to_string(port)});
-    }catch(const std::exception & e){
-        std::cerr<<"error while resolving the given endpoint"<<std::endl;
-        return;
-    }
-    do_resolve(host,std::to_string(port));
-    runloop_ = std::move(std::thread{[this]() {io_service_.run(); std::cout<<"io_service returned..."<<std::endl;}});
-}
 
 Susi::SSLClient::SSLClient(std::string host, short port, std::string keyfile, std::string certfile) {
     context_.use_private_key_file(keyfile, boost::asio::ssl::context::pem);
     context_.use_certificate_file(certfile, boost::asio::ssl::context::pem);
     socket_ = std::make_shared<boost::asio::ssl::stream<boost::asio::ip::tcp::socket>>(io_service_, context_);
-    endpoint_iterator_ = resolver_.resolve({host, std::to_string(port)});
-    do_connect();
+    do_resolve(host,std::to_string(port));
     runloop_ = std::move(std::thread{[this]() {io_service_.run();}});
+}
+
+Susi::SSLClient::SSLClient(std::string host, short port) {
+    do_resolve(host,std::to_string(port));
+    runloop_ = std::move(std::thread{[this]() {io_service_.run(); std::cout<<"io_service returned..."<<std::endl;}});
 }
 
 void Susi::SSLClient::join() {
