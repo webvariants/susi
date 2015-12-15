@@ -3,6 +3,7 @@
 Susi::ClusterComponent::ClusterComponent(Susi::SusiClient & susi, BSON::Value & config) :
   _susi{susi},
   _config{config} {
+      std::cout<<"cluster config: "<<config.toJSON()<<std::endl;
       if(_config["nodes"].isArray()){
           for(std::size_t nodeId=0;nodeId < _config["nodes"].size(); nodeId++){
               auto & node = _config["nodes"][nodeId];
