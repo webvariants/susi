@@ -11,19 +11,18 @@
 
 #include "susi/SSLClient.h"
 
-Susi::SSLClient::SSLClient(std::string host, short port) {
-    endpoint_iterator_ = resolver_.resolve({host, std::to_string(port)});
-    do_connect();
-    runloop_ = std::move(std::thread{[this]() {io_service_.run(); std::cout<<"io_service returned..."<<std::endl;}});
-}
 
 Susi::SSLClient::SSLClient(std::string host, short port, std::string keyfile, std::string certfile) {
     context_.use_private_key_file(keyfile, boost::asio::ssl::context::pem);
     context_.use_certificate_file(certfile, boost::asio::ssl::context::pem);
     socket_ = std::make_shared<boost::asio::ssl::stream<boost::asio::ip::tcp::socket>>(io_service_, context_);
-    endpoint_iterator_ = resolver_.resolve({host, std::to_string(port)});
-    do_connect();
+    do_resolve(host,std::to_string(port));
     runloop_ = std::move(std::thread{[this]() {io_service_.run();}});
+}
+
+Susi::SSLClient::SSLClient(std::string host, short port) {
+    do_resolve(host,std::to_string(port));
+    runloop_ = std::move(std::thread{[this]() {io_service_.run(); std::cout<<"io_service returned..."<<std::endl;}});
 }
 
 void Susi::SSLClient::join() {
@@ -42,6 +41,19 @@ void Susi::SSLClient::send(std::string msg) {
         write_msgs_.push_back(msg);
         if (!write_in_progress) {
             do_write();
+        }
+    });
+}
+
+void Susi::SSLClient::do_resolve(std::string host, std::string port) {
+    resolver_.async_resolve({host, port},[this,host,port](boost::system::error_code ec,  boost::asio::ip::tcp::resolver::iterator iterator){
+        if(!ec){
+            endpoint_iterator_ = iterator;
+            do_connect();
+        }else{
+            std::this_thread::sleep_for(std::chrono::seconds{1});
+            std::cout << "try reconnecting because of " << ec.message() << std::endl;
+            do_resolve(host,port);
         }
     });
 }
