@@ -13,6 +13,7 @@
 #define __FRAMINGSERVER__
 
 #include <map>
+#include <string>
 
 namespace Susi {
 

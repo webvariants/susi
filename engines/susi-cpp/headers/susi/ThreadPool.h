@@ -19,6 +19,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <vector>
+#include <string>
 
 namespace Susi{
     class ThreadPool {
