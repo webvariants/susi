@@ -183,7 +183,19 @@ void Susi::SusiServer::publish(BSON::Value & event, int publisher) {
 
     checkAndReactToSusiEvents(event);
 
-    auto process = std::make_shared<PublishProcess>();
+    auto process = std::make_shared<PublishProcess>(io_service);
+
+    int64_t timeout = checkForTimeoutHeader(event);
+    if(timeout){
+        process->timeout.expires_from_now(boost::posix_time::milliseconds(timeout));
+        process->timeout.async_wait([this,process](const boost::system::error_code & error){
+            if(!error){
+                process->lastState["headers"].push_back(BSON::Object{{"Error","Timeout"}});
+                dismiss(process->lastState,0);
+            }
+        });
+    }
+
     process->publisher = publisher;
     for (auto & kv : processors) {
         std::regex e{kv.first};
@@ -316,7 +328,16 @@ bool Susi::SusiServer::checkForHeader(BSON::Value & event, const std::string & k
     }
     return false;
 }
-
+int64_t Susi::SusiServer::checkForTimeoutHeader(BSON::Value & event){
+    if(event["headers"].isArray()){
+        for(auto & header : event["headers"].getArray()){
+            if(header["Event-Timeout"].isString() && header["Event-Timeout"].isString() ){
+                return std::atoi(header["Event-Timeout"].getString().c_str());
+            }
+        }
+    }
+    return 0;
+}
 bool Susi::SusiServer::checkForNoAckHeader(BSON::Value & event){
     return checkForHeader(event,"Event-Control","No-Ack");
 }

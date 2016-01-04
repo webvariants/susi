@@ -17,6 +17,7 @@
 #include <regex>
 #include <chrono>
 #include <bson/Value.h>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "susi/SSLTCPServer.h"
 
@@ -28,6 +29,8 @@ class SusiServer : public FramingServer<LineFramer, SSLTCPServer> {
     std::map<std::string, std::vector<int>> processors; //topic to list of client id's
 
     struct PublishProcess {
+        PublishProcess(boost::asio::io_service & io) : timeout{io} {}
+        boost::asio::deadline_timer timeout;
         BSON::Value lastState;
         std::vector<int> processors;    //list of client id's
         std::vector<int> consumers;     //list of client id's
@@ -63,6 +66,7 @@ class SusiServer : public FramingServer<LineFramer, SSLTCPServer> {
     bool checkForNoConsumerHeader(BSON::Value & event);
     bool checkForNoProcessorHeader(BSON::Value & event);
     bool checkForHeader(BSON::Value & event, const std::string & key, const std::string & value);
+    int64_t checkForTimeoutHeader(BSON::Value & event);
 };
 
 
