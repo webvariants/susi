@@ -16,11 +16,13 @@ namespace Susi {
 
 		bool validateFieldsForPut(const Susi::EventPtr & event);
 		bool validateFieldsForGet(const Susi::EventPtr & event);
+		bool validateFieldsForGetRange(const Susi::EventPtr & event);
 
 		void handlePut(Susi::EventPtr event);
 		void handleGet(Susi::EventPtr event);
 		void handleDelete(Susi::EventPtr event);
 		void handleGetPrefix(Susi::EventPtr event);
+		void handleGetRange(Susi::EventPtr event);
 
 	};
 }

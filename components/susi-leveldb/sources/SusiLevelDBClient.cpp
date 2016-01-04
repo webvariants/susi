@@ -19,6 +19,9 @@ Susi::LevelDBComponent::LevelDBComponent(Susi::SusiClient & susi, std::string db
     susi_.registerProcessor("leveldb::getPrefix",[this](Susi::EventPtr event){
         handleGetPrefix(std::move(event));
     });
+    susi_.registerProcessor("leveldb::getRange",[this](Susi::EventPtr event){
+        handleGetRange(std::move(event));
+    });
 }
 
 void Susi::LevelDBComponent::join(){
@@ -37,6 +40,15 @@ bool Susi::LevelDBComponent::validateFieldsForPut(const Susi::EventPtr & event){
 bool Susi::LevelDBComponent::validateFieldsForGet(const Susi::EventPtr & event){
 	if(!(event->payload.isObject()) ||
 	   !(event->payload["key"].isString())){
+		return false;
+	}
+	return true;
+}
+
+bool Susi::LevelDBComponent::validateFieldsForGetRange(const Susi::EventPtr & event){
+	if(!(event->payload.isObject()) ||
+	   !(event->payload["begin"].isString()) ||
+       !(event->payload["end"].isString())){
 		return false;
 	}
 	return true;
@@ -103,5 +115,27 @@ void Susi::LevelDBComponent::handleGetPrefix(Susi::EventPtr event){
         }
     }
     std::cout << "got all keys with prefix "<<prefix<<" from disk."<<std::endl;
+	event->payload["value"] = result;
+}
+
+void Susi::LevelDBComponent::handleGetRange(Susi::EventPtr event){
+	if(!validateFieldsForGetRange(event)){
+		event->headers.push_back({"Error","leveldb get error"});
+		return;
+	}
+    BSON::Value result;
+    auto begin = event->payload["begin"].getString();
+    auto end = event->payload["end"].getString();
+    std::shared_ptr<leveldb::Iterator> dbIter(db_->NewIterator(leveldb::ReadOptions()));
+    for(dbIter->Seek(begin); dbIter->Valid() && dbIter->key().compare(end) <= 0 ; dbIter->Next()){
+        if( !dbIter->value().empty() ) {
+            auto key = dbIter->key();
+            auto value = dbIter->value();
+            std::string keyString{key.data(),key.size()};
+            std::string valueString{value.data(),value.size()};
+            result[keyString] = BSON::Value::fromJSON(valueString);
+        }
+    }
+    std::cout << "got all keys in range ["<<begin<<", "<<end<<"] from disk."<<std::endl;
 	event->payload["value"] = result;
 }
