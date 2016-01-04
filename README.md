@@ -10,12 +10,12 @@ It intends to enable even novice programmers to build robust asyncronous applica
 ### 1. Clone
 First, get all dependencies you will need to build every susi core component (I assume you are using a recent debian or some derived distribution):
 ```
-sudo apt-get install \\
-    cmake make clang git \\
-    libssl-dev \\
-    libboost-all-dev \\
-    libmosquitto-dev \\
-    libmosquittopp-dev \\
+sudo apt-get install \
+    cmake make clang git \
+    libssl-dev \
+    libboost-all-dev \
+    libmosquitto-dev \
+    libmosquittopp-dev \
     libleveldb-dev
 ```
 If you want to use the susi-dev tool, you will also need a copy of debootstrap and jq:
