@@ -1,5 +1,5 @@
 ![Image of SUSI](http://webvariants.github.io/susi/resources/SUSI_Icon.svg)
-# SUSI, a Universal System Interface
+# SUSI, an Universal System Interface
 
 SUSI is an application framework to build interfaces for arbitrary systems.
 
