@@ -28,6 +28,7 @@ option(WITH_WEBHOOKS "Include susi-webhooks binary" ON)
 option(WITH_STATEFILE "Include susi-webhooks binary" ON)
 option(WITH_AUTHENTICATOR "Include susi-authenticator binary" ON)
 option(WITH_SHELL "Include susi-shell binary" ON)
+option(WITH_MONGODB "Include susi-mongodb binary" ON)
 
 set( CMAKE_COLOR_MAKEFILE ON )
 
@@ -110,6 +111,11 @@ if(WITH_SHELL)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/components/susi-shell)
     include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/components/susi-shell/headers)
 endif(WITH_SHELL)
+
+if(WITH_MONGODB)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/components/susi-mongodb)
+    include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/components/susi-mongodb/headers)
+endif(WITH_MONGODB)
 
 SET(CPACK_GENERATOR "DEB")
 SET(CPACK_SET_DESTDIR ON)
