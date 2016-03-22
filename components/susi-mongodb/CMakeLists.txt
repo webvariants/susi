@@ -18,11 +18,13 @@ project(susi-mongodb)
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/headers )
 
-set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 -O3 \
- -I/usr/local/include/mongocxx/v_noabi \
- -I/usr/local/include/libmongoc-1.0 \
- -I/usr/local/include/bsoncxx/v_noabi \
- -I/usr/local/include/libbson-1.0" )
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+find_package(mongocxx REQUIRED)
+find_package(libbson REQUIRED)
+
+include_directories(${LIBBSON_INCLUDE_DIRS})
+include_directories(${MONGOCXX_INCLUDE_DIRS})
+set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 -O3")
 
 file( GLOB SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/*.cpp )
 
@@ -34,10 +36,10 @@ target_link_libraries(${PROJECT_NAME}
 	${CMAKE_THREAD_LIBS_INIT}
 	${Boost_LIBRARIES}
 	${OPENSSL_LIBRARIES}
+  ${MONGOCXX_LIBRARIES}
+  ${LIBBSON_LIBRARIES}
 	bson
-	susi-cpp
-	mongocxx
-	bsoncxx)
+	susi-cpp)
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "/usr/local/bin")
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/headers/ DESTINATION /usr/local/include)
