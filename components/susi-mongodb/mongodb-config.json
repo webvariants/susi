@@ -4,7 +4,10 @@
     "cert": "sampleCert.pem",
     "key": "sampleKey.pem",
     "component": {
-        "value1": 1,
-        "value2": [1,2,3]
+        "host": "localhost",
+        "port": "27017",
+        "username": "",
+        "password": "",
+        "database": "susi-mongodb"
     }
 }
