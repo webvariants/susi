@@ -1,0 +1,11 @@
+{
+    "susi-addr": "localhost",
+    "susi-port": 4000,
+    "cert": "mongodb_cert.pem",
+    "key": "mongodb_key.pem",
+    "component": {
+        "username": "",
+        "password": "",
+        "database": "sqlite-susi"
+    }
+}
