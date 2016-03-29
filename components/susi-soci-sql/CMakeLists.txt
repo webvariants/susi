@@ -21,9 +21,7 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/headers )
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(Soci REQUIRED)
 find_package(SQLite3 REQUIRED)
-find_package(libbson REQUIRED)
 
-include_directories(${LIBBSON_INCLUDE_DIRS})
 include_directories(${SOCI_INCLUDE_DIRS})
 include_directories(${SQLITE3_INCLUDE_DIRS})
 set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 -O3")
@@ -40,9 +38,6 @@ target_link_libraries(${PROJECT_NAME}
 	${OPENSSL_LIBRARIES}
 	${SOCI_LIBRARIES}
 	${SQLITE3_LIBRARIES}
-	${LIBBSON_LIBRARIES}
-	soci_core
-	soci_sqlite3
 	bson
 	susi-cpp)
 

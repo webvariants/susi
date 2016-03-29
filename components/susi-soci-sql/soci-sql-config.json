@@ -1,8 +1,8 @@
 {
     "susi-addr": "localhost",
     "susi-port": 4000,
-    "cert": "mongodb_cert.pem",
-    "key": "mongodb_key.pem",
+    "cert": "soci-sql_cert.pem",
+    "key": "soci-sql_key.pem",
     "component": {
         "username": "",
         "password": "",
