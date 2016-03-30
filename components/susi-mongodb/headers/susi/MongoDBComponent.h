@@ -16,9 +16,11 @@ namespace Susi {
         MongoDBComponent(Susi::SusiClient & susi, const BSON::Value & config);
 
         void create(const std::string collection, const BSON::Value data);
-        std::vector<BSON::Value>  find(const std::string collection, const BSON::Value query);
+        std::vector<BSON::Value> find(const std::string collection, const BSON::Value query);
         void update(const std::string collection, const BSON::Value findQuery, const BSON::Value updateQuery);
         void remove(const std::string collection, const BSON::Value queryRemove);
+		BSON::Value mapreduce(const std::string collectionName, const std::string map, const std::string reduce,
+					const BSON::Value query, const BSON::Value sort, const int limit, const std::string finalize);
 
         ~MongoDBComponent();
         void join();
