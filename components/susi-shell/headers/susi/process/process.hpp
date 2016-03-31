@@ -77,8 +77,8 @@ namespace fr {
             }else if(c==' ' || c=='\t'){
                 parameter_vector.push_back(currentParameter);
                 currentParameter = "";
-            }else if(c == '\"'){
-                while(command[++i]!='\"' && i<command.size()){
+            }else if(c == '\"' && i!=0 && command[i-1]!='\\'){
+                while(command[++i]!='\"' && i!=0 && command[i-1]!='\\' && i<command.size()){
                     currentParameter += command[i];
                 }
                 parameter_vector.push_back(currentParameter);
