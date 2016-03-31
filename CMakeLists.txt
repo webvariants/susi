@@ -28,7 +28,7 @@ option(WITH_WEBHOOKS "Include susi-webhooks binary" ON)
 option(WITH_STATEFILE "Include susi-webhooks binary" ON)
 option(WITH_AUTHENTICATOR "Include susi-authenticator binary" ON)
 option(WITH_SHELL "Include susi-shell binary" ON)
-option(WITH_MONGODB "Include susi-mongodb binary" ON)
+option(WITH_MONGODB "Include susi-mongodb binary" OFF)
 
 set( CMAKE_COLOR_MAKEFILE ON )
 
