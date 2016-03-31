@@ -15,30 +15,46 @@ Susi::MongoDBComponent::MongoDBComponent(Susi::SusiClient & susi, const BSON::Va
 
     _susi.registerProcessor("mongodb::create", [this](Susi::EventPtr event){
         auto collection = event->payload["collection"].getString();
-        auto data = event->payload["data"];
+        auto data       = event->payload["data"];
+
         create(collection, data);
         event->payload["success"] = true;
     });
 
     _susi.registerProcessor("mongodb::find", [this](Susi::EventPtr event){
         auto collection = event->payload["collection"].getString();
-        auto query = event->payload["query"];
+        auto query      = event->payload["query"];
+
         event->payload["data"] = find(collection, query);
     });
 
     _susi.registerProcessor("mongodb::update", [this](Susi::EventPtr event){
-        auto collection = event->payload["collection"].getString();
-        auto findQuery = event->payload["findQuery"];
+        auto collection  = event->payload["collection"].getString();
+        auto findQuery   = event->payload["findQuery"];
         auto updateQuery = event->payload["updateQuery"];
+
         update(collection, findQuery, updateQuery);
         event->payload["success"] = true;
     });
 
     _susi.registerProcessor("mongodb::remove", [this](Susi::EventPtr event){
-        auto collection = event->payload["collection"].getString();
+        auto collection  = event->payload["collection"].getString();
         auto removeQuery = event->payload["removeQuery"];
+
         remove(collection, removeQuery);
         event->payload["success"] = true;
+    });
+
+	_susi.registerProcessor("mongodb::mapreduce", [this](Susi::EventPtr event){
+        auto collection = event->payload["collection"].getString();
+		auto map        = event->payload["map"].getString();
+		auto reduce     = event->payload["reduce"].getString();
+        auto query      = event->payload["query"].getObject();
+		auto sort       = event->payload["sort"].getObject();
+		auto limit      = event->payload["limit"].getInt64();
+		auto finalize   = event->payload["finalize"].getString();
+
+        event->payload["data"] = mapreduce(collection, map, reduce, query, sort, limit, finalize);
     });
 }
 
@@ -82,19 +98,26 @@ BSON::Value Susi::MongoDBComponent::mapreduce(
 
     auto collection = conn[database];
 
-	bsoncxx::document::value queryDoc = bsoncxx::from_json(query.toJSON());
-	bsoncxx::document::value sortDoc = bsoncxx::from_json(sort.toJSON());
+	std::string doc = "{";
+	doc += "\"mapReduce\": \"";
+	doc += collectionName;
+	doc += "\",";
 
-	bsoncxx::document::value command = bsoncxx::builder::stream::document{}
-		<< "mapReduce" << collectionName
-		<< "map" << map
-		<< "reduce" << reduce
-		<< "query" << queryDoc
-		<< "sort" << sortDoc
-		<< "limit" << limit
-		<< "finalize" << finalize
-		<< bsoncxx::builder::stream::finalize;
-	auto result = collection.run_command(command.view());
+	doc += "\"map\": ";
+	doc += map;
+	doc += ",";
+
+	doc += "\"reduce\": ";
+	doc += reduce;
+	doc += ",";
+
+	doc += query.toJSON();
+	doc += ",";
+
+	doc += "\"out\": {\"replace\": \"susiOut\" }";
+	doc += "}";
+
+	auto result = collection.run_command(bsoncxx::from_json(doc));
 
     return bsoncxx::to_json(result);
 }
