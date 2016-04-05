@@ -8,11 +8,14 @@ Susi::OPCUAServer::OPCUAServer(Susi::SusiClient & susi) :
     config.networkLayersSize = 1;
     server = UA_Server_new(config);
     addInt32Node("the.answer",42);
+    runloop = std::move(std::thread{[this](){
+      running = true;
+      UA_Server_run(server, &running);
+      UA_Server_delete(server);
+    }});
 }
 
 void Susi::OPCUAServer::join(){
-  running = true;
-  UA_Server_run(server, &running);
-  UA_Server_delete(server);
+  if(runloop.joinable())runloop.join();
 	susi_.join();
 }

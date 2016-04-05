@@ -14,6 +14,7 @@ namespace Susi {
 		UA_ServerNetworkLayer nl;
 		UA_Server *server;
 		bool running = true;
+		std::thread runloop;
 
 		static void onRead(void *handle, const UA_NodeId nodeid, const UA_Variant *data, const UA_NumericRange *range) {
 	  	std::cout << "onRead; handle is:" <<  (uintptr_t)handle << std::endl;;
