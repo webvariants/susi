@@ -10,15 +10,17 @@ namespace Susi {
 	protected:
 		Susi::SusiClient & susi_;
 		boost::asio::io_service io_service_;
+		UA_ServerConfig config = UA_ServerConfig_standard;
+		UA_ServerNetworkLayer nl;
 		UA_Server *server;
 		bool running = true;
 
 		static void onRead(void *handle, const UA_NodeId nodeid, const UA_Variant *data, const UA_NumericRange *range) {
-	  std::cout << "onRead; handle is:" <<  (uintptr_t)handle << std::endl;;
+	  	std::cout << "onRead; handle is:" <<  (uintptr_t)handle << std::endl;;
 		}
 
 		static void onWrite(void *handle, const UA_NodeId nodeid, const UA_Variant *data, const UA_NumericRange *range) {
-	  std::cout << "onWrite; handle is:" << (uintptr_t)handle << std::endl;;
+	  	std::cout << "onWrite; handle is:" << (uintptr_t)handle << std::endl;;
 		}
 
 		void addInt32Node(const char * id, int32_t initial = 0){
