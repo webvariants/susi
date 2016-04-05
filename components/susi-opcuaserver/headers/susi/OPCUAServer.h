@@ -37,7 +37,7 @@ namespace Susi {
 		  UA_Server_addVariableNode(server, myIntegerNodeId, parentNodeId,
 		                            parentReferenceNodeId, myIntegerName,
 		                            UA_NODEID_NULL, attr, NULL, NULL);
-		  UA_ValueCallback callback = {(void*)this, OPCUAServer::onRead, OPCUAServer::onWrite};
+		  UA_ValueCallback callback = {(void*)this, &OPCUAServer::onRead, &OPCUAServer::onWrite};
 		  UA_Server_setVariableNode_valueCallback(server, myIntegerNodeId, callback);
 		}
 	};
