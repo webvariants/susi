@@ -6,7 +6,7 @@ Susi::OPCUAServer::OPCUAServer(Susi::SusiClient & susi) :
     config.logger = Logger_Stdout;
     config.networkLayers = &nl;
     config.networkLayersSize = 1;
-    UA_Server *server = UA_Server_new(config);
+    server = UA_Server_new(config);
     addInt32Node("the.answer",42);
 }
 
