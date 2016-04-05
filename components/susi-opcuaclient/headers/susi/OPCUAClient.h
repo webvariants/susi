@@ -2,9 +2,9 @@
 #include "susi/open62541.h"
 
 namespace Susi {
-	class OPCUA {
+	class OPCUAClient {
 	public:
-		OPCUA(Susi::SusiClient & susi);
+		OPCUAClient(Susi::SusiClient & susi);
 		void join();
 
 	protected:

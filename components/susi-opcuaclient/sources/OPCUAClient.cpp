@@ -1,8 +1,8 @@
-#include "susi/OPCUA.h"
+#include "susi/OPCUAClient.h"
 #include <boost/asio.hpp>
 using boost::asio::ip::tcp;
 
-Susi::OPCUA::OPCUA(Susi::SusiClient & susi) :
+Susi::OPCUAClient::OPCUAClient(Susi::SusiClient & susi) :
   susi_{susi} {
     susi_.registerProcessor("opcua::set",[this](Susi::EventPtr event){
       auto endpoint = event->payload["endpoint"].getString();
@@ -25,6 +25,6 @@ Susi::OPCUA::OPCUA(Susi::SusiClient & susi) :
     });
 }
 
-void Susi::OPCUA::join(){
+void Susi::OPCUAClient::join(){
 	susi_.join();
 }

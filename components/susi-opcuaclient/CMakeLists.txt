@@ -14,12 +14,12 @@
 
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
-project(susi-opcua)
+project(susi-opcuaclient)
 
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/headers )
 
 set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 -Os " )
-file( GLOB SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/OPCUA.cpp ${CMAKE_CURRENT_SOURCE_DIR}/sources/open62541.c)
+file( GLOB SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/OPCUAClient.cpp ${CMAKE_CURRENT_SOURCE_DIR}/sources/open62541.c)
 file( GLOB HEADERFILES ${CMAKE_CURRENT_SOURCE_DIR}/headers/*.h )
 add_executable( ${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp ${SRCFILES})
 target_link_libraries(${PROJECT_NAME}
