@@ -17,29 +17,28 @@ namespace Susi {
 
 		static void onRead(void *handle, const UA_NodeId nodeid, const UA_Variant *data, const UA_NumericRange *range) {
 			auto self = (Susi::OPCUAServer*)handle;
-			UA_Int32 value = -1;
-			std::cout<<"onRead()"<<std::endl;
-			if(data->type == &UA_TYPES[UA_TYPES_INT32]) {
-				value = *(UA_Int32*)data->data;
-				std::cout<<"read result: "<<value<<std::endl;
-				auto event = self->susi.createEvent("opcua::read");
-				event->payload = BSON::Object{
-					{"value",(BSON::int64)value},
-				};
-				self->susi.publish(std::move(event));
-			}
+			std::string node{(char*)nodeid.identifier.string.data,nodeid.identifier.string.length};
+			std::cout<<"read request for node " << node << std::endl;
+			auto event = self->susi.createEvent("opcua::read");
+			event->payload = BSON::Object{
+				{"node",node},
+			};
+			self->susi.publish(std::move(event));
+
 		}
 
 		static void onWrite(void *handle, const UA_NodeId nodeid, const UA_Variant *data, const UA_NumericRange *range) {
 			auto self = (Susi::OPCUAServer*)handle;
 			UA_Int32 value = -1;
-			std::cout<<"onWrite()"<<std::endl;
+			std::string node{(char*)nodeid.identifier.string.data,nodeid.identifier.string.length};
+			std::cout<<"read request for node " << node << std::endl;
 			if(data->type == &UA_TYPES[UA_TYPES_INT32]) {
 				value = *(UA_Int32*)data->data;
 				std::cout<<"write result: "<<value<<std::endl;
 				auto event = self->susi.createEvent("opcua::write");
 				event->payload = BSON::Object{
 					{"value",(BSON::int64)value},
+					{"node",node}
 				};
 				self->susi.publish(std::move(event));
 			}
