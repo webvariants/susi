@@ -4,7 +4,7 @@ using boost::asio::ip::tcp;
 
 Susi::OPCUAClient::OPCUAClient(Susi::SusiClient & susi) :
   susi_{susi} {
-    susi_.registerProcessor("opcua::set",[this](Susi::EventPtr event){
+    susi_.registerProcessor("opcua::client::set",[this](Susi::EventPtr event){
       auto endpoint = event->payload["endpoint"].getString();
       auto node = event->payload["node"].getString();
       auto value = event->payload["value"].getInt64();
@@ -14,7 +14,7 @@ Susi::OPCUAClient::OPCUAClient(Susi::SusiClient & susi) :
       setInt32(client,node,v);
       susi_.ack(std::move(event));
     });
-    susi_.registerProcessor("opcua::get",[this](Susi::EventPtr event){
+    susi_.registerProcessor("opcua::client::get",[this](Susi::EventPtr event){
       auto endpoint = event->payload["endpoint"].getString();
       auto node = event->payload["node"].getString();
       //auto client = createClient("opc.tcp://localhost:16664");

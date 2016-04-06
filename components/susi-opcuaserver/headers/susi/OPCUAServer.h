@@ -19,7 +19,7 @@ namespace Susi {
 			auto self = (Susi::OPCUAServer*)handle;
 			std::string node{(char*)nodeid.identifier.string.data,nodeid.identifier.string.length};
 			std::cout<<"read request for node " << node << std::endl;
-			auto event = self->susi.createEvent("opcua::read");
+			auto event = self->susi.createEvent("opcua::server::get");
 			event->payload = BSON::Object{
 				{"node",node},
 			};
@@ -34,7 +34,7 @@ namespace Susi {
 			if(data->type == &UA_TYPES[UA_TYPES_INT32]) {
 				value = *(UA_Int32*)data->data;
 				std::cout<<"write request for node " << node <<" : "<<value<< std::endl;
-				auto event = self->susi.createEvent("opcua::write");
+				auto event = self->susi.createEvent("opcua::server::set");
 				event->payload = BSON::Object{
 					{"value",(BSON::int64)value},
 					{"node",node}
