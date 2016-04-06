@@ -16,11 +16,31 @@ namespace Susi {
 		bool opcuaServerRunning;
 
 		static void onRead(void *handle, const UA_NodeId nodeid, const UA_Variant *data, const UA_NumericRange *range) {
-	  	std::cout << "onRead; handle is:" <<  (uintptr_t)handle << std::endl;;
+			auto self = (Susi::OPCUAServer*)handle;
+			UA_Int32 value = -1;
+			if(data->type == &UA_TYPES[UA_TYPES_INT32]) {
+				value = *(UA_Int32*)data->data;
+				std::cout<<"read result: "<<value<<std::endl;
+				auto event = self->susi.createEvent("opcua::read");
+				event->payload = BSON::Object{
+					{"value",(BSON::int64)value},
+				};
+				self->susi.publish(std::move(event));
+			}
 		}
 
 		static void onWrite(void *handle, const UA_NodeId nodeid, const UA_Variant *data, const UA_NumericRange *range) {
-	  	std::cout << "onWrite; handle is:" << (uintptr_t)handle << std::endl;;
+			auto self = (Susi::OPCUAServer*)handle;
+			UA_Int32 value = -1;
+			if(data->type == &UA_TYPES[UA_TYPES_INT32]) {
+				value = *(UA_Int32*)data->data;
+				std::cout<<"write result: "<<value<<std::endl;
+				auto event = self->susi.createEvent("opcua::write");
+				event->payload = BSON::Object{
+					{"value",(BSON::int64)value},
+				};
+				self->susi.publish(std::move(event));
+			}
 		}
 
 		void addInt32Node(UA_Server *server, const char * id, int32_t initial = 0){
