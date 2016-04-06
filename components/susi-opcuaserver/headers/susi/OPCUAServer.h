@@ -5,16 +5,15 @@ namespace Susi {
 	class OPCUAServer {
 	public:
 		OPCUAServer(Susi::SusiClient & susi);
-		void join();
+		void stop(){
+
+			opcuaServerRunning = false;
+		}
 
 	protected:
-		Susi::SusiClient & susi_;
-		boost::asio::io_service io_service_;
-		UA_ServerConfig config = UA_ServerConfig_standard;
-		UA_ServerNetworkLayer nl;
-		UA_Server *server;
-		bool running = true;
+		Susi::SusiClient & susi;
 		std::thread runloop;
+		bool opcuaServerRunning;
 
 		static void onRead(void *handle, const UA_NodeId nodeid, const UA_Variant *data, const UA_NumericRange *range) {
 	  	std::cout << "onRead; handle is:" <<  (uintptr_t)handle << std::endl;;
@@ -24,7 +23,7 @@ namespace Susi {
 	  	std::cout << "onWrite; handle is:" << (uintptr_t)handle << std::endl;;
 		}
 
-		void addInt32Node(const char * id, int32_t initial = 0){
+		void addInt32Node(UA_Server *server, const char * id, int32_t initial = 0){
 		  UA_VariableAttributes attr;
 		  UA_VariableAttributes_init(&attr);
 		  UA_Int32 myInteger = initial;
