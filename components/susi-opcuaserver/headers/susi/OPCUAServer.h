@@ -18,6 +18,7 @@ namespace Susi {
 		static void onRead(void *handle, const UA_NodeId nodeid, const UA_Variant *data, const UA_NumericRange *range) {
 			auto self = (Susi::OPCUAServer*)handle;
 			UA_Int32 value = -1;
+			std::cout<<"onRead()"<<std::endl;
 			if(data->type == &UA_TYPES[UA_TYPES_INT32]) {
 				value = *(UA_Int32*)data->data;
 				std::cout<<"read result: "<<value<<std::endl;
@@ -32,6 +33,7 @@ namespace Susi {
 		static void onWrite(void *handle, const UA_NodeId nodeid, const UA_Variant *data, const UA_NumericRange *range) {
 			auto self = (Susi::OPCUAServer*)handle;
 			UA_Int32 value = -1;
+			std::cout<<"onWrite()"<<std::endl;
 			if(data->type == &UA_TYPES[UA_TYPES_INT32]) {
 				value = *(UA_Int32*)data->data;
 				std::cout<<"write result: "<<value<<std::endl;
