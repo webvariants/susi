@@ -28,8 +28,7 @@ option(WITH_WEBHOOKS "Include susi-webhooks binary" ON)
 option(WITH_STATEFILE "Include susi-webhooks binary" ON)
 option(WITH_AUTHENTICATOR "Include susi-authenticator binary" ON)
 option(WITH_SHELL "Include susi-shell binary" ON)
-option(WITH_OPCUACLIENT "Include susi-opcuaclient binary" ON)
-option(WITH_OPCUASERVER "Include susi-opcuaserver binary" ON)
+option(WITH_OPCUA "Include susi-opcuaserver and susi-opcuaclient binary" ON)
 option(WITH_MONGODB "Include susi-mongodb binary" OFF)
 
 set( CMAKE_COLOR_MAKEFILE ON )
@@ -119,14 +118,21 @@ if(WITH_MONGODB)
     include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/components/susi-mongodb/headers)
 endif(WITH_MONGODB)
 
-if(WITH_OPCUACLIENT)
+if(WITH_OPCUA)
+    # open62541
+    set(UA_ENABLE_SUBSCRIPTIONS ON CACHE BOOL "Enable subscriptions" FORCE)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/submodules/open62541)
+    include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/open62541/include)
+    include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/open62541/plugins)
+    include_directories( ${CMAKE_CURRENT_BINARY_DIR}/submodules/open62541/src_generated)
+    # susi-opcuaclient and susi-opcuaserver
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/components/susi-opcuaclient)
     include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/components/susi-opcuaclient/headers)
-endif(WITH_OPCUACLIENT)
-
-if(WITH_OPCUASERVER)
     add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/components/susi-opcuaserver)
     include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/components/susi-opcuaserver/headers)
+endif(WITH_OPCUA)
+
+if(WITH_OPCUASERVER)
 endif(WITH_OPCUASERVER)
 
 SET(CPACK_GENERATOR "DEB")

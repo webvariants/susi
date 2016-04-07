@@ -1,12 +1,14 @@
 #include "susi/SusiClient.h"
-#include "susi/open62541.h"
+#include "ua_types.h"
+#include "ua_server.h"
+#include "logger_stdout.h"
+#include "networklayer_tcp.h"
 
 namespace Susi {
 	class OPCUAServer {
 	public:
 		OPCUAServer(Susi::SusiClient & susi);
 		void stop(){
-
 			opcuaServerRunning = false;
 		}
 

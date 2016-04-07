@@ -27,7 +27,8 @@ target_link_libraries(${PROJECT_NAME}
 	${Boost_LIBRARIES}
 	${OPENSSL_LIBRARIES}
 	bson
-	susi-cpp)
+	susi-cpp
+	open62541-static)
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "/usr/local/bin")
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/headers/ DESTINATION /usr/local/include)
