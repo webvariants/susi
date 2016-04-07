@@ -23,7 +23,7 @@ Susi::OPCUAClient::OPCUAClient(Susi::SusiClient & susi) :
       event->payload["value"] = (BSON::int64)value;
       this->susi.ack(std::move(event));
     });
-    susi.registerProcessor("opcus::client::subscribe",[this](Susi::EventPtr event){
+    susi.registerProcessor("opcua::client::subscribe",[this](Susi::EventPtr event){
       auto endpoint = event->payload["endpoint"].getString();
       auto node = event->payload["node"].getString();
       auto topic = event->payload["topic"].getString();
