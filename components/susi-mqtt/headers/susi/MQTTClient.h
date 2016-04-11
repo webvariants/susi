@@ -1,4 +1,3 @@
-#include "leveldb/db.h"
 #include "susi/SusiClient.h"
 #include <mosquittopp.h>
 
@@ -13,7 +12,7 @@ namespace Susi {
 		Susi::SusiClient & susi_;
 		std::thread runloop_;
 		std::vector<std::string> subscriptions_;
-		
+
 		void subscribe(const std::string & topic);
 		void forward(const std::string & topic);
 
