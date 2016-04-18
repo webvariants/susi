@@ -8,6 +8,17 @@ Susi::MongoDBComponent::MongoDBComponent(Susi::SusiClient & susi, const BSON::Va
         username = _config["username"].getString();
         password = _config["password"].getString();
         database = _config["database"].getString();
+
+		mongoc_init();
+		client = mongoc_client_new("mongodb://127.0.0.1:27017/");
+		collection = mongoc_client_get_collection(client, "test", "test");
+		query = BCON_NEW("cmpxchg", BCON_INT32(1));
+
+		// if (mongoc_collection_find_and_modify(collection, query, NULL, NULL, NULL, false, false, true, &reply, &error)) {
+		// 	std::cout << &reply << std::endl;
+		// } else {
+		// 	std::cout << &error << std::endl;
+		// }
     }
     catch(const std::exception & e) {
         std::cout << e.what() << std::endl;
@@ -54,7 +65,7 @@ Susi::MongoDBComponent::MongoDBComponent(Susi::SusiClient & susi, const BSON::Va
 		auto limit      = event->payload["limit"].getInt64();
 		auto finalize   = event->payload["finalize"].getString();
 
-        event->payload["data"] = mapreduce(collection, map, reduce, query, sort, limit, finalize);
+		event->payload["data"] = mapreduce(collection, map, reduce, query, sort, limit, finalize);
     });
 }
 
@@ -96,7 +107,7 @@ BSON::Value Susi::MongoDBComponent::mapreduce(
 	const std::string collectionName, const std::string map, const std::string reduce,
 	const BSON::Value query, const BSON::Value sort, const int limit, const std::string finalize) {
 
-    auto collection = conn[database];
+    // auto collection = conn[database];
 
 	std::string doc = "{";
 	doc += "\"mapReduce\": \"";
@@ -117,7 +128,39 @@ BSON::Value Susi::MongoDBComponent::mapreduce(
 	doc += "\"out\": {\"replace\": \"susiOut\" }";
 	doc += "}";
 
-	auto result = collection.run_command(bsoncxx::from_json(doc));
+	// auto result = collection.run_command(bsoncxx::from_json(doc));
+	auto result = bsoncxx::from_json("{}");
+
+	bson_t cmd;
+	bson_init(&cmd);
+	bson_append_utf8(&cmd, "mapReduce", collectionName);
+	// cmd = BCON_NEW("mapReduce", collectionName);
+	// cmd = BCON_NEW("map", BCON_UTF8(map));
+	// cmd = BCON_NEW("reduce", BCON_UTF8(reduce));
+
+	if (mongoc_collection_command_simple(collection, cmd, NULL, &reply, &error)) {
+
+	} else {
+
+	}
+
+
+	// bson cmd;
+	// bson_init(&cmd);
+	// bson_append_string(&cmd, "map", map);
+	// bson_append_string(&cmd, "reduce", reduce);
+	// bson_append_string(&cmd, "query", query);
+	// bson_append_string(&cmd, "sort", sort);
+	// bson_append_string(&cmd, "limit", limit);
+	// bson_append_string(&cmd, "finalize", finalize);
+	// bson_finish(&cmd);
+	//
+	// if (mongoc_collection_command_simple(collection, &cmd, NULL, &reply, &error)) {
+	//
+	// } else {
+	//
+	// }
+	// bson_destroy(&cmd);
 
     return bsoncxx::to_json(result);
 }

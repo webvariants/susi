@@ -19,10 +19,12 @@ project(susi-mongodb)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/headers )
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-find_package(mongocxx REQUIRED)
 find_package(libbson REQUIRED)
+find_package(mongoc REQUIRED)
+find_package(mongocxx REQUIRED)
 
 include_directories(${LIBBSON_INCLUDE_DIRS})
+include_directories(${MONGOC_INCLUDE_DIRS})
 include_directories(${MONGOCXX_INCLUDE_DIRS})
 set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 -O3")
 
@@ -36,8 +38,9 @@ target_link_libraries(${PROJECT_NAME}
 	${CMAKE_THREAD_LIBS_INIT}
 	${Boost_LIBRARIES}
 	${OPENSSL_LIBRARIES}
-  ${MONGOCXX_LIBRARIES}
-  ${LIBBSON_LIBRARIES}
+	${LIBBSON_LIBRARIES}
+	${MONGOC_LIBRARIES}
+	${MONGOCXX_LIBRARIES}
 	bson
 	susi-cpp)
 

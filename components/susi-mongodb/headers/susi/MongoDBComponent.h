@@ -6,6 +6,9 @@
 #include <mongocxx/client.hpp>
 #include <mongocxx/instance.hpp>
 
+#include <bcon.h>
+#include <mongoc.h>
+
 #include <vector>
 
 namespace Susi {
@@ -35,6 +38,12 @@ namespace Susi {
         std::string username ;
         std::string password ;
         std::string database ;
+
+		mongoc_client_t* client;
+		mongoc_collection_t* collection;
+		bson_t* query;
+		bson_t reply;
+		bson_error_t error;
     };
 
 }
