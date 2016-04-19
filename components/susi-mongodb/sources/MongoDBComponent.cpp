@@ -11,9 +11,8 @@ Susi::MongoDBComponent::MongoDBComponent(Susi::SusiClient & susi, const BSON::Va
 
 		mongoc_init();
 		client = mongoc_client_new("mongodb://127.0.0.1:27017/");
-		collection = mongoc_client_get_collection(client, "test", "test");
-		query = BCON_NEW("cmpxchg", BCON_INT32(1));
 
+		// query = BCON_NEW("cmpxchg", BCON_INT32(1));
 		// if (mongoc_collection_find_and_modify(collection, query, NULL, NULL, NULL, false, false, true, &reply, &error)) {
 		// 	std::cout << &reply << std::endl;
 		// } else {
@@ -107,62 +106,39 @@ BSON::Value Susi::MongoDBComponent::mapreduce(
 	const std::string collectionName, const std::string map, const std::string reduce,
 	const BSON::Value query, const BSON::Value sort, const int limit, const std::string finalize) {
 
-    // auto collection = conn[database];
+	collection = mongoc_client_get_collection(client, database.c_str(), collectionName.c_str());
 
-	std::string doc = "{";
-	doc += "\"mapReduce\": \"";
-	doc += collectionName;
-	doc += "\",";
+	bson_t queryValue, sortValue;
+	bson_init_from_json(&queryValue, query.toJSON().c_str(), -1, &error);
+	bson_init_from_json(&sortValue, sort.toJSON().c_str(), -1, &error);
 
-	doc += "\"map\": ";
-	doc += map;
-	doc += ",";
+	auto* cmd = BCON_NEW("mapReduce", collectionName.c_str());
+	bson_append_utf8(cmd, "map"     , -1, map.c_str()       , -1);
+	bson_append_utf8(cmd, "reduce"  , -1, reduce.c_str()    , -1);
+	bson_append_utf8(cmd, "out"     , -1, "function() {}"   , -1);
+	bson_append_utf8(cmd, "finalize", -1, finalize.c_str()  , -1);
+	bson_append_document(cmd, "query", -1, &queryValue);
+	bson_append_document(cmd, "sort", -1, &sortValue);
+	bson_append_int32(cmd, "limit", -1, limit);
 
-	doc += "\"reduce\": ";
-	doc += reduce;
-	doc += ",";
-
-	doc += query.toJSON();
-	doc += ",";
-
-	doc += "\"out\": {\"replace\": \"susiOut\" }";
-	doc += "}";
-
-	// auto result = collection.run_command(bsoncxx::from_json(doc));
-	auto result = bsoncxx::from_json("{}");
-
-	bson_t cmd;
-	bson_init(&cmd);
-	bson_append_utf8(&cmd, "mapReduce", collectionName);
-	// cmd = BCON_NEW("mapReduce", collectionName);
-	// cmd = BCON_NEW("map", BCON_UTF8(map));
-	// cmd = BCON_NEW("reduce", BCON_UTF8(reduce));
+// char *str = bson_as_json(cmd, NULL);
+// printf("%s\n", str);
+// bson_free(str);
 
 	if (mongoc_collection_command_simple(collection, cmd, NULL, &reply, &error)) {
-
+		std::cout << "Command succesful executed" << std::endl;
 	} else {
-
+		std::cout << "Command execution failed" << std::endl;
 	}
+	bson_free(cmd);
 
+// std::cout << "Command: " << bson_as_json(&cmd, NULL) << std::endl;
+// std::cout << "Answer:  " << bson_as_json(&reply, NULL) << std::endl;
+std::cout << "Domain:  " << error.domain << std::endl;
+std::cout << "Code:    " << error.code << std::endl;
+std::cout << "Message: " << error.message << std::endl;
 
-	// bson cmd;
-	// bson_init(&cmd);
-	// bson_append_string(&cmd, "map", map);
-	// bson_append_string(&cmd, "reduce", reduce);
-	// bson_append_string(&cmd, "query", query);
-	// bson_append_string(&cmd, "sort", sort);
-	// bson_append_string(&cmd, "limit", limit);
-	// bson_append_string(&cmd, "finalize", finalize);
-	// bson_finish(&cmd);
-	//
-	// if (mongoc_collection_command_simple(collection, &cmd, NULL, &reply, &error)) {
-	//
-	// } else {
-	//
-	// }
-	// bson_destroy(&cmd);
-
-    return bsoncxx::to_json(result);
+	return bson_as_json(&reply, NULL);
 }
 
 Susi::MongoDBComponent::~MongoDBComponent() {
