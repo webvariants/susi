@@ -2,7 +2,8 @@
 #include "susi/LineFramer.h"
 #include <string>
 #include <iostream>
-#include <boost/asio.hpp>
+#include "Serial.h"
+// #include <boost/asio.hpp>
 #include <boost/system/system_error.hpp>
 
 namespace Susi {
@@ -13,7 +14,7 @@ namespace Susi {
         SerialComponent(Susi::SusiClient & susi, BSON::Value & config);
         void join();
         void initPorts();
-        void initPort(const std::string & id, const std::string & portname, int baudrate);
+        void initPort(const std::string & id, const std::string & portname, int baudrate, int char_size, int parity);
 
         void run(){
             _ioservice.run();
@@ -32,7 +33,7 @@ namespace Susi {
     	    event->payload = message;
                 parent->_susi.publish( std::move(event) );
             }} {}
-            std::shared_ptr<boost::asio::serial_port> port;
+            std::map<std::string> port;
             SerialComponent * parent;
             Susi::LineFramer lineframer;
             char data[4096];
