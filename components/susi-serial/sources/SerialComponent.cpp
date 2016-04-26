@@ -1,16 +1,15 @@
 #include "susi/SerialComponent.h"
 
-Susi::SerialComponent::SerialComponent(Susi::SusiClient & susi, BSON::Value & config) :
-  _susi{susi}, _config{config} {
+Susi::SerialComponent::SerialComponent(Susi::SusiClient & susi, BSON::Value & config) : _susi{susi}, _config{config} {
+
+	running.store(true);
+	initPorts();
 
     _susi.registerProcessor("serial::write", [this](Susi::EventPtr event) {
         auto & payload = event->payload;
         std::string id = payload["id"];
         std::string msg = payload["msg"];
-        auto & port = _sessions[id];
-        int size = port.port->write_some(boost::asio::buffer(msg));
-        payload["bytes_written"] = size;
-        _susi.ack(std::move(event));
+		ports[id]->write(msg);
     });
 }
 
@@ -23,7 +22,10 @@ void Susi::SerialComponent::initPorts() {
 		auto char_size = port["char_size"].getString();
 		auto parity    = port["parity"].getString();
 
-		auto converted_baudrate = B115200;
+		auto converted_baudrate  = B115200;
+		auto converted_char_size = CS8;
+		auto converted_parity    = Serial::ODD;
+
 		if (baudrate == 0) {
 			converted_baudrate = B0;
 		} else if (baudrate == 50) {
@@ -64,18 +66,16 @@ void Susi::SerialComponent::initPorts() {
 			converted_baudrate = B230400;
 		}
 
-		auto converted_char_size = CS8;
-		if (char_size == "CS8") {
+		if (char_size == "CS8" || char_size == "cs8") {
 			converted_char_size = CS8;
-		} else if (char_size == "CS7") {
+		} else if (char_size == "CS7" || char_size == "cs7") {
 			converted_char_size = CS7;
-		} else if (char_size == "CS6") {
+		} else if (char_size == "CS6" || char_size == "cs6") {
 			converted_char_size = CS6;
-		} else if (char_size == "CS5") {
+		} else if (char_size == "CS5" || char_size == "cs5") {
 			converted_char_size = CS5;
 		}
 
-		auto converted_parity = Serial::ODD;
 		if (parity == "ODD" || parity == "odd") {
 			converted_parity = Serial::ODD;
 		} else if (parity == "EVEN" || parity == "even") {
@@ -88,13 +88,45 @@ void Susi::SerialComponent::initPorts() {
     }
 }
 
-void Susi::SerialComponent::join() {
-    _susi.join();
+void Susi::SerialComponent::initPort(const std::string & id, const std::string & portname, const int & baudrate, const int & char_size, const int & parity) {
+	auto port = std::make_shared<Serial>(portname, baudrate, char_size, parity);
+	try {
+		port->open();
+		ports[id] = port;
+
+		auto t = std::thread{[this,port,id](){
+			while (running.load()) {
+				char data[4096];
+				size_t len = port->read(data, sizeof(data));
+
+				if (len > 0) {
+					std::string str{data,len};
+					auto event = _susi.createEvent("serial::data");
+					event->payload = BSON::Object{
+						{"id",id},
+						{"data",str}
+					};
+					_susi.publish(std::move(event));
+				}
+			}
+		}};
+		threads[id] = std::move(t);
+
+		std::cout << "serial port " << id << " is open" << std::endl;
+	} catch (const std::exception & e) {
+		std::cout << "failed to open serial connection to " << id << std::endl;
+	}
 }
 
-void Susi::SerialComponent::initPort(const std::string & id, const std::string & portname, int baudrate, int char_size, int parity) {
-    std::cout << "init serial port " << id << std::endl;
-	auto serial = std::make_shared<Serial>(portname, baudrate, char_size, parity);
-    Susi::SerialComponent::SerialSession & port = portname;
-    port.do_read();
+void Susi::SerialComponent::join() {
+	_susi.join();
+}
+
+Susi::SerialComponent::~SerialComponent() {
+	running.store(false);
+	for (auto & kv : threads) {
+		if (kv.second.joinable()) {
+			kv.second.join();
+		}
+	}
 }

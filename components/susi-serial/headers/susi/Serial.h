@@ -40,10 +40,19 @@
 * Example:
 *
 *   Serial serial("/dev/ttyUSB0", B38400, CS8, Serial::ODD);
-*   if(serial.open()){
-*     while(true){
-*       std::cout << serial.readline() <<std::endl;
+*   try {
+*     serial.open()
+*     while(true) {
+*       char data[4096];
+*       size_t len = port->read(data, sizeof(data));
+*       if (len > 0) {
+*         std::string str{data,len};
+*         std::cout << "Read: " << str << std::endl;
+*       }
 *     }
+*   }
+*   catch (const std::exception & e) {
+*     std::cout << "Failed to open port" << std::endl;
 *   }
 *
 */

@@ -1,4 +1,4 @@
-#include "Serial.h"
+#include "../headers/susi/Serial.h"
 
 void Serial::open(){
   fd = ::open (port.c_str(), O_RDWR | O_NOCTTY | O_SYNC);
