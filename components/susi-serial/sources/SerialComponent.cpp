@@ -6,8 +6,8 @@ Susi::SerialComponent::SerialComponent(Susi::SusiClient & susi, BSON::Value & co
 	initPorts();
 
     _susi.registerProcessor("serial::write", [this](Susi::EventPtr event) {
-        auto & payload = event->payload;
-        std::string id = payload["id"];
+        auto & payload  = event->payload;
+        std::string id  = payload["id"];
         std::string msg = payload["msg"];
 		ports[id]->write(msg);
     });
@@ -15,6 +15,7 @@ Susi::SerialComponent::SerialComponent(Susi::SusiClient & susi, BSON::Value & co
 
 void Susi::SerialComponent::initPorts() {
     auto ports = _config["ports"].getArray();
+
     for (auto & port : ports) {
         auto id        = port["id"].getString();
         auto portname  = port["port"].getString();
@@ -94,7 +95,7 @@ void Susi::SerialComponent::initPort(const std::string & id, const std::string &
 		port->open();
 		ports[id] = port;
 
-		auto t = std::thread{[this,port,id](){
+		auto t = std::thread{[this,port,id]() {
 			while (running.load()) {
 				char data[4096];
 				size_t len = port->read(data, sizeof(data));

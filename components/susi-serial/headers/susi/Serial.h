@@ -7,8 +7,13 @@
 *
 * Public Constructor:
 *
-* Port: for example "/dev/ttyUSB0"
-* speed: one of the following:
+* Valid arguments for serial communication are listed below.
+*
+*
+* port:
+*  example:  "/dev/ttyUSB0"
+*
+* speed:
 *  B0
 *  B50
 *  B75
@@ -29,30 +34,34 @@
 *  B115200
 *  B230400
 *
-*  char_size: valid bit lengths are:
+* char_size:
 *  CS8
 *  CS7
 *  CS6
 *  CS5
 *
-* paritiy: on of Serial::NONE, Serial::ODD, Serial::EVEN
+* paritiy:
+*  Serial::NONE
+*  Serial::ODD
+*  Serial::EVEN
 *
-* Example:
+*
+* Code example:
 *
 *   Serial serial("/dev/ttyUSB0", B38400, CS8, Serial::ODD);
 *   try {
-*     serial.open()
-*     while(true) {
-*       char data[4096];
-*       size_t len = port->read(data, sizeof(data));
-*       if (len > 0) {
-*         std::string str{data,len};
-*         std::cout << "Read: " << str << std::endl;
+*       serial.open()
+*       while (true) {
+*           char data[4096];
+*           size_t len = port->read(data, sizeof(data));
+*           if (len > 0) {
+*               std::string str{data,len};
+*               std::cout << "Read: " << str << std::endl;
+*           }
 *       }
-*     }
 *   }
 *   catch (const std::exception & e) {
-*     std::cout << "Failed to open port" << std::endl;
+*       std::cout << "Failed to open port" << std::endl;
 *   }
 *
 */
@@ -67,39 +76,34 @@
 #include <cstring>
 #include <iostream>
 
+
 class Serial {
-public:
-  Serial(std::string port, int speed, int char_size, int parity) :
-    port{port},
-    speed{speed},
-	char_size{char_size},
-    parity{parity} {}
+	public:
+		Serial(std::string port, int speed, int char_size, int parity) :
+				port{port}, speed{speed}, char_size{char_size}, parity{parity} {}
 
-  enum {
-    NONE = 0,
-    ODD  = PARENB | PARODD,
-    EVEN = PARENB
-  };
+		enum {
+			NONE = 0,
+			ODD  = PARENB | PARODD,
+			EVEN = PARENB
+		};
 
-  void open();
-  size_t read(char* buff, size_t maxlen);
+		void open();
+		size_t read(char* buff, size_t maxlen);
+		std::string readline();
+		size_t write(char* buff, size_t len);
+		size_t write(std::string data);
 
-  std::string readline();
+	protected:
+		std::string port;
+		int speed;
+		int char_size;
+		int parity;
+		int fd;
+		std::string lineBuff;
 
-  size_t write(char* buff, size_t len);
-
-  size_t write(std::string data);
-
-protected:
-  std::string port;
-  int speed;
-  int char_size;
-  int parity;
-  int fd;
-  std::string lineBuff;
-
-  int set_interface_attribs (int fd, int speed, int char_size, int parity);
-  void set_blocking (int fd, int should_block);
+		int set_interface_attribs(int fd, int speed, int char_size, int parity);
+		void set_blocking(int fd, int should_block);
 };
 
 #endif // __SERIAL__

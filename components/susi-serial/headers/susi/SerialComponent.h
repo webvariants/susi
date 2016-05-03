@@ -14,7 +14,8 @@ namespace Susi {
     protected:
 		void initPorts();
 		void initPort(const std::string & id, const std::string & portname, const int & baudrate, const int & char_size, const int & parity);
-        Susi::SusiClient & _susi;
+
+		Susi::SusiClient & _susi;
         BSON::Value & _config;
 		std::map<std::string, std::shared_ptr<Serial>> ports;
 		std::map<std::string, std::thread> threads;
