@@ -9,6 +9,7 @@ class SerialApp : public Susi::BaseApp {
 	    virtual ~SerialApp() {}
 	    virtual void start() override {
 	        _serialComponent.reset(new Susi::SerialComponent{*_susi,_config["component"]});
+			_serialComponent->start();
 	    }
 };
 

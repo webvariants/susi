@@ -1,4 +1,4 @@
-#include "../headers/susi/Serial.h"
+#include "susi/Serial.h"
 
 void Serial::open() {
 	fd = ::open(port.c_str(), O_RDWR | O_NOCTTY | O_SYNC);
@@ -21,7 +21,7 @@ std::string Serial::readline() {
 
 	while (true) {
 		int n = read(buf, sizeof buf);
-		if(n < 0) {
+		if (n < 0) {
 			throw std::runtime_error{"lost serial connection"};
 		}
 
@@ -36,11 +36,11 @@ std::string Serial::readline() {
 	}
 }
 
-size_t Serial::write(char* buff, size_t len){
+size_t Serial::write(const char* buff, size_t len){
 	return ::write (fd, buff, len);
 }
 
-size_t Serial::write(std::string data){
+size_t Serial::write(const std::string & data){
 	return write((char*)data.c_str(), data.size());
 }
 
@@ -48,12 +48,12 @@ int Serial::set_interface_attribs (int fd, int speed, int char_size, int parity)
 	struct termios tty;
 	memset (&tty, 0, sizeof tty);
 	if (tcgetattr (fd, &tty) != 0) {
-		std::cout <<"error "<<errno<<" from tcgetattr"<<std::endl;
+		std::cout << "error " << errno << " from tcgetattr" << std::endl;
 		return -1;
 	}
 
-	cfsetospeed (&tty, speed);
-	cfsetispeed (&tty, speed);
+	cfsetospeed(&tty, speed);
+	cfsetispeed(&tty, speed);
 
 	tty.c_cflag = (tty.c_cflag & ~CSIZE) | char_size;   // bit length - 8-bit chars
 	// disable IGNBRK for mismatched speed tests; otherwise receive break as \000 chars
@@ -93,7 +93,7 @@ void Serial::set_blocking (int fd, int should_block) {
 	tty.c_cc[VMIN]  = should_block ? 1 : 0;
 	tty.c_cc[VTIME] = 5;   // 0.5 seconds read timeout
 
-	if (tcsetattr(fd, TCSANOW, &tty) != 0){
+	if (tcsetattr(fd, TCSANOW, &tty) != 0) {
 		std::cout << "error " << errno << " setting term attributes" << std::endl;
 	}
 }

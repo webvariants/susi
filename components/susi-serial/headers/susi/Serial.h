@@ -50,10 +50,10 @@
 *
 *   Serial serial("/dev/ttyUSB0", B38400, CS8, Serial::ODD);
 *   try {
-*       serial.open()
+*       serial.open();
 *       while (true) {
 *           char data[4096];
-*           size_t len = port->read(data, sizeof(data));
+*           size_t len = serial->read(data, sizeof(data));
 *           if (len > 0) {
 *               std::string str{data,len};
 *               std::cout << "Read: " << str << std::endl;
@@ -61,7 +61,7 @@
 *       }
 *   }
 *   catch (const std::exception & e) {
-*       std::cout << "Failed to open port" << std::endl;
+*       std::cout << "Failed to open serial port" << std::endl;
 *   }
 *
 */
@@ -76,11 +76,13 @@
 #include <cstring>
 #include <iostream>
 
-
 class Serial {
 	public:
-		Serial(std::string port, int speed, int char_size, int parity) :
+		Serial(const std::string & port, int speed, int char_size, int parity) :
 				port{port}, speed{speed}, char_size{char_size}, parity{parity} {}
+
+		Serial(const std::string & port) :
+				port{port}, speed{B9600}, char_size{CS8}, parity{Serial::NONE} {}
 
 		enum {
 			NONE = 0,
@@ -91,8 +93,8 @@ class Serial {
 		void open();
 		size_t read(char* buff, size_t maxlen);
 		std::string readline();
-		size_t write(char* buff, size_t len);
-		size_t write(std::string data);
+		size_t write(const char* buff, size_t len);
+		size_t write(const std::string & data);
 
 	protected:
 		std::string port;

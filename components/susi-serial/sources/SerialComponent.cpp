@@ -3,7 +3,6 @@
 Susi::SerialComponent::SerialComponent(Susi::SusiClient & susi, BSON::Value & config) : _susi{susi}, _config{config} {
 
 	running.store(true);
-	initPorts();
 
     _susi.registerProcessor("serial::write", [this](Susi::EventPtr event) {
         auto & payload  = event->payload;
@@ -27,44 +26,27 @@ void Susi::SerialComponent::initPorts() {
 		auto converted_char_size = CS8;
 		auto converted_parity    = Serial::ODD;
 
-		if (baudrate == 0) {
-			converted_baudrate = B0;
-		} else if (baudrate == 50) {
-			converted_baudrate = B50;
-		} else if (baudrate == 75) {
-			converted_baudrate = B75;
-		} else if (baudrate == 110) {
-			converted_baudrate = B110;
-		} else if (baudrate == 134) {
-			converted_baudrate = B134;
-		} else if (baudrate == 150) {
-			converted_baudrate = B150;
-		} else if (baudrate == 200) {
-			converted_baudrate = B200;
-		} else if (baudrate == 300) {
-			converted_baudrate = B300;
-		} else if (baudrate == 600) {
-			converted_baudrate = B600;
-		} else if (baudrate == 1200) {
-			converted_baudrate = B1200;
-		} else if (baudrate == 1800) {
-			converted_baudrate = B1800;
-		} else if (baudrate == 2400) {
-			converted_baudrate = B2400;
-		} else if (baudrate == 4800) {
-			converted_baudrate = B4800;
-		} else if (baudrate == 9600) {
-			converted_baudrate = B9600;
-		} else if (baudrate == 19200) {
-			converted_baudrate = B19200;
-		} else if (baudrate == 38400) {
-			converted_baudrate = B38400;
-		} else if (baudrate == 57600) {
-			converted_baudrate = B57600;
-		} else if (baudrate == 115200) {
-			converted_baudrate = B115200;
-		} else if (baudrate == 230400) {
-			converted_baudrate = B230400;
+		switch (baudrate) {
+			case 0:      converted_baudrate = B0;      break;
+			case 50:     converted_baudrate = B50;     break;
+			case 75:     converted_baudrate = B75;     break;
+			case 110:    converted_baudrate = B110;    break;
+			case 134:    converted_baudrate = B134;    break;
+			case 150:    converted_baudrate = B150;    break;
+			case 200:    converted_baudrate = B200;    break;
+			case 300:    converted_baudrate = B300;    break;
+			case 600:    converted_baudrate = B600;    break;
+			case 1200:   converted_baudrate = B1200;   break;
+			case 1800:   converted_baudrate = B1800;   break;
+			case 2400:   converted_baudrate = B2400;   break;
+			case 4800:   converted_baudrate = B4800;   break;
+			case 9600:   converted_baudrate = B9600;   break;
+			case 19200:  converted_baudrate = B19200;  break;
+			case 38400:  converted_baudrate = B38400;  break;
+			case 57600:  converted_baudrate = B57600;  break;
+			case 115200: converted_baudrate = B115200; break;
+			case 230400: converted_baudrate = B230400; break;
+			default: throw std::runtime_error{"Unknown baudrate"};
 		}
 
 		if (char_size == "CS8" || char_size == "cs8") {
@@ -75,6 +57,8 @@ void Susi::SerialComponent::initPorts() {
 			converted_char_size = CS6;
 		} else if (char_size == "CS5" || char_size == "cs5") {
 			converted_char_size = CS5;
+		} else {
+			throw std::runtime_error{"Unknown char size"};
 		}
 
 		if (parity == "ODD" || parity == "odd") {
@@ -83,6 +67,8 @@ void Susi::SerialComponent::initPorts() {
 			converted_parity = Serial::EVEN;
 		} else if (parity == "NONE" || parity == "none") {
 			converted_parity = Serial::NONE;
+		} else {
+			throw std::runtime_error{"Unknown parity"};
 		}
 
         initPort(id, portname, converted_baudrate, converted_char_size, converted_parity);
@@ -115,7 +101,7 @@ void Susi::SerialComponent::initPort(const std::string & id, const std::string &
 
 		std::cout << "serial port " << id << " is open" << std::endl;
 	} catch (const std::exception & e) {
-		std::cout << "failed to open serial connection to " << id << std::endl;
+		std::cout << "failed to open serial connection to " << id << " (" << e.what() << ")" << std::endl;
 	}
 }
 

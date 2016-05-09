@@ -10,6 +10,9 @@ namespace Susi {
         SerialComponent(Susi::SusiClient & susi, BSON::Value & config);
 		~SerialComponent();
 		void join();
+		void start() {
+			initPorts();
+		}
 
     protected:
 		void initPorts();
