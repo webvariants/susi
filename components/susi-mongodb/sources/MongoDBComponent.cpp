@@ -2,7 +2,7 @@
 
 Susi::MongoDBComponent::MongoDBComponent(Susi::SusiClient & susi, const BSON::Value & config) : _susi{susi}, _config{config} {
 
-    try{
+    try {
         host     = _config["host"].getString();
         port     = _config["port"].getString();
         username = _config["username"].getString();
@@ -19,26 +19,26 @@ Susi::MongoDBComponent::MongoDBComponent(Susi::SusiClient & susi, const BSON::Va
 		// 	std::cout << &error << std::endl;
 		// }
     }
-    catch(const std::exception & e) {
+    catch (const std::exception & e) {
         std::cout << e.what() << std::endl;
     }
 
-    _susi.registerProcessor("mongodb::create", [this](Susi::EventPtr event){
-        auto collection = event->payload["collection"].getString();
+	auto collection = event->payload["collection"].getString();
+    _susi.registerProcessor("mongodb::create", [this](Susi::EventPtr event) {
         auto data       = event->payload["data"];
 
         create(collection, data);
         event->payload["success"] = true;
     });
 
-    _susi.registerProcessor("mongodb::find", [this](Susi::EventPtr event){
+    _susi.registerProcessor("mongodb::find", [this](Susi::EventPtr event) {
         auto collection = event->payload["collection"].getString();
         auto query      = event->payload["query"];
 
         event->payload["data"] = find(collection, query);
     });
 
-    _susi.registerProcessor("mongodb::update", [this](Susi::EventPtr event){
+    _susi.registerProcessor("mongodb::update", [this](Susi::EventPtr event) {
         auto collection  = event->payload["collection"].getString();
         auto findQuery   = event->payload["findQuery"];
         auto updateQuery = event->payload["updateQuery"];
@@ -47,7 +47,7 @@ Susi::MongoDBComponent::MongoDBComponent(Susi::SusiClient & susi, const BSON::Va
         event->payload["success"] = true;
     });
 
-    _susi.registerProcessor("mongodb::remove", [this](Susi::EventPtr event){
+    _susi.registerProcessor("mongodb::remove", [this](Susi::EventPtr event) {
         auto collection  = event->payload["collection"].getString();
         auto removeQuery = event->payload["removeQuery"];
 
@@ -55,7 +55,7 @@ Susi::MongoDBComponent::MongoDBComponent(Susi::SusiClient & susi, const BSON::Va
         event->payload["success"] = true;
     });
 
-	_susi.registerProcessor("mongodb::mapreduce", [this](Susi::EventPtr event){
+	_susi.registerProcessor("mongodb::mapreduce", [this](Susi::EventPtr event) {
         auto collection = event->payload["collection"].getString();
 		auto map        = event->payload["map"].getString();
 		auto reduce     = event->payload["reduce"].getString();
