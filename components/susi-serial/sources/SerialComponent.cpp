@@ -16,10 +16,11 @@ void Susi::SerialComponent::initPorts() {
     auto ports = _config["ports"].getArray();
 
     for (auto & port : ports) {
+
         auto id        = port["id"].getString();
         auto portname  = port["port"].getString();
         auto baudrate  = port["baudrate"].getInt64();
-		auto char_size = port["char_size"].getString();
+		auto char_size = port["char_size"].getInt64();
 		auto parity    = port["parity"].getString();
 
 		auto converted_baudrate  = B115200;
@@ -49,16 +50,12 @@ void Susi::SerialComponent::initPorts() {
 			default: throw std::runtime_error{"Unknown baudrate"};
 		}
 
-		if (char_size == "CS8" || char_size == "cs8") {
-			converted_char_size = CS8;
-		} else if (char_size == "CS7" || char_size == "cs7") {
-			converted_char_size = CS7;
-		} else if (char_size == "CS6" || char_size == "cs6") {
-			converted_char_size = CS6;
-		} else if (char_size == "CS5" || char_size == "cs5") {
-			converted_char_size = CS5;
-		} else {
-			throw std::runtime_error{"Unknown char size"};
+		switch (char_size) {
+			case 8: converted_char_size = CS8; break;
+			case 7: converted_char_size = CS7; break;
+			case 6: converted_char_size = CS6; break;
+			case 5: converted_char_size = CS5; break;
+			default: throw std::runtime_error{"Unknown char size"};
 		}
 
 		if (parity == "ODD" || parity == "odd") {
@@ -99,7 +96,7 @@ void Susi::SerialComponent::initPort(const std::string & id, const std::string &
 		}};
 		threads[id] = std::move(t);
 
-		std::cout << "serial port " << id << " is open" << std::endl;
+		std::cout << "serial port " << id << " is now open" << std::endl;
 	} catch (const std::exception & e) {
 		std::cout << "failed to open serial connection to " << id << " (" << e.what() << ")" << std::endl;
 	}

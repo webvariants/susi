@@ -13,7 +13,7 @@ class SerialApp : public Susi::BaseApp {
 	    }
 };
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[]) {
     try {
         SerialApp app{argc,argv};
         app.start();
