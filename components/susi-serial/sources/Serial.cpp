@@ -1,5 +1,10 @@
 #include "susi/Serial.h"
 
+/**
+ * Thanks to wallyk for sharing this code sample.
+ * http://stackoverflow.com/questions/6947413/how-to-open-read-and-write-from-serial-port-in-c?answertab=votes#tab-top
+ **/
+
 void Serial::open() {
 	fd = ::open(port.c_str(), O_RDWR | O_NOCTTY | O_SYNC);
 	if (fd < 0) {
@@ -37,7 +42,7 @@ std::string Serial::readline() {
 }
 
 size_t Serial::write(const char* buff, size_t len){
-	return ::write (fd, buff, len);
+	return ::write(fd, buff, len);
 }
 
 size_t Serial::write(const std::string & data){
@@ -46,7 +51,8 @@ size_t Serial::write(const std::string & data){
 
 int Serial::set_interface_attribs (int fd, int speed, int char_size, int parity) {
 	struct termios tty;
-	memset (&tty, 0, sizeof tty);
+	memset(&tty, 0, sizeof tty);
+
 	if (tcgetattr (fd, &tty) != 0) {
 		std::cout << "error " << errno << " from tcgetattr" << std::endl;
 		return -1;
