@@ -18,7 +18,26 @@ void Serial::open() {
 }
 
 size_t Serial::read(char* buff, size_t maxlen) {
-	return ::read(fd, buff, maxlen);
+	size_t byteCount = 0;
+
+	while (1) {
+		char temp[maxlen];
+		ssize_t length = ::read(fd, temp, sizeof(temp));
+
+		if (length == -1) {
+			return 0;
+		} else if (length == 0) {
+			break;
+		} else {
+			for (ssize_t i = 0; i < length; i++) {
+				buff[byteCount] = temp[i];
+				byteCount++;
+			}
+		}
+	}
+
+	buff[byteCount+1] = '\0';
+	return byteCount;
 }
 
 std::string Serial::readline() {
