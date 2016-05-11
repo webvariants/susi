@@ -20,8 +20,8 @@ void Serial::open() {
 size_t Serial::read(char* buff, size_t maxlen) {
 	size_t byteCount = 0;
 
-	while (1) {
-		char temp[maxlen];
+	while (byteCount < (maxlen-1)) {
+		char temp[maxlen]; // <- WTF, that works
 		ssize_t length = ::read(fd, temp, sizeof(temp));
 
 		if (length == -1) {
@@ -36,7 +36,7 @@ size_t Serial::read(char* buff, size_t maxlen) {
 		}
 	}
 
-	buff[byteCount+1] = '\0';
+	buff[byteCount] = '\0';
 	return byteCount;
 }
 
