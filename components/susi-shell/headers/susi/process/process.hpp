@@ -68,7 +68,12 @@ namespace fr {
       process(std::string command) : child(-1), in(nullptr), out(nullptr), err(nullptr)
       {
         std::vector<std::string> parameter_vector;
+        parameter_vector.push_back("/bin/bash");
+        parameter_vector.push_back("-c");
+        parameter_vector.push_back(command);
+        /*
         std::string currentParameter = "";
+
         for(size_t i=0;i<command.size();i++){
             char c = command[i];
             if(i==command.size()-1){
@@ -77,8 +82,14 @@ namespace fr {
             }else if(c==' ' || c=='\t'){
                 parameter_vector.push_back(currentParameter);
                 currentParameter = "";
-            }else if(c == '\"'){
-                while(command[++i]!='\"' && i<command.size()){
+            }else if(c == '\"' && i!=0 && command[i-1]!='\\'){
+                while(command[++i]!='\"' && i!=0 && command[i-1]!='\\' && i<command.size()){
+                    currentParameter += command[i];
+                }
+                parameter_vector.push_back(currentParameter);
+                currentParameter = "";
+            }else if(c == '\'' && i!=0 && command[i-1]!='\\'){
+                while(command[++i]!='\'' && i!=0 && command[i-1]!='\\' && i<command.size()){
                     currentParameter += command[i];
                 }
                 parameter_vector.push_back(currentParameter);
@@ -87,6 +98,7 @@ namespace fr {
                 currentParameter += c;
             }
         }
+        */
         for(int i = 0 ; i < parameter_vector.size(); ++i) {
           parameters.push_back(new char[parameter_vector[i].length() + 1]);
           strncpy(parameters[i], parameter_vector[i].c_str(), parameter_vector[i].length() + 1);
