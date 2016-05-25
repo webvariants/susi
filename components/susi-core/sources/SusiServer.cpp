@@ -142,7 +142,7 @@ void Susi::SusiServer::registerProcessor(std::string & topic, int id) {
 }
 
 void Susi::SusiServer::unregisterConsumer(std::string & topic, int id) {
-    for (int i = 0; i < consumers[topic].size(); i++) {
+    for (size_t i = 0; i < consumers[topic].size(); i++) {
         if (id == consumers[topic][i]) {
             std::cout << "unregister consumer " + topic + " for " << Susi::SSLTCPServer::getPeerCertificateHash(id) << std::endl;
             consumers[topic].erase(consumers[topic].begin() + i);
@@ -152,7 +152,7 @@ void Susi::SusiServer::unregisterConsumer(std::string & topic, int id) {
 }
 
 void Susi::SusiServer::unregisterProcessor(std::string & topic, int id) {
-    for (int i = 0; i < processors[topic].size(); i++) {
+    for (size_t i = 0; i < processors[topic].size(); i++) {
         if (id == processors[topic][i]) {
             std::cout << "unregister processor " + topic + " for " << Susi::SSLTCPServer::getPeerCertificateHash(id) << std::endl;
             processors[topic].erase(processors[topic].begin() + i);

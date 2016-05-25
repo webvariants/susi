@@ -99,7 +99,7 @@ namespace fr {
             }
         }
         */
-        for(int i = 0 ; i < parameter_vector.size(); ++i) {
+        for(size_t i = 0 ; i < parameter_vector.size(); ++i) {
           parameters.push_back(new char[parameter_vector[i].length() + 1]);
           strncpy(parameters[i], parameter_vector[i].c_str(), parameter_vector[i].length() + 1);
         }

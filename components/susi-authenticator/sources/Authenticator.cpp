@@ -215,7 +215,7 @@ namespace Susi {
         static std::mt19937 rg(std::chrono::system_clock::now().time_since_epoch().count());
         static std::uniform_int_distribution<> pick(0, alphanums.size() - 1);
 
-        for (int i = 0; i < len; ++i) {
+        for (size_t i = 0; i < len; ++i) {
             token += alphanums[pick(rg)];
         }
         return token;
