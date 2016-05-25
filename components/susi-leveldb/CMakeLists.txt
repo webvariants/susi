@@ -26,9 +26,9 @@ target_link_libraries(${PROJECT_NAME}
 	${CMAKE_THREAD_LIBS_INIT}
 	${Boost_LIBRARIES}
 	${OPENSSL_LIBRARIES}
+	leveldb
 	bson
-	susi-cpp
-	leveldb)
+	susi-cpp)
 
 install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION "/usr/local/bin")
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/headers/ DESTINATION /usr/local/include)
