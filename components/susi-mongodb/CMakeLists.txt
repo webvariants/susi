@@ -21,11 +21,15 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/headers )
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(libbson REQUIRED)
 find_package(mongoc REQUIRED)
-find_package(mongocxx REQUIRED)
+
+# execute_process(COMMAND /bin/sh ${CMAKE_SOURCE_DIR}/components/susi-mongodb/driver-install.sh)
 
 include_directories(${LIBBSON_INCLUDE_DIRS})
 include_directories(${MONGOC_INCLUDE_DIRS})
-include_directories(${MONGOCXX_INCLUDE_DIRS})
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/../../submodules/mongo-cxx-driver/src)
+include_directories(${CMAKE_BINARY_DIR}/install/include/bsoncxx/v_noabi)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../submodules/mongo-cxx-driver/src)
+
 set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall --std=c++11 -O3")
 
 file( GLOB SRCFILES ${CMAKE_CURRENT_SOURCE_DIR}/sources/*.cpp )
@@ -40,7 +44,7 @@ target_link_libraries(${PROJECT_NAME}
 	${OPENSSL_LIBRARIES}
 	${LIBBSON_LIBRARIES}
 	${MONGOC_LIBRARIES}
-	${MONGOCXX_LIBRARIES}
+	mongocxx
 	bson
 	susi-cpp)
 

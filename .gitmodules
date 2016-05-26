@@ -16,3 +16,6 @@
 [submodule "submodules/mongo-c-driver"]
 	path = submodules/mongo-c-driver
 	url = https://github.com/mongodb/mongo-c-driver.git
+[submodule "submodules/mongo-cxx-driver"]
+	path = submodules/mongo-cxx-driver
+	url = https://github.com/mordfisch/mongo-cxx-driver.git

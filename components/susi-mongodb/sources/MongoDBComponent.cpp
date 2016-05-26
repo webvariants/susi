@@ -23,8 +23,8 @@ Susi::MongoDBComponent::MongoDBComponent(Susi::SusiClient & susi, const BSON::Va
         std::cout << e.what() << std::endl;
     }
 
-	auto collection = event->payload["collection"].getString();
     _susi.registerProcessor("mongodb::create", [this](Susi::EventPtr event) {
+		auto collection = event->payload["collection"].getString();
         auto data       = event->payload["data"];
 
         create(collection, data);
