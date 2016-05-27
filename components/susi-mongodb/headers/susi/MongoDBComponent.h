@@ -22,7 +22,7 @@ namespace Susi {
 	        void update(const std::string collection, const BSON::Value findQuery, const BSON::Value updateQuery);
 	        void remove(const std::string collection, const BSON::Value queryRemove);
 			BSON::Value mapreduce(const std::string collectionName, const std::string map, const std::string reduce,
-				const BSON::Value query, const BSON::Value sort, const int limit, const std::string finalize);
+				const std::string out, const int limit);
 
 	        ~MongoDBComponent();
 	        void join();
