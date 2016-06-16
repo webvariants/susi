@@ -13,6 +13,7 @@ var susi = {
     _processorProcesses: {},
 
     _processed: [],
+    _processedConsumer: [],
 
     registerConsumer: function(topic,callback) {
         var id = this._genID();
@@ -105,6 +106,14 @@ var susi = {
     //used by js to interact with c++ part
     _processConsumerEvent: function(event){
         event = JSON.parse(event);
+        if(this._processedConsumer.indexOf(event.id) !== -1){
+            _ack(JSON.stringify(event));
+            return;
+        }
+        this._processedConsumer.push(event.id);
+        if(this._processedConsumer.length > 64){
+            this._processedConsumer.splice(0,1);
+        }
         for(var i=0;i<this._consumerCallbacks.length;i++){
             if(event.topic.match(this._consumerCallbacks[i].topic)){
                 this._consumerCallbacks[i].callback(event);
