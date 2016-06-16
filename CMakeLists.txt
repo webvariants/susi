@@ -45,6 +45,8 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/submodules/libbson)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/libbson/src/headers)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/submodules/libbcrypt)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/libbcrypt/include)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/submodules/tiny-process-library)
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/submodules/tiny-process-library)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/engines/susi-cpp)
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/engines/susi-cpp/headers)

@@ -16,3 +16,6 @@
 [submodule "submodules/mongo-c-driver"]
 	path = submodules/mongo-c-driver
 	url = https://github.com/mongodb/mongo-c-driver.git
+[submodule "submodules/tiny-process-library"]
+	path = submodules/tiny-process-library
+	url = https://github.com/eidheim/tiny-process-library
