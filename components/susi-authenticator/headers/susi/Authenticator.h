@@ -1,5 +1,6 @@
 #include "susi/SusiClient.h"
 #include "bcrypt/BCrypt.hpp"
+#include <random>
 #include <regex>
 #include <fstream>
 
