@@ -1,0 +1,9 @@
+{
+    "susi-addr": "localhost",
+    "susi-port": 4000,
+    "cert": "/etc/susi/keys/susi-statefile_cert.pem",
+    "key": "/etc/susi/keys/susi-statefile_key.pem",
+    "component": {
+        "file": "/usr/share/susi/statefile.json"
+    }
+}

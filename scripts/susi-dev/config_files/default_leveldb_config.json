@@ -1,0 +1,9 @@
+{
+    "susi-addr": "localhost",
+    "susi-port": 4000,
+    "cert": "/etc/susi/keys/susi-leveldb_cert.pem",
+    "key": "/etc/susi/keys/susi-leveldb_key.pem",
+    "component": {
+        "db": "/usr/share/susi/leveldb"
+    }
+}

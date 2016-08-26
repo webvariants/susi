@@ -1,0 +1,13 @@
+{
+    "susi-addr": "localhost",
+    "susi-port": 4000,
+    "cert": "sampleCert.pem",
+    "key": "sampleKey.pem",
+    "component": {
+        "host": "localhost",
+        "port": "27017",
+        "username": "",
+        "password": "",
+        "database": "susi-mongodb"
+    }
+}

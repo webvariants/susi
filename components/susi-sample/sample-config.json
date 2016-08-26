@@ -1,0 +1,10 @@
+{
+    "susi-addr": "localhost",
+    "susi-port": 4000,
+    "cert": "sampleCert.pem",
+    "key": "sampleKey.pem",
+    "component": {
+        "value1": 1,
+        "value2": [1,2,3]
+    }
+}

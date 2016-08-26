@@ -1,0 +1,17 @@
+image: wv/susi-builder:latest
+
+before_script:
+    - apt-get update
+    - apt-get -y upgrade
+
+build:
+    tags: [docker]
+    script:
+        - rm -rf submodules/
+        - git submodule init
+        - git submodule update
+        - cmake .
+        - make -j4 package
+    artifacts:
+        paths:
+            - susi-0.2.0-Linux.deb

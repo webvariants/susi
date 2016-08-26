@@ -1,0 +1,13 @@
+{
+    "susi-addr": "localhost",
+    "susi-port": 4000,
+    "cert": "/etc/susi/keys/susi-shell_cert.pem",
+    "key": "/etc/susi/keys/susi-shell_key.pem",
+    "component": {
+        "commands": {
+            "stdoutTest": "echo -n 'Hello World!'",
+            "stderrTest": "ls /foobar",
+            "argumentTest": "ls $location"
+        }
+    }
+}

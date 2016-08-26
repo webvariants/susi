@@ -1,0 +1,10 @@
+{
+    "nodes": [
+        {
+            "id": "susi-test-1",
+            "components": [
+                "susi-heartbeat"
+            ]
+        }
+    ]
+}

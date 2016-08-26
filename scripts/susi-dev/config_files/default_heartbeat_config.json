@@ -1,0 +1,6 @@
+{
+    "susi-addr": "localhost",
+    "susi-port": 4000,
+    "cert": "/etc/susi/keys/susi-heartbeat_cert.pem",
+    "key": "/etc/susi/keys/susi-heartbeat_key.pem"
+}
